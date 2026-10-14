@@ -16,7 +16,7 @@ Keep every message short and friendly. She is a beginner. Wait for her reply at 
 - Read the wireframe `docs/wireframes/NN *.svg`. The `<text>` elements show the labels; rectangles show boxes, inputs and buttons.
 - Skim `docs/styling.md` and `docs/building-a-screen.md`.
 
-- Run `git status` and `git branch --show-current`. If she's on `main`, run `git pull`, then `git switch -c frontend/screen-NN-short-name`. Tell her in one sentence: "I made you a branch, your own copy for this screen."
+- Run `git status`, `git branch --show-current` and `git remote -v`. If there's no `upstream` remote, follow the first-time fork setup in `CLAUDE.md`. If she's on `main`, run `git pull upstream main` and `git push origin main`, then `git switch -c frontend/screen-NN-short-name`. Tell her in one sentence: "I made you a branch, your own copy for this screen."
 
 ## 2. Plan in plain words ⏸
 
@@ -46,6 +46,6 @@ From `frontend/`, run `npm run format`, `npm run build`, `npm run lint`, `npm ru
 ## 7. Wrap up
 
 - Mark the screen 🟦 Ready for review in `docs/progress.md`.
-- Commit (`Build screen NN Name`), push the branch, and open a pull request with `gh pr create` using `.github/pull_request_template.md`, with the checklist ticked. Give her the link and say the lead will review it.
+- Commit (`Build screen NN Name`), `git push -u origin <branch>`, and open a pull request with `gh pr create --repo aysayas-school/table-reservation --base main` using `.github/pull_request_template.md`, with the checklist ticked. Give her the link and say the lead will review it. If the CI check turns red, read it with `gh pr checks` and fix it with her.
 - Tell her in 3 bullets: what was built, which files, one thing she learned (a React or Tailwind idea used on this screen, explained simply).
 - Suggest the next screen from the suggested order.

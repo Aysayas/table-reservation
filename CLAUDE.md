@@ -46,16 +46,31 @@ Commands run from `frontend/`. The dev server preview is configured in `.claude/
 
 ## Git and GitHub
 
-The repo is `github.com/Aysayas/table-reservation`. Changes reach `main` through pull requests that the lead reviews.
+The team repo is `github.com/aysayas-school/table-reservation`. She has **Read** access only, so she works on her own **fork** and sends pull requests to the team repo. The lead reviews and merges.
 
-- Before building, make sure she's on her own branch, not `main`. Name it `frontend/screen-NN-short-name` (e.g. `frontend/screen-07-about`). If she's on `main`, run `git pull` and create the branch for her, explaining it in one sentence.
-- One branch and one pull request per screen.
+Remotes on her computer:
+
+| Remote | Points to | Used for |
+|---|---|---|
+| `origin` | her fork, `github.com/<her-username>/table-reservation` | pushing her branches |
+| `upstream` | `github.com/aysayas-school/table-reservation` | getting the latest `main` |
+
+First-time setup (do it for her, explaining each step in one sentence):
+
+1. `gh auth status`. If she isn't signed in, have her run `gh auth login` herself (GitHub.com → HTTPS → browser). She types her password in the browser, never in chat.
+2. `gh repo fork aysayas-school/table-reservation --clone`, run from `C:\dev`. This creates the fork, clones it, and sets `origin` and `upstream`.
+3. Check with `git remote -v`.
+
+Every screen:
+
+- Get the latest first: `git switch main`, `git pull upstream main`, `git push origin main`.
+- Make a branch from `main`: `frontend/screen-NN-short-name` (e.g. `frontend/screen-07-about`). One branch and one pull request per screen.
 - Commit after each working step with a short plain message (`Build screen 07 About Us`, `Add test for screen 07`). Explain what a commit is the first time.
-- When a screen is 🟦 Ready for review: push the branch and open a pull request with `gh pr create`, filling in `.github/pull_request_template.md`. Give her the link.
-- Never push to `main`, never force-push, never merge pull requests, never rewrite history (`reset --hard`, `rebase`). Merging is the lead's job.
-- If `git pull` gives a conflict, stop and explain it simply; resolve only files in `frontend/src/` or `frontend/e2e/`, otherwise ask her to contact the lead.
-- When she says "save my work", that means commit and push her branch.
-- Pushing to `main` or changing files the lead owns (see `.github/CODEOWNERS`) is a 🔴 in the drift check below.
+- When a screen is 🟦 Ready for review: `git push -u origin <branch>`, then `gh pr create --repo aysayas-school/table-reservation --base main`, filling in `.github/pull_request_template.md`. Give her the link.
+- When she says "save my work", commit and push her branch to `origin`.
+- Never push to `upstream`, never force-push, never merge pull requests, never rewrite history (`reset --hard`, `rebase`). Merging is the lead's job.
+- If a pull gives a conflict, stop and explain it simply; resolve only files in `frontend/src/` or `frontend/e2e/`, otherwise ask her to contact the lead.
+- Changing files the lead owns (see `.github/CODEOWNERS`, including everything in `backend/`) is a 🔴 in the drift check below. The CI check on pull requests also fails if a fork PR touches them.
 
 ## Staying on track (drift check)
 

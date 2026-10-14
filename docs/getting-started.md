@@ -15,10 +15,21 @@ Recommended VS Code extensions:
 
 ## 2. Get the code
 
-Ask the lead to add you to the GitHub repository, accept the email invite, then:
+Ask the lead to add you to the GitHub organization `aysayas-school` and accept the email invite.
+
+**Frontend developer and other Read members:** fork the repo and clone your fork, using the [GitHub CLI](https://cli.github.com):
 
 ```bash
-git clone https://github.com/Aysayas/table-reservation.git
+gh auth login
+gh repo fork aysayas-school/table-reservation --clone
+```
+
+This sets `origin` to your fork and `upstream` to the team repo. Send your work as pull requests from your fork.
+
+**Lead and Write members:** clone the team repo directly:
+
+```bash
+git clone https://github.com/aysayas-school/table-reservation.git
 ```
 
 Keep it **outside OneDrive, Google Drive or Dropbox** (for example `C:\dev\table-reservation`). Syncing tools can corrupt Git folders.

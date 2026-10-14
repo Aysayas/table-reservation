@@ -26,20 +26,31 @@ The **frontend** is the part people see and click. The **backend** is the hidden
 
 1. **Node.js**: the engine that runs the project. Download the "LTS" version from [nodejs.org](https://nodejs.org) and install it with the default options.
 2. **Git**: the tool that saves versions of the project. Download it from [git-scm.com](https://git-scm.com) and install it with the default options.
-3. **A GitHub account**: GitHub is the website where the team's code lives. Make a free account at [github.com](https://github.com), send your username to the lead, then accept the invite email.
-4. **The Claude desktop app**, with the **Code** tab. Sign in with the account the team gave you.
+3. **GitHub CLI**: lets Claude talk to GitHub for you. Download it from [cli.github.com](https://cli.github.com) and install it with the default options.
+4. **A GitHub account**: GitHub is the website where the team's code lives. Make a free account at [github.com](https://github.com), send your username to the lead, then accept the invite email.
+5. **The Claude desktop app**, with the **Code** tab. Sign in with the account the team gave you.
+
+### Signing in to GitHub (once)
+
+Open **PowerShell** (press the Windows key, type `PowerShell`, press Enter) and type:
+
+```
+gh auth login
+```
+
+Pick **GitHub.com** → **HTTPS** → **Yes** → **Login with a web browser**. It shows a code; copy it, press Enter, and paste it in the browser page that opens. **You** type your password in the browser, never in the chat.
 
 ### Getting the project onto your computer
+
+You get your **own copy** of the team project, called a **fork**. You can change your copy freely; the team's copy only changes when the lead accepts your work. This keeps everyone's work safe, including yours.
 
 1. Make a folder called `dev` directly in your `C:` drive, so you have `C:\dev`.
    > ⚠️ Not inside OneDrive, Google Drive or Dropbox. They can break the project.
 2. Open the Claude desktop app → **Code** tab → start a session in `C:\dev`, and type:
 
    ```
-   Please download the GitHub repository https://github.com/Aysayas/table-reservation into this folder. Explain each step simply.
+   Please fork the GitHub repository aysayas-school/table-reservation and download my fork into this folder. Explain each step simply.
    ```
-
-   Claude may ask you to sign in to GitHub. Follow what it shows; **you** type your password in the browser, never in the chat.
 
 You now have a folder `C:\dev\table-reservation`. That's the project.
 
@@ -253,17 +264,18 @@ Git is like **save points in a video game**. GitHub is the **shared cloud** wher
 | Word | Think of it as |
 |---|---|
 | **Repository (repo)** | The whole project folder, with its full history |
+| **Fork** | Your own copy of the team repo on GitHub. You push here |
 | **Commit** | A save point with a short note ("Built screen 07") |
 | **Branch** | Your own copy to work on, so you don't mess up anyone else's work |
-| **`main`** | The official version. Only the lead adds to it |
-| **Push** | Upload your save points to GitHub |
+| **`main`** | The official version in the team repo. Only the lead adds to it |
+| **Push** | Upload your save points to your fork on GitHub |
 | **Pull** | Download the team's newest changes |
-| **Pull request (PR)** | Asking the lead: "Please check my work and add it to `main`" |
+| **Pull request (PR)** | Asking the lead: "Please copy my work from my fork into the team's `main`" |
 
 ### How it works for each screen
 
 ```
-pull newest → make a branch → build the screen → commit → push → pull request → lead reviews → merged ✅
+get team's newest → make a branch → build the screen → commit → push to your fork → pull request → lead reviews → merged ✅
 ```
 
 You don't need to type Git commands. **Claude does it for you**; just say what you want:
@@ -279,6 +291,8 @@ You don't need to type Git commands. **Claude does it for you**; just say what y
 ### Rules
 
 - Never work on `main`. Claude checks this for you.
+- You can't change the team repo directly, only through pull requests. That's on purpose, and it protects your work too.
+- If your pull request shows a red ❌, a check failed. Paste the link to Claude and say: `My pull request has a red X. What's wrong?`
 - One screen = one branch = one pull request.
 - If Claude says there's a **conflict** (two people changed the same thing), don't panic. Let Claude explain, and ask the lead if it's not in your files.
 - The lead might leave **comments** on your pull request asking for changes. Paste the link to Claude and say: `The lead left comments on this pull request. Help me fix them.`
