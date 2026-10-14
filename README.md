@@ -20,7 +20,7 @@ Open http://localhost:5173.
 
 ## Building the frontend with Claude
 
-- **Frontend developer:** read [START-HERE.md](START-HERE.md) first.
+- **Frontend developer:** start with the [frontend guide](guides/frontend/) (Taglish, step by step).
 - **Progress:** [docs/progress.md](docs/progress.md) tracks all 29 screens.
 - **Lead:** check [LEAD-REVIEW.md](LEAD-REVIEW.md) for requests that need your approval.
 - **Claude's rules:** [CLAUDE.md](CLAUDE.md) (read automatically by Claude), plus the `/build-screen` and `/check-my-work` commands in `.claude/skills/`.
