@@ -1,0 +1,37 @@
+# Dependencies
+node_modules/
+vendor/
+
+# Builds and test output
+dist/
+dist-ssr/
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+*.local
+
+# Backend runtime
+backend/runtime/cache/*
+backend/runtime/logs/*
+backend/runtime/sessions/*
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS and editors
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Claude personal settings
+.claude/settings.local.json

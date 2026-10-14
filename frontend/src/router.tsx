@@ -1,0 +1,82 @@
+import { createBrowserRouter } from 'react-router-dom'
+import CustomerLayout from '@/layouts/CustomerLayout'
+import DashboardLayout, { type NavItem } from '@/layouts/DashboardLayout'
+import Placeholder from '@/pages/Placeholder'
+
+const staffNav: NavItem[] = [
+  { to: '/staff', label: 'Dashboard' },
+  { to: '/staff/reservations', label: "Today's Reservations" },
+  { to: '/staff/tables', label: 'Table Status' },
+  { to: '/staff/orders', label: 'Orders and Payments' },
+]
+
+const adminNav: NavItem[] = [
+  { to: '/admin', label: 'Dashboard' },
+  { to: '/admin/menu', label: 'Menu' },
+  { to: '/admin/categories', label: 'Categories' },
+  { to: '/admin/tables', label: 'Tables and QR Codes' },
+  { to: '/admin/reservations', label: 'Reservations' },
+  { to: '/admin/orders', label: 'Order History' },
+  { to: '/admin/payments', label: 'Payments' },
+  { to: '/admin/reports', label: 'Reports' },
+  { to: '/admin/users', label: 'Staff Accounts' },
+  { to: '/admin/settings', label: 'Settings' },
+]
+
+export const router = createBrowserRouter([
+  {
+    element: <CustomerLayout />,
+    children: [
+      { path: '/', element: <Placeholder screen="01" title="Home" /> },
+      { path: '/menu', element: <Placeholder screen="02" title="Menu" /> },
+      { path: '/reserve', element: <Placeholder screen="03" title="Reserve a Table" /> },
+      { path: '/reserve/payment', element: <Placeholder screen="04" title="Deposit Payment" /> },
+      {
+        path: '/reserve/confirmation/:code',
+        element: <Placeholder screen="05" title="Reservation Confirmation" />,
+      },
+      { path: '/reservation', element: <Placeholder screen="06" title="Find Reservation" /> },
+      { path: '/about', element: <Placeholder screen="07" title="About Us" /> },
+      { path: '/table/:tableId', element: <Placeholder screen="08" title="Table Menu" /> },
+      { path: '/table/:tableId/menu', element: <Placeholder screen="08" title="Table Menu" /> },
+      {
+        path: '/table/:tableId/menu/:itemId',
+        element: <Placeholder screen="09" title="Item Details" />,
+      },
+      { path: '/table/:tableId/cart', element: <Placeholder screen="10" title="Cart" /> },
+      { path: '/table/:tableId/checkout', element: <Placeholder screen="11" title="Checkout" /> },
+      { path: '/table/:tableId/orders', element: <Placeholder screen="12" title="Order Status" /> },
+    ],
+  },
+  { path: '/staff/login', element: <Placeholder screen="13" title="Staff Login" /> },
+  { path: '/kitchen', element: <Placeholder screen="18" title="Kitchen Display" /> },
+  {
+    path: '/staff',
+    element: <DashboardLayout title="Staff" items={staffNav} />,
+    children: [
+      { index: true, element: <Placeholder screen="14" title="Staff Dashboard" /> },
+      { path: 'reservations', element: <Placeholder screen="15" title="Today's Reservations" /> },
+      { path: 'tables', element: <Placeholder screen="16" title="Table Status" /> },
+      { path: 'orders', element: <Placeholder screen="17" title="Orders and Payments" /> },
+    ],
+  },
+  {
+    path: '/admin',
+    element: <DashboardLayout title="Admin" items={adminNav} />,
+    children: [
+      { index: true, element: <Placeholder screen="19" title="Admin Dashboard" /> },
+      { path: 'menu', element: <Placeholder screen="20" title="Menu Management" /> },
+      { path: 'menu/new', element: <Placeholder screen="21" title="Add Menu Item" /> },
+      { path: 'menu/:id/edit', element: <Placeholder screen="21" title="Edit Menu Item" /> },
+      { path: 'categories', element: <Placeholder screen="22" title="Categories" /> },
+      { path: 'tables', element: <Placeholder screen="23" title="Tables and QR Codes" /> },
+      { path: 'reservations', element: <Placeholder screen="24" title="Reservations" /> },
+      { path: 'orders', element: <Placeholder screen="25" title="Order History" /> },
+      { path: 'payments', element: <Placeholder screen="26" title="Payments" /> },
+      { path: 'reports', element: <Placeholder screen="27" title="Reports" /> },
+      { path: 'users', element: <Placeholder screen="28" title="Staff Accounts" /> },
+      { path: 'settings', element: <Placeholder screen="29" title="Settings" /> },
+    ],
+  },
+  { path: '*', element: <Placeholder screen="—" title="Page Not Found" /> },
+])

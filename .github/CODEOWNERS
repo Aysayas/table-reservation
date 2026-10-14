@@ -1,0 +1,9 @@
+* @Aysayas
+/backend/ @Aysayas
+/CLAUDE.md @Aysayas
+/.claude/ @Aysayas
+/.github/ @Aysayas
+/frontend/package.json @Aysayas
+/frontend/vite.config.ts @Aysayas
+/frontend/tsconfig*.json @Aysayas
+/frontend/playwright.config.ts @Aysayas
