@@ -1,13 +1,13 @@
 # Calling the API
 
-The frontend talks to a LavaLust (PHP) backend that returns JSON. The backend isn't in the project yet, so this page describes how to connect once it is.
+The frontend talks to the LavaLust (PHP) backend in `backend/`, which returns JSON. Every endpoint lives under `/api`. Running it locally needs Docker; see `backend/README.md`.
 
 ## Setting the backend address
 
 In `frontend/.env.local`:
 
 ```
-VITE_API_URL=http://localhost:8000
+VITE_API_URL=http://localhost:8000/api
 ```
 
 Restart `npm run dev` after changing it. Only settings that start with `VITE_` reach the browser, and anything in them is public, so **never put API keys or passwords in the frontend**. Keys for payments, SMS, storage and real-time messaging belong in the backend.
@@ -69,7 +69,14 @@ Call `setToken(null)` on Log Out.
 
 ## Agree with the backend team on
 
-The endpoint names above are examples. Before wiring a screen, confirm with whoever builds the backend:
+## Endpoints that exist now
+
+| Method | URL | Returns |
+|---|---|---|
+| GET | `/health` | `{ "status": "ok" }` when the API is up |
+| GET | `/health/db` | `{ "status": "ok", "database": "connected" }`, or 503 if the database is down |
+
+The other endpoint names above are examples. Before wiring a screen, confirm with whoever builds the backend:
 
 - The exact URL and method for each endpoint
 - The JSON field names (the ERD in `docs/design/ERD.pdf` uses names like `reservation_id`, `menu_items`)

@@ -5,7 +5,7 @@ A table reservation and QR menu ordering system with menu recommendations.
 | Part | Folder | Stack | Status |
 |---|---|---|---|
 | Frontend | [`frontend/`](frontend/) | React, TypeScript, Vite, Tailwind CSS, React Router, axios | Set up; screens are placeholders |
-| Backend | [`backend/`](backend/) | LavaLust (PHP) JSON API, MySQL | Lead adds from template |
+| Backend | [`backend/`](backend/) | LavaLust (PHP) JSON API, MySQL, Docker | API skeleton and database schema; see [backend/README.md](backend/README.md) |
 
 ## Quick start (frontend)
 

@@ -4,7 +4,11 @@
 table-reservation/
 ├── README.md                 Start here
 ├── docs/                     These guides
-├── backend/                  LavaLust API (lead)
+├── render.yaml               Render deploy settings for the backend
+├── backend/                  LavaLust API (lead), see backend/README.md
+│   ├── app/                  Routes, controllers, models, config
+│   ├── database/schema.sql   All tables from the ERD
+│   └── docker/               Docker and Render server config
 ├── .github/                  Code owners and pull request template
 └── frontend/
     ├── .env.example          Copy to .env.local
