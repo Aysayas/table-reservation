@@ -24,7 +24,13 @@ Piliin mo: **GitHub.com** → **HTTPS** → **Yes** → **Login with a web brows
 
 ## Kunin yung project
 
-1. Gumawa ka ng folder na `dev` diretso sa `C:` drive, para may `C:\dev` ka.
+1. Gumawa ka ng folder na `dev` diretso sa `C:` drive, para may `C:\dev` ka. Pinakamadali sa **Command Prompt** (pindutin yung Windows key, i-type `cmd`, tapos Enter), then i-type:
+
+   ```cmd
+   if not exist C:\dev mkdir C:\dev
+   ```
+
+   Gagawin nito yung folder kung wala pa. Kung meron na, wala siyang gagalawin.
    > ⚠️ Huwag sa loob ng OneDrive, Google Drive o Dropbox. Pwedeng masira yung project dahil sa syncing nila.
 2. Buksan yung Claude desktop app → **Code** tab → mag-start ng session sa `C:\dev`, tapos i-type:
 
