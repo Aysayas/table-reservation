@@ -42,14 +42,12 @@ Pick **GitHub.com** → **HTTPS** → **Yes** → **Login with a web browser**. 
 
 ### Getting the project onto your computer
 
-You get your **own copy** of the team project, called a **fork**. You can change your copy freely; the team's copy only changes when the lead accepts your work. This keeps everyone's work safe, including yours.
-
 1. Make a folder called `dev` directly in your `C:` drive, so you have `C:\dev`.
    > ⚠️ Not inside OneDrive, Google Drive or Dropbox. They can break the project.
 2. Open the Claude desktop app → **Code** tab → start a session in `C:\dev`, and type:
 
    ```
-   Please fork the GitHub repository aysayas-school/table-reservation and download my fork into this folder. Explain each step simply.
+   Please download the GitHub repository https://github.com/Aysayas/table-reservation into this folder. Explain each step simply.
    ```
 
 You now have a folder `C:\dev\table-reservation`. That's the project.
@@ -264,18 +262,17 @@ Git is like **save points in a video game**. GitHub is the **shared cloud** wher
 | Word | Think of it as |
 |---|---|
 | **Repository (repo)** | The whole project folder, with its full history |
-| **Fork** | Your own copy of the team repo on GitHub. You push here |
 | **Commit** | A save point with a short note ("Built screen 07") |
 | **Branch** | Your own copy to work on, so you don't mess up anyone else's work |
-| **`main`** | The official version in the team repo. Only the lead adds to it |
-| **Push** | Upload your save points to your fork on GitHub |
+| **`main`** | The official version. Only the lead adds to it |
+| **Push** | Upload your save points to GitHub |
 | **Pull** | Download the team's newest changes |
-| **Pull request (PR)** | Asking the lead: "Please copy my work from my fork into the team's `main`" |
+| **Pull request (PR)** | Asking the lead: "Please check my work and add it to `main`" |
 
 ### How it works for each screen
 
 ```
-get team's newest → make a branch → build the screen → commit → push to your fork → pull request → lead reviews → merged ✅
+get team's newest → make a branch → build the screen → commit → push → pull request → lead reviews → merged ✅
 ```
 
 You don't need to type Git commands. **Claude does it for you**; just say what you want:
@@ -291,7 +288,7 @@ You don't need to type Git commands. **Claude does it for you**; just say what y
 ### Rules
 
 - Never work on `main`. Claude checks this for you.
-- You can't change the team repo directly, only through pull requests. That's on purpose, and it protects your work too.
+- Your work reaches `main` only through pull requests. That's on purpose, and it protects your work too.
 - If your pull request shows a red ❌, a check failed. Paste the link to Claude and say: `My pull request has a red X. What's wrong?`
 - One screen = one branch = one pull request.
 - If Claude says there's a **conflict** (two people changed the same thing), don't panic. Let Claude explain, and ask the lead if it's not in your files.

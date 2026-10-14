@@ -10,7 +10,7 @@ A table reservation and QR menu ordering system with menu recommendations.
 ## Quick start (frontend)
 
 ```bash
-git clone https://github.com/aysayas-school/table-reservation.git
+git clone https://github.com/Aysayas/table-reservation.git
 cd table-reservation/frontend
 npm install
 npm run dev
@@ -48,8 +48,8 @@ Read these in order if you are new to the project:
 ## Working together
 
 - `main` always works. Nobody pushes to it directly.
-- Teammates with **Read** access fork the repo and open pull requests from their fork. Members with **Write** access push branches here (`backend/menu-api`) and open pull requests.
+- Everyone pushes their own branches here and opens a pull request. Nobody pushes to `main` directly; only the lead merges.
 - One branch and one pull request per screen or feature (`frontend/screen-07-about`).
-- GitHub Actions runs the checks on every pull request (`.github/workflows/ci.yml`). Fork pull requests that change lead-owned files (`backend/`, config, Claude rules) fail the **Protected files** check.
+- GitHub Actions runs the checks on every pull request (`.github/workflows/ci.yml`). Pull requests not opened by the lead fail the **Protected files** check if they change lead-owned files (`backend/`, config, Claude rules).
 - The lead reviews and merges. `.github/CODEOWNERS` makes the lead the reviewer for backend, config and Claude files.
 - Every pull request uses the checklist in `.github/pull_request_template.md`.

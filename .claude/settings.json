@@ -21,9 +21,7 @@
       "Bash(git push --force:*)",
       "Bash(git push -f:*)",
       "Bash(git push origin main)",
-      "Bash(git reset --hard:*)",
-      "Bash(git push upstream:*)",
-      "Bash(git push upstream)"
+      "Bash(git reset --hard:*)"
     ]
   }
 }

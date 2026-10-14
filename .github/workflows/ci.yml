@@ -12,10 +12,10 @@ permissions:
 jobs:
   protected-files:
     name: Protected files
-    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository
+    if: github.event_name == 'pull_request' && github.event.pull_request.user.login != github.repository_owner
     runs-on: ubuntu-latest
     steps:
-      - name: Fail if a fork PR changes lead-owned files
+      - name: Fail if a teammate PR changes lead-owned files
         env:
           GH_TOKEN: ${{ github.token }}
           PR: ${{ github.event.pull_request.number }}
