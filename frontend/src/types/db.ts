@@ -1,0 +1,101 @@
+export type UserRole = 'admin' | 'staff' | 'kitchen'
+export type TableStatus = 'available' | 'occupied' | 'reserved'
+export type ReservationStatus = 'pending' | 'confirmed' | 'arrived' | 'no_show' | 'cancelled'
+export type OrderStatus = 'received' | 'preparing' | 'ready' | 'served'
+export type OrderPaymentStatus = 'unpaid' | 'paid'
+export type PaymentMethod = 'online' | 'cash'
+export type PaymentStatus = 'pending' | 'paid' | 'failed' | 'refunded'
+export type NotificationStatus = 'sent' | 'failed'
+
+export type User = {
+  user_id: number
+  full_name: string
+  email: string
+  role: UserRole
+  created_at: string
+}
+
+export type Customer = {
+  customer_id: number
+  full_name: string
+  mobile_number: string
+  email: string | null
+  created_at: string
+}
+
+export type RestaurantTable = {
+  table_id: number
+  table_number: string
+  capacity: number
+  qr_token: string
+  status: TableStatus
+}
+
+export type Reservation = {
+  reservation_id: number
+  customer_id: number
+  table_id: number | null
+  reference_code: string
+  reservation_date: string
+  reservation_time: string
+  pax: number
+  deposit_amount: number
+  status: ReservationStatus
+  created_at: string
+}
+
+export type Category = {
+  category_id: number
+  name: string
+  sort_order: number
+}
+
+export type MenuItem = {
+  item_id: number
+  category_id: number
+  name: string
+  description: string | null
+  price: number
+  image_url: string | null
+  is_available: boolean
+}
+
+export type Order = {
+  order_id: number
+  table_id: number
+  customer_id: number | null
+  status: OrderStatus
+  total_amount: number
+  payment_status: OrderPaymentStatus
+  created_at: string
+}
+
+export type OrderItem = {
+  order_item_id: number
+  order_id: number
+  item_id: number
+  quantity: number
+  unit_price: number
+  notes: string | null
+}
+
+export type Payment = {
+  payment_id: number
+  order_id: number | null
+  reservation_id: number | null
+  received_by: number | null
+  method: PaymentMethod
+  provider_reference: string | null
+  amount: number
+  status: PaymentStatus
+  paid_at: string | null
+}
+
+export type Notification = {
+  notification_id: number
+  customer_id: number
+  type: 'sms'
+  message: string
+  status: NotificationStatus
+  sent_at: string
+}
