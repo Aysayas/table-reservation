@@ -1,0 +1,46 @@
+# Render Blueprint - deploy with "New > Blueprint" in the Render dashboard.
+# Builds the upstream LavaLust Dockerfile (PHP + Apache on port 80).
+# Render has no managed MySQL: point DB_* at an external MySQL host
+# (e.g. Aiven). Variables marked sync: false are asked for when you create
+# the Blueprint. Pending migrations run on every deploy before Apache
+# starts; a failed migration fails the deploy.
+services:
+  - type: web
+    name: lavalust-app
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: free
+    dockerCommand: sh -c "php lava migration run && exec apache2-foreground"
+    healthCheckPath: /health
+    envVars:
+      - key: PORT
+        value: "80"
+      - key: APP_ENV
+        value: production
+      - key: APP_KEY
+        generateValue: true
+      - key: JWT_SECRET
+        generateValue: true
+      - key: REFRESH_TOKEN_KEY
+        generateValue: true
+      - key: CORS_ALLOW_ORIGIN
+        sync: false        # your frontend origin, e.g. https://app.example.com
+      - key: TRUST_PROXY
+        value: "true"      # Render terminates TLS; enables HSTS detection
+      - key: DB_DRIVER
+        value: mysql
+      - key: DB_CHARSET
+        value: utf8mb4
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        sync: false        # Aiven uses a non-standard port
+      - key: DB_NAME
+        sync: false
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_SSL_CA
+        sync: false        # /etc/secrets/ca.pem after adding ca.pem as a Secret File; empty = no TLS

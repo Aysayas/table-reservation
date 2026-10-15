@@ -1,0 +1,32 @@
+# macOS
+.DS_Store
+
+# Environment
+.env
+.env.*
+!.env.example
+# Managed MySQL CA certificates (e.g. Aiven ca.pem)
+*.pem
+
+# Dependencies
+vendor/
+app/vendor/
+composer.lock
+
+# Cache & Logs
+runtime/*
+!runtime/.htaccess
+!runtime/index.html
+*.log
+*.cache
+
+# IDE
+.idea/
+.vscode/
+*.sublime-*
+
+# OS
+Thumbs.db
+
+# Files the device bridge couldn't delete directly get moved here
+_to_delete/

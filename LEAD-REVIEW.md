@@ -18,4 +18,10 @@ Claude adds an entry here when the frontend developer asks for something outside
 
 ## Entries
 
-_None yet._
+### 2026-10-15: Set up the backend from the LavaLust template
+- Level: 🔴 not allowed
+- Asked for: "set up the backend, this is the template https://github.com/Aysayas/Lavalust-Template"
+- Rule it bumps into: Writing backend code (PHP, LavaLust, SQL) is the backend teammate's part, and `backend/` is lead-owned in CODEOWNERS
+- What Claude did instead: Nothing in `backend/` was changed. Offered to list the data each screen needs so the backend side can be agreed
+- Status: Approved
+- Lead note:
