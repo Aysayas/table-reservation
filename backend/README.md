@@ -18,9 +18,8 @@ Docker setup for local development and a Render Blueprint for deployment. It use
 On Windows, with Docker Desktop running:
 
 ```powershell
-git clone https://github.com/Aysayas/Lavalust-Template.git my-new-project
-cd my-new-project
-.\setup-new-project.bat
+cd backend
+.\start-dev.bat
 ```
 
 Then check the API:

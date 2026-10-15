@@ -3,28 +3,15 @@
 The fastest path from a fresh clone to a running API on Windows with Docker Desktop.
 For details see [DOCKER_SETUP.md](DOCKER_SETUP.md).
 
-## 1. Clone
+## 1. Start
 
-Give the folder a name at clone time. The setup script renames things inside the project, not the folder itself.
+From `backend/`, double-click `start-dev.bat`, or run `.\start-dev.bat`. It:
 
-```powershell
-git clone https://github.com/Aysayas/Lavalust-Template.git my-new-project
-cd my-new-project
-```
-
-## 2. Run Setup (once)
-
-Double-click `setup-new-project.bat`, or run `.\setup-new-project.ps1`. It:
-
-- asks for the project name and renames the `lavalust_` prefix in `.env.example` (database name and user)
-- backs up an existing `.env` to `.env.bak` and creates a new one, with generated keys and passwords
-- optionally resets git history and sets a new remote
+- creates `.env` from `.env.example` if missing, with generated keys and passwords
 - runs `docker compose up -d --build --wait`, then the migrations
 - opens VS Code and `http://localhost/health`
 
-The `.bat` and `.ps1` files delete themselves after a successful run.
-
-## 3. Verify
+## 2. Verify
 
 ```bash
 curl http://localhost/health
