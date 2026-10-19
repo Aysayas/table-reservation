@@ -29,6 +29,7 @@ runtime/*
 
 # Docker
 .docker/
+supervisord.pid
 
 # OS
 .DS_Store
