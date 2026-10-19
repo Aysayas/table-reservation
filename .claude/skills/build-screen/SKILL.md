@@ -46,6 +46,6 @@ From `frontend/`, run `npm run format`, `npm run build`, `npm run lint`, `npm ru
 ## 7. Wrap up
 
 - Mark the screen 🟦 Ready for review in `docs/progress.md`.
-- Commit (`Build screen NN Name`), push the branch, and open a pull request with `gh pr create` using `.github/pull_request_template.md`, with the checklist ticked. Give her the link and say the lead will review it.
+- Commit (`Build screen NN Name`), `git push -u origin <branch>`, and open a pull request with `gh pr create --base main` using `.github/pull_request_template.md`, with the checklist ticked. Give her the link and say the lead will review it. If the CI check turns red, read it with `gh pr checks` and fix it with her.
 - Tell her in 3 bullets: what was built, which files, one thing she learned (a React or Tailwind idea used on this screen, explained simply).
 - Suggest the next screen from the suggested order.

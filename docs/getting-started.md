@@ -15,9 +15,10 @@ Recommended VS Code extensions:
 
 ## 2. Get the code
 
-Ask the lead to add you to the GitHub repository, accept the email invite, then:
+Ask the lead to add you to the GitHub repository, accept the email invite, sign in with the [GitHub CLI](https://cli.github.com), then clone:
 
 ```bash
+gh auth login
 git clone https://github.com/Aysayas/table-reservation.git
 ```
 

@@ -1,0 +1,74 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  protected-files:
+    name: Protected files
+    if: github.event_name == 'pull_request' && github.event.pull_request.user.login != github.repository_owner
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fail if a teammate PR changes lead-owned files
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          files=$(gh api "repos/$REPO/pulls/$PR/files" --paginate --jq '.[].filename')
+          blocked=$(printf '%s\n' "$files" | grep -E '^(backend/|\.github/|\.claude/|CLAUDE\.md$|render\.yaml$|frontend/(package\.json|package-lock\.json|vite\.config\.ts|tsconfig[^/]*\.json|playwright\.config\.ts|\.prettierrc\.json|\.oxlintrc\.json)$)' || true)
+          if [ -n "$blocked" ]; then
+            echo "::error::This pull request changes files only the lead can change:"
+            printf '%s\n' "$blocked"
+            echo "Undo these changes, or ask the lead to make them."
+            exit 1
+          fi
+          echo "No protected files changed."
+
+  frontend:
+    name: Frontend
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npm run format:check
+      - run: npm run build
+      - run: npm run lint
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e -- --reporter=list
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: frontend/playwright-report
+          retention-days: 7
+
+  backend:
+    name: Backend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check backend exists
+        id: exists
+        run: |
+          if [ -d backend/app ]; then echo "present=true" >> "$GITHUB_OUTPUT"; else echo "No backend yet, skipping."; fi
+      - name: PHP syntax check
+        if: steps.exists.outputs.present == 'true'
+        run: find backend/app backend/public -name '*.php' -print0 | xargs -0 -n1 php -l
+      - name: Docker build
+        if: steps.exists.outputs.present == 'true'
+        run: docker build -t table-reservation-api backend

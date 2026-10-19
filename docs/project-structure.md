@@ -3,7 +3,8 @@
 ```
 table-reservation/
 ├── README.md                 Start here
-├── docs/                     These guides
+├── guides/frontend/          Frontend developer guide (Taglish)
+├── docs/                     Technical guides
 ├── backend/                  LavaLust API (lead)
 ├── .github/                  Code owners and pull request template
 └── frontend/

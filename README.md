@@ -20,7 +20,7 @@ Open http://localhost:5173.
 
 ## Building the frontend with Claude
 
-- **Frontend developer:** read [START-HERE.md](START-HERE.md) first.
+- **Frontend developer:** start with the [frontend guide](guides/frontend/) (Taglish, step by step).
 - **Progress:** [docs/progress.md](docs/progress.md) tracks all 29 screens.
 - **Lead:** check [LEAD-REVIEW.md](LEAD-REVIEW.md) for requests that need your approval.
 - **Claude's rules:** [CLAUDE.md](CLAUDE.md) (read automatically by Claude), plus the `/build-screen` and `/check-my-work` commands in `.claude/skills/`.
@@ -48,6 +48,8 @@ Read these in order if you are new to the project:
 ## Working together
 
 - `main` always works. Nobody pushes to it directly.
-- Make a branch per screen or feature (`frontend/screen-07-about`, `backend/menu-api`), push it, and open a pull request.
+- Everyone pushes their own branches here and opens a pull request. Nobody pushes to `main` directly; only the lead merges.
+- One branch and one pull request per screen or feature (`frontend/screen-07-about`).
+- GitHub Actions runs the checks on every pull request (`.github/workflows/ci.yml`). Pull requests not opened by the lead fail the **Protected files** check if they change lead-owned files (`backend/`, config, Claude rules).
 - The lead reviews and merges. `.github/CODEOWNERS` makes the lead the reviewer for backend, config and Claude files.
 - Every pull request uses the checklist in `.github/pull_request_template.md`.
