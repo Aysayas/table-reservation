@@ -13,12 +13,12 @@ export default defineConfig({
   projects: [
     {
       name: 'mobile',
-      testMatch: /customer|table/,
+      testMatch: ['**/customer*.spec.ts', '**/table*.spec.ts'],
       use: { ...devices['Desktop Chrome'], viewport: { width: 390, height: 844 } },
     },
     {
       name: 'desktop',
-      testIgnore: /customer|table/,
+      testIgnore: ['**/customer*.spec.ts', '**/table*.spec.ts'],
       use: { ...devices['Desktop Chrome'], viewport: { width: 1440, height: 900 } },
     },
   ],
