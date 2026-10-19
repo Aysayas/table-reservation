@@ -9,6 +9,7 @@ The person in this session is the **frontend developer**. She is new to coding a
 - After every change, explain in 3 bullets or fewer: what you changed, which file, what she should look at.
 - When she asks "why", teach. Questions are always welcome and never count as going off track.
 - Never make her feel bad for asking something out of scope. Be kind, be clear, offer the right path.
+- She may write in English, Tagalog or Taglish. Reply in the language she uses. For Taglish, keep it natural and light like her guide in `guides/frontend/`: everyday Filipino with English tech terms, no slang or forced deep Tagalog.
 
 The **project lead** set these rules and reviews her work. You can't see the lead; they read `LEAD-REVIEW.md` and `docs/progress.md`.
 
@@ -37,7 +38,7 @@ Read these before building anything. They are the source of truth:
 
 1. At the start of a session, check `docs/progress.md` and `LEAD-REVIEW.md`, then ask which screen she is working on today.
 2. Build **one screen at a time**, matching its wireframe. Use `/build-screen NN` steps.
-3. Use sample data until the backend exists. Don't invent real API endpoints.
+3. Build without waiting for the backend. Screens get data **only** through functions in `frontend/src/services/` (see `menu.ts`). Until an endpoint is listed in `docs/api.md`, those functions return data from `frontend/src/services/sampleData.ts`, typed with `frontend/src/types/db.ts`. Field names match the ERD and `backend/database/schema.sql` exactly (`item_id`, `is_available`, `reservation_date`). Add sample records there when a screen needs more; never call `api` or invent endpoints for things not in `docs/api.md`. Actions that need the backend (pay, login, send SMS, upload) pretend to succeed and move to the next screen.
 4. Show the screen in the browser preview at the right size (390 wide for 01–12, 1440 × 900 for 13–29).
 5. Run the checks before saying a screen is done: `npm run format`, `npm run build`, `npm run lint`, `npm run test:e2e` (all from `frontend/`).
 6. Update `docs/progress.md` when a screen changes status.
@@ -46,16 +47,24 @@ Commands run from `frontend/`. The dev server preview is configured in `.claude/
 
 ## Git and GitHub
 
-The repo is `github.com/Aysayas/table-reservation`. Changes reach `main` through pull requests that the lead reviews.
+The repo is `github.com/Aysayas/table-reservation`. She has write access, but **`main` is the lead's**: she works only on her own branches and sends pull requests. The lead reviews and merges. GitHub doesn't stop a push to `main` here, so you must.
 
-- Before building, make sure she's on her own branch, not `main`. Name it `frontend/screen-NN-short-name` (e.g. `frontend/screen-07-about`). If she's on `main`, run `git pull` and create the branch for her, explaining it in one sentence.
-- One branch and one pull request per screen.
+First-time setup (do it for her, explaining each step in one sentence):
+
+1. `gh auth status`. If she isn't signed in, have her run `gh auth login` herself (GitHub.com → HTTPS → browser). She types her password in the browser, never in chat.
+2. From `C:\dev`: `git clone https://github.com/Aysayas/table-reservation.git`.
+
+Every screen:
+
+- Get the latest first: `git switch main`, then `git pull`.
+- Make a branch from `main`: `frontend/screen-NN-short-name` (e.g. `frontend/screen-07-about`). One branch and one pull request per screen.
 - Commit after each working step with a short plain message (`Build screen 07 About Us`, `Add test for screen 07`). Explain what a commit is the first time.
-- When a screen is 🟦 Ready for review: push the branch and open a pull request with `gh pr create`, filling in `.github/pull_request_template.md`. Give her the link.
-- Never push to `main`, never force-push, never merge pull requests, never rewrite history (`reset --hard`, `rebase`). Merging is the lead's job.
-- If `git pull` gives a conflict, stop and explain it simply; resolve only files in `frontend/src/` or `frontend/e2e/`, otherwise ask her to contact the lead.
-- When she says "save my work", that means commit and push her branch.
-- Pushing to `main` or changing files the lead owns (see `.github/CODEOWNERS`) is a 🔴 in the drift check below.
+- When a screen is 🟦 Ready for review: `git push -u origin <branch>`, then `gh pr create --base main`, filling in `.github/pull_request_template.md`. Give her the link.
+- When she says "save my work", commit and push her branch.
+- Before every commit and push, check `git branch --show-current`. If it says `main`, stop, move the work to a branch, and explain why.
+- Never push to `main`, never force-push, never merge pull requests, never delete remote branches, never rewrite history (`reset --hard`, `rebase`). Merging is the lead's job.
+- If a pull gives a conflict, stop and explain it simply; resolve only files in `frontend/src/` or `frontend/e2e/`, otherwise ask her to contact the lead.
+- Changing files the lead owns (see `.github/CODEOWNERS`, including everything in `backend/`) is a 🔴 in the drift check below. The **Protected files** CI check also fails any pull request not opened by the lead that touches them.
 
 ## Staying on track (drift check)
 

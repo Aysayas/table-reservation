@@ -67,6 +67,27 @@ setToken(data.access_token)
 
 Call `setToken(null)` on Log Out.
 
+## Building before the backend exists
+
+Screens never call the API directly. They call a function in `src/services/`:
+
+```ts
+// src/services/menu.ts, while the endpoint doesn't exist yet
+export async function getMenuItems() {
+  return sampleMenuItems
+}
+
+// after the endpoint is listed below
+export async function getMenuItems() {
+  const { data } = await api.get('/menu-items')
+  return data.data.map((item) => ({ ...item, price: Number(item.price) }))
+}
+```
+
+- Sample data lives in `src/services/sampleData.ts`, typed by `src/types/db.ts`.
+- Field names match the database exactly, so switching to the real API changes only the service function.
+- MySQL returns `DECIMAL` values (prices, amounts) as strings. Convert them with `Number()` in the service.
+
 ## Agree with the backend team on
 
 ## Endpoints that exist now

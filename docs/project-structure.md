@@ -3,7 +3,8 @@
 ```
 table-reservation/
 ├── README.md                 Start here
-├── docs/                     These guides
+├── guides/frontend/          Frontend developer guide (Taglish)
+├── docs/                     Technical guides
 ├── render.yaml               Render deploy settings for the backend
 ├── backend/                  LavaLust API (lead), see backend/README.md
 │   ├── app/                  Routes, controllers, models, config
