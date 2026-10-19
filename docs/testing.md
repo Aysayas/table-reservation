@@ -24,15 +24,20 @@ npx playwright install chromium
 
 ## Where tests live
 
+One spec file per screen, named by area, screen number and short name:
+
 ```
 frontend/e2e/
-├── customer.spec.ts   screens 01-07
-├── table.spec.ts      screens 08-12
-├── staff.spec.ts      screens 13-18 (add when built)
-└── admin.spec.ts      screens 19-29
+├── customer-NN-short-name.spec.ts   screens 01-07
+├── table-NN-short-name.spec.ts      screens 08-12
+├── staff-NN-short-name.spec.ts      screens 13-18
+├── admin-NN-short-name.spec.ts      screens 19-29
+└── customer.spec.ts, table.spec.ts, admin.spec.ts   shared navigation tests
 ```
 
-Files with `customer` or `table` in the name run at phone size (390 × 844). All others run at desktop size (1440 × 900). This is set in `playwright.config.ts`.
+Files whose name starts with `customer` or `table` run at phone size (390 × 844). All others run at desktop size (1440 × 900). This is set in `playwright.config.ts`.
+
+In Claude Code, `/e2e NN` writes the test for screen NN, and `/e2e` alone lists which screens still have no test.
 
 ## Writing a test
 

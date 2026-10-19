@@ -37,7 +37,7 @@ Start the preview (`frontend` in `.claude/launch.json`), set the size (390 × 84
 
 ## 5. Test
 
-Add or extend a test in `frontend/e2e/` (`customer.spec.ts`, `table.spec.ts`, `staff.spec.ts` or `admin.spec.ts`) that opens the screen and checks its main parts and buttons. Use `getByRole` and `getByLabel`.
+Follow `/e2e NN` to add the screen's own spec file in `frontend/e2e/` that opens the screen and checks its main parts and buttons. Use `getByRole` and `getByLabel`.
 
 ## 6. Check
 
