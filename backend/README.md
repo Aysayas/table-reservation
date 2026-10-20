@@ -80,8 +80,9 @@ With the containers running and `APP_ENV=development`, open these in the browser
 |---|---|
 | http://localhost:8000/dev/db | Every table, read through its model, as `ddt()` tables |
 | http://localhost:8000/dev/db/crud | A create, read, update and delete test for every model, with PASS or FAIL per row |
+| http://localhost:8000/dev/db/table/category | Test it yourself: forms to create, read, update and delete rows. Swap `category` for `user`, `customer`, `table`, `reservation`, `menu_item`, `order`, `order_item`, `payment`, `notification`, `setting` or `opening_hour` |
 
-The CRUD test runs each model inside a transaction and rolls it back, so the seed data stays the same. The summary shows "row counts unchanged". The test data is the `$cases` list at the top of `app/controllers/Dbtest.php`. Add a row there when you add a model. Both pages return 404 unless `APP_ENV` is `development`, and Render sets it to `production`.
+The table pages change the real local data, and foreign key or CHECK errors show on the page. To start over, use `start-dev.bat` option 9 (Reset DB). The CRUD test runs each model inside a transaction and rolls it back, so the seed data stays the same. The summary shows "row counts unchanged". The test data is the `$cases` list at the top of `app/controllers/Dbtest.php`. Add a row there when you add a model. Both pages return 404 unless `APP_ENV` is `development`, and Render sets it to `production`.
 
 PHP caches files for up to 60 seconds (`opcache.revalidate_freq` in `docker/php/php.ini`). If a change doesn't show yet, run `docker compose restart php`.
 
