@@ -101,7 +101,7 @@ export async function getMenuItems() {
 | GET | `/menu-items/{id}` | `{ "data": MenuItem }`, or 404. Screens 09, 21 |
 | GET | `/settings` | `{ "data": RestaurantSettings }`. Screens 01, 07, 29 |
 | GET | `/opening-hours` | `{ "data": OpeningHours[] }`, all 7 days, `day_of_week` 0 to 6. Screens 01, 07, 29 |
-| POST | `/auth/login` | Body `{ "email", "password" }`. `{ "data": { access_token, refresh_token, expires_in, token_type, user } }`. 401 for a wrong email or password, 422 if one is missing, 429 after 10 tries a minute. Screen 13 |
+| POST | `/auth/login` | Body `{ "email", "password" }`. `{ "data": { access_token, refresh_token, expires_in, token_type, user } }`. 401 for a wrong email or password, 422 with an `errors` list if a field is missing or the email is invalid, 429 after 10 tries a minute. Screen 13 |
 | POST | `/auth/refresh` | Body `{ "refresh_token" }`. Same shape as login, with a new pair of tokens. The old refresh token stops working. 401 if expired or already used |
 | POST | `/auth/logout` | Needs the access token. Body `{ "refresh_token" }`. `{ "data": { "message": "Logged out" } }` |
 | GET | `/auth/me` | Needs the access token. `{ "data": User }` without the password |

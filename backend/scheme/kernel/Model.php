@@ -233,7 +233,16 @@ class Model {
     public function _find($id, $with_deleted = false) {
         $this->db->table($this->table);
         $this->apply_soft_delete($with_deleted);
-        return $this->db->where($this->primary_key, $id)->get();
+        $record = $this->db->where($this->primary_key, $id)->get();
+
+        if (!empty($this->with) && $record) {
+            $records = [$record];
+            $this->load_relations($records);
+            $record = $records[0];
+        }
+
+        $this->with = [];
+        return $record;
     }
 
     /**
@@ -524,7 +533,7 @@ class Model {
 
                         case 'belongs_to':
                             $record[$relationName] = $this->{$rel['related']}
-                                ->_find($record[$rel['foreign_key']] ?? null);
+                                ->_find($record[$rel['foreign_key']] ?? null) ?: null;
                             break;
 
                         case 'many_to_many':
@@ -952,7 +961,7 @@ class Model {
      */
     public function _rollback()
     {
-        $this->db->rollback();
+        $this->db->roll_back();
     }
 
      /**
