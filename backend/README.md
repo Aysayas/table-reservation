@@ -104,7 +104,7 @@ php -r "echo bin2hex(random_bytes(32));"
    - `with()` only works with `all()`. `find()` ignores it and leaves it set for the next `all()` call, so for one record use `find()` and load the related row yourself.
    - A `belongs_to` relation with a NULL foreign key returns `false`. Send `null` to the frontend instead.
 
-3. For staff and admin endpoints, call `$this->api->require_jwt();` first.
+3. For staff, kitchen and admin endpoints, call `$this->api->require_role('staff', 'admin');` first, listing every role allowed. It returns 401 without a valid access token and 403 for the wrong role. Admin is not added automatically, so include `'admin'` wherever admin should get in. Use `require_jwt()` when any logged-in user is fine. The "Who" column in `../docs/api.md` decides which roles each route allows.
 
 Tell the frontend developer the URL and JSON shape, and update `../docs/api.md`.
 

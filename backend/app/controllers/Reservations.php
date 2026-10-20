@@ -10,21 +10,25 @@ class Reservations extends Controller {
 
 	public function index()
 	{
+		$this->api->require_role('staff', 'admin');
 		$this->api->respond_error('Not implemented', 501);
 	}
 
 	public function show($id)
 	{
+		$this->api->require_role('staff', 'admin');
 		$this->api->respond_error('Not implemented', 501);
 	}
 
 	public function update($id)
 	{
+		$this->api->require_role('admin');
 		$this->api->respond_error('Not implemented', 501);
 	}
 
 	public function status($id)
 	{
+		$this->api->require_role('staff', 'admin');
 		$this->api->respond_error('Not implemented', 501);
 	}
 

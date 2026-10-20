@@ -10,6 +10,7 @@ class Orders extends Controller {
 
 	public function index()
 	{
+		$this->api->require_role('staff', 'kitchen', 'admin');
 		$this->api->respond_error('Not implemented', 501);
 	}
 
@@ -25,6 +26,7 @@ class Orders extends Controller {
 
 	public function status($id)
 	{
+		$this->api->require_role('staff', 'kitchen', 'admin');
 		$this->api->respond_error('Not implemented', 501);
 	}
 
