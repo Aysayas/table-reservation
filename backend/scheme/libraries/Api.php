@@ -496,8 +496,25 @@ class Api
         $token = $this->get_bearer_token();
         $payload = $this->validate_jwt($token ?? '');
 
-        if (!$payload) {
+        if (!$payload || ($payload['type'] ?? '') === 'refresh') {
             $this->respond_error('Unauthorized', 401);
+        }
+
+        return $payload;
+    }
+
+    /**
+     * require_role
+     *
+     * @param string ...$roles
+     * @return array<string,mixed>
+     */
+    public function require_role(string ...$roles)
+    {
+        $payload = $this->require_jwt();
+
+        if (!in_array($payload['role'] ?? '', $roles, true)) {
+            $this->respond_error('Forbidden', 403);
         }
 
         return $payload;
@@ -528,6 +545,7 @@ class Api
             'sub'  => $user_id,
             'type' => 'refresh',
             'jti'  => bin2hex(random_bytes(16)),
+            'exp'  => $now + $this->refresh_token_expiration,
         ];
 
         $access_token  = $this->encode_jwt($access_payload);
@@ -562,26 +580,10 @@ class Api
      */
     public function refresh_access_token($refresh_token)
     {
-        $payload = $this->validate_jwt($refresh_token);
-        if (!$payload || ($payload['type'] ?? '') !== 'refresh') {
-            $this->respond_error('Invalid refresh token', 403);
-        }
-
-        $hashed = hash_hmac('sha256', $refresh_token, $this->refresh_token_key);
-
-        $stmt = $this->_lava->db->raw(
-            "SELECT * FROM {$this->refresh_token_table} 
-             WHERE token = ? AND expires_at > NOW() LIMIT 1",
-            [$hashed]
-        );
-        $found = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if (!$found) {
+        $payload = $this->consume_refresh_token($refresh_token);
+        if (!$payload) {
             $this->respond_error('Refresh token expired or revoked', 403);
         }
-
-        // Revoke old + rotate (best practice)
-        $this->revoke_refresh_token($refresh_token);
 
         $new_tokens = $this->issue_tokens(['id' => $payload['sub']]);
 
@@ -589,6 +591,36 @@ class Api
             'message' => 'Tokens refreshed successfully',
             'tokens'  => $new_tokens
         ]);
+    }
+
+    /**
+     * consume_refresh_token
+     *
+     * @param string $refresh_token
+     * @return array<string,mixed>|null
+     */
+    public function consume_refresh_token($refresh_token)
+    {
+        $payload = $this->validate_jwt((string) $refresh_token);
+        if (!$payload || ($payload['type'] ?? '') !== 'refresh') {
+            return null;
+        }
+
+        $hashed = hash_hmac('sha256', (string) $refresh_token, $this->refresh_token_key);
+
+        $stmt = $this->_lava->db->raw(
+            "SELECT * FROM {$this->refresh_token_table}
+             WHERE token = ? AND expires_at > NOW() LIMIT 1",
+            [$hashed]
+        );
+
+        if (!$stmt->fetch(PDO::FETCH_ASSOC)) {
+            return null;
+        }
+
+        $this->revoke_refresh_token($refresh_token);
+
+        return $payload;
     }
 
     /**

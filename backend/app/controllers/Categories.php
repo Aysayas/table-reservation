@@ -17,16 +17,19 @@ class Categories extends Controller {
 
 	public function store()
 	{
+		$this->api->require_role('admin');
 		$this->api->respond_error('Not implemented', 501);
 	}
 
 	public function update($id)
 	{
+		$this->api->require_role('admin');
 		$this->api->respond_error('Not implemented', 501);
 	}
 
 	public function destroy($id)
 	{
+		$this->api->require_role('admin');
 		$this->api->respond_error('Not implemented', 501);
 	}
 }

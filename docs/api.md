@@ -101,6 +101,12 @@ export async function getMenuItems() {
 | GET | `/menu-items/{id}` | `{ "data": MenuItem }`, or 404. Screens 09, 21 |
 | GET | `/settings` | `{ "data": RestaurantSettings }`. Screens 01, 07, 29 |
 | GET | `/opening-hours` | `{ "data": OpeningHours[] }`, all 7 days, `day_of_week` 0 to 6. Screens 01, 07, 29 |
+| POST | `/auth/login` | Body `{ "email", "password" }`. `{ "data": { access_token, refresh_token, expires_in, token_type, user } }`. 401 for a wrong email or password, 422 if one is missing, 429 after 10 tries a minute. Screen 13 |
+| POST | `/auth/refresh` | Body `{ "refresh_token" }`. Same shape as login, with a new pair of tokens. The old refresh token stops working. 401 if expired or already used |
+| POST | `/auth/logout` | Needs the access token. Body `{ "refresh_token" }`. `{ "data": { "message": "Logged out" } }` |
+| GET | `/auth/me` | Needs the access token. `{ "data": User }` without the password |
+
+Login: save `access_token` with `setToken()` from `src/lib/api.ts`, which then sends it on every request. It lasts 15 minutes (`expires_in` is 900 seconds). When a request returns 401, call `/auth/refresh` with the `refresh_token`, which lasts 7 days. Routes for the wrong role return 403.
 
 Field names and types match `frontend/src/types/db.ts`: `price` is a number, `is_available` and `is_open` are true or false. Errors look like `{ "error": "Menu item not found", "status": 404 }`.
 
@@ -108,14 +114,10 @@ Field names and types match `frontend/src/types/db.ts`: `price` is a number, `is
 
 These routes are registered in `backend/app/config/routes.php`, but every one still answers **501 Not implemented**. Keep using `sampleData.ts` for a screen until its endpoint moves up to "Endpoints that exist now".
 
-Who: **public** needs no login. **staff**, **kitchen** and **admin** need the login token, and admin can use everything staff can.
+Who: **public** needs no login. **staff**, **kitchen** and **admin** need the login token. Admin can use everything staff can. These role checks already work: a protected route answers 401 or 403 before it gets to 501.
 
 | Method | URL | Who | Screens | Does |
 |---|---|---|---|---|
-| POST | `/auth/login` | public | 13 | Log in with `email`, `password`. Returns `access_token`, `refresh_token`, user |
-| POST | `/auth/refresh` | public | all staff | New `access_token` from a `refresh_token` |
-| POST | `/auth/logout` | staff | all staff | Revoke the refresh token |
-| GET | `/auth/me` | staff | all staff | The logged-in user |
 | POST | `/categories` | admin | 22 | Add a category |
 | PUT | `/categories/{id}` | admin | 22 | Edit a category |
 | DELETE | `/categories/{id}` | admin | 22 | Delete a category |

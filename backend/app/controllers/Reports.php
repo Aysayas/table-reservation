@@ -10,6 +10,7 @@ class Reports extends Controller {
 
 	public function index()
 	{
+		$this->api->require_role('admin');
 		$this->api->respond_error('Not implemented', 501);
 	}
 }

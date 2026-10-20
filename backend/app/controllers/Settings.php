@@ -22,11 +22,13 @@ class Settings extends Controller {
 
 	public function update()
 	{
+		$this->api->require_role('admin');
 		$this->api->respond_error('Not implemented', 501);
 	}
 
 	public function logo()
 	{
+		$this->api->require_role('admin');
 		$this->api->respond_error('Not implemented', 501);
 	}
 
@@ -42,6 +44,7 @@ class Settings extends Controller {
 
 	public function update_hours()
 	{
+		$this->api->require_role('admin');
 		$this->api->respond_error('Not implemented', 501);
 	}
 }

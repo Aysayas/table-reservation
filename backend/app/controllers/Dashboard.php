@@ -10,11 +10,13 @@ class Dashboard extends Controller {
 
 	public function staff()
 	{
+		$this->api->require_role('staff', 'admin');
 		$this->api->respond_error('Not implemented', 501);
 	}
 
 	public function admin()
 	{
+		$this->api->require_role('admin');
 		$this->api->respond_error('Not implemented', 501);
 	}
 }
