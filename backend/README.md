@@ -80,7 +80,7 @@ php -r "echo bin2hex(random_bytes(32));"
    $router->get('/menu-items', 'Menu::index');
    ```
 
-2. Create the controller and load the `api` library in its constructor. That handles CORS, preflight requests and JSON output:
+2. In the controller, load the `api` library and the database in the constructor. The `api` library handles CORS, preflight requests and JSON output. Then load the model for the table you need:
 
    ```php
    class Menu extends Controller {
@@ -89,15 +89,20 @@ php -r "echo bin2hex(random_bytes(32));"
            parent::__construct();
            $this->call->library('api');
            $this->call->database();
+           $this->call->model('Menu_item_model');
        }
 
        public function index()
        {
-           $items = $this->db->table('menu_items')->where('is_available', 1)->get_all();
+           $items = $this->Menu_item_model->with('category')->all();
            $this->api->respond(['data' => $items]);
        }
    }
    ```
+
+   Every table except `refresh_tokens` has a model in `app/models/` named `Name_model`. The `api` library manages `refresh_tokens` itself. Each model sets its `$table`, `$primary_key` and `$fillable`. Watch for two LavaLust quirks:
+   - `with()` only works with `all()`. `find()` ignores it and leaves it set for the next `all()` call, so for one record use `find()` and load the related row yourself.
+   - A `belongs_to` relation with a NULL foreign key returns `false`. Send `null` to the frontend instead.
 
 3. For staff and admin endpoints, call `$this->api->require_jwt();` first.
 
