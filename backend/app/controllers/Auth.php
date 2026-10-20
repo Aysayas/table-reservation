@@ -15,12 +15,19 @@ class Auth extends Controller {
 		$this->api->rate_limit('login_' . ($_SERVER['REMOTE_ADDR'] ?? 'unknown'), 10, 60);
 
 		$input = $this->input();
-		$email = is_string($input['email'] ?? null) ? trim($input['email']) : '';
-		$password = is_string($input['password'] ?? null) ? $input['password'] : '';
+		$_POST = $input;
+		$this->call->library('form_validation');
 
-		if ($email === '' || $password === '') {
-			$this->api->respond_error('Email and password are required', 422);
+		$valid = $this->form_validation->validate([
+			'email' => 'required|valid_email',
+			'password' => 'required',
+		]);
+		if (!$valid || !is_string($input['email']) || !is_string($input['password'])) {
+			$this->api->respond(['error' => 'Invalid input', 'status' => 422, 'errors' => $this->form_validation->get_errors() ?? []], 422);
 		}
+
+		$email = trim($input['email']);
+		$password = $input['password'];
 
 		$user = $this->User_model->find_by('email', $email);
 		if (!$user || !password_verify($password, $user['password_hash'])) {
@@ -78,7 +85,7 @@ class Auth extends Controller {
 
 	private function input()
 	{
-		$input = json_decode(file_get_contents('php://input'), true);
+		$input = $this->request->json();
 		return is_array($input) ? $input : [];
 	}
 

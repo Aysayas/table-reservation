@@ -57,7 +57,7 @@ Empty folders hold a `.gitkeep` file so Git keeps them. Delete it once the folde
 | A custom hook | `src/hooks/` | `src/hooks/useMenuItems.ts` |
 | State shared across screens | `src/stores/` | `src/stores/cartStore.ts` |
 | Shared TypeScript types | `src/types/` | `src/types/menu.ts` |
-| A browser test | `e2e/` | `e2e/reservation.spec.ts` |
+| A browser test | `e2e/` | `e2e/customer-03-reserve-a-table.spec.ts` |
 
 ## The @ shortcut
 
@@ -74,5 +74,5 @@ import MenuItemCard from '@/components/MenuItemCard'
 - Hooks: `useSomething.ts` (`useCart.ts`)
 - Stores: `somethingStore.ts` (`cartStore.ts`)
 - Everything else: `camelCase.ts` (`formatPrice.ts`)
-- Tests: `area.spec.ts` or `flow.spec.ts` in `e2e/`
+- Tests: `area-NN-short-name.spec.ts` in `e2e/` (area is `customer`, `table`, `staff` or `admin`; see `testing.md`)
 - One component per file, exported as `default`
