@@ -21,12 +21,22 @@ Or double-click `start-dev.bat` (and `stop-dev.bat` to stop).
 | phpMyAdmin | http://localhost:8080 |
 | MySQL | `localhost:3306`, user `table_reservation_user`, password `table_reservation_pass` |
 
-The first start creates every table from `database/schema.sql`. To rebuild the database from scratch (this deletes all data):
+The first start creates every table from `database/schema.sql`, then fills them with `database/seed.sql` (the same placeholder records as `frontend/src/services/sampleData.ts`). Both run only when the database volume is empty. To rebuild the database from scratch (this deletes all data):
 
 ```bash
 docker compose down -v
 docker compose up -d
 ```
+
+Seeded logins, all with the dev-only password `devpass123`:
+
+| Role | Email |
+|---|---|
+| admin | `admin@placeholder-domain.com` |
+| staff | `staff@placeholder-domain.com` |
+| kitchen | `kitchen@placeholder-domain.com` |
+
+Never import `seed.sql` into a production database: anyone who reads this README could log in as admin.
 
 Set `JWT_SECRET` and `JWT_REFRESH_KEY` in `.env` to random values before using login:
 

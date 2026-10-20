@@ -110,9 +110,10 @@ CREATE TABLE IF NOT EXISTS payments (
     status ENUM('pending', 'paid', 'failed', 'refunded') NOT NULL DEFAULT 'pending',
     paid_at DATETIME NULL,
     KEY payments_provider_idx (provider_reference),
-    CONSTRAINT payments_order_fk FOREIGN KEY (order_id) REFERENCES orders (order_id) ON DELETE SET NULL,
-    CONSTRAINT payments_reservation_fk FOREIGN KEY (reservation_id) REFERENCES reservations (reservation_id) ON DELETE SET NULL,
-    CONSTRAINT payments_received_by_fk FOREIGN KEY (received_by) REFERENCES users (user_id) ON DELETE SET NULL
+    CONSTRAINT payments_order_fk FOREIGN KEY (order_id) REFERENCES orders (order_id) ON DELETE RESTRICT,
+    CONSTRAINT payments_reservation_fk FOREIGN KEY (reservation_id) REFERENCES reservations (reservation_id) ON DELETE RESTRICT,
+    CONSTRAINT payments_received_by_fk FOREIGN KEY (received_by) REFERENCES users (user_id) ON DELETE SET NULL,
+    CONSTRAINT payments_one_target_chk CHECK ((order_id IS NULL) <> (reservation_id IS NULL))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS notifications (
@@ -124,4 +125,23 @@ CREATE TABLE IF NOT EXISTS notifications (
     sent_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     KEY notifications_customer_idx (customer_id),
     CONSTRAINT notifications_customer_fk FOREIGN KEY (customer_id) REFERENCES customers (customer_id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS restaurant_settings (
+    setting_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    restaurant_name VARCHAR(100) NOT NULL,
+    address VARCHAR(255) NULL,
+    contact_number VARCHAR(15) NULL,
+    email VARCHAR(100) NULL,
+    facebook_url VARCHAR(255) NULL,
+    logo_url VARCHAR(255) NULL,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS opening_hours (
+    day_of_week TINYINT UNSIGNED PRIMARY KEY,
+    open_time TIME NULL,
+    close_time TIME NULL,
+    is_open TINYINT(1) NOT NULL DEFAULT 1,
+    CONSTRAINT opening_hours_day_chk CHECK (day_of_week <= 6)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

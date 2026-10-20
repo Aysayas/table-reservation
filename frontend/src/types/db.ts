@@ -99,3 +99,21 @@ export type Notification = {
   status: NotificationStatus
   sent_at: string
 }
+
+export type RestaurantSettings = {
+  setting_id: number
+  restaurant_name: string
+  address: string | null
+  contact_number: string | null
+  email: string | null
+  facebook_url: string | null
+  logo_url: string | null
+  updated_at: string
+}
+
+export type OpeningHours = {
+  day_of_week: number
+  open_time: string | null
+  close_time: string | null
+  is_open: boolean
+}
