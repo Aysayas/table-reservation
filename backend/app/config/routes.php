@@ -50,4 +50,66 @@ $router->group(['prefix' => 'api'], function ($router) {
     $router->options('/{path}', 'Health::preflight')->where('path', '.+');
     $router->get('/health', 'Health::index');
     $router->get('/health/db', 'Health::database');
+
+    $router->post('/auth/login', 'Auth::login');
+    $router->post('/auth/refresh', 'Auth::refresh');
+    $router->post('/auth/logout', 'Auth::logout');
+    $router->get('/auth/me', 'Auth::me');
+
+    $router->get('/categories', 'Categories::index');
+    $router->post('/categories', 'Categories::store');
+    $router->put('/categories/{id}', 'Categories::update')->where_number('id');
+    $router->delete('/categories/{id}', 'Categories::destroy')->where_number('id');
+
+    $router->get('/menu-items', 'Menu::index');
+    $router->get('/menu-items/{id}', 'Menu::show')->where_number('id');
+    $router->post('/menu-items', 'Menu::store');
+    $router->put('/menu-items/{id}', 'Menu::update')->where_number('id');
+    $router->patch('/menu-items/{id}/availability', 'Menu::availability')->where_number('id');
+    $router->post('/menu-items/{id}/image', 'Menu::image')->where_number('id');
+    $router->delete('/menu-items/{id}', 'Menu::destroy')->where_number('id');
+
+    $router->get('/tables', 'Tables::index');
+    $router->get('/tables/{id}', 'Tables::show')->where_number('id');
+    $router->post('/tables', 'Tables::store');
+    $router->put('/tables/{id}', 'Tables::update')->where_number('id');
+    $router->patch('/tables/{id}/status', 'Tables::status')->where_number('id');
+    $router->delete('/tables/{id}', 'Tables::destroy')->where_number('id');
+
+    $router->post('/reservations', 'Reservations::store');
+    $router->post('/reservations/find', 'Reservations::find');
+    $router->get('/reservations/code/{code}', 'Reservations::by_code')->where('code', '[A-Za-z0-9-]+');
+    $router->post('/reservations/code/{code}/cancel', 'Reservations::cancel')->where('code', '[A-Za-z0-9-]+');
+    $router->post('/reservations/code/{code}/reschedule', 'Reservations::reschedule')->where('code', '[A-Za-z0-9-]+');
+    $router->post('/reservations/code/{code}/deposit', 'Reservations::deposit')->where('code', '[A-Za-z0-9-]+');
+    $router->get('/reservations', 'Reservations::index');
+    $router->get('/reservations/{id}', 'Reservations::show')->where_number('id');
+    $router->put('/reservations/{id}', 'Reservations::update')->where_number('id');
+    $router->patch('/reservations/{id}/status', 'Reservations::status')->where_number('id');
+
+    $router->post('/orders', 'Orders::store');
+    $router->get('/orders', 'Orders::index');
+    $router->get('/orders/{id}', 'Orders::show')->where_number('id');
+    $router->patch('/orders/{id}/status', 'Orders::status')->where_number('id');
+    $router->post('/orders/{id}/pay', 'Orders::pay')->where_number('id');
+
+    $router->get('/payments', 'Payments::index');
+    $router->get('/payments/{id}', 'Payments::show')->where_number('id');
+    $router->post('/payments', 'Payments::store');
+    $router->post('/payments/webhook', 'Payments::webhook');
+
+    $router->get('/users', 'Users::index');
+    $router->post('/users', 'Users::store');
+    $router->put('/users/{id}', 'Users::update')->where_number('id');
+    $router->delete('/users/{id}', 'Users::destroy')->where_number('id');
+
+    $router->get('/settings', 'Settings::show');
+    $router->put('/settings', 'Settings::update');
+    $router->post('/settings/logo', 'Settings::logo');
+    $router->get('/opening-hours', 'Settings::hours');
+    $router->put('/opening-hours', 'Settings::update_hours');
+
+    $router->get('/reports', 'Reports::index');
+    $router->get('/dashboard/staff', 'Dashboard::staff');
+    $router->get('/dashboard/admin', 'Dashboard::admin');
 });

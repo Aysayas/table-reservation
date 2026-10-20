@@ -12,7 +12,23 @@ cp .env.example .env
 docker compose up -d
 ```
 
-Or double-click `start-dev.bat` (and `stop-dev.bat` to stop).
+Or double-click `start-dev.bat` (and `stop-dev.bat` to stop). It starts Docker and the containers, fills in missing JWT keys in `.env`, then shows a menu:
+
+| Key | Does |
+|---|---|
+| 1 | Status: containers, `/api/health`, `/api/health/db` |
+| 2 | Test API: calls every route in `app/config/routes.php`, expects 501 from stubs |
+| 3 | Restart all containers |
+| 4 | Follow container logs (new window) |
+| 5 | MySQL shell (new window) |
+| 6 | Bash inside the php container (new window) |
+| 7 | Start the frontend dev server (new window), creating `frontend/.env.local` if missing |
+| 8 | Frontend checks: format, build, lint, e2e tests |
+| 9 | Reset DB: deletes all local data and reloads `schema.sql` + `seed.sql`. Asks you to type `RESET` |
+| S | Stop all containers and exit |
+| Q | Exit, leave everything running |
+
+`DB_PASSWORD` in `.env` must match `MYSQL_PASSWORD` in `docker-compose.yml` (`table_reservation_pass`), or `/api/health/db` returns 503.
 
 | Service | URL |
 |---|---|
@@ -38,7 +54,7 @@ Seeded logins, all with the dev-only password `devpass123`:
 
 Never import `seed.sql` into a production database: anyone who reads this README could log in as admin.
 
-Set `JWT_SECRET` and `JWT_REFRESH_KEY` in `.env` to random values before using login:
+Every API route returns 500 "Refresh token key is missing or too weak." until `JWT_SECRET` and `JWT_REFRESH_KEY` in `.env` are at least 32 characters. `start-dev.bat` generates them. To make one by hand:
 
 ```bash
 php -r "echo bin2hex(random_bytes(32));"
