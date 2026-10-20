@@ -79,6 +79,7 @@ $router->group(['prefix' => 'api'], function ($router) {
     $router->patch('/tables/{id}/status', 'Tables::status')->where_number('id');
     $router->delete('/tables/{id}', 'Tables::destroy')->where_number('id');
 
+    $router->get('/reservations/availability', 'Reservations::availability');
     $router->post('/reservations', 'Reservations::store');
     $router->post('/reservations/find', 'Reservations::find');
     $router->get('/reservations/code/{code}', 'Reservations::by_code')->where('code', '[A-Za-z0-9-]+');

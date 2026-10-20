@@ -17,6 +17,7 @@ class Settings extends Controller {
 			$this->api->respond_error('Settings not found', 404);
 		}
 
+		$settings[0]['deposit_per_guest'] = (float) $settings[0]['deposit_per_guest'];
 		$this->api->respond(['data' => $settings[0]]);
 	}
 

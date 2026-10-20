@@ -39,6 +39,7 @@ export type Reservation = {
   reservation_date: string
   reservation_time: string
   pax: number
+  special_request: string | null
   deposit_amount: number
   status: ReservationStatus
   created_at: string
@@ -108,6 +109,7 @@ export type RestaurantSettings = {
   email: string | null
   facebook_url: string | null
   logo_url: string | null
+  deposit_per_guest: number
   updated_at: string
 }
 
