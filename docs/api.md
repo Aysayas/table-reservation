@@ -96,6 +96,13 @@ export async function getMenuItems() {
 |---|---|---|
 | GET | `/health` | `{ "status": "ok" }` when the API is up |
 | GET | `/health/db` | `{ "status": "ok", "database": "connected" }`, or 503 if the database is down |
+| GET | `/categories` | `{ "data": Category[] }` by `sort_order`. Screens 02, 08, 20, 22 |
+| GET | `/menu-items` | `{ "data": MenuItem[] }`. Optional filters `?category_id=1&is_available=1`; a non-number gives 422. Screens 01, 02, 08, 20 |
+| GET | `/menu-items/{id}` | `{ "data": MenuItem }`, or 404. Screens 09, 21 |
+| GET | `/settings` | `{ "data": RestaurantSettings }`. Screens 01, 07, 29 |
+| GET | `/opening-hours` | `{ "data": OpeningHours[] }`, all 7 days, `day_of_week` 0 to 6. Screens 01, 07, 29 |
+
+Field names and types match `frontend/src/types/db.ts`: `price` is a number, `is_available` and `is_open` are true or false. Errors look like `{ "error": "Menu item not found", "status": 404 }`.
 
 ## Planned endpoints
 
@@ -109,12 +116,9 @@ Who: **public** needs no login. **staff**, **kitchen** and **admin** need the lo
 | POST | `/auth/refresh` | public | all staff | New `access_token` from a `refresh_token` |
 | POST | `/auth/logout` | staff | all staff | Revoke the refresh token |
 | GET | `/auth/me` | staff | all staff | The logged-in user |
-| GET | `/categories` | public | 02, 08, 20, 22 | All categories by `sort_order` |
 | POST | `/categories` | admin | 22 | Add a category |
 | PUT | `/categories/{id}` | admin | 22 | Edit a category |
 | DELETE | `/categories/{id}` | admin | 22 | Delete a category |
-| GET | `/menu-items` | public | 01, 02, 08, 20 | Menu items. Filters: `category_id`, `is_available` |
-| GET | `/menu-items/{id}` | public | 09, 21 | One menu item |
 | POST | `/menu-items` | admin | 21 | Add a menu item |
 | PUT | `/menu-items/{id}` | admin | 21 | Edit a menu item |
 | PATCH | `/menu-items/{id}/availability` | admin | 20 | Set `is_available` |
@@ -149,10 +153,8 @@ Who: **public** needs no login. **staff**, **kitchen** and **admin** need the lo
 | POST | `/users` | admin | 28 | Add a staff account |
 | PUT | `/users/{id}` | admin | 28 | Edit a staff account |
 | DELETE | `/users/{id}` | admin | 28 | Delete a staff account |
-| GET | `/settings` | public | 01, 07, 29 | Restaurant information |
 | PUT | `/settings` | admin | 29 | Save restaurant information |
 | POST | `/settings/logo` | admin | 29 | Upload the logo, sets `logo_url` |
-| GET | `/opening-hours` | public | 01, 07, 29 | All 7 days |
 | PUT | `/opening-hours` | admin | 29 | Save all 7 days |
 | GET | `/reports` | admin | 27 | Totals and charts. Query: `period` (`daily`, `weekly`, `monthly`), `from`, `to` |
 | GET | `/dashboard/staff` | staff | 14 | Counts for today and upcoming reservations |

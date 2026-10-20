@@ -6,11 +6,18 @@ class Settings extends Controller {
 	{
 		parent::__construct();
 		$this->call->library('api');
+		$this->call->database();
+		$this->call->model(['Setting_model', 'Opening_hour_model']);
 	}
 
 	public function show()
 	{
-		$this->api->respond_error('Not implemented', 501);
+		$settings = $this->Setting_model->all();
+		if (!$settings) {
+			$this->api->respond_error('Settings not found', 404);
+		}
+
+		$this->api->respond(['data' => $settings[0]]);
 	}
 
 	public function update()
@@ -25,7 +32,12 @@ class Settings extends Controller {
 
 	public function hours()
 	{
-		$this->api->respond_error('Not implemented', 501);
+		$hours = array_map(function ($day) {
+			$day['is_open'] = (bool) $day['is_open'];
+			return $day;
+		}, $this->Opening_hour_model->order_by('day_of_week'));
+
+		$this->api->respond(['data' => $hours]);
 	}
 
 	public function update_hours()

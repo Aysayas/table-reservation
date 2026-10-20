@@ -76,7 +76,7 @@ echo   phpMyAdmin: http://localhost:8080   (root / root)
 echo   Frontend:   http://localhost:5173   (after option 7)
 echo ============================================================
 echo   1  Status        containers + API + database check
-echo   2  Test API      call every route, expect 501 on stubs
+echo   2  Test API      call every route, flag 404s and crashes
 echo   3  Restart       restart all containers
 echo   4  Logs          follow container logs (new window)
 echo   5  MySQL shell   (new window)
@@ -112,7 +112,7 @@ goto menu
 echo.
 call :check "GET" "/health" "200"
 call :check "GET" "/health/db" "200"
-for /f "tokens=1,2 delims=|" %%a in ('powershell -NoProfile -Command "Select-String -Path app\config\routes.php -Pattern '\$router->(get|post|put|patch|delete)\(''([^'']+)'', ''(?!Health)' | ForEach-Object { $_.Matches[0].Groups[1].Value.ToUpper() + '|' + ($_.Matches[0].Groups[2].Value -replace '\{id\}','1' -replace '\{code\}','RSV-000001') }"') do call :check "%%a" "%%b" "501"
+for /f "tokens=1,2 delims=|" %%a in ('powershell -NoProfile -Command "Select-String -Path app\config\routes.php -Pattern '\$router->(get|post|put|patch|delete)\(''([^'']+)'', ''(?!Health)' | ForEach-Object { $_.Matches[0].Groups[1].Value.ToUpper() + '|' + ($_.Matches[0].Groups[2].Value -replace '\{id\}','1' -replace '\{code\}','RSV-000001') }"') do call :check "%%a" "%%b" "live"
 goto menu
 
 :restart
@@ -180,6 +180,10 @@ REM --- Helpers ---
 
 :check
 for /f %%c in ('curl -s -o nul -w "%%{http_code}" -X %~1 "http://localhost:8000/api%~2"') do set "code=%%c"
+if "%~3"=="live" (
+    echo  200 201 204 401 403 422 501 | findstr /c:" %code% " >nul && (echo   OK    %code%  %~1 %~2) || (echo   FAIL  %code%  %~1 %~2   expected 2xx, 401, 403, 422 or 501)
+    exit /b 0
+)
 if "%code%"=="%~3" (echo   OK    %code%  %~1 %~2) else (echo   FAIL  %code%  %~1 %~2   expected %~3)
 exit /b 0
 
