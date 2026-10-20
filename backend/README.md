@@ -70,7 +70,7 @@ php -r "echo bin2hex(random_bytes(32));"
 | `app/config/api.php` | JWT, CORS and rate limit settings (values come from `.env`) |
 | `database/schema.sql` | All tables from the ERD (`../docs/design/ERD.pdf`) |
 | `docker/` | PHP, nginx and MySQL config for Docker and Render |
-| `scheme/` | LavaLust core. Don't edit |
+| `scheme/` | LavaLust core. Change only to fix a bug, and say so in the PR |
 
 ## Testing the database
 
@@ -85,6 +85,35 @@ With the containers running and `APP_ENV=development`, open these in the browser
 The table pages change the real local data, and foreign key or CHECK errors show on the page. To start over, use `start-dev.bat` option 9 (Reset DB). The CRUD test runs each model inside a transaction and rolls it back, so the seed data stays the same. The summary shows "row counts unchanged". The test data is the `$cases` list at the top of `app/controllers/Dbtest.php`. Add a row there when you add a model. Both pages return 404 unless `APP_ENV` is `development`, and Render sets it to `production`.
 
 PHP caches files for up to 60 seconds (`opcache.revalidate_freq` in `docker/php/php.ini`). If a change doesn't show yet, run `docker compose restart php`.
+
+## Built-in helpers
+
+Use LavaLust's built-ins before writing your own:
+
+| Need | Use |
+|---|---|
+| Request body or query | `$this->api->body()` (JSON or form, not escaped), `$this->api->get_query_params()`, `$this->request->json()`, `$this->request->post('field')` |
+| Validation | `Form_validation`: `required`, `valid_email`, `numeric`, `greater_than[0]`, `max_length[100]`, `in_list[a,b]`. For "already taken" checks use Model `exists([...])`, because `is_unique` can't be used in a rules string |
+| One row or many | Model `find`, `find_by`, `find_all_by`, `filter([...])->get_all()`, `order_by`, `exists([...])`, `count()`, `paginate($per_page, $page)` |
+| Find or create (e.g. a customer by mobile number) | Model `first_or_create($match, $extra)` |
+| Several writes that succeed or fail together | Model `transaction()`, `commit()`, `rollback()` |
+| Image upload (menu item photo, logo) | `Upload` library: `allowed_mimes`, `max_size`, `encrypt_name`, `do_upload` |
+| Auth | `$this->api->require_role(...)`, `require_jwt()`, `rate_limit($key, $max, $seconds)` |
+| Debug output | `dd()`, `ddt()` (table), `ddj()` (JSON) |
+
+Input isn't HTML-escaped on the way in. Save what the user typed, and escape on output. React does that already.
+
+`Form_validation` reads `$_POST` only. To validate a JSON body:
+
+```php
+$input = $this->api->body();
+$_POST = $input;
+$this->call->library('form_validation');
+
+if (!$this->form_validation->validate(['email' => 'required|valid_email', 'pax' => 'required|numeric|greater_than[0]'])) {
+    $this->api->respond(['error' => 'Invalid input', 'status' => 422, 'errors' => $this->form_validation->get_errors()], 422);
+}
+```
 
 ## Adding an endpoint
 

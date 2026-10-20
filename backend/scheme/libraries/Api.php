@@ -211,46 +211,26 @@ class Api
      */
     public function body()
     {
-        $contentType = $_SERVER['CONTENT_TYPE'] ?? '';
+        $request = $this->_lava->request;
 
-        if (stripos($contentType, 'application/json') !== false) {
-            $input = json_decode(file_get_contents('php://input'), true);
-            return is_array($input) ? $this->sanitize_input($input) : [];
+        if (stripos($request->server('CONTENT_TYPE') ?? '', 'application/json') !== false) {
+            $input = $request->json();
+            return is_array($input) ? $input : [];
         }
 
-        if ($_POST) {
-            return $this->sanitize_input($_POST);
-        }
-
-        parse_str(file_get_contents('php://input'), $formData);
-        return $this->sanitize_input($formData ?? []);
+        return $request->post() ?: $request->put();
     }
 
     /**
      * get_query_params
      *
-     * @return void
+     * @return array<string,mixed>
      */
     public function get_query_params()
     {
-        return $this->sanitize_input($_GET);
+        return $this->_lava->request->get();
     }
 
-    /**
-     * sanitize_input
-     *
-     * @param array $data
-     * @return array
-     */
-    private function sanitize_input($data)
-    {
-        array_walk_recursive($data, function(&$value) {
-            if (is_string($value)) {
-                $value = trim(htmlspecialchars($value, ENT_QUOTES, 'UTF-8'));
-            }
-        });
-        return $data;
-    }
 
     /**
      * require_method
@@ -572,26 +552,6 @@ class Api
         ];
     }
 
-    /**
-     * refresh_access_token
-     *
-     * @param string $refresh_token
-     * @return void
-     */
-    public function refresh_access_token($refresh_token)
-    {
-        $payload = $this->consume_refresh_token($refresh_token);
-        if (!$payload) {
-            $this->respond_error('Refresh token expired or revoked', 403);
-        }
-
-        $new_tokens = $this->issue_tokens(['id' => $payload['sub']]);
-
-        $this->respond([
-            'message' => 'Tokens refreshed successfully',
-            'tokens'  => $new_tokens
-        ]);
-    }
 
     /**
      * consume_refresh_token

@@ -104,7 +104,7 @@ class Dbtest extends Controller {
 
 		$message = '';
 		$found = null;
-		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+		if ($this->request->is_post()) {
 			[$message, $found] = $this->handle($model, $columns);
 		}
 
@@ -116,7 +116,7 @@ class Dbtest extends Controller {
 		echo '</div>';
 
 		if ($found) {
-			ddt($found, "Read {$key} " . $_POST['id']);
+			ddt($found, "Read {$key} " . $this->request->post('id'));
 		}
 
 		$this->form('Create', 'create', $columns, false);
@@ -129,11 +129,11 @@ class Dbtest extends Controller {
 
 	private function handle($model, $columns)
 	{
-		$action = $_POST['action'] ?? '';
-		$id = trim($_POST['id'] ?? '');
+		$action = $this->request->post('action', '');
+		$id = trim((string) $this->request->post('id', ''));
 		$data = [];
 		foreach ($columns as $column) {
-			$value = trim($_POST['f_' . $column['Field']] ?? '');
+			$value = trim((string) $this->request->post('f_' . $column['Field'], ''));
 			if ($value !== '') {
 				$data[$column['Field']] = $value;
 			}
@@ -231,7 +231,7 @@ class Dbtest extends Controller {
 	private function run($model, $case)
 	{
 		$row = ['model' => $model, 'create' => '', 'read' => '', 'update' => '', 'delete' => '', 'result' => 'FAIL', 'error' => ''];
-		$this->db->transaction();
+		$this->$model->transaction();
 
 		try {
 			if (isset($case['key'])) {
@@ -258,7 +258,7 @@ class Dbtest extends Controller {
 			$row['error'] = $e->getMessage();
 		}
 
-		$this->db->roll_back();
+		$this->$model->rollback();
 		return $row;
 	}
 
