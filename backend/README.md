@@ -72,6 +72,19 @@ php -r "echo bin2hex(random_bytes(32));"
 | `docker/` | PHP, nginx and MySQL config for Docker and Render |
 | `scheme/` | LavaLust core. Don't edit |
 
+## Testing the database
+
+With the containers running and `APP_ENV=development`, open these in the browser:
+
+| URL | Shows |
+|---|---|
+| http://localhost:8000/dev/db | Every table, read through its model, as `ddt()` tables |
+| http://localhost:8000/dev/db/crud | A create, read, update and delete test for every model, with PASS or FAIL per row |
+
+The CRUD test runs each model inside a transaction and rolls it back, so the seed data stays the same. The summary shows "row counts unchanged". The test data is the `$cases` list at the top of `app/controllers/Dbtest.php`. Add a row there when you add a model. Both pages return 404 unless `APP_ENV` is `development`, and Render sets it to `production`.
+
+PHP caches files for up to 60 seconds (`opcache.revalidate_freq` in `docker/php/php.ini`). If a change doesn't show yet, run `docker compose restart php`.
+
 ## Adding an endpoint
 
 1. Add the route in `app/config/routes.php` inside the `api` group:

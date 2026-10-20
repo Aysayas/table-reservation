@@ -112,7 +112,7 @@ goto menu
 echo.
 call :check "GET" "/health" "200"
 call :check "GET" "/health/db" "200"
-for /f "tokens=1,2 delims=|" %%a in ('powershell -NoProfile -Command "Select-String -Path app\config\routes.php -Pattern '\$router->(get|post|put|patch|delete)\(''([^'']+)'', ''(?!Health)' | ForEach-Object { $_.Matches[0].Groups[1].Value.ToUpper() + '|' + ($_.Matches[0].Groups[2].Value -replace '\{id\}','1' -replace '\{code\}','RSV-000001') }"') do call :check "%%a" "%%b" "live"
+for /f "tokens=1,2 delims=|" %%a in ('powershell -NoProfile -Command "Select-String -Path app\config\routes.php -Pattern '\$router->(get|post|put|patch|delete)\(''([^'']+)'', ''(?!Health|Dbtest)' | ForEach-Object { $_.Matches[0].Groups[1].Value.ToUpper() + '|' + ($_.Matches[0].Groups[2].Value -replace '\{id\}','1' -replace '\{code\}','RSV-000001') }"') do call :check "%%a" "%%b" "live"
 goto menu
 
 :restart

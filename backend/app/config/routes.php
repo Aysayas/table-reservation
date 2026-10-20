@@ -45,6 +45,8 @@ defined('PREVENT_DIRECT_ACCESS') OR exit('No direct script access allowed');
 /** @var object $router **/
 
 $router->get('/', 'Health::index');
+$router->get('/dev/db', 'Dbtest::index');
+$router->get('/dev/db/crud', 'Dbtest::crud');
 
 $router->group(['prefix' => 'api'], function ($router) {
     $router->options('/{path}', 'Health::preflight')->where('path', '.+');
