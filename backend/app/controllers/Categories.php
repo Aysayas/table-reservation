@@ -6,11 +6,13 @@ class Categories extends Controller {
 	{
 		parent::__construct();
 		$this->call->library('api');
+		$this->call->database();
+		$this->call->model('Category_model');
 	}
 
 	public function index()
 	{
-		$this->api->respond_error('Not implemented', 501);
+		$this->api->respond(['data' => $this->Category_model->order_by('sort_order')]);
 	}
 
 	public function store()
