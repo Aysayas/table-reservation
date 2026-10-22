@@ -138,7 +138,9 @@ CREATE TABLE IF NOT EXISTS restaurant_settings (
     facebook_url VARCHAR(255) NULL,
     logo_url VARCHAR(255) NULL,
     deposit_per_guest DECIMAL(10,2) NOT NULL DEFAULT 0.00,
-    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    service_charge_percent DECIMAL(5,2) NOT NULL DEFAULT 0.00,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT restaurant_settings_service_charge_chk CHECK (service_charge_percent BETWEEN 0 AND 100)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS opening_hours (
