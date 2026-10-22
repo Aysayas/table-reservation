@@ -338,6 +338,8 @@ export const sampleUsers: User[] = [
     full_name: 'Admin Name',
     email: 'admin@placeholder-domain.com',
     role: 'admin',
+    is_active: true,
+    last_login_at: '2026-01-01T09:00:00',
     created_at: '2026-01-01T00:00:00',
   },
   {
@@ -345,6 +347,8 @@ export const sampleUsers: User[] = [
     full_name: 'Staff Name',
     email: 'staff@placeholder-domain.com',
     role: 'staff',
+    is_active: true,
+    last_login_at: '2026-01-01T10:00:00',
     created_at: '2026-01-01T00:00:00',
   },
   {
@@ -352,6 +356,17 @@ export const sampleUsers: User[] = [
     full_name: 'Kitchen Name',
     email: 'kitchen@placeholder-domain.com',
     role: 'kitchen',
+    is_active: true,
+    last_login_at: null,
+    created_at: '2026-01-01T00:00:00',
+  },
+  {
+    user_id: 4,
+    full_name: 'Staff Name',
+    email: 'staff2@placeholder-domain.com',
+    role: 'staff',
+    is_active: false,
+    last_login_at: null,
     created_at: '2026-01-01T00:00:00',
   },
 ]

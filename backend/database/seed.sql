@@ -1,9 +1,10 @@
 SET NAMES utf8mb4;
 
-INSERT INTO users (user_id, full_name, email, password_hash, role, created_at) VALUES
-    (1, 'Admin Name', 'admin@placeholder-domain.com', '$2y$12$NqJRFPwqqyTgYLZyEbZ2RO6g7dpU9rn93tfmpEi7KXdku7l5ePOpa', 'admin', '2026-01-01 00:00:00'),
-    (2, 'Staff Name', 'staff@placeholder-domain.com', '$2y$12$NqJRFPwqqyTgYLZyEbZ2RO6g7dpU9rn93tfmpEi7KXdku7l5ePOpa', 'staff', '2026-01-01 00:00:00'),
-    (3, 'Kitchen Name', 'kitchen@placeholder-domain.com', '$2y$12$NqJRFPwqqyTgYLZyEbZ2RO6g7dpU9rn93tfmpEi7KXdku7l5ePOpa', 'kitchen', '2026-01-01 00:00:00');
+INSERT INTO users (user_id, full_name, email, password_hash, role, is_active, last_login_at, created_at) VALUES
+    (1, 'Admin Name', 'admin@placeholder-domain.com', '$2y$12$NqJRFPwqqyTgYLZyEbZ2RO6g7dpU9rn93tfmpEi7KXdku7l5ePOpa', 'admin', 1, NULL, '2026-01-01 00:00:00'),
+    (2, 'Staff Name', 'staff@placeholder-domain.com', '$2y$12$NqJRFPwqqyTgYLZyEbZ2RO6g7dpU9rn93tfmpEi7KXdku7l5ePOpa', 'staff', 1, NULL, '2026-01-01 00:00:00'),
+    (3, 'Kitchen Name', 'kitchen@placeholder-domain.com', '$2y$12$NqJRFPwqqyTgYLZyEbZ2RO6g7dpU9rn93tfmpEi7KXdku7l5ePOpa', 'kitchen', 1, NULL, '2026-01-01 00:00:00'),
+    (4, 'Staff Name', 'staff2@placeholder-domain.com', '$2y$12$NqJRFPwqqyTgYLZyEbZ2RO6g7dpU9rn93tfmpEi7KXdku7l5ePOpa', 'staff', 0, NULL, '2026-01-01 00:00:00');
 
 INSERT INTO categories (category_id, name, sort_order) VALUES
     (1, 'Breakfast Corner', 1),
