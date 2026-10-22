@@ -55,11 +55,11 @@ Start with simple screens to learn, then the forms, then the bigger flows:
 
 ## Backend progress
 
-Updated 2026-10-21. Full endpoint details are in [api.md](api.md). Until a screen's API is ✅, keep using `sampleData.ts` for it.
+Updated 2026-10-22. Full endpoint details are in [api.md](api.md). Every screen keeps using `sampleData.ts` until the lead deploys the backend and says the API is live. ✅ means the endpoint is ready for that switch.
 
 | Status | Meaning |
 |---|---|
-| ✅ | Works now. The screen can call the API |
+| ✅ | Endpoint works. Switch the service to it once the API is live |
 | 🟨 | Partly works: reads work, saves or payments don't yet |
 | ⬜ | Not built yet (the route answers 501) |
 
