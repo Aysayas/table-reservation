@@ -89,13 +89,13 @@ Updated 2026-10-22. Full endpoint details are in [api.md](api.md). Every screen 
 | 20 | Menu Management | ✅ | `GET /menu-items`, `PATCH /menu-items/{id}/availability`, `DELETE /menu-items/{id}` |
 | 21 | Add Edit Menu Item | ✅ | `POST`/`PUT /menu-items`, `POST /menu-items/{id}/image` |
 | 22 | Categories | ✅ | `GET`/`POST /categories`, `PUT`/`DELETE /categories/{id}` |
-| 23 | Tables and QR Codes | ⬜ | `/tables` add, edit, delete |
-| 24 | Reservations | ⬜ | `GET`/`PUT /reservations/{id}` |
+| 23 | Tables and QR Codes | ✅ | `GET`/`POST /tables`, `PUT`/`DELETE /tables/{id}` |
+| 24 | Reservations | ✅ | `GET /reservations?view=`, `PUT /reservations/{id}`, `PUT /settings` (reservation fields) |
 | 25 | Order History | ⬜ | `GET /orders` |
 | 26 | Payments | ⬜ | `GET /payments` |
 | 27 | Reports | ⬜ | `GET /reports` |
 | 28 | Staff Accounts | ⬜ | `/users` |
-| 29 | Settings | 🟨 | `GET /settings`, `/opening-hours` work; saving doesn't yet |
+| 29 | Settings | 🟨 | `GET /settings`, `/opening-hours` work; `PUT /settings` saves the reservation fields only |
 
 Every staff, kitchen and admin route already checks the login token and role, so it answers 401 or 403 before 501.
 
