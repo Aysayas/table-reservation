@@ -34,7 +34,7 @@ Read these in order if you are new to the project:
 2. [Project structure](docs/project-structure.md): where things live
 3. [Screens and routes](docs/screens-and-routes.md): all 29 screens and their URLs
 4. [Building a screen](docs/building-a-screen.md): turning a placeholder into a real page
-5. [Styling rules](docs/styling.md): Tailwind, black and white, placeholder content
+5. [Styling rules](docs/styling.md): Tailwind, theme colours, placeholder content
 6. [Calling the API](docs/api.md): talking to the LavaLust backend
 7. [Packages](docs/packages.md): what each installed library is for
 8. [Testing](docs/testing.md): Playwright browser tests

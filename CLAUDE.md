@@ -27,7 +27,7 @@ Read these before building anything. They are the source of truth:
 |---|---|
 | `docs/screens-and-routes.md` | The 29 screens, their URLs and layouts |
 | `docs/wireframes/NN Name.svg` | What each screen looks like |
-| `docs/styling.md` | Black and white, placeholder content, no code comments |
+| `docs/styling.md` | Theme colours, placeholder content, no code comments |
 | `docs/project-structure.md` | Where files go and how they are named |
 | `docs/packages.md` | The only libraries we use |
 | `docs/building-a-screen.md` | The steps for building a screen |
@@ -89,7 +89,6 @@ If the request matches anything here, **don't do it yet**. Reply with:
 
 | If she asks to… | Why it's off track | Offer instead |
 |---|---|---|
-| Add colours, gradients, brand styling, dark mode | The school rule is black and white only | Greys from `docs/styling.md` |
 | Use a real restaurant name, real prices, real people, real photos | The organisation must stay a placeholder | `Restaurant Name`, `₱000.00`, grey boxes |
 | Add a screen, page or feature that isn't in the 29 wireframes (customer accounts, chat, dark mode toggle, animations, a landing page) | The design is approved and fixed | Finish the planned screens first |
 | Change a URL, rename routes or reorganise `router.tsx` | The URLs come from the approved sitemap | Swap the placeholder for the page only |
@@ -124,7 +123,7 @@ Every few steps, and before saying a screen is done, compare what's on screen wi
 ## Code rules
 
 - TypeScript, function components, one component per file, `export default`.
-- Tailwind classes only. Black, white, `neutral-*` greys.
+- Tailwind classes only. Colours come from the theme in `src/index.css`, never hard-coded hex values.
 - Import with `@/` (e.g. `@/lib/api`).
 - Use `Link`/`useNavigate` for navigation, `api` from `@/lib/api` for requests, React Query for loading data, `react-hook-form` + `zod` for forms, `sonner` for messages, `lucide-react` for icons.
 - Labels on every form field and accessible names on buttons, so Playwright tests can find them with `getByRole`/`getByLabel`.

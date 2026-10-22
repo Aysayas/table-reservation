@@ -14,17 +14,13 @@ We style with [Tailwind CSS v4](https://tailwindcss.com/docs) utility classes wr
 - Shared base styles go in `src/index.css` only.
 - If the same long list of classes repeats, make a component instead of copying it.
 
-## Black and white
+## Colours
 
-Match the wireframes: black, white and greys only.
+The frontend developer chooses the colours. The wireframes show layout, not colour.
 
-| Use | Classes |
-|---|---|
-| Text | `text-black`, `text-neutral-500` for secondary text |
-| Backgrounds | `bg-white`, `bg-neutral-100` for subtle areas, `bg-black` for primary buttons and active items |
-| Borders | `border-neutral-200`, `border-black` |
-
-Don't add brand colours or colour legends.
+- Define every colour once as a theme token in `src/index.css`, inside `@theme` (for example `--color-primary`). Tailwind then makes classes like `bg-primary` and `text-primary`.
+- Use those theme classes on screens. Don't hard-code hex values (`#1a2b3c`, `bg-[#1a2b3c]`) in components.
+- Keep text readable: enough contrast between text and its background.
 
 ## Screen sizes
 
@@ -43,7 +39,7 @@ The organisation is a placeholder. On every screen use:
 | Real domain or email | `placeholder-domain.com` |
 | Prices and amounts | `₱000.00` |
 | Real people | Generic names, e.g. `Customer Name` |
-| Food photos | A grey box (`bg-neutral-200`) |
+| Food photos | A plain placeholder box |
 
 ## Code comments
 

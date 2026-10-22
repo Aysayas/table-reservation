@@ -10,7 +10,6 @@
 - Sabihan ang team kung anong screen yung ginagawa mo
 
 ❌ **Huwag**
-- Maglagay ng colors (black, white at gray lang)
 - Gamitin yung totoong pangalan ng restaurant, totoong presyo o totoong pictures. Gamitin yung `Restaurant Name`, `₱000.00`, at gray boxes
 - Magdagdag ng pages o features na wala sa wireframes
 - Galawin yung backend o settings files
@@ -22,7 +21,7 @@
 | Word | Ibig sabihin |
 |---|---|
 | **Screen / page** | Isa sa 29 drawings, ginawang web page |
-| **Wireframe** | Yung black and white na drawing ng screen |
+| **Wireframe** | Yung drawing ng layout ng screen |
 | **Component** | Reusable na building block, parang LEGO piece (button, menu card) |
 | **Route / URL** | Yung web address ng page, gaya ng `/menu` |
 | **Placeholder** | Temporary na page ("Screen 07 · About Us") habang wala pa yung totoo |
