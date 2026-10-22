@@ -30,7 +30,7 @@ Mark the screen 🟨 in `docs/progress.md`.
 
 - Page file in `frontend/src/pages/<area>/`. Pieces used on other screens go in `frontend/src/components/`.
 - Colours and fonts only from the brand tokens in `docs/design/brand.md` (`bg-brand-green`, `text-brand-brown`, `font-display` for one big title).
-- Data only through `frontend/src/services/`, which return `sampleData.ts` records until the lead says the API is live. The restaurant's name (`Vencio's Garden`), logo (`/logo.png`), menu and prices are real; people, contacts and photos stay placeholders (`Juan Dela Cruz`, `09XX XXX XXXX`, `placeholder-domain.com`, grey boxes).
+- Data only through `frontend/src/services/`, which return `sampleData.ts` records until the lead says the API is live. The restaurant's name (`Vencio's Garden`), logo (`/logo.png`), menu, prices and business contacts are real; people's names and contacts, and food photos, stay placeholders (`Juan Dela Cruz`, `09XX XXX XXXX`, `placeholder-domain.com`, grey boxes).
 - Swap the `Placeholder` for the page in `frontend/src/router.tsx`. Don't change any `path`.
 - Follow every rule in `CLAUDE.md`, including the drift check.
 
