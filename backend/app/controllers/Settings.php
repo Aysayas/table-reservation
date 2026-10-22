@@ -19,6 +19,9 @@ class Settings extends Controller {
 
 		$settings[0]['deposit_per_guest'] = (float) $settings[0]['deposit_per_guest'];
 		$settings[0]['service_charge_percent'] = (float) $settings[0]['service_charge_percent'];
+		$settings[0]['slot_minutes'] = (int) $settings[0]['slot_minutes'];
+		$settings[0]['max_pax'] = (int) $settings[0]['max_pax'];
+		$settings[0]['deposit_required'] = (bool) $settings[0]['deposit_required'];
 		$this->api->respond(['data' => $settings[0]]);
 	}
 
