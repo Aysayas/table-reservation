@@ -2,18 +2,65 @@
 defined('PREVENT_DIRECT_ACCESS') OR exit('No direct script access allowed');
 
 class Orders extends Controller {
+	private $statuses = ['received', 'preparing', 'ready', 'served'];
+
 	public function __construct()
 	{
 		parent::__construct();
 		$this->call->library('api');
 		$this->call->database();
-		$this->call->model(['Order_model', 'Order_item_model', 'Menu_item_model', 'Table_model']);
+		$this->call->model(['Order_model', 'Order_item_model', 'Menu_item_model', 'Table_model', 'Setting_model']);
 	}
 
 	public function index()
 	{
 		$this->api->require_role('staff', 'kitchen', 'admin');
-		$this->api->respond_error('Not implemented', 501);
+		$query = $this->api->get_query_params();
+		$errors = [];
+
+		$table_id = $query['table_id'] ?? '';
+		if ($table_id !== '' && !(is_string($table_id) && ctype_digit($table_id))) {
+			$errors[] = '"table_id" must be a number.';
+		}
+		$status = $query['status'] ?? '';
+		$statuses = is_string($status) && $status !== '' ? explode(',', $status) : [];
+		if (!is_string($status) || array_diff($statuses, $this->statuses)) {
+			$errors[] = '"status" must be a comma list of ' . implode(', ', $this->statuses) . '.';
+		}
+		$payment = $query['payment_status'] ?? '';
+		if ($payment !== '' && !in_array($payment, ['unpaid', 'paid'], true)) {
+			$errors[] = '"payment_status" must be unpaid or paid.';
+		}
+		foreach (['date_from', 'date_to'] as $field) {
+			$value = $query[$field] ?? '';
+			$date = is_string($value) ? DateTime::createFromFormat('!Y-m-d', $value) : false;
+			if ($value !== '' && (!$date || $date->format('Y-m-d') !== $value)) {
+				$errors[] = "\"{$field}\" must be a date (YYYY-MM-DD).";
+			}
+		}
+		if ($errors) {
+			$this->api->respond(['error' => 'Invalid input', 'status' => 422, 'errors' => $errors], 422);
+		}
+
+		$orders = $this->Order_model->query();
+		if ($table_id !== '') {
+			$orders->where('table_id', (int) $table_id);
+		}
+		if ($statuses) {
+			$orders->in('status', $statuses);
+		}
+		if ($payment !== '') {
+			$orders->where('payment_status', $payment);
+		}
+		if (!empty($query['date_from'])) {
+			$orders->where('created_at', '>=', $query['date_from'] . ' 00:00:00');
+		}
+		if (!empty($query['date_to'])) {
+			$orders->where('created_at', '<', date('Y-m-d', strtotime($query['date_to'] . ' +1 day')) . ' 00:00:00');
+		}
+
+		// shortcut: returns every matching order with no paging; add LIMIT/page once history grows past a few hundred
+		$this->api->respond(['data' => array_map([$this, 'format'], $orders->order_by('order_id', 'DESC')->get_all())]);
 	}
 
 	public function show($id)
@@ -91,10 +138,13 @@ class Orders extends Controller {
 			$this->api->respond(['error' => 'Invalid input', 'status' => 422, 'errors' => $errors], 422);
 		}
 
-		$total = 0.0;
+		$subtotal = 0.0;
 		foreach ($lines as $line) {
-			$total += (float) $menu[$line['item_id']]['price'] * $line['quantity'];
+			$subtotal += (float) $menu[$line['item_id']]['price'] * $line['quantity'];
 		}
+		$settings = $this->Setting_model->all();
+		$rate = $settings ? (float) $settings[0]['service_charge_percent'] : 0.0;
+		$total = round(round($subtotal, 2) * (1 + $rate / 100), 2);
 
 		$this->Order_model->transaction();
 		try {
@@ -126,7 +176,23 @@ class Orders extends Controller {
 	public function status($id)
 	{
 		$this->api->require_role('staff', 'kitchen', 'admin');
-		$this->api->respond_error('Not implemented', 501);
+		$order = $this->Order_model->find($id);
+		if (!$order) {
+			$this->api->respond_error('Order not found', 404);
+		}
+
+		$status = $this->api->body()['status'] ?? null;
+		if (!in_array($status, $this->statuses, true)) {
+			$this->api->respond(['error' => 'Invalid input', 'status' => 422, 'errors' => ['"status" must be one of ' . implode(', ', $this->statuses) . '.']], 422);
+		}
+
+		$next = $this->statuses[array_search($order['status'], $this->statuses, true) + 1] ?? null;
+		if ($status !== $next) {
+			$this->api->respond_error($next ? "A {$order['status']} order can only become {$next}" : 'This order is already served', 409);
+		}
+
+		$this->Order_model->update($id, ['status' => $status]);
+		$this->api->respond(['data' => $this->format($this->Order_model->find($id))]);
 	}
 
 	public function pay($id)
@@ -150,6 +216,8 @@ class Orders extends Controller {
 		$order['table_id'] = (int) $order['table_id'];
 		$order['customer_id'] = $order['customer_id'] !== null ? (int) $order['customer_id'] : null;
 		$order['total_amount'] = (float) $order['total_amount'];
+		$order['subtotal'] = round(array_sum(array_map(fn($item) => (float) $item['unit_price'] * (int) $item['quantity'], $items)), 2);
+		$order['service_charge'] = round($order['total_amount'] - $order['subtotal'], 2);
 		$order['table_number'] = $table['table_number'] ?? null;
 		$order['items'] = array_map(fn($item) => [
 			'order_item_id' => (int) $item['order_item_id'],
