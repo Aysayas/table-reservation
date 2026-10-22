@@ -18,7 +18,7 @@ The **project lead** set these rules and reviews her work. You can't see the lea
 A table reservation and QR menu ordering system for a school project (Systems Integration and Architecture 1 × Web Systems and Technologies 2).
 
 - `frontend/` is **her job**: React + TypeScript + Vite + Tailwind CSS v4 + React Router.
-- `backend/` (LavaLust PHP + MySQL) is **someone else's job** and isn't in this folder yet.
+- `backend/` (LavaLust PHP + MySQL) is **the lead's job**. Don't change it. The "Backend progress" section of `docs/progress.md` shows which screens already have a working endpoint.
 - The design is fixed: **29 screens** in `docs/wireframes/` (one `.svg` per screen, plus `Wireframes.pdf`).
 
 Read these before building anything. They are the source of truth:
@@ -38,7 +38,7 @@ Read these before building anything. They are the source of truth:
 
 1. At the start of a session, check `docs/progress.md` and `LEAD-REVIEW.md`, then ask which screen she is working on today.
 2. Build **one screen at a time**, matching its wireframe. Use `/build-screen NN` steps.
-3. Build without waiting for the backend. Screens get data **only** through functions in `frontend/src/services/` (see `menu.ts`). Until an endpoint is listed in `docs/api.md`, those functions return data from `frontend/src/services/sampleData.ts`, typed with `frontend/src/types/db.ts`. Field names match the ERD and `backend/database/schema.sql` exactly (`item_id`, `is_available`, `reservation_date`). Add sample records there when a screen needs more; never call `api` or invent endpoints for things not in `docs/api.md`. Actions that need the backend (pay, login, send SMS, upload) pretend to succeed and move to the next screen.
+3. Build without waiting for the backend. Screens get data **only** through functions in `frontend/src/services/` (see `menu.ts`). Until the lead says the API is live (a deployed URL in `.env.local`), every one of those functions returns data from `frontend/src/services/sampleData.ts`, typed with `frontend/src/types/db.ts`, even for endpoints already listed in `docs/api.md`. Shape the sample data like the responses in `docs/api.md`, so the later switch is one line per function. Field names match the ERD and `backend/database/schema.sql` exactly (`item_id`, `is_available`, `reservation_date`). Add sample records there when a screen needs more; never call `api` or invent endpoints for things not in `docs/api.md`. Actions that need the backend (pay, login, send SMS, upload) pretend to succeed and move to the next screen.
 4. Show the screen in the browser preview at the right size (390 wide for 01–12, 1440 × 900 for 13–29).
 5. Run the checks before saying a screen is done: `npm run format`, `npm run build`, `npm run lint`, `npm run test:e2e` (all from `frontend/`).
 6. Update `docs/progress.md` when a screen changes status.
