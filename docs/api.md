@@ -117,14 +117,17 @@ export async function getMenuItems() {
 | PATCH | `/reservations/{id}/status` | Staff, admin. Body `status` and/or `table_id`. Moves: pending → confirmed, no_show or cancelled; confirmed → arrived, no_show or cancelled. Giving a table to a pending reservation confirms it. The table must exist and seat `pax` (422), and must not hold another active booking at that time (409). Arrived needs a table (409). Any other move, or a change to an arrived, no-show or cancelled reservation, gives 409. The table follows: assigned → `reserved` (if it was available), arrived → `occupied`, no_show or cancelled → `available` (if it was reserved). Screens 15, 16 |
 | GET | `/tables` | Staff, admin. Filter `status`. `{ "data": [{ table_id, table_number, capacity, status, current_order, next_reservation }] }`. `current_order` is the newest order not yet served or not yet paid (`{ order_id, status, payment_status, total_amount, created_at }`), or null. `next_reservation` is today's first pending or confirmed booking for that table (`{ reservation_id, reference_code, full_name, reservation_time, status }`), or null. Screen 16 |
 | PATCH | `/tables/{id}/status` | Staff, admin. Body `status`: `available`, `occupied` or `reserved`. Any change is allowed (for example, freeing a table after guests leave). Returns the same shape as `GET /tables`. Screen 16 |
-| POST | `/orders` | Body `table_id`, `qr_token`, `customer_name` (optional, up to 60), `items`: 1 to 50 of `{ item_id, quantity (1–99), notes (optional, up to 255) }`. The server sets `unit_price` from the menu and works out `total_amount`; prices sent by the browser are ignored. 201 `{ "data": Order }` with status `received` and `payment_status` `unpaid`, whether the customer picked Pay Now or Pay at the Counter. 403 if `qr_token` doesn't match the table, 422 with `errors` for bad input or an unknown or unavailable item, 429 after 10 orders a minute. Screen 11 |
+| POST | `/orders` | Body `table_id`, `qr_token`, `customer_name` (optional, up to 60), `items`: 1 to 50 of `{ item_id, quantity (1–99), notes (optional, up to 255) }`. The server sets `unit_price` from the menu and works out `total_amount` = subtotal plus `service_charge_percent` from settings; prices sent by the browser are ignored. 201 `{ "data": Order }` with status `received` and `payment_status` `unpaid`, whether the customer picked Pay Now or Pay at the Counter. 403 if `qr_token` doesn't match the table, 422 with `errors` for bad input or an unknown or unavailable item, 429 after 10 orders a minute. Screen 11 |
 | GET | `/orders/{id}?qr_token=` | `{ "data": Order }`, or 404 if the order doesn't exist or `qr_token` isn't that order's table. 60 a minute. Screen 12 |
+| GET | `/orders` | Staff, kitchen, admin. Filters: `table_id`, `status` (comma list, e.g. `received,preparing,ready` for the kitchen), `payment_status`, `date_from`, `date_to` (YYYY-MM-DD). `{ "data": Order[] }`, newest first, with items. 422 for a bad filter. Screens 17, 18 |
+| PATCH | `/orders/{id}/status` | Staff, kitchen, admin. Body `status`, one step forward only: received → preparing → ready → served. Skipping, going back or changing a served order gives 409. Screens 17, 18 |
+| POST | `/payments` | Staff, admin. Records a cash payment. Body: exactly one of `order_id` or `reservation_id`, and `amount`, which must equal the order's `total_amount` or the reservation's `deposit_amount` (422 otherwise). 409 if already paid, if there's nothing to pay, or if the reservation is no-show or cancelled. 201 `{ "data": Payment }`; an order becomes `payment_status` `paid`. Cash Received and Change are worked out on the screen. Screen 17 |
 
 Login: save `access_token` with `setToken()` from `src/lib/api.ts`, which then sends it on every request. It lasts 15 minutes (`expires_in` is 900 seconds). When a request returns 401, call `/auth/refresh` with the `refresh_token`, which lasts 7 days. Routes for the wrong role return 403.
 
 Reservations from these routes also carry `customer: { full_name, mobile_number }`, `table_number` (or null) and `deposit_status` (`paid` or `unpaid`). Public routes mask the mobile as `09XX XXX 4567`; staff routes show it in full. Cancelling also frees the table if it was reserved. Find, cancel and reschedule allow 20 tries a minute (then 429). `day_of_week` 0 is Sunday. Times are Asia/Manila.
 
-QR ordering: each table's QR code opens `/table/{table_id}?t={qr_token}`. Keep `t` for the visit (for example in `sessionStorage`) and send it as `qr_token`. Orders from these routes also carry `table_number` and `items`, and each item has the menu item's `name`.
+QR ordering: each table's QR code opens `/table/{table_id}?t={qr_token}`. Keep `t` for the visit (for example in `sessionStorage`) and send it as `qr_token`. Orders from these routes also carry `table_number`, `subtotal`, `service_charge` and `items`, and each item has the menu item's `name`.
 
 Field names and types match `frontend/src/types/db.ts`: `price` is a number, `is_available` and `is_open` are true or false. Errors look like `{ "error": "Menu item not found", "status": 404 }`.
 
@@ -149,12 +152,9 @@ Who: **public** needs no login. **staff**, **kitchen** and **admin** need the lo
 | DELETE | `/tables/{id}` | admin | 23 | Delete a table |
 | POST | `/reservations/code/{code}/deposit` | public | 04 | Start the online deposit payment. Returns the payment page URL |
 | PUT | `/reservations/{id}` | admin | 24 | Edit a reservation, incl. `table_id` |
-| GET | `/orders` | staff, kitchen | 12, 14, 17, 18, 25 | Orders with items. Filters: `table_id`, `status`, `payment_status`, date range |
-| PATCH | `/orders/{id}/status` | kitchen, staff | 17, 18 | Set `status` |
 | POST | `/orders/{id}/pay` | public | 11 | Start the online payment for an order. Returns the payment page URL |
 | GET | `/payments` | admin | 26 | Payments. Filters: `method`, `status`, date range |
 | GET | `/payments/{id}` | admin | 26 | One payment |
-| POST | `/payments` | staff | 17 | Record a cash payment: `order_id` or `reservation_id`, `amount` |
 | POST | `/payments/webhook` | payment provider | none | The provider reports a paid or failed payment |
 | GET | `/users` | admin | 28 | Staff accounts |
 | POST | `/users` | admin | 28 | Add a staff account |
