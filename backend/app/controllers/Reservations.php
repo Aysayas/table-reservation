@@ -3,25 +3,59 @@ defined('PREVENT_DIRECT_ACCESS') OR exit('No direct script access allowed');
 
 class Reservations extends Controller {
 	private $active = ['pending', 'confirmed', 'arrived'];
+	private $statuses = ['pending', 'confirmed', 'arrived', 'no_show', 'cancelled'];
+	private $per_page = 8;
 
 	public function __construct()
 	{
 		parent::__construct();
 		$this->call->library('api');
 		$this->call->database();
-		$this->call->model(['Reservation_model', 'Customer_model', 'Table_model', 'Setting_model', 'Opening_hour_model']);
+		$this->call->model(['Reservation_model', 'Customer_model', 'Table_model', 'Setting_model', 'Opening_hour_model', 'Payment_model']);
 	}
 
 	public function index()
 	{
 		$this->api->require_role('staff', 'admin');
-		$this->api->respond_error('Not implemented', 501);
+		$query = $this->api->get_query_params();
+		$date = $this->valid_date($query['reservation_date'] ?? date('Y-m-d'), true);
+		$status = $query['status'] ?? '';
+		$search = is_string($query['search'] ?? null) ? trim($query['search']) : '';
+		$page = ctype_digit((string) ($query['page'] ?? '1')) ? (int) ($query['page'] ?? 1) : 0;
+
+		if (!$date || ($status !== '' && !in_array($status, $this->statuses, true)) || $page < 1) {
+			$this->api->respond_error('Give reservation_date as YYYY-MM-DD, a valid status and a page of 1 or more', 422);
+		}
+
+		$conditions = ['reservation_date' => $date];
+		if ($status !== '') {
+			$conditions['status'] = $status;
+		}
+		$rows = array_map(
+			fn($reservation) => $this->format($reservation, true),
+			$this->Reservation_model->filter($conditions)->order_by('reservation_time')->get_all()
+		);
+		if ($search !== '') {
+			$rows = array_values(array_filter($rows, fn($row) => stripos($row['reference_code'], $search) !== false
+				|| stripos($row['customer']['full_name'] ?? '', $search) !== false));
+		}
+
+		// shortcut: searches and pages one day's bookings in PHP; move search and LIMIT into SQL if lists span many days
+		$this->api->respond([
+			'data' => array_slice($rows, ($page - 1) * $this->per_page, $this->per_page),
+			'meta' => ['total' => count($rows), 'page' => $page, 'per_page' => $this->per_page],
+		]);
 	}
 
 	public function show($id)
 	{
 		$this->api->require_role('staff', 'admin');
-		$this->api->respond_error('Not implemented', 501);
+		$reservation = $this->Reservation_model->find($id);
+		if (!$reservation) {
+			$this->api->respond_error('Reservation not found', 404);
+		}
+
+		$this->api->respond(['data' => $this->format($reservation, true)]);
 	}
 
 	public function update($id)
@@ -33,7 +67,90 @@ class Reservations extends Controller {
 	public function status($id)
 	{
 		$this->api->require_role('staff', 'admin');
-		$this->api->respond_error('Not implemented', 501);
+		$reservation = $this->Reservation_model->find($id);
+		if (!$reservation) {
+			$this->api->respond_error('Reservation not found', 404);
+		}
+
+		$input = $this->api->body();
+		$status = $input['status'] ?? null;
+		$has_table = array_key_exists('table_id', $input);
+		$table_id = $input['table_id'] ?? null;
+
+		$errors = [];
+		if ($status === null && !$has_table) {
+			$errors[] = 'Give "status", "table_id" or both.';
+		}
+		if ($status !== null && !in_array($status, $this->statuses, true)) {
+			$errors[] = '"status" must be one of ' . implode(', ', $this->statuses) . '.';
+		}
+		if ($has_table && !is_int($table_id)) {
+			$errors[] = '"table_id" must be a number.';
+		}
+		if ($errors) {
+			$this->api->respond(['error' => 'Invalid input', 'status' => 422, 'errors' => $errors], 422);
+		}
+
+		$current = $reservation['status'];
+		if (!in_array($current, ['pending', 'confirmed'], true)) {
+			$this->api->respond_error("This reservation is {$current} and can't be changed", 409);
+		}
+
+		if ($has_table) {
+			$table = $this->Table_model->find($table_id);
+			if (!$table) {
+				$this->api->respond(['error' => 'Invalid input', 'status' => 422, 'errors' => ['That table does not exist.']], 422);
+			}
+			if ((int) $table['capacity'] < (int) $reservation['pax']) {
+				$this->api->respond(['error' => 'Invalid input', 'status' => 422, 'errors' => ["Table {$table['table_number']} seats only {$table['capacity']}."]], 422);
+			}
+			$taken = $this->Reservation_model
+				->filter(['table_id' => $table_id, 'reservation_date' => $reservation['reservation_date'], 'reservation_time' => $reservation['reservation_time']])
+				->in('status', $this->active)
+				->not_where('reservation_id', $id)
+				->count();
+			if ($taken) {
+				$this->api->respond_error('That table is already booked for this time', 409);
+			}
+		}
+
+		$next = $status ?? ($has_table && $current === 'pending' ? 'confirmed' : $current);
+		$allowed = [
+			'pending' => ['pending', 'confirmed', 'no_show', 'cancelled'],
+			'confirmed' => ['confirmed', 'arrived', 'no_show', 'cancelled'],
+		];
+		if (!in_array($next, $allowed[$current], true)) {
+			$this->api->respond_error("A reservation can't go from {$current} to {$next}", 409);
+		}
+
+		$old_table = $reservation['table_id'] !== null ? (int) $reservation['table_id'] : null;
+		$new_table = $has_table ? $table_id : $old_table;
+		if ($next === 'arrived' && $new_table === null) {
+			$this->api->respond_error('Assign a table before marking the guests arrived', 409);
+		}
+
+		$this->Reservation_model->transaction();
+		try {
+			$this->Reservation_model->update($id, ['status' => $next, 'table_id' => $new_table]);
+			if ($old_table !== null && $old_table !== $new_table) {
+				$this->release_table($old_table);
+			}
+			if ($new_table !== null) {
+				if ($next === 'arrived') {
+					$this->Table_model->update($new_table, ['status' => 'occupied']);
+				} elseif (in_array($next, ['no_show', 'cancelled'], true)) {
+					$this->release_table($new_table);
+				} else {
+					$this->hold_table($new_table);
+				}
+			}
+			$this->Reservation_model->commit();
+		} catch (Throwable $e) {
+			$this->Reservation_model->rollback();
+			$this->api->respond_error('Could not update the reservation', 500);
+		}
+
+		$this->api->respond(['data' => $this->format($this->Reservation_model->find($id), true)]);
 	}
 
 	public function availability()
@@ -120,6 +237,9 @@ class Reservations extends Controller {
 		$reservation = $this->changeable($code);
 
 		$this->Reservation_model->update($reservation['reservation_id'], ['status' => 'cancelled']);
+		if ($reservation['table_id'] !== null) {
+			$this->release_table((int) $reservation['table_id']);
+		}
 		$this->api->respond(['data' => $this->format($this->Reservation_model->find($reservation['reservation_id']))]);
 	}
 
@@ -215,10 +335,10 @@ class Reservations extends Controller {
 		];
 	}
 
-	private function valid_date($value)
+	private function valid_date($value, $allow_past = false)
 	{
 		$date = is_string($value) ? DateTime::createFromFormat('!Y-m-d', $value) : false;
-		if (!$date || $date->format('Y-m-d') !== $value || $value < date('Y-m-d')) {
+		if (!$date || $date->format('Y-m-d') !== $value || (!$allow_past && $value < date('Y-m-d'))) {
 			return null;
 		}
 		return $value;
@@ -273,7 +393,7 @@ class Reservations extends Controller {
 	{
 		$reservation = $this->owned($code, $this->api->body()['mobile_number'] ?? '');
 		if (!in_array($reservation['status'], ['pending', 'confirmed'], true)) {
-			$this->api->respond_error("A {$reservation['status']} reservation can't be changed", 409);
+			$this->api->respond_error("This reservation is {$reservation['status']} and can't be changed", 409);
 		}
 		return $reservation;
 	}
@@ -295,7 +415,17 @@ class Reservations extends Controller {
 		return $code;
 	}
 
-	private function format($reservation)
+	private function release_table($table_id)
+	{
+		$this->Table_model->update_where(['table_id' => $table_id, 'status' => 'reserved'], ['status' => 'available']);
+	}
+
+	private function hold_table($table_id)
+	{
+		$this->Table_model->update_where(['table_id' => $table_id, 'status' => 'available'], ['status' => 'reserved']);
+	}
+
+	private function format($reservation, $full_mobile = false)
 	{
 		$customer = $this->Customer_model->find($reservation['customer_id']);
 		$table = $reservation['table_id'] ? $this->Table_model->find($reservation['table_id']) : null;
@@ -303,9 +433,10 @@ class Reservations extends Controller {
 
 		$reservation['pax'] = (int) $reservation['pax'];
 		$reservation['deposit_amount'] = (float) $reservation['deposit_amount'];
+		$reservation['deposit_status'] = $this->Payment_model->exists(['reservation_id' => $reservation['reservation_id'], 'status' => 'paid']) ? 'paid' : 'unpaid';
 		$reservation['customer'] = [
 			'full_name' => $customer['full_name'] ?? null,
-			'mobile_number' => strlen($mobile) === 11 ? '09XX XXX ' . substr($mobile, -4) : null,
+			'mobile_number' => $full_mobile ? ($mobile ?: null) : (strlen($mobile) === 11 ? '09XX XXX ' . substr($mobile, -4) : null),
 		];
 		$reservation['table_number'] = $table['table_number'] ?? null;
 		return $reservation;
