@@ -13,7 +13,9 @@ Keep every message short and friendly. She is a beginner. Wait for her reply at 
 
 - Read `docs/progress.md`. If the screen is 🟨 or 🟦 and she didn't start it, say so and ask if a teammate is already on it.
 - Read `docs/screens-and-routes.md` for the URL and layout.
-- Read the wireframe `docs/wireframes/NN *.svg`. The `<text>` elements show the labels; rectangles show boxes, inputs and buttons.
+- Look at the wireframe image `docs/wireframes/png/NN *.png` to see the screen.
+- Read `docs/wireframes/NN *.svg` for exact labels and sizes. The `<text>` elements show the labels; rectangles show boxes, inputs and buttons.
+- Read the screen's rows in `docs/design/navigation.md` so every button and link goes to the right screen.
 - Skim `docs/styling.md` and `docs/building-a-screen.md`.
 
 - Run `git status` and `git branch --show-current`. If she's on `main`, run `git pull`, then `git switch -c frontend/screen-NN-short-name`. Tell her in one sentence: "I made you a branch, your own copy for this screen."
@@ -27,7 +29,8 @@ Mark the screen 🟨 in `docs/progress.md`.
 ## 3. Build
 
 - Page file in `frontend/src/pages/<area>/`. Pieces used on other screens go in `frontend/src/components/`.
-- Sample data inside the file until the backend exists. Placeholder content only (`Restaurant Name`, `₱000.00`, `placeholder-domain.com`).
+- Colours and fonts only from the brand tokens in `docs/design/brand.md` (`bg-brand-green`, `text-brand-brown`, `font-display` for one big title).
+- Data only through `frontend/src/services/`, which return `sampleData.ts` records until the lead says the API is live. The restaurant's name (`Vencio's Garden`), logo (`/logo.png`), menu and prices are real; people, contacts and photos stay placeholders (`Juan Dela Cruz`, `09XX XXX XXXX`, `placeholder-domain.com`, grey boxes).
 - Swap the `Placeholder` for the page in `frontend/src/router.tsx`. Don't change any `path`.
 - Follow every rule in `CLAUDE.md`, including the drift check.
 

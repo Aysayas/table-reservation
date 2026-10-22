@@ -6,6 +6,8 @@ CREATE TABLE IF NOT EXISTS users (
     email VARCHAR(100) NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     role ENUM('admin', 'staff', 'kitchen') NOT NULL DEFAULT 'staff',
+    is_active TINYINT(1) NOT NULL DEFAULT 1,
+    last_login_at DATETIME NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     UNIQUE KEY users_email_unique (email)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -47,6 +49,7 @@ CREATE TABLE IF NOT EXISTS reservations (
     reservation_date DATE NOT NULL,
     reservation_time TIME NOT NULL,
     pax INT UNSIGNED NOT NULL,
+    special_request VARCHAR(255) NULL,
     deposit_amount DECIMAL(10,2) NOT NULL DEFAULT 0.00,
     status ENUM('pending', 'confirmed', 'arrived', 'no_show', 'cancelled') NOT NULL DEFAULT 'pending',
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -70,6 +73,7 @@ CREATE TABLE IF NOT EXISTS menu_items (
     price DECIMAL(10,2) NOT NULL,
     image_url VARCHAR(255) NULL,
     is_available TINYINT(1) NOT NULL DEFAULT 1,
+    is_recommended TINYINT(1) NOT NULL DEFAULT 1,
     KEY menu_items_category_idx (category_id),
     CONSTRAINT menu_items_category_fk FOREIGN KEY (category_id) REFERENCES categories (category_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -78,6 +82,7 @@ CREATE TABLE IF NOT EXISTS orders (
     order_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     table_id INT UNSIGNED NOT NULL,
     customer_id INT UNSIGNED NULL,
+    customer_name VARCHAR(60) NULL,
     status ENUM('received', 'preparing', 'ready', 'served') NOT NULL DEFAULT 'received',
     total_amount DECIMAL(10,2) NOT NULL DEFAULT 0.00,
     payment_status ENUM('unpaid', 'paid') NOT NULL DEFAULT 'unpaid',
@@ -135,7 +140,15 @@ CREATE TABLE IF NOT EXISTS restaurant_settings (
     email VARCHAR(100) NULL,
     facebook_url VARCHAR(255) NULL,
     logo_url VARCHAR(255) NULL,
-    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    deposit_per_guest DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+    service_charge_percent DECIMAL(5,2) NOT NULL DEFAULT 0.00,
+    slot_minutes SMALLINT UNSIGNED NOT NULL DEFAULT 60,
+    max_pax TINYINT UNSIGNED NOT NULL DEFAULT 10,
+    deposit_required TINYINT(1) NOT NULL DEFAULT 1,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT restaurant_settings_service_charge_chk CHECK (service_charge_percent BETWEEN 0 AND 100),
+    CONSTRAINT restaurant_settings_slot_chk CHECK (slot_minutes BETWEEN 15 AND 240),
+    CONSTRAINT restaurant_settings_max_pax_chk CHECK (max_pax >= 1)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS opening_hours (

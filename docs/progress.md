@@ -52,3 +52,78 @@ Start with simple screens to learn, then the forms, then the bigger flows:
 | 27 | Reports | ⬜ | |
 | 28 | Staff Accounts | ⬜ | |
 | 29 | Settings | ⬜ | |
+
+## Backend progress
+
+Updated 2026-10-22. Full endpoint details are in [api.md](api.md). Every screen keeps using `sampleData.ts` until the lead deploys the backend and says the API is live. ✅ means the endpoint is ready for that switch.
+
+| Status | Meaning |
+|---|---|
+| ✅ | Endpoint works. Switch the service to it once the API is live |
+| 🟨 | Partly works: reads work, saves or payments don't yet |
+| ⬜ | Not built yet (the route answers 501) |
+
+### API per screen
+
+| # | Screen | API | Endpoints |
+|---|---|---|---|
+| 01 | Home | ✅ | `GET /menu-items`, `/settings`, `/opening-hours` |
+| 02 | Menu | ✅ | `GET /categories`, `/menu-items` |
+| 03 | Reserve a Table | ✅ | `GET /reservations/availability`, `POST /reservations` |
+| 04 | Deposit Payment | 🟨 | `GET /reservations/code/{code}` works; paying waits for the payment gateway |
+| 05 | Reservation Confirmation | ✅ | `GET /reservations/code/{code}` |
+| 06 | Find Reservation | ✅ | `POST /reservations/find`, `/cancel`, `/reschedule` |
+| 07 | About Us | ✅ | `GET /settings`, `/opening-hours` |
+| 08 | Table Menu | ✅ | `GET /menu-items`, `GET /tables/{id}` |
+| 09 | Item Details | ✅ | `GET /menu-items/{id}` |
+| 10 | Cart | ✅ | No API needed. The cart stays in the browser |
+| 11 | Checkout | 🟨 | `POST /orders` works; `/orders/{id}/pay` waits for the payment gateway |
+| 12 | Order Status | ✅ | `GET /orders/{id}` |
+| 13 | Staff Login | ✅ | `POST /auth/login`, `/auth/refresh`, `/auth/logout`, `GET /auth/me` |
+| 14 | Staff Dashboard | ✅ | `GET /dashboard/staff` |
+| 15 | Today's Reservations | ✅ | `GET /reservations`, `PATCH /reservations/{id}/status` |
+| 16 | Table Status | ✅ | `GET /tables`, `PATCH /tables/{id}/status` |
+| 17 | Orders and Payments | ✅ | `GET /orders`, `PATCH /orders/{id}/status`, `POST /payments` |
+| 18 | Kitchen Display | ✅ | `GET /orders`, `PATCH /orders/{id}/status` |
+| 19 | Admin Dashboard | ✅ | `GET /dashboard/admin` |
+| 20 | Menu Management | ✅ | `GET /menu-items`, `PATCH /menu-items/{id}/availability`, `DELETE /menu-items/{id}` |
+| 21 | Add Edit Menu Item | ✅ | `POST`/`PUT /menu-items`, `POST /menu-items/{id}/image` |
+| 22 | Categories | ✅ | `GET`/`POST /categories`, `PUT`/`DELETE /categories/{id}` |
+| 23 | Tables and QR Codes | ✅ | `GET`/`POST /tables`, `PUT`/`DELETE /tables/{id}` |
+| 24 | Reservations | ✅ | `GET /reservations?view=`, `PUT /reservations/{id}`, `PUT /settings` (reservation fields) |
+| 25 | Order History | ✅ | `GET /orders?page=` (search, dates, status, payment); export is a CSV made in the browser |
+| 26 | Payments | ✅ | `GET /payments`, `GET /payments/{id}` |
+| 27 | Reports | ✅ | `GET /reports`; Export PDF is the browser's print |
+| 28 | Staff Accounts | ✅ | `GET`/`POST /users`, `PUT`/`DELETE /users/{id}` |
+| 29 | Settings | ✅ | `GET`/`PUT /settings`, `POST /settings/logo`, `GET`/`PUT /opening-hours` |
+
+Every staff, kitchen and admin route already checks the login token and role, so it answers 401 or 403 before 501.
+
+### Foundation
+
+| Part | Status |
+|---|---|
+| Database tables and seed data (`backend/database/`) | ✅ |
+| One model per table (`backend/app/models/`) | ✅ |
+| Login with tokens, roles (staff, kitchen, admin) | ✅ |
+| Database test pages (`/dev/db`, development only) | ✅ |
+| Database migrations | ⬜ planned for the last dev PR, before production |
+
+### Integrations
+
+| Integration | Status |
+|---|---|
+| Payment gateway | ⬜ provider not chosen (needed for deposit and order payment) |
+| SMS notification | ⬜ provider not chosen |
+| Real-time messaging (kitchen and order status) | ⬜ |
+| Cloud storage (menu and logo images) | ⬜ |
+| Recommendation engine | ⬜ approach not decided |
+
+### Deployment
+
+| Item | Status |
+|---|---|
+| Render Blueprint (`render.yaml`) | ✅ written, not deployed yet |
+| Hosted MySQL with SSL | ⬜ |
+| MySQL time zone set to Asia/Manila | ✅ set on every connection from `APP_TIMEZONE` |
+| Real client address behind Render's proxy (for the login limit) | ⬜ |

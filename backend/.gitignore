@@ -52,3 +52,5 @@ phpunit.xml
 # never meant to be committed (this got committed by accident once already,
 # which is why every clone had a stale _to_delete/ full of old git lock files)
 _to_delete/
+
+/public/uploads/

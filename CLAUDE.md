@@ -17,17 +17,22 @@ The **project lead** set these rules and reviews her work. You can't see the lea
 
 A table reservation and QR menu ordering system for a school project (Systems Integration and Architecture 1 × Web Systems and Technologies 2).
 
+The restaurant is **Vencio's Garden**. Its name, logo (`frontend/public/logo.png`), menu and prices are real and already in `frontend/src/services/sampleData.ts` and `backend/database/seed.sql`. People, phone numbers, emails and food photos stay placeholders.
+
 - `frontend/` is **her job**: React + TypeScript + Vite + Tailwind CSS v4 + React Router.
-- `backend/` (LavaLust PHP + MySQL) is **someone else's job** and isn't in this folder yet.
-- The design is fixed: **29 screens** in `docs/wireframes/` (one `.svg` per screen, plus `Wireframes.pdf`).
+- `backend/` (LavaLust PHP + MySQL) is **the lead's job**. Don't change it. The "Backend progress" section of `docs/progress.md` shows which screens already have a working endpoint.
+- The design is fixed: **29 screens** in `docs/wireframes/` (one `.svg` and one `png/` image per screen, plus `Wireframes.pdf`). The Figma file is saved as `docs/design/Wireframes.fig`. You don't need Figma or a Figma connection; everything in it is in these files.
 
 Read these before building anything. They are the source of truth:
 
 | File | What it decides |
 |---|---|
 | `docs/screens-and-routes.md` | The 29 screens, their URLs and layouts |
-| `docs/wireframes/NN Name.svg` | What each screen looks like |
-| `docs/styling.md` | Black and white, placeholder content, no code comments |
+| `docs/wireframes/png/NN Name.png` | What each screen looks like (open it as an image) |
+| `docs/wireframes/NN Name.svg` | Exact labels, sizes and positions (`<text>` and `<rect>` elements) |
+| `docs/design/navigation.md` | Where every button and link goes (from the Figma prototype) |
+| `docs/design/brand.md` | Brand colours, fonts, logo use and personality (from the restaurant's menu) |
+| `docs/styling.md` | Theme colours, placeholder content, no code comments |
 | `docs/project-structure.md` | Where files go and how they are named |
 | `docs/packages.md` | The only libraries we use |
 | `docs/building-a-screen.md` | The steps for building a screen |
@@ -38,7 +43,7 @@ Read these before building anything. They are the source of truth:
 
 1. At the start of a session, check `docs/progress.md` and `LEAD-REVIEW.md`, then ask which screen she is working on today.
 2. Build **one screen at a time**, matching its wireframe. Use `/build-screen NN` steps.
-3. Build without waiting for the backend. Screens get data **only** through functions in `frontend/src/services/` (see `menu.ts`). Until an endpoint is listed in `docs/api.md`, those functions return data from `frontend/src/services/sampleData.ts`, typed with `frontend/src/types/db.ts`. Field names match the ERD and `backend/database/schema.sql` exactly (`item_id`, `is_available`, `reservation_date`). Add sample records there when a screen needs more; never call `api` or invent endpoints for things not in `docs/api.md`. Actions that need the backend (pay, login, send SMS, upload) pretend to succeed and move to the next screen.
+3. Build without waiting for the backend. Screens get data **only** through functions in `frontend/src/services/` (see `menu.ts`). Until the lead says the API is live (a deployed URL in `.env.local`), every one of those functions returns data from `frontend/src/services/sampleData.ts`, typed with `frontend/src/types/db.ts`, even for endpoints already listed in `docs/api.md`. Shape the sample data like the responses in `docs/api.md`, so the later switch is one line per function. Field names match the ERD and `backend/database/schema.sql` exactly (`item_id`, `is_available`, `reservation_date`). Add sample records there when a screen needs more; never call `api` or invent endpoints for things not in `docs/api.md`. Actions that need the backend (pay, login, send SMS, upload) pretend to succeed and move to the next screen.
 4. Show the screen in the browser preview at the right size (390 wide for 01–12, 1440 × 900 for 13–29).
 5. Run the checks before saying a screen is done: `npm run format`, `npm run build`, `npm run lint`, `npm run test:e2e` (all from `frontend/`).
 6. Update `docs/progress.md` when a screen changes status.
@@ -89,8 +94,7 @@ If the request matches anything here, **don't do it yet**. Reply with:
 
 | If she asks to… | Why it's off track | Offer instead |
 |---|---|---|
-| Add colours, gradients, brand styling, dark mode | The school rule is black and white only | Greys from `docs/styling.md` |
-| Use a real restaurant name, real prices, real people, real photos | The organisation must stay a placeholder | `Restaurant Name`, `₱000.00`, grey boxes |
+| Use real people, phone numbers, emails or food photos | Only the restaurant's name, logo, menu and prices are real | `Juan Dela Cruz`, `09XX XXX XXXX`, `placeholder-domain.com`, grey boxes |
 | Add a screen, page or feature that isn't in the 29 wireframes (customer accounts, chat, dark mode toggle, animations, a landing page) | The design is approved and fixed | Finish the planned screens first |
 | Change a URL, rename routes or reorganise `router.tsx` | The URLs come from the approved sitemap | Swap the placeholder for the page only |
 | Change the layout of a screen so it no longer matches the wireframe | The wireframes were submitted | Match the wireframe; note the idea for the lead |
@@ -124,7 +128,7 @@ Every few steps, and before saying a screen is done, compare what's on screen wi
 ## Code rules
 
 - TypeScript, function components, one component per file, `export default`.
-- Tailwind classes only. Black, white, `neutral-*` greys.
+- Tailwind classes only. Colours come from the theme in `src/index.css`, never hard-coded hex values.
 - Import with `@/` (e.g. `@/lib/api`).
 - Use `Link`/`useNavigate` for navigation, `api` from `@/lib/api` for requests, React Query for loading data, `react-hook-form` + `zod` for forms, `sonner` for messages, `lucide-react` for icons.
 - Labels on every form field and accessible names on buttons, so Playwright tests can find them with `getByRole`/`getByLabel`.

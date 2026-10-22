@@ -14,17 +14,18 @@ We style with [Tailwind CSS v4](https://tailwindcss.com/docs) utility classes wr
 - Shared base styles go in `src/index.css` only.
 - If the same long list of classes repeats, make a component instead of copying it.
 
-## Black and white
+## Colours
 
-Match the wireframes: black, white and greys only.
+The colours come from Vencio's Garden's menu. They are already theme tokens in `src/index.css`, and [the brand guide](design/brand.md) says what each one is for. The wireframes show layout, not colour.
 
-| Use | Classes |
-|---|---|
-| Text | `text-black`, `text-neutral-500` for secondary text |
-| Backgrounds | `bg-white`, `bg-neutral-100` for subtle areas, `bg-black` for primary buttons and active items |
-| Borders | `border-neutral-200`, `border-black` |
+- Use the brand classes: `bg-brand-green`, `text-brand-brown`, `bg-brand-cream`, and so on.
+- Shades of them are fine (for example `hover:bg-brand-green/90`). Don't add new colours.
+- Don't hard-code hex values (`#1a2b3c`, `bg-[#1a2b3c]`) in components.
+- Keep text readable. The brand guide lists which text and background pairs are safe.
 
-Don't add brand colours or colour legends.
+## Fonts
+
+Montserrat is the default font (`font-sans`) for everything. Dancing Script (`font-display`) is only for one big title at a time, like the restaurant name or a section banner. Both are already loaded in `src/index.css`.
 
 ## Screen sizes
 
@@ -33,17 +34,24 @@ Don't add brand colours or colour legends.
 | Customer and QR ordering (01-12) | 390px wide | `CustomerLayout` already limits the width |
 | Staff, kitchen and admin (13-29) | 1440 × 900 | Sidebar is 240px wide |
 
-## Placeholder content
+## Real and placeholder content
 
-The organisation is a placeholder. On every screen use:
+The restaurant is **Vencio's Garden**. These are real, so use them:
+
+| What | Where |
+|---|---|
+| Restaurant name | `Vencio's Garden` |
+| Logo | `/logo.png` (in `frontend/public/`) |
+| Menu categories, items, descriptions and prices | `sampleData.ts`, later the API |
+
+Everything else stays a placeholder:
 
 | Instead of | Write |
 |---|---|
-| The real restaurant name | `Restaurant Name` |
+| Real people | Generic names, e.g. `Juan Dela Cruz`, `Customer Name` |
+| Real phone numbers | `09XX XXX XXXX` |
 | Real domain or email | `placeholder-domain.com` |
-| Prices and amounts | `₱000.00` |
-| Real people | Generic names, e.g. `Customer Name` |
-| Food photos | A grey box (`bg-neutral-200`) |
+| Food photos | A plain placeholder box |
 
 ## Code comments
 

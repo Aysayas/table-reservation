@@ -6,7 +6,7 @@ Minsan, **hihinto muna si Claude** bago gawin yung inutos mo. Normal 'yan at sin
 
 | Inutos mo | Ganito sasabihin ni Claude |
 |---|---|
-| "Gawin mong blue yung button" | "Quick check 🟡: black and white lang dapat yung project. Black na lang na may white text?" |
+| "Lagyan mo ng chat feature" | "Quick check 🟡: wala 'yan sa 29 wireframes. Tapusin muna natin yung planned screens?" |
 | "Lagyan mo ng dark mode" | "Quick check 🟡: wala sa wireframes yung dark mode. Tapusin muna natin yung planned screens?" |
 | "Install mo Bootstrap" | "Quick check 🟡: Tailwind na yung gamit natin sa styling. Ganito siya gagawin sa Tailwind." |
 | "Gawin mo yung PHP para sa login" | "Part 'yan ng backend teammate 🔴. Tulungan kita i-plan kung ano yung ise-send ng login screen sa kanila." |

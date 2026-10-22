@@ -12,6 +12,8 @@ export type User = {
   full_name: string
   email: string
   role: UserRole
+  is_active: boolean
+  last_login_at: string | null
   created_at: string
 }
 
@@ -39,6 +41,7 @@ export type Reservation = {
   reservation_date: string
   reservation_time: string
   pax: number
+  special_request: string | null
   deposit_amount: number
   status: ReservationStatus
   created_at: string
@@ -58,12 +61,14 @@ export type MenuItem = {
   price: number
   image_url: string | null
   is_available: boolean
+  is_recommended: boolean
 }
 
 export type Order = {
   order_id: number
   table_id: number
   customer_id: number | null
+  customer_name: string | null
   status: OrderStatus
   total_amount: number
   payment_status: OrderPaymentStatus
@@ -108,6 +113,11 @@ export type RestaurantSettings = {
   email: string | null
   facebook_url: string | null
   logo_url: string | null
+  deposit_per_guest: number
+  service_charge_percent: number
+  slot_minutes: number
+  max_pax: number
+  deposit_required: boolean
   updated_at: string
 }
 
