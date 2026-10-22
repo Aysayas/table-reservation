@@ -2,6 +2,7 @@ import { createBrowserRouter } from 'react-router-dom'
 import CustomerLayout from '@/layouts/CustomerLayout'
 import DashboardLayout, { type NavItem } from '@/layouts/DashboardLayout'
 import Placeholder from '@/pages/Placeholder'
+import About from '@/pages/customer/About'
 
 const staffNav: NavItem[] = [
   { to: '/staff', label: 'Dashboard' },
@@ -36,7 +37,7 @@ export const router = createBrowserRouter([
         element: <Placeholder screen="05" title="Reservation Confirmation" />,
       },
       { path: '/reservation', element: <Placeholder screen="06" title="Find Reservation" /> },
-      { path: '/about', element: <Placeholder screen="07" title="About Us" /> },
+      { path: '/about', element: <About /> },
       { path: '/table/:tableId', element: <Placeholder screen="08" title="Table Menu" /> },
       { path: '/table/:tableId/menu', element: <Placeholder screen="08" title="Table Menu" /> },
       {
