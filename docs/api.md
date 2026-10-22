@@ -105,8 +105,16 @@ export async function getMenuItems() {
 | POST | `/auth/refresh` | Body `{ "refresh_token" }`. Same shape as login, with a new pair of tokens. The old refresh token stops working. 401 if expired or already used |
 | POST | `/auth/logout` | Needs the access token. Body `{ "refresh_token" }`. `{ "data": { "message": "Logged out" } }` |
 | GET | `/auth/me` | Needs the access token. `{ "data": User }` without the password |
+| GET | `/reservations/availability?date=&pax=` | `{ "data": [{ "time": "18:00:00", "available": true }] }`. Hourly slots from that day's opening hours; past slots today are left out; a closed day gives `[]`. A slot is available while fewer active bookings exist at that time than tables seating `pax`. 422 for a past or invalid date, or pax under 1. Screen 03 |
+| POST | `/reservations` | Body `full_name`, `mobile_number` (`09` + 9 digits), `email` (optional), `reservation_date` (YYYY-MM-DD), `reservation_time` (`18:00` or `18:00:00`, must be a slot), `pax`, `special_request` (optional). 201 `{ "data": Reservation }` with status `pending`, a `reference_code` like `RSV-7K3M9Q`, and `deposit_amount` = pax × `deposit_per_guest`. 422 with `errors`, 409 if the slot just filled. Screen 03 |
+| GET | `/reservations/code/{code}` | `{ "data": Reservation }`, or 404. Screens 04, 05 |
+| POST | `/reservations/find` | Body `reference_code`, `mobile_number`. `{ "data": Reservation }`, or 404 if either doesn't match. Screen 06 |
+| POST | `/reservations/code/{code}/cancel` | Body `mobile_number`. Sets `cancelled`. 404 if the mobile doesn't match, 409 unless `pending` or `confirmed`. Screen 06 |
+| POST | `/reservations/code/{code}/reschedule` | Body `mobile_number`, `reservation_date`, `reservation_time`. Same checks as booking; clears `table_id`. 404, 409 or 422 as above. Screen 06 |
 
 Login: save `access_token` with `setToken()` from `src/lib/api.ts`, which then sends it on every request. It lasts 15 minutes (`expires_in` is 900 seconds). When a request returns 401, call `/auth/refresh` with the `refresh_token`, which lasts 7 days. Routes for the wrong role return 403.
+
+Reservations from these routes also carry `customer: { full_name, mobile_number }` (mobile masked as `09XX XXX 4567`) and `table_number` (or null). Find, cancel and reschedule allow 20 tries a minute (then 429). `day_of_week` 0 is Sunday. Times are Asia/Manila.
 
 Field names and types match `frontend/src/types/db.ts`: `price` is a number, `is_available` and `is_open` are true or false. Errors look like `{ "error": "Menu item not found", "status": 404 }`.
 
@@ -132,11 +140,6 @@ Who: **public** needs no login. **staff**, **kitchen** and **admin** need the lo
 | PUT | `/tables/{id}` | admin | 23 | Edit a table |
 | PATCH | `/tables/{id}/status` | staff | 16 | Set `status` |
 | DELETE | `/tables/{id}` | admin | 23 | Delete a table |
-| POST | `/reservations` | public | 03 | Book: `full_name`, `mobile_number`, `email`, `reservation_date`, `reservation_time`, `pax`. Returns `reference_code` |
-| POST | `/reservations/find` | public | 06 | Find by `reference_code` and `mobile_number` |
-| GET | `/reservations/code/{code}` | public | 04, 05 | One reservation by `reference_code` |
-| POST | `/reservations/code/{code}/cancel` | public | 06 | Cancel. Body: `mobile_number` |
-| POST | `/reservations/code/{code}/reschedule` | public | 06 | New `reservation_date`, `reservation_time`. Body also: `mobile_number` |
 | POST | `/reservations/code/{code}/deposit` | public | 04 | Start the online deposit payment. Returns the payment page URL |
 | GET | `/reservations` | staff | 14, 15, 24 | Reservations. Filters: `reservation_date`, `status` |
 | GET | `/reservations/{id}` | staff | 15, 24 | One reservation |

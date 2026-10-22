@@ -66,6 +66,8 @@ $config['version']                 = '4.6.0';
 */
 $config['environment'] = getenv('APP_ENV') ?: 'production';
 
+date_default_timezone_set(getenv('APP_TIMEZONE') ?: 'Asia/Manila');
+
 /*
 |--------------------------------------------------------------------------
 | Base Site URL

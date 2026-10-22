@@ -47,6 +47,7 @@ CREATE TABLE IF NOT EXISTS reservations (
     reservation_date DATE NOT NULL,
     reservation_time TIME NOT NULL,
     pax INT UNSIGNED NOT NULL,
+    special_request VARCHAR(255) NULL,
     deposit_amount DECIMAL(10,2) NOT NULL DEFAULT 0.00,
     status ENUM('pending', 'confirmed', 'arrived', 'no_show', 'cancelled') NOT NULL DEFAULT 'pending',
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -135,6 +136,7 @@ CREATE TABLE IF NOT EXISTS restaurant_settings (
     email VARCHAR(100) NULL,
     facebook_url VARCHAR(255) NULL,
     logo_url VARCHAR(255) NULL,
+    deposit_per_guest DECIMAL(10,2) NOT NULL DEFAULT 0.00,
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
