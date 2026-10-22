@@ -63,7 +63,7 @@ if errorlevel 1 (
     echo ^(In VS Code: Ctrl+Shift+P -^> "Shell Command: Install 'code' command in PATH"^)
 ) else (
     echo Opening project in VS Code...
-    code ..
+    call code ..
 )
 start "" "http://localhost:8000/api/health"
 
