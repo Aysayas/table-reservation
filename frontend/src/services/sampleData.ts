@@ -2,10 +2,12 @@ import type {
   Category,
   Customer,
   MenuItem,
+  OpeningHours,
   Order,
   OrderItem,
   Payment,
   Reservation,
+  RestaurantSettings,
   RestaurantTable,
   User,
 } from '@/types/db'
@@ -370,3 +372,26 @@ export const sampleUsers: User[] = [
     created_at: '2026-01-01T00:00:00',
   },
 ]
+
+export const sampleSettings: RestaurantSettings = {
+  setting_id: 1,
+  restaurant_name: "Vencio's Garden",
+  address: 'Street, City, Province',
+  contact_number: '0000 000 0000',
+  email: 'info@placeholder-domain.com',
+  facebook_url: 'facebook.com/placeholder-page',
+  logo_url: null,
+  deposit_per_guest: 0,
+  service_charge_percent: 0,
+  slot_minutes: 60,
+  max_pax: 10,
+  deposit_required: true,
+  updated_at: '2026-01-01T00:00:00',
+}
+
+export const sampleOpeningHours: OpeningHours[] = Array.from({ length: 7 }, (_, day) => ({
+  day_of_week: day,
+  open_time: '07:00:00',
+  close_time: '21:00:00',
+  is_open: true,
+}))
