@@ -96,9 +96,17 @@ export async function getMenuItems() {
 |---|---|---|
 | GET | `/health` | `{ "status": "ok" }` when the API is up |
 | GET | `/health/db` | `{ "status": "ok", "database": "connected" }`, or 503 if the database is down |
-| GET | `/categories` | `{ "data": Category[] }` by `sort_order`. Screens 02, 08, 20, 22 |
+| GET | `/categories` | `{ "data": Category[] }` by `sort_order`, each with `item_count` (its number of menu items). Screens 02, 08, 20, 22 |
 | GET | `/menu-items` | `{ "data": MenuItem[] }`. Optional filters `?category_id=1&is_available=1`; a non-number gives 422. Screens 01, 02, 08, 20 |
 | GET | `/menu-items/{id}` | `{ "data": MenuItem }`, or 404. Screens 09, 21 |
+| POST | `/categories` | Admin. Body `name` (required, up to 50, unique) and `sort_order` (optional whole number, 0 or more; default is one after the last). 201 `{ "data": Category }`, 422 with `errors`. Screen 22 |
+| PUT | `/categories/{id}` | Admin. Body `name` and optional `sort_order` (kept if left out). Same checks. `{ "data": Category }`, 404 or 422. Screen 22 |
+| DELETE | `/categories/{id}` | Admin. `{ "data": { "message": "Deleted" } }`. 409 while it still has menu items, 404 if missing. Screen 22 |
+| POST | `/menu-items` | Admin. Body `category_id` (an existing category), `name` (required, up to 100), `price` (number, 0 to 99999999.99), `description` (optional, up to 1000), `is_available` and `is_recommended` (optional true or false, default true). 201 `{ "data": MenuItem }`, 422 with `errors`. Screen 21 |
+| PUT | `/menu-items/{id}` | Admin. Same body and checks as adding; `is_available` and `is_recommended` keep their values if left out. Doesn't change the photo. `{ "data": MenuItem }`, 404 or 422. Screen 21 |
+| PATCH | `/menu-items/{id}/availability` | Admin. Body `{ "is_available": true }`. `{ "data": MenuItem }`, 404 or 422. Screen 20 |
+| POST | `/menu-items/{id}/image` | Admin. Multipart form with a `photo` file: JPG or PNG, up to 2 MB. Sets `image_url` to `/uploads/menu/<random>.jpg` (served by the backend; put the API's host in front, without `/api`) and removes the old photo. `{ "data": MenuItem }`, 404, or 422 with the reasons. Save the item first, then upload. Screen 21 |
+| DELETE | `/menu-items/{id}` | Admin. Deletes the item and its photo: `{ "data": { "message": "Deleted" } }`. 409 if it has ever been ordered (mark it unavailable instead), 404 if missing. Screen 20 |
 | GET | `/settings` | `{ "data": RestaurantSettings }`. Screens 01, 07, 29 |
 | GET | `/opening-hours` | `{ "data": OpeningHours[] }`, all 7 days, `day_of_week` 0 to 6. Screens 01, 07, 29 |
 | POST | `/auth/login` | Body `{ "email", "password" }`. `{ "data": { access_token, refresh_token, expires_in, token_type, user } }`. 401 for a wrong email or password, 422 with an `errors` list if a field is missing or the email is invalid, 429 after 10 tries a minute. Screen 13 |
@@ -130,7 +138,7 @@ Reservations from these routes also carry `customer: { full_name, mobile_number 
 
 QR ordering: each table's QR code opens `/table/{table_id}?t={qr_token}`. Keep `t` for the visit (for example in `sessionStorage`) and send it as `qr_token`. Orders from these routes also carry `table_number`, `subtotal`, `service_charge` and `items`, and each item has the menu item's `name`.
 
-Field names and types match `frontend/src/types/db.ts`: `price` is a number, `is_available` and `is_open` are true or false. Errors look like `{ "error": "Menu item not found", "status": 404 }`.
+Field names and types match `frontend/src/types/db.ts`: `price` is a number, `is_available`, `is_recommended` and `is_open` are true or false. Errors look like `{ "error": "Menu item not found", "status": 404 }`.
 
 ## Planned endpoints
 
@@ -140,14 +148,6 @@ Who: **public** needs no login. **staff**, **kitchen** and **admin** need the lo
 
 | Method | URL | Who | Screens | Does |
 |---|---|---|---|---|
-| POST | `/categories` | admin | 22 | Add a category |
-| PUT | `/categories/{id}` | admin | 22 | Edit a category |
-| DELETE | `/categories/{id}` | admin | 22 | Delete a category |
-| POST | `/menu-items` | admin | 21 | Add a menu item |
-| PUT | `/menu-items/{id}` | admin | 21 | Edit a menu item |
-| PATCH | `/menu-items/{id}/availability` | admin | 20 | Set `is_available` |
-| POST | `/menu-items/{id}/image` | admin | 21 | Upload the photo, sets `image_url` |
-| DELETE | `/menu-items/{id}` | admin | 20 | Delete a menu item |
 | POST | `/tables` | admin | 23 | Add a table. The backend makes the `qr_token` |
 | PUT | `/tables/{id}` | admin | 23 | Edit a table |
 | DELETE | `/tables/{id}` | admin | 23 | Delete a table |
