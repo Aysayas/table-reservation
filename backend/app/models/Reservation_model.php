@@ -15,4 +15,24 @@ class Reservation_model extends Model {
 	{
 		return $this->belongs_to('Table_model', 'table_id');
 	}
+
+	public function stats($from, $to)
+	{
+		$row = $this->db->raw(
+			"SELECT SUM(status <> 'cancelled') AS reservations,
+			        SUM(status = 'no_show') AS no_shows,
+			        SUM(status IN ('arrived', 'no_show')) AS settled
+			 FROM reservations
+			 WHERE reservation_date BETWEEN ? AND ?",
+			[$from, $to]
+		)->fetch(PDO::FETCH_ASSOC);
+
+		$no_shows = (int) $row['no_shows'];
+		$settled = (int) $row['settled'];
+		return [
+			'reservations' => (int) $row['reservations'],
+			'no_shows' => $no_shows,
+			'no_show_rate' => $settled ? round($no_shows / $settled * 100, 1) : 0.0,
+		];
+	}
 }
