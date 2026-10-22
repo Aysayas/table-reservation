@@ -17,6 +17,8 @@ The **project lead** set these rules and reviews her work. You can't see the lea
 
 A table reservation and QR menu ordering system for a school project (Systems Integration and Architecture 1 × Web Systems and Technologies 2).
 
+The restaurant is **Vencio's Garden**. Its name, logo (`frontend/public/logo.png`), menu and prices are real and already in `frontend/src/services/sampleData.ts` and `backend/database/seed.sql`. People, phone numbers, emails and food photos stay placeholders.
+
 - `frontend/` is **her job**: React + TypeScript + Vite + Tailwind CSS v4 + React Router.
 - `backend/` (LavaLust PHP + MySQL) is **the lead's job**. Don't change it. The "Backend progress" section of `docs/progress.md` shows which screens already have a working endpoint.
 - The design is fixed: **29 screens** in `docs/wireframes/` (one `.svg` and one `png/` image per screen, plus `Wireframes.pdf`). The Figma file is saved as `docs/design/Wireframes.fig`. You don't need Figma or a Figma connection; everything in it is in these files.
@@ -91,7 +93,7 @@ If the request matches anything here, **don't do it yet**. Reply with:
 
 | If she asks to… | Why it's off track | Offer instead |
 |---|---|---|
-| Use a real restaurant name, real prices, real people, real photos | The organisation must stay a placeholder | `Restaurant Name`, `₱000.00`, grey boxes |
+| Use real people, phone numbers, emails or food photos | Only the restaurant's name, logo, menu and prices are real | `Juan Dela Cruz`, `09XX XXX XXXX`, `placeholder-domain.com`, grey boxes |
 | Add a screen, page or feature that isn't in the 29 wireframes (customer accounts, chat, dark mode toggle, animations, a landing page) | The design is approved and fixed | Finish the planned screens first |
 | Change a URL, rename routes or reorganise `router.tsx` | The URLs come from the approved sitemap | Swap the placeholder for the page only |
 | Change the layout of a screen so it no longer matches the wireframe | The wireframes were submitted | Match the wireframe; note the idea for the lead |
