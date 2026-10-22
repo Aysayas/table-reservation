@@ -21,14 +21,17 @@ test('opening hours list every day', async ({ page }) => {
   ]) {
     await expect(page.getByText(day, { exact: true })).toBeVisible()
   }
-  await expect(page.getByText('7:00 AM – 9:00 PM')).toHaveCount(7)
+  await expect(page.getByText('10:00 AM – 10:00 PM')).toHaveCount(7)
 })
 
 test('contact details are shown', async ({ page }) => {
   await page.goto('/about')
-  await expect(page.getByText('0000 000 0000')).toBeVisible()
-  await expect(page.getByText('info@placeholder-domain.com')).toBeVisible()
-  await expect(page.getByText('facebook.com/placeholder-page')).toBeVisible()
+  await expect(
+    page.getByText('#08 Nautical Highway, Tawiran, Calapan City, Oriental Mindoro'),
+  ).toBeVisible()
+  await expect(page.getByText('0918 957 2855')).toBeVisible()
+  await expect(page.getByText('venciosgarden@yahoo.com')).toBeVisible()
+  await expect(page.getByText('https://www.facebook.com/venciosgardenhotel')).toBeVisible()
 })
 
 test('back button returns to the previous page', async ({ page }) => {

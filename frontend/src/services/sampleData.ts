@@ -376,10 +376,10 @@ export const sampleUsers: User[] = [
 export const sampleSettings: RestaurantSettings = {
   setting_id: 1,
   restaurant_name: "Vencio's Garden",
-  address: 'Street, City, Province',
-  contact_number: '0000 000 0000',
-  email: 'info@placeholder-domain.com',
-  facebook_url: 'facebook.com/placeholder-page',
+  address: '#08 Nautical Highway, Tawiran, Calapan City, Oriental Mindoro',
+  contact_number: '0918 957 2855',
+  email: 'venciosgarden@yahoo.com',
+  facebook_url: 'https://www.facebook.com/venciosgardenhotel',
   logo_url: null,
   deposit_per_guest: 0,
   service_charge_percent: 0,
@@ -391,7 +391,7 @@ export const sampleSettings: RestaurantSettings = {
 
 export const sampleOpeningHours: OpeningHours[] = Array.from({ length: 7 }, (_, day) => ({
   day_of_week: day,
-  open_time: '07:00:00',
-  close_time: '21:00:00',
+  open_time: '10:00:00',
+  close_time: '22:00:00',
   is_open: true,
 }))
