@@ -2,24 +2,135 @@
 defined('PREVENT_DIRECT_ACCESS') OR exit('No direct script access allowed');
 
 class Payments extends Controller {
+	private $per_page = 8;
+
 	public function __construct()
 	{
 		parent::__construct();
 		$this->call->library('api');
 		$this->call->database();
-		$this->call->model(['Payment_model', 'Order_model', 'Reservation_model']);
+		$this->call->model(['Payment_model', 'Order_model', 'Reservation_model', 'User_model']);
 	}
 
 	public function index()
 	{
 		$this->api->require_role('admin');
-		$this->api->respond_error('Not implemented', 501);
+		$query = $this->api->get_query_params();
+		$method = $query['method'] ?? '';
+		$status = $query['status'] ?? '';
+		$page = $query['page'] ?? '1';
+		$search = is_string($query['search'] ?? null) ? trim($query['search']) : '';
+
+		$errors = [];
+		if ($method !== '' && !in_array($method, ['online', 'cash'], true)) {
+			$errors[] = '"method" must be online or cash.';
+		}
+		if ($status !== '' && !in_array($status, ['pending', 'paid', 'failed', 'refunded'], true)) {
+			$errors[] = '"status" must be pending, paid, failed or refunded.';
+		}
+		if (!(is_string($page) && ctype_digit($page) && (int) $page >= 1)) {
+			$errors[] = '"page" must be 1 or more.';
+		}
+		$range = [];
+		foreach (['date_from', 'date_to'] as $field) {
+			$value = $query[$field] ?? '';
+			$date = is_string($value) ? DateTime::createFromFormat('!Y-m-d', $value) : false;
+			if ($value !== '' && (!$date || $date->format('Y-m-d') !== $value)) {
+				$errors[] = "\"{$field}\" must be a date (YYYY-MM-DD).";
+			} elseif ($value !== '') {
+				$range[$field] = $field === 'date_from' ? "{$value} 00:00:00" : date('Y-m-d', strtotime("{$value} +1 day")) . ' 00:00:00';
+			}
+		}
+		if ($errors) {
+			$this->api->respond(['error' => 'Invalid input', 'status' => 422, 'errors' => $errors], 422);
+		}
+
+		$search_reservations = $search !== ''
+			? array_column($this->Reservation_model->query()->like('reference_code', "%{$search}%")->get_all(), 'reservation_id')
+			: [];
+		$digits = preg_replace('/^(PAY-|#)/i', '', $search);
+		$number = ctype_digit($digits) ? (int) $digits : 0;
+		$build = function ($with_filters) use ($method, $status, $range, $search, $search_reservations, $number) {
+			$payments = $this->Payment_model->query();
+			if (isset($range['date_from'])) {
+				$payments->where('paid_at', '>=', $range['date_from']);
+			}
+			if (isset($range['date_to'])) {
+				$payments->where('paid_at', '<', $range['date_to']);
+			}
+			if (!$with_filters) {
+				return $payments;
+			}
+			if ($method !== '') {
+				$payments->where('method', $method);
+			}
+			if ($status !== '') {
+				$payments->where('status', $status);
+			}
+			if ($search !== '') {
+				$payments->grouped(function ($group) use ($search, $search_reservations, $number) {
+					$group->like('provider_reference', "%{$search}%");
+					if ($number) {
+						$group->or_where('payment_id', $number)->or_where('order_id', $number);
+					}
+					if ($search_reservations) {
+						$group->or_in('reservation_id', $search_reservations);
+					}
+				});
+			}
+			return $payments;
+		};
+
+		$total = (int) $build(true)->count();
+		$rows = $build(true)->order_by('payment_id', 'DESC')->pagination($this->per_page, (int) $page)->get_all();
+
+		$totals = ['total_collected' => 0.0, 'online' => 0.0, 'cash' => 0.0, 'deposits' => 0.0];
+		foreach ($build(false)->where('status', 'paid')->get_all() as $payment) {
+			$amount = (float) $payment['amount'];
+			$totals['total_collected'] += $amount;
+			$totals[$payment['method']] += $amount;
+			if ($payment['reservation_id'] !== null) {
+				$totals['deposits'] += $amount;
+			}
+		}
+
+		$this->api->respond([
+			'data' => array_map([$this, 'format'], $rows),
+			'totals' => array_map(fn($value) => round($value, 2), $totals),
+			'meta' => ['total' => $total, 'page' => (int) $page, 'per_page' => $this->per_page],
+		]);
 	}
 
 	public function show($id)
 	{
 		$this->api->require_role('admin');
-		$this->api->respond_error('Not implemented', 501);
+		$payment = $this->Payment_model->find($id);
+		if (!$payment) {
+			$this->api->respond_error('Payment not found', 404);
+		}
+
+		$this->api->respond(['data' => $this->format($payment)]);
+	}
+
+	private function format($payment)
+	{
+		$reservation = $payment['reservation_id'] !== null ? $this->Reservation_model->find($payment['reservation_id']) : null;
+		$user = $payment['received_by'] !== null ? $this->User_model->find($payment['received_by']) : null;
+
+		return [
+			'payment_id' => (int) $payment['payment_id'],
+			'order_id' => $payment['order_id'] !== null ? (int) $payment['order_id'] : null,
+			'reservation_id' => $payment['reservation_id'] !== null ? (int) $payment['reservation_id'] : null,
+			'for' => $payment['order_id'] !== null
+				? ['type' => 'order', 'order_id' => (int) $payment['order_id']]
+				: ['type' => 'deposit', 'reservation_id' => (int) $payment['reservation_id'], 'reference_code' => $reservation['reference_code'] ?? null],
+			'method' => $payment['method'],
+			'provider_reference' => $payment['provider_reference'],
+			'amount' => (float) $payment['amount'],
+			'status' => $payment['status'],
+			'paid_at' => $payment['paid_at'],
+			'received_by' => $user ? ['user_id' => (int) $user['user_id'], 'full_name' => $user['full_name']] : null,
+		];
 	}
 
 	public function store()

@@ -3,13 +3,14 @@ defined('PREVENT_DIRECT_ACCESS') OR exit('No direct script access allowed');
 
 class Orders extends Controller {
 	private $statuses = ['received', 'preparing', 'ready', 'served'];
+	private $per_page = 8;
 
 	public function __construct()
 	{
 		parent::__construct();
 		$this->call->library('api');
 		$this->call->database();
-		$this->call->model(['Order_model', 'Order_item_model', 'Menu_item_model', 'Table_model', 'Setting_model']);
+		$this->call->model(['Order_model', 'Order_item_model', 'Menu_item_model', 'Table_model', 'Setting_model', 'Payment_model']);
 	}
 
 	public function index()
@@ -38,29 +39,57 @@ class Orders extends Controller {
 				$errors[] = "\"{$field}\" must be a date (YYYY-MM-DD).";
 			}
 		}
+		$page = $query['page'] ?? null;
+		if ($page !== null && !(is_string($page) && ctype_digit($page) && (int) $page >= 1)) {
+			$errors[] = '"page" must be 1 or more.';
+		}
 		if ($errors) {
 			$this->api->respond(['error' => 'Invalid input', 'status' => 422, 'errors' => $errors], 422);
 		}
 
-		$orders = $this->Order_model->query();
-		if ($table_id !== '') {
-			$orders->where('table_id', (int) $table_id);
-		}
-		if ($statuses) {
-			$orders->in('status', $statuses);
-		}
-		if ($payment !== '') {
-			$orders->where('payment_status', $payment);
-		}
-		if (!empty($query['date_from'])) {
-			$orders->where('created_at', '>=', $query['date_from'] . ' 00:00:00');
-		}
-		if (!empty($query['date_to'])) {
-			$orders->where('created_at', '<', date('Y-m-d', strtotime($query['date_to'] . ' +1 day')) . ' 00:00:00');
+		$search = is_string($query['search'] ?? null) ? trim(ltrim(trim($query['search']), '#')) : '';
+		$search_tables = $search !== ''
+			? array_column($this->Table_model->query()->like('table_number', "%{$search}%")->get_all(), 'table_id')
+			: [];
+		$build = function () use ($table_id, $statuses, $payment, $query, $search, $search_tables) {
+			$orders = $this->Order_model->query();
+			if ($table_id !== '') {
+				$orders->where('table_id', (int) $table_id);
+			}
+			if ($statuses) {
+				$orders->in('status', $statuses);
+			}
+			if ($payment !== '') {
+				$orders->where('payment_status', $payment);
+			}
+			if (!empty($query['date_from'])) {
+				$orders->where('created_at', '>=', $query['date_from'] . ' 00:00:00');
+			}
+			if (!empty($query['date_to'])) {
+				$orders->where('created_at', '<', date('Y-m-d', strtotime($query['date_to'] . ' +1 day')) . ' 00:00:00');
+			}
+			if ($search !== '') {
+				$orders->grouped(function ($group) use ($search, $search_tables) {
+					$group->where('order_id', ctype_digit($search) ? (int) $search : 0);
+					if ($search_tables) {
+						$group->or_in('table_id', $search_tables);
+					}
+				});
+			}
+			return $orders->order_by('order_id', 'DESC');
+		};
+
+		if ($page === null) {
+			// shortcut: without "page" every matching order is returned (kitchen and staff lists); pass "page" for long histories
+			$this->api->respond(['data' => array_map([$this, 'format'], $build()->get_all())]);
 		}
 
-		// shortcut: returns every matching order with no paging; add LIMIT/page once history grows past a few hundred
-		$this->api->respond(['data' => array_map([$this, 'format'], $orders->order_by('order_id', 'DESC')->get_all())]);
+		$total = (int) $build()->count();
+		$rows = $build()->pagination($this->per_page, (int) $page)->get_all();
+		$this->api->respond([
+			'data' => array_map([$this, 'format'], $rows),
+			'meta' => ['total' => $total, 'page' => (int) $page, 'per_page' => $this->per_page],
+		]);
 	}
 
 	public function show($id)
@@ -219,6 +248,8 @@ class Orders extends Controller {
 		$order['subtotal'] = round(array_sum(array_map(fn($item) => (float) $item['unit_price'] * (int) $item['quantity'], $items)), 2);
 		$order['service_charge'] = round($order['total_amount'] - $order['subtotal'], 2);
 		$order['table_number'] = $table['table_number'] ?? null;
+		$paid = $this->Payment_model->filter(['order_id' => $order['order_id'], 'status' => 'paid'])->order_by('payment_id', 'DESC')->get();
+		$order['payment_method'] = $paid['method'] ?? null;
 		$order['items'] = array_map(fn($item) => [
 			'order_item_id' => (int) $item['order_item_id'],
 			'order_id' => (int) $item['order_id'],

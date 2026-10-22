@@ -85,15 +85,15 @@ Updated 2026-10-22. Full endpoint details are in [api.md](api.md). Every screen 
 | 16 | Table Status | ✅ | `GET /tables`, `PATCH /tables/{id}/status` |
 | 17 | Orders and Payments | ✅ | `GET /orders`, `PATCH /orders/{id}/status`, `POST /payments` |
 | 18 | Kitchen Display | ✅ | `GET /orders`, `PATCH /orders/{id}/status` |
-| 19 | Admin Dashboard | ⬜ | `GET /dashboard/admin` |
+| 19 | Admin Dashboard | ✅ | `GET /dashboard/admin` |
 | 20 | Menu Management | ✅ | `GET /menu-items`, `PATCH /menu-items/{id}/availability`, `DELETE /menu-items/{id}` |
 | 21 | Add Edit Menu Item | ✅ | `POST`/`PUT /menu-items`, `POST /menu-items/{id}/image` |
 | 22 | Categories | ✅ | `GET`/`POST /categories`, `PUT`/`DELETE /categories/{id}` |
 | 23 | Tables and QR Codes | ✅ | `GET`/`POST /tables`, `PUT`/`DELETE /tables/{id}` |
 | 24 | Reservations | ✅ | `GET /reservations?view=`, `PUT /reservations/{id}`, `PUT /settings` (reservation fields) |
-| 25 | Order History | ⬜ | `GET /orders` |
-| 26 | Payments | ⬜ | `GET /payments` |
-| 27 | Reports | ⬜ | `GET /reports` |
+| 25 | Order History | ✅ | `GET /orders?page=` (search, dates, status, payment); export is a CSV made in the browser |
+| 26 | Payments | ✅ | `GET /payments`, `GET /payments/{id}` |
+| 27 | Reports | ✅ | `GET /reports`; Export PDF is the browser's print |
 | 28 | Staff Accounts | ✅ | `GET`/`POST /users`, `PUT`/`DELETE /users/{id}` |
 | 29 | Settings | ✅ | `GET`/`PUT /settings`, `POST /settings/logo`, `GET`/`PUT /opening-hours` |
 
@@ -125,5 +125,5 @@ Every staff, kitchen and admin route already checks the login token and role, so
 |---|---|
 | Render Blueprint (`render.yaml`) | ✅ written, not deployed yet |
 | Hosted MySQL with SSL | ⬜ |
-| MySQL time zone set to Asia/Manila | ⬜ |
+| MySQL time zone set to Asia/Manila | ✅ set on every connection from `APP_TIMEZONE` |
 | Real client address behind Render's proxy (for the login limit) | ⬜ |
