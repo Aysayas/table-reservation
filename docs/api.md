@@ -107,7 +107,7 @@ export async function getMenuItems() {
 | PATCH | `/menu-items/{id}/availability` | Admin. Body `{ "is_available": true }`. `{ "data": MenuItem }`, 404 or 422. Screen 20 |
 | POST | `/menu-items/{id}/image` | Admin. Multipart form with a `photo` file: JPG or PNG, up to 2 MB. Sets `image_url` to `/uploads/menu/<random>.jpg` (served by the backend; put the API's host in front, without `/api`) and removes the old photo. `{ "data": MenuItem }`, 404, or 422 with the reasons. Save the item first, then upload. Screen 21 |
 | DELETE | `/menu-items/{id}` | Admin. Deletes the item and its photo: `{ "data": { "message": "Deleted" } }`. 409 if it has ever been ordered (mark it unavailable instead), 404 if missing. Screen 20 |
-| GET | `/settings` | `{ "data": RestaurantSettings }`. Screens 01, 07, 29 |
+| GET | `/settings` | `{ "data": RestaurantSettings }`, including `slot_minutes`, `max_pax` and `deposit_required`. Screens 01, 07, 24, 29 |
 | GET | `/opening-hours` | `{ "data": OpeningHours[] }`, all 7 days, `day_of_week` 0 to 6. Screens 01, 07, 29 |
 | POST | `/auth/login` | Body `{ "email", "password" }`. `{ "data": { access_token, refresh_token, expires_in, token_type, user } }`. 401 for a wrong email or password, 422 with an `errors` list if a field is missing or the email is invalid, 429 after 10 tries a minute. Screen 13 |
 | POST | `/auth/refresh` | Body `{ "refresh_token" }`. Same shape as login, with a new pair of tokens. The old refresh token stops working. 401 if expired or already used |
@@ -120,11 +120,16 @@ export async function getMenuItems() {
 | POST | `/reservations/code/{code}/cancel` | Body `mobile_number`. Sets `cancelled`. 404 if the mobile doesn't match, 409 unless `pending` or `confirmed`. Screen 06 |
 | POST | `/reservations/code/{code}/reschedule` | Body `mobile_number`, `reservation_date`, `reservation_time`. Same checks as booking; clears `table_id`. 404, 409 or 422 as above. Screen 06 |
 | GET | `/tables/{id}` | `{ "data": { table_id, table_number, capacity, status } }`, or 404. Never returns `qr_token`. Screens 08–12 |
-| GET | `/reservations` | Staff, admin. Filters: `reservation_date` (YYYY-MM-DD, default today), `status`, `search` (ref code or name), `page` (8 per page). `{ "data": Reservation[], "meta": { total, page, per_page } }` by time. 422 for a bad filter. Screen 15 |
+| GET | `/reservations` | Staff, admin. Either `view` = `upcoming` (after today, pending or confirmed, soonest first), `today`, `past` (before today, not cancelled, newest first) or `cancelled` (newest first), or `reservation_date` (YYYY-MM-DD, default today). Also `status`, `search` (ref code or customer name, across all days) and `page` (8 per page). `{ "data": Reservation[], "meta": { total, page, per_page } }`. 422 for a bad filter. Screens 15, 24 |
 | GET | `/reservations/{id}` | Staff, admin. `{ "data": Reservation }`, or 404. Screen 15 |
 | PATCH | `/reservations/{id}/status` | Staff, admin. Body `status` and/or `table_id`. Moves: pending → confirmed, no_show or cancelled; confirmed → arrived, no_show or cancelled. Giving a table to a pending reservation confirms it. The table must exist and seat `pax` (422), and must not hold another active booking at that time (409). Arrived needs a table (409). Any other move, or a change to an arrived, no-show or cancelled reservation, gives 409. The table follows: assigned → `reserved` (if it was available), arrived → `occupied`, no_show or cancelled → `available` (if it was reserved). Screens 15, 16 |
-| GET | `/tables` | Staff, admin. Filter `status`. `{ "data": [{ table_id, table_number, capacity, status, current_order, next_reservation }] }`. `current_order` is the newest order not yet served or not yet paid (`{ order_id, status, payment_status, total_amount, created_at }`), or null. `next_reservation` is today's first pending or confirmed booking for that table (`{ reservation_id, reference_code, full_name, reservation_time, status }`), or null. Screen 16 |
+| GET | `/tables` | Staff, admin. Filter `status`. `{ "data": [{ table_id, table_number, capacity, status, current_order, next_reservation }] }`. `current_order` is the newest order not yet served or not yet paid (`{ order_id, status, payment_status, total_amount, created_at }`), or null. `next_reservation` is today's first pending or confirmed booking for that table (`{ reservation_id, reference_code, full_name, reservation_time, status }`), or null. For admins each table also has `qr_token`; staff never see it. Screens 16, 23 |
 | PATCH | `/tables/{id}/status` | Staff, admin. Body `status`: `available`, `occupied` or `reserved`. Any change is allowed (for example, freeing a table after guests leave). Returns the same shape as `GET /tables`. Screen 16 |
+| POST | `/tables` | Admin. Body `table_number` (required, up to 10, unique) and `capacity` (whole number 1–50). The backend makes a 64-character `qr_token`; status starts `available`. 201 with the same shape as an admin's `GET /tables`. 422 with `errors`. Screen 23 |
+| PUT | `/tables/{id}` | Admin. Same body and checks; the `qr_token` stays the same. 409 if a pending or confirmed booking from today on has more guests than the new capacity; 404, 422. Screen 23 |
+| DELETE | `/tables/{id}` | Admin. `{ "data": { "message": "Deleted" } }`. 409 if the table has any orders or pending or confirmed bookings from today on; 404. Screen 23 |
+| PUT | `/reservations/{id}` | Admin. Body `reservation_date`, `reservation_time`, `pax`, and optional `table_id` (a number or `null`) and `special_request` (kept if left out). Only pending or confirmed bookings (409 otherwise). Same checks as booking: an open slot today or later (409 if full), `pax` within `max_pax` and the biggest table, and the table must exist, seat `pax` (422) and be free at that time (409). Moving tables frees the old one and reserves the new one. Status changes still go through `PATCH /reservations/{id}/status`. Screen 24 |
+| PUT | `/settings` | Admin. Any of `slot_minutes` (15–240), `max_pax` (1–100), `deposit_required` (true or false) and `deposit_per_guest` (0 or more). Returns the settings. 422 with `errors`. Other settings fields are saved later with screen 29. Screen 24 |
 | POST | `/orders` | Body `table_id`, `qr_token`, `customer_name` (optional, up to 60), `items`: 1 to 50 of `{ item_id, quantity (1–99), notes (optional, up to 255) }`. The server sets `unit_price` from the menu and works out `total_amount` = subtotal plus `service_charge_percent` from settings; prices sent by the browser are ignored. 201 `{ "data": Order }` with status `received` and `payment_status` `unpaid`, whether the customer picked Pay Now or Pay at the Counter. 403 if `qr_token` doesn't match the table, 422 with `errors` for bad input or an unknown or unavailable item, 429 after 10 orders a minute. Screen 11 |
 | GET | `/orders/{id}?qr_token=` | `{ "data": Order }`, or 404 if the order doesn't exist or `qr_token` isn't that order's table. 60 a minute. Screen 12 |
 | GET | `/orders` | Staff, kitchen, admin. Filters: `table_id`, `status` (comma list, e.g. `received,preparing,ready` for the kitchen), `payment_status`, `date_from`, `date_to` (YYYY-MM-DD). `{ "data": Order[] }`, newest first, with items. 422 for a bad filter. Screens 17, 18 |
@@ -136,7 +141,7 @@ Login: save `access_token` with `setToken()` from `src/lib/api.ts`, which then s
 
 Reservations from these routes also carry `customer: { full_name, mobile_number }`, `table_number` (or null) and `deposit_status` (`paid` or `unpaid`). Public routes mask the mobile as `09XX XXX 4567`; staff routes show it in full. Cancelling also frees the table if it was reserved. Find, cancel and reschedule allow 20 tries a minute (then 429). `day_of_week` 0 is Sunday. Times are Asia/Manila.
 
-QR ordering: each table's QR code opens `/table/{table_id}?t={qr_token}`. Keep `t` for the visit (for example in `sessionStorage`) and send it as `qr_token`. Orders from these routes also carry `table_number`, `subtotal`, `service_charge` and `items`, and each item has the menu item's `name`.
+QR ordering: each table's QR code opens `/table/{table_id}?t={qr_token}`. Screen 23 builds it from the site's own address and the admin `GET /tables` token with `qrcode.react`. Keep `t` for the visit (for example in `sessionStorage`) and send it as `qr_token`. Orders from these routes also carry `table_number`, `subtotal`, `service_charge` and `items`, and each item has the menu item's `name`. Booking times come in steps of `slot_minutes`; a booking's `deposit_amount` is `pax` × `deposit_per_guest` when `deposit_required` is true, otherwise 0.
 
 Field names and types match `frontend/src/types/db.ts`: `price` is a number, `is_available`, `is_recommended` and `is_open` are true or false. Errors look like `{ "error": "Menu item not found", "status": 404 }`.
 
@@ -148,11 +153,7 @@ Who: **public** needs no login. **staff**, **kitchen** and **admin** need the lo
 
 | Method | URL | Who | Screens | Does |
 |---|---|---|---|---|
-| POST | `/tables` | admin | 23 | Add a table. The backend makes the `qr_token` |
-| PUT | `/tables/{id}` | admin | 23 | Edit a table |
-| DELETE | `/tables/{id}` | admin | 23 | Delete a table |
 | POST | `/reservations/code/{code}/deposit` | public | 04 | Start the online deposit payment. Returns the payment page URL |
-| PUT | `/reservations/{id}` | admin | 24 | Edit a reservation, incl. `table_id` |
 | POST | `/orders/{id}/pay` | public | 11 | Start the online payment for an order. Returns the payment page URL |
 | GET | `/payments` | admin | 26 | Payments. Filters: `method`, `status`, date range |
 | GET | `/payments/{id}` | admin | 26 | One payment |
@@ -161,7 +162,7 @@ Who: **public** needs no login. **staff**, **kitchen** and **admin** need the lo
 | POST | `/users` | admin | 28 | Add a staff account |
 | PUT | `/users/{id}` | admin | 28 | Edit a staff account |
 | DELETE | `/users/{id}` | admin | 28 | Delete a staff account |
-| PUT | `/settings` | admin | 29 | Save restaurant information |
+| PUT | `/settings` | admin | 29 | Save restaurant information (name, address, contact, Facebook, service charge). The reservation fields already work |
 | POST | `/settings/logo` | admin | 29 | Upload the logo, sets `logo_url` |
 | PUT | `/opening-hours` | admin | 29 | Save all 7 days |
 | GET | `/reports` | admin | 27 | Totals and charts. Query: `period` (`daily`, `weekly`, `monthly`), `from`, `to` |
