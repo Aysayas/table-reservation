@@ -24,6 +24,7 @@ export const sampleMenuItems: MenuItem[] = Array.from({ length: 9 }, (_, i) => (
   price: 0,
   image_url: null,
   is_available: i !== 8,
+  is_recommended: i !== 7,
 }))
 
 export const sampleTables: RestaurantTable[] = Array.from({ length: 8 }, (_, i) => ({
