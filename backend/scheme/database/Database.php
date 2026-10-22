@@ -271,6 +271,9 @@ class Database {
         try {
             $this->db = new PDO($dsn, $username, $password, $options);
             $this->driver = $this->db->getAttribute(PDO::ATTR_DRIVER_NAME);
+            if ($this->driver === 'mysql') {
+                $this->db->exec("SET time_zone = '" . date('P') . "'");
+            }
         } catch (Exception $e) {
             $error = load_class('Errors', 'kernel');
             $error->show_database_error(
