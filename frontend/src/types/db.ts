@@ -111,6 +111,7 @@ export type RestaurantSettings = {
   facebook_url: string | null
   logo_url: string | null
   deposit_per_guest: number
+  service_charge_percent: number
   updated_at: string
 }
 
