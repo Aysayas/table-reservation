@@ -19,14 +19,16 @@ A table reservation and QR menu ordering system for a school project (Systems In
 
 - `frontend/` is **her job**: React + TypeScript + Vite + Tailwind CSS v4 + React Router.
 - `backend/` (LavaLust PHP + MySQL) is **the lead's job**. Don't change it. The "Backend progress" section of `docs/progress.md` shows which screens already have a working endpoint.
-- The design is fixed: **29 screens** in `docs/wireframes/` (one `.svg` per screen, plus `Wireframes.pdf`).
+- The design is fixed: **29 screens** in `docs/wireframes/` (one `.svg` and one `png/` image per screen, plus `Wireframes.pdf`). The Figma file is saved as `docs/design/Wireframes.fig`. You don't need Figma or a Figma connection; everything in it is in these files.
 
 Read these before building anything. They are the source of truth:
 
 | File | What it decides |
 |---|---|
 | `docs/screens-and-routes.md` | The 29 screens, their URLs and layouts |
-| `docs/wireframes/NN Name.svg` | What each screen looks like |
+| `docs/wireframes/png/NN Name.png` | What each screen looks like (open it as an image) |
+| `docs/wireframes/NN Name.svg` | Exact labels, sizes and positions (`<text>` and `<rect>` elements) |
+| `docs/design/navigation.md` | Where every button and link goes (from the Figma prototype) |
 | `docs/styling.md` | Theme colours, placeholder content, no code comments |
 | `docs/project-structure.md` | Where files go and how they are named |
 | `docs/packages.md` | The only libraries we use |
