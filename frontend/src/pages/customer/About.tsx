@@ -5,6 +5,7 @@ import { getOpeningHours, getSettings } from '@/services/settings'
 
 const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 const weekOrder = [1, 2, 3, 4, 5, 6, 0]
+const banner = 'bg-brand-green px-4 py-2 text-lg font-bold tracking-wide text-white uppercase'
 
 function formatTime(time: string) {
   const [hours, minutes] = time.split(':').map(Number)
@@ -34,28 +35,27 @@ export default function About() {
         >
           <ChevronLeft className="size-7" />
         </button>
-        <h1 className="text-brand-brown text-lg font-bold">About Us</h1>
+        <h1 className="text-brand-green text-lg font-bold">About Us</h1>
       </div>
 
-      <div
-        role="img"
-        aria-label="Restaurant photo"
-        className="h-50 border-b border-neutral-200 bg-neutral-100"
-      />
+      <div role="img" aria-label="Restaurant photo" className="h-50 bg-neutral-100" />
 
-      <div className="space-y-8 px-4 pt-6">
+      <div className="space-y-8">
         <section>
-          <h2 className="text-brand-brown text-xl font-bold">Our Story</h2>
-          <p className="mt-3 text-sm leading-relaxed">
-            {settings?.restaurant_name} is a garden restaurant with its own aquaponics farm. We
-            serve warm, home-style Filipino dishes made with fresh greens, best shared with family
-            and friends.
-          </p>
+          <h2 className={banner}>Our Story</h2>
+          <div className="px-4 pt-4">
+            <p className="font-display text-brand-green text-4xl">{settings?.restaurant_name}</p>
+            <p className="mt-2 text-sm leading-relaxed">
+              {settings?.restaurant_name} is a garden restaurant with its own aquaponics farm. We
+              serve warm, home-style Filipino dishes made with fresh greens, best shared with family
+              and friends.
+            </p>
+          </div>
         </section>
 
         <section>
-          <h2 className="text-brand-brown text-xl font-bold">Opening Hours</h2>
-          <ul className="mt-3">
+          <h2 className={banner}>Opening Hours</h2>
+          <ul className="bg-brand-cream divide-brand-sage/40 mx-4 mt-4 divide-y rounded-xl px-4">
             {weekOrder.map((day) => {
               const entry = hours.find((h) => h.day_of_week === day)
               const time =
@@ -63,11 +63,8 @@ export default function About() {
                   ? `${formatTime(entry.open_time)} – ${formatTime(entry.close_time)}`
                   : 'Closed'
               return (
-                <li
-                  key={day}
-                  className="border-brand-sage/40 flex justify-between border-b py-2 text-sm"
-                >
-                  <span>{dayNames[day]}</span>
+                <li key={day} className="flex justify-between py-2.5 text-sm">
+                  <span className="text-brand-brown font-semibold">{dayNames[day]}</span>
                   <span>{time}</span>
                 </li>
               )
@@ -76,18 +73,20 @@ export default function About() {
         </section>
 
         <section>
-          <h2 className="text-brand-brown text-xl font-bold">Location</h2>
-          <div
-            role="img"
-            aria-label="Map"
-            className="mt-3 h-45 rounded border border-neutral-200 bg-neutral-100"
-          />
-          <p className="mt-3 text-sm">{settings?.address}</p>
+          <h2 className={banner}>Location</h2>
+          <div className="px-4 pt-4">
+            <div
+              role="img"
+              aria-label="Map"
+              className="h-45 rounded-xl border border-neutral-200 bg-neutral-100"
+            />
+            <p className="mt-3 text-sm">{settings?.address}</p>
+          </div>
         </section>
 
         <section>
-          <h2 className="text-brand-brown text-xl font-bold">Contact</h2>
-          <dl className="mt-3 space-y-2 text-sm">
+          <h2 className={banner}>Contact</h2>
+          <dl className="space-y-2 px-4 pt-4 text-sm">
             {contacts.map((contact) => (
               <div key={contact.label} className="flex justify-between gap-4">
                 <dt className="text-brand-ink/70">{contact.label}</dt>
