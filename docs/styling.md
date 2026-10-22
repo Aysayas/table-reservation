@@ -43,14 +43,15 @@ The restaurant is **Vencio's Garden**. These are real, so use them:
 | Restaurant name | `Vencio's Garden` |
 | Logo | `/logo.png` (in `frontend/public/`) |
 | Menu categories, items, descriptions and prices | `sampleData.ts`, later the API |
+| The restaurant's address, phone, email and Facebook page | `sampleSettings` in `sampleData.ts`, later `GET /settings` |
 
 Everything else stays a placeholder:
 
 | Instead of | Write |
 |---|---|
-| Real people | Generic names, e.g. `Juan Dela Cruz`, `Customer Name` |
-| Real phone numbers | `09XX XXX XXXX` |
-| Real domain or email | `placeholder-domain.com` |
+| Real people (customers, staff) | Generic names, e.g. `Juan Dela Cruz`, `Customer Name` |
+| A person's phone number | `09XX XXX XXXX` |
+| A person's email or other domains | `placeholder-domain.com` |
 | Food photos | A plain placeholder box |
 
 ## Code comments

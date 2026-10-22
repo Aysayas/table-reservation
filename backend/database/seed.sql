@@ -150,7 +150,7 @@ INSERT INTO payments (payment_id, order_id, reservation_id, received_by, method,
     (1, 2, NULL, 2, 'cash', NULL, 250.00, 'paid', '2026-01-01 13:00:00');
 
 INSERT INTO restaurant_settings (setting_id, restaurant_name, address, contact_number, email, facebook_url, logo_url) VALUES
-    (1, 'Vencio''s Garden', 'Street, City, Province', '0000 000 0000', 'info@placeholder-domain.com', 'facebook.com/placeholder-page', NULL);
+    (1, 'Vencio''s Garden', '#08 Nautical Highway, Tawiran, Calapan City, Oriental Mindoro', '0918 957 2855', 'venciosgarden@yahoo.com', 'https://www.facebook.com/venciosgardenhotel', NULL);
 
 INSERT INTO opening_hours (day_of_week, open_time, close_time, is_open) VALUES
     (0, '10:00:00', '22:00:00', 1),
