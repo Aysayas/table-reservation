@@ -94,8 +94,8 @@ Updated 2026-10-22. Full endpoint details are in [api.md](api.md). Every screen 
 | 25 | Order History | ⬜ | `GET /orders` |
 | 26 | Payments | ⬜ | `GET /payments` |
 | 27 | Reports | ⬜ | `GET /reports` |
-| 28 | Staff Accounts | ⬜ | `/users` |
-| 29 | Settings | 🟨 | `GET /settings`, `/opening-hours` work; `PUT /settings` saves the reservation fields only |
+| 28 | Staff Accounts | ✅ | `GET`/`POST /users`, `PUT`/`DELETE /users/{id}` |
+| 29 | Settings | ✅ | `GET`/`PUT /settings`, `POST /settings/logo`, `GET`/`PUT /opening-hours` |
 
 Every staff, kitchen and admin route already checks the login token and role, so it answers 401 or 403 before 501.
 
