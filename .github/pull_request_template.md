@@ -14,4 +14,4 @@
 - [ ] `npm run lint`
 - [ ] `npm run test:e2e`
 - [ ] `docs/progress.md` updated
-- [ ] Black and white only, placeholder content only
+- [ ] Colours from the theme in `src/index.css`, placeholder content only

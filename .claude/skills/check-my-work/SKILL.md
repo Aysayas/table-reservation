@@ -22,7 +22,7 @@ Search `frontend/src/` and `frontend/e2e/` for:
 
 | Look for | Rule |
 |---|---|
-| Colour classes other than black, white, `neutral-*`, `gray-*` (e.g. `red-`, `blue-`, `green-`, `amber-`, hex colours, `rgb(`) | Black and white only |
+| Hard-coded colours instead of theme classes (hex values like `#1a2b3c`, `bg-[#...]`, `rgb(`) | Colours live in the theme in `src/index.css` |
 | `//` or `/* */` comments in `.tsx`/`.ts` files | No explanatory comments |
 | `@ts-ignore`, `@ts-expect-error`, `: any`, `as any`, `oxlint-disable`, `test.skip`, `.only(` | Don't hide errors or skip tests |
 | `key`, `secret`, `token`, `password` with a real-looking value | No secrets in the frontend |
@@ -37,7 +37,7 @@ Also check that `package.json` dependencies match `docs/packages.md`, and that t
 
 ```
 ✅ Format, build, lint, tests: all passing
-🟡 Screen 07 uses text-blue-600 in About.tsx line 12 (black and white only). Fix it?
+🟡 Screen 07 uses bg-[#1a2b3c] in About.tsx line 12 (use a theme colour from src/index.css). Fix it?
 🔴 A test is skipped in customer.spec.ts line 8. Let's fix the test instead.
 ```
 
