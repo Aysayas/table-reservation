@@ -156,19 +156,20 @@ goto menu
 
 :resetdb
 echo.
+call :foldercheck
 echo This permanently deletes ALL data in the local database.
-echo The database is rebuilt from database\schema.sql and database\seed.sql.
+echo The database is rebuilt from database\schema.sql and database\seed.sql in THIS folder.
 set "confirm="
 set /p "confirm=Type RESET to continue, anything else to cancel: "
 if /i not "%confirm%"=="RESET" (
-    echo Cancelled.
+    echo Cancelled - nothing was deleted. ^(Type exactly RESET to reset.^)
     goto menu
 )
+echo Deleting the database and rebuilding it from schema.sql and seed.sql...
 docker compose down -v
 docker compose up -d
-echo Waiting for MySQL to load the schema and seed...
-timeout /t 25 >nul
-call :check "GET" "/health/db" "200"
+echo Waiting for MySQL to load the schema and seed, up to 2 minutes...
+call :waitseed
 goto menu
 
 :stop
@@ -185,6 +186,47 @@ if "%~3"=="live" (
     exit /b 0
 )
 if "%code%"=="%~3" (echo   OK    %code%  %~1 %~2) else (echo   FAIL  %code%  %~1 %~2   expected %~3)
+exit /b 0
+
+:foldercheck
+REM Warn when this folder is not an up-to-date main, because the reset loads its .sql files
+where git >nul 2>&1 || exit /b 0
+git -C .. fetch -q origin main >nul 2>&1
+set "branch="
+set "behind=0"
+for /f %%b in ('git -C .. rev-parse --abbrev-ref HEAD 2^>nul') do set "branch=%%b"
+for /f %%n in ('git -C .. rev-list --count HEAD..origin/main 2^>nul') do set "behind=%%n"
+if /i "%branch%"=="main" if "%behind%"=="0" exit /b 0
+echo.
+echo WARNING: this folder is on "%branch%", %behind% commit^(s^) behind main.
+echo The reset loads the seed from THIS folder, so it may load an old menu or schema.
+echo Run "git switch main" and "git pull" first, or type RESET to reset anyway.
+echo.
+exit /b 0
+
+:waitseed
+REM Wait until the API reaches the database and the seed is loaded, then show proof
+set /a "tries=0"
+:waitseedloop
+timeout /t 3 >nul
+set /a "tries+=1"
+set "code=000"
+set "cats=0"
+for /f %%c in ('curl -s -o nul -w "%%{http_code}" "http://localhost:8000/api/health/db"') do set "code=%%c"
+for /f %%c in ('docker compose exec -T mysql mysql -uroot -proot table_reservation_db -N -e "SELECT COUNT(*) FROM categories" 2^>nul') do set "cats=%%c"
+if "%code%"=="200" if not "%cats%"=="0" goto waitseeddone
+if %tries% lss 40 goto waitseedloop
+echo FAILED: the database did not come back within 2 minutes. Check option 4 ^(Logs^).
+exit /b 0
+:waitseeddone
+set "created="
+set "counts="
+for /f "delims=" %%t in ('docker compose exec -T mysql mysql -uroot -proot table_reservation_db -N -e "SELECT MIN(create_time) FROM information_schema.tables WHERE table_schema = DATABASE()" 2^>nul') do set "created=%%t"
+for /f "tokens=1-3" %%a in ('docker compose exec -T mysql mysql -uroot -proot table_reservation_db -N -e "SELECT (SELECT COUNT(*) FROM categories), (SELECT COUNT(*) FROM menu_items), (SELECT COUNT(*) FROM users)" 2^>nul') do set "counts=%%a categories, %%b menu items, %%c users"
+echo.
+echo Database rebuilt at %created% ^(MySQL clock, UTC^).
+echo Loaded: %counts%
+call :check "GET" "/health/db" "200"
 exit /b 0
 
 :jwtkeys
