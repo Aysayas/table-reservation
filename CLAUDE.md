@@ -31,6 +31,7 @@ Read these before building anything. They are the source of truth:
 | `docs/wireframes/png/NN Name.png` | What each screen looks like (open it as an image) |
 | `docs/wireframes/NN Name.svg` | Exact labels, sizes and positions (`<text>` and `<rect>` elements) |
 | `docs/design/navigation.md` | Where every button and link goes (from the Figma prototype) |
+| `docs/design/brand.md` | Brand colours, fonts, logo use and personality (from the restaurant's menu) |
 | `docs/styling.md` | Theme colours, placeholder content, no code comments |
 | `docs/project-structure.md` | Where files go and how they are named |
 | `docs/packages.md` | The only libraries we use |

@@ -8,6 +8,7 @@
 - Magtanong ng "bakit?" kahit kailan
 - I-run ang `/check-my-work` bago mo sabihin sa team na tapos ka na
 - Sabihan ang team kung anong screen yung ginagawa mo
+- Gamitin yung brand colors at fonts sa `docs/design/brand.md` (`bg-brand-green`, `text-brand-brown`). Huwag mag-imbento ng bagong kulay
 
 ❌ **Huwag**
 - Gamitin yung totoong pangalan ng tao, phone number, email o food pictures. Gamitin yung `Juan Dela Cruz`, `09XX XXX XXXX`, `placeholder-domain.com`, at gray boxes. (Okay lang yung totoong pangalan ng restaurant, logo, menu at presyo: nasa `sampleData.ts` na sila)

@@ -16,11 +16,16 @@ We style with [Tailwind CSS v4](https://tailwindcss.com/docs) utility classes wr
 
 ## Colours
 
-The frontend developer chooses the colours. The wireframes show layout, not colour.
+The colours come from Vencio's Garden's menu. They are already theme tokens in `src/index.css`, and [the brand guide](design/brand.md) says what each one is for. The wireframes show layout, not colour.
 
-- Define every colour once as a theme token in `src/index.css`, inside `@theme` (for example `--color-primary`). Tailwind then makes classes like `bg-primary` and `text-primary`.
-- Use those theme classes on screens. Don't hard-code hex values (`#1a2b3c`, `bg-[#1a2b3c]`) in components.
-- Keep text readable: enough contrast between text and its background.
+- Use the brand classes: `bg-brand-green`, `text-brand-brown`, `bg-brand-cream`, and so on.
+- Shades of them are fine (for example `hover:bg-brand-green/90`). Don't add new colours.
+- Don't hard-code hex values (`#1a2b3c`, `bg-[#1a2b3c]`) in components.
+- Keep text readable. The brand guide lists which text and background pairs are safe.
+
+## Fonts
+
+Montserrat is the default font (`font-sans`) for everything. Dancing Script (`font-display`) is only for one big title at a time, like the restaurant name or a section banner. Both are already loaded in `src/index.css`.
 
 ## Screen sizes
 
