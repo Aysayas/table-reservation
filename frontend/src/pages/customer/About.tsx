@@ -90,7 +90,7 @@ export default function About() {
             {contacts.map((contact) => (
               <div key={contact.label} className="flex justify-between gap-4">
                 <dt className="text-brand-ink/70">{contact.label}</dt>
-                <dd className="text-right">{contact.value}</dd>
+                <dd className="text-right break-all">{contact.value}</dd>
               </div>
             ))}
           </dl>
