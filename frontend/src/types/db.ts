@@ -65,6 +65,7 @@ export type Order = {
   order_id: number
   table_id: number
   customer_id: number | null
+  customer_name: string | null
   status: OrderStatus
   total_amount: number
   payment_status: OrderPaymentStatus

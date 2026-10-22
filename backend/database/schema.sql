@@ -79,6 +79,7 @@ CREATE TABLE IF NOT EXISTS orders (
     order_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     table_id INT UNSIGNED NOT NULL,
     customer_id INT UNSIGNED NULL,
+    customer_name VARCHAR(60) NULL,
     status ENUM('received', 'preparing', 'ready', 'served') NOT NULL DEFAULT 'received',
     total_amount DECIMAL(10,2) NOT NULL DEFAULT 0.00,
     payment_status ENUM('unpaid', 'paid') NOT NULL DEFAULT 'unpaid',
