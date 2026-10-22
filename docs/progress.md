@@ -80,7 +80,7 @@ Updated 2026-10-22. Full endpoint details are in [api.md](api.md). Every screen 
 | 11 | Checkout | 🟨 | `POST /orders` works; `/orders/{id}/pay` waits for the payment gateway |
 | 12 | Order Status | ✅ | `GET /orders/{id}` |
 | 13 | Staff Login | ✅ | `POST /auth/login`, `/auth/refresh`, `/auth/logout`, `GET /auth/me` |
-| 14 | Staff Dashboard | ⬜ | `GET /dashboard/staff` |
+| 14 | Staff Dashboard | ✅ | `GET /dashboard/staff` |
 | 15 | Today's Reservations | ✅ | `GET /reservations`, `PATCH /reservations/{id}/status` |
 | 16 | Table Status | ✅ | `GET /tables`, `PATCH /tables/{id}/status` |
 | 17 | Orders and Payments | ✅ | `GET /orders`, `PATCH /orders/{id}/status`, `POST /payments` |
