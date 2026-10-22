@@ -54,6 +54,7 @@ class Api
      * @var string
      */
     protected $refresh_token_table;
+    protected $users_table = 'users';
 
     /**
      * Api Payload Token Expiration
@@ -493,6 +494,10 @@ class Api
     {
         $payload = $this->require_jwt();
 
+        if (!$this->user_is_active($payload['sub'] ?? null)) {
+            $this->respond_error('Unauthorized', 401);
+        }
+
         if (!in_array($payload['role'] ?? '', $roles, true)) {
             $this->respond_error('Forbidden', 403);
         }
@@ -595,6 +600,40 @@ class Api
         $this->_lava->db->raw(
             "DELETE FROM {$this->refresh_token_table} WHERE token = ?",
             [$hashed]
+        );
+    }
+
+    /**
+     * user_is_active
+     *
+     * @param mixed $user_id
+     * @return boolean
+     */
+    public function user_is_active($user_id)
+    {
+        if (!isset($this->_lava->db)) {
+            $this->_lava->call->database();
+        }
+
+        $row = $this->_lava->db->raw(
+            "SELECT is_active FROM {$this->users_table} WHERE user_id = ? LIMIT 1",
+            [$user_id]
+        )->fetch(PDO::FETCH_ASSOC);
+
+        return $row && (int) $row['is_active'] === 1;
+    }
+
+    /**
+     * revoke_user_refresh_tokens
+     *
+     * @param integer $user_id
+     * @return void
+     */
+    public function revoke_user_refresh_tokens($user_id)
+    {
+        $this->_lava->db->raw(
+            "DELETE FROM {$this->refresh_token_table} WHERE user_id = ?",
+            [$user_id]
         );
     }
 
