@@ -46,6 +46,7 @@ class Menu extends Controller {
 	{
 		$item['price'] = (float) $item['price'];
 		$item['is_available'] = (bool) $item['is_available'];
+		$item['is_recommended'] = (bool) $item['is_recommended'];
 		return $item;
 	}
 

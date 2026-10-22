@@ -71,6 +71,7 @@ CREATE TABLE IF NOT EXISTS menu_items (
     price DECIMAL(10,2) NOT NULL,
     image_url VARCHAR(255) NULL,
     is_available TINYINT(1) NOT NULL DEFAULT 1,
+    is_recommended TINYINT(1) NOT NULL DEFAULT 1,
     KEY menu_items_category_idx (category_id),
     CONSTRAINT menu_items_category_fk FOREIGN KEY (category_id) REFERENCES categories (category_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
