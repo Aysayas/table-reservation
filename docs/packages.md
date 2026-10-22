@@ -21,6 +21,15 @@ What each installed library is for. Check here before adding a new one, so we do
 
 React Query and the pop-up messages are already switched on in `src/main.tsx`, so every screen can use them.
 
+## Fonts
+
+| Package | Use it for | Docs |
+|---|---|---|
+| `@fontsource/montserrat` | The main font (`font-sans`), weights 400, 600 and 700 | [fontsource.org](https://fontsource.org/fonts/montserrat) |
+| `@fontsource/dancing-script` | The script title font (`font-display`), weight 700 | [fontsource.org](https://fontsource.org/fonts/dancing-script) |
+
+Both are imported once in `src/index.css`. See the [brand guide](design/brand.md) for when to use each.
+
 ## Developer tools
 
 | Package | Use it for |
