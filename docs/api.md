@@ -122,6 +122,7 @@ export async function getMenuItems() {
 | GET | `/orders` | Staff, kitchen, admin. Filters: `table_id`, `status` (comma list, e.g. `received,preparing,ready` for the kitchen), `payment_status`, `date_from`, `date_to` (YYYY-MM-DD). `{ "data": Order[] }`, newest first, with items. 422 for a bad filter. Screens 17, 18 |
 | PATCH | `/orders/{id}/status` | Staff, kitchen, admin. Body `status`, one step forward only: received → preparing → ready → served. Skipping, going back or changing a served order gives 409. Screens 17, 18 |
 | POST | `/payments` | Staff, admin. Records a cash payment. Body: exactly one of `order_id` or `reservation_id`, and `amount`, which must equal the order's `total_amount` or the reservation's `deposit_amount` (422 otherwise). 409 if already paid, if there's nothing to pay, or if the reservation is no-show or cancelled. 201 `{ "data": Payment }`; an order becomes `payment_status` `paid`. Cash Received and Change are worked out on the screen. Screen 17 |
+| GET | `/dashboard/staff` | Staff, admin. `{ "data": { reservations_today, guests_arrived, active_orders, available_tables, total_tables, upcoming_reservations, active_orders_list } }`. Today's pending, confirmed and arrived bookings are counted; `guests_arrived` adds up `pax` of arrived ones. `upcoming_reservations`: up to 7 pending or confirmed from now on, by time (`reservation_id, reference_code, reservation_time, full_name, pax, table_number, status`). `active_orders_list`: up to 7 orders not yet served, newest first (`order_id, table_number, item_count, total_amount, status`); `item_count` adds up quantities. Screen 14 |
 
 Login: save `access_token` with `setToken()` from `src/lib/api.ts`, which then sends it on every request. It lasts 15 minutes (`expires_in` is 900 seconds). When a request returns 401, call `/auth/refresh` with the `refresh_token`, which lasts 7 days. Routes for the wrong role return 403.
 
@@ -164,7 +165,6 @@ Who: **public** needs no login. **staff**, **kitchen** and **admin** need the lo
 | POST | `/settings/logo` | admin | 29 | Upload the logo, sets `logo_url` |
 | PUT | `/opening-hours` | admin | 29 | Save all 7 days |
 | GET | `/reports` | admin | 27 | Totals and charts. Query: `period` (`daily`, `weekly`, `monthly`), `from`, `to` |
-| GET | `/dashboard/staff` | staff | 14 | Counts for today and upcoming reservations |
 | GET | `/dashboard/admin` | admin | 19 | Sales today, best sellers, last 7 days, recent orders |
 
 Before wiring a screen, also confirm with whoever builds the backend:
