@@ -86,9 +86,9 @@ Updated 2026-10-22. Full endpoint details are in [api.md](api.md). Every screen 
 | 17 | Orders and Payments | ✅ | `GET /orders`, `PATCH /orders/{id}/status`, `POST /payments` |
 | 18 | Kitchen Display | ✅ | `GET /orders`, `PATCH /orders/{id}/status` |
 | 19 | Admin Dashboard | ⬜ | `GET /dashboard/admin` |
-| 20 | Menu Management | 🟨 | `GET /menu-items` works; edit, delete and availability don't yet |
-| 21 | Add Edit Menu Item | ⬜ | `POST`/`PUT /menu-items`, image upload |
-| 22 | Categories | 🟨 | `GET /categories` works; add, edit and delete don't yet |
+| 20 | Menu Management | ✅ | `GET /menu-items`, `PATCH /menu-items/{id}/availability`, `DELETE /menu-items/{id}` |
+| 21 | Add Edit Menu Item | ✅ | `POST`/`PUT /menu-items`, `POST /menu-items/{id}/image` |
+| 22 | Categories | ✅ | `GET`/`POST /categories`, `PUT`/`DELETE /categories/{id}` |
 | 23 | Tables and QR Codes | ⬜ | `/tables` add, edit, delete |
 | 24 | Reservations | ⬜ | `GET`/`PUT /reservations/{id}` |
 | 25 | Order History | ⬜ | `GET /orders` |

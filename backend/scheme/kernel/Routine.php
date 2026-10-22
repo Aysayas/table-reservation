@@ -212,6 +212,10 @@ if ( ! function_exists('_error_handler'))
 	 */
 	function _error_handler($severity, $errstr, $errfile, $errline)
 	{
+		if (!(error_reporting() & $severity)) {
+			return false;
+		}
+
 		// Map of PHP error levels
 		$error_levels = [
 			E_ERROR             => 'E_ERROR',
