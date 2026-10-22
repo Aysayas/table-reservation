@@ -111,10 +111,15 @@ export async function getMenuItems() {
 | POST | `/reservations/find` | Body `reference_code`, `mobile_number`. `{ "data": Reservation }`, or 404 if either doesn't match. Screen 06 |
 | POST | `/reservations/code/{code}/cancel` | Body `mobile_number`. Sets `cancelled`. 404 if the mobile doesn't match, 409 unless `pending` or `confirmed`. Screen 06 |
 | POST | `/reservations/code/{code}/reschedule` | Body `mobile_number`, `reservation_date`, `reservation_time`. Same checks as booking; clears `table_id`. 404, 409 or 422 as above. Screen 06 |
+| GET | `/tables/{id}` | `{ "data": { table_id, table_number, capacity, status } }`, or 404. Never returns `qr_token`. Screens 08–12 |
+| POST | `/orders` | Body `table_id`, `qr_token`, `customer_name` (optional, up to 60), `items`: 1 to 50 of `{ item_id, quantity (1–99), notes (optional, up to 255) }`. The server sets `unit_price` from the menu and works out `total_amount`; prices sent by the browser are ignored. 201 `{ "data": Order }` with status `received` and `payment_status` `unpaid`, whether the customer picked Pay Now or Pay at the Counter. 403 if `qr_token` doesn't match the table, 422 with `errors` for bad input or an unknown or unavailable item, 429 after 10 orders a minute. Screen 11 |
+| GET | `/orders/{id}?qr_token=` | `{ "data": Order }`, or 404 if the order doesn't exist or `qr_token` isn't that order's table. 60 a minute. Screen 12 |
 
 Login: save `access_token` with `setToken()` from `src/lib/api.ts`, which then sends it on every request. It lasts 15 minutes (`expires_in` is 900 seconds). When a request returns 401, call `/auth/refresh` with the `refresh_token`, which lasts 7 days. Routes for the wrong role return 403.
 
 Reservations from these routes also carry `customer: { full_name, mobile_number }` (mobile masked as `09XX XXX 4567`) and `table_number` (or null). Find, cancel and reschedule allow 20 tries a minute (then 429). `day_of_week` 0 is Sunday. Times are Asia/Manila.
+
+QR ordering: each table's QR code opens `/table/{table_id}?t={qr_token}`. Keep `t` for the visit (for example in `sessionStorage`) and send it as `qr_token`. Orders from these routes also carry `table_number` and `items`, and each item has the menu item's `name`.
 
 Field names and types match `frontend/src/types/db.ts`: `price` is a number, `is_available` and `is_open` are true or false. Errors look like `{ "error": "Menu item not found", "status": 404 }`.
 
@@ -135,7 +140,6 @@ Who: **public** needs no login. **staff**, **kitchen** and **admin** need the lo
 | POST | `/menu-items/{id}/image` | admin | 21 | Upload the photo, sets `image_url` |
 | DELETE | `/menu-items/{id}` | admin | 20 | Delete a menu item |
 | GET | `/tables` | staff | 14, 16, 23 | Tables with their current order or reservation. Filter: `status` |
-| GET | `/tables/{id}` | public | 08–12 | One table, for the QR ordering pages |
 | POST | `/tables` | admin | 23 | Add a table. The backend makes the `qr_token` |
 | PUT | `/tables/{id}` | admin | 23 | Edit a table |
 | PATCH | `/tables/{id}/status` | staff | 16 | Set `status` |
@@ -145,9 +149,7 @@ Who: **public** needs no login. **staff**, **kitchen** and **admin** need the lo
 | GET | `/reservations/{id}` | staff | 15, 24 | One reservation |
 | PUT | `/reservations/{id}` | admin | 24 | Edit a reservation, incl. `table_id` |
 | PATCH | `/reservations/{id}/status` | staff | 15, 16, 24 | Set `status` (e.g. Mark Arrived) |
-| POST | `/orders` | public | 11 | Place an order: `table_id`, `qr_token`, items (`item_id`, `quantity`, `notes`) |
 | GET | `/orders` | staff, kitchen | 12, 14, 17, 18, 25 | Orders with items. Filters: `table_id`, `status`, `payment_status`, date range |
-| GET | `/orders/{id}` | public | 12, 17 | One order with its items |
 | PATCH | `/orders/{id}/status` | kitchen, staff | 17, 18 | Set `status` |
 | POST | `/orders/{id}/pay` | public | 11 | Start the online payment for an order. Returns the payment page URL |
 | GET | `/payments` | admin | 26 | Payments. Filters: `method`, `status`, date range |

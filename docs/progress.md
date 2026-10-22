@@ -74,11 +74,11 @@ Updated 2026-10-22. Full endpoint details are in [api.md](api.md). Every screen 
 | 05 | Reservation Confirmation | ✅ | `GET /reservations/code/{code}` |
 | 06 | Find Reservation | ✅ | `POST /reservations/find`, `/cancel`, `/reschedule` |
 | 07 | About Us | ✅ | `GET /settings`, `/opening-hours` |
-| 08 | Table Menu | 🟨 | `GET /menu-items` works; `GET /tables/{id}` not yet |
+| 08 | Table Menu | ✅ | `GET /menu-items`, `GET /tables/{id}` |
 | 09 | Item Details | ✅ | `GET /menu-items/{id}` |
 | 10 | Cart | ✅ | No API needed. The cart stays in the browser |
-| 11 | Checkout | ⬜ | `POST /orders`, `/orders/{id}/pay` |
-| 12 | Order Status | ⬜ | `GET /orders/{id}` |
+| 11 | Checkout | 🟨 | `POST /orders` works; `/orders/{id}/pay` waits for the payment gateway |
+| 12 | Order Status | ✅ | `GET /orders/{id}` |
 | 13 | Staff Login | ✅ | `POST /auth/login`, `/auth/refresh`, `/auth/logout`, `GET /auth/me` |
 | 14 | Staff Dashboard | ⬜ | `GET /dashboard/staff` |
 | 15 | Today's Reservations | ⬜ | `GET /reservations`, `PATCH /reservations/{id}/status` |
