@@ -29,7 +29,7 @@ Start with simple screens to learn, then the forms, then the bigger flows:
 | 04 | Deposit Payment | ⬜ | |
 | 05 | Reservation Confirmation | ⬜ | |
 | 06 | Find Reservation | ⬜ | |
-| 07 | About Us | ⬜ | |
+| 07 | About Us | 🟨 | |
 | 08 | Table Menu | ⬜ | |
 | 09 | Item Details | ⬜ | |
 | 10 | Cart | ⬜ | |
