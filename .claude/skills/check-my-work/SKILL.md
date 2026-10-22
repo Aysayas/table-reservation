@@ -28,7 +28,7 @@ Search `frontend/src/` and `frontend/e2e/` for:
 | `key`, `secret`, `token`, `password` with a real-looking value | No secrets in the frontend |
 | New `.css` files other than `index.css` | Tailwind classes only |
 | Imports from packages not in `docs/packages.md` | Agreed packages only |
-| Real names, prices other than `₱000.00`, real domains | Placeholder content only |
+| Real people's names, phone numbers, emails or domains, or food photos | Only the restaurant's name, logo, menu and prices are real |
 | `path:` values in `router.tsx` that differ from `docs/screens-and-routes.md` | URLs are fixed |
 
 Also check that `package.json` dependencies match `docs/packages.md`, and that the screens marked 🟦 in `docs/progress.md` still match their wireframes in `docs/wireframes/`.

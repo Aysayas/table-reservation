@@ -29,7 +29,7 @@ Mark the screen 🟨 in `docs/progress.md`.
 ## 3. Build
 
 - Page file in `frontend/src/pages/<area>/`. Pieces used on other screens go in `frontend/src/components/`.
-- Data only through `frontend/src/services/`, which return `sampleData.ts` records until the lead says the API is live. Placeholder content only (`Restaurant Name`, `₱000.00`, `placeholder-domain.com`).
+- Data only through `frontend/src/services/`, which return `sampleData.ts` records until the lead says the API is live. The restaurant's name (`Vencio's Garden`), logo (`/logo.png`), menu and prices are real; people, contacts and photos stay placeholders (`Juan Dela Cruz`, `09XX XXX XXXX`, `placeholder-domain.com`, grey boxes).
 - Swap the `Placeholder` for the page in `frontend/src/router.tsx`. Don't change any `path`.
 - Follow every rule in `CLAUDE.md`, including the drift check.
 

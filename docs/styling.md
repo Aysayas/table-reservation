@@ -29,16 +29,23 @@ The frontend developer chooses the colours. The wireframes show layout, not colo
 | Customer and QR ordering (01-12) | 390px wide | `CustomerLayout` already limits the width |
 | Staff, kitchen and admin (13-29) | 1440 × 900 | Sidebar is 240px wide |
 
-## Placeholder content
+## Real and placeholder content
 
-The organisation is a placeholder. On every screen use:
+The restaurant is **Vencio's Garden**. These are real, so use them:
+
+| What | Where |
+|---|---|
+| Restaurant name | `Vencio's Garden` |
+| Logo | `/logo.png` (in `frontend/public/`) |
+| Menu categories, items, descriptions and prices | `sampleData.ts`, later the API |
+
+Everything else stays a placeholder:
 
 | Instead of | Write |
 |---|---|
-| The real restaurant name | `Restaurant Name` |
+| Real people | Generic names, e.g. `Juan Dela Cruz`, `Customer Name` |
+| Real phone numbers | `09XX XXX XXXX` |
 | Real domain or email | `placeholder-domain.com` |
-| Prices and amounts | `₱000.00` |
-| Real people | Generic names, e.g. `Customer Name` |
 | Food photos | A plain placeholder box |
 
 ## Code comments

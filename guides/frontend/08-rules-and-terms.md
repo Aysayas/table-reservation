@@ -10,7 +10,7 @@
 - Sabihan ang team kung anong screen yung ginagawa mo
 
 ❌ **Huwag**
-- Gamitin yung totoong pangalan ng restaurant, totoong presyo o totoong pictures. Gamitin yung `Restaurant Name`, `₱000.00`, at gray boxes
+- Gamitin yung totoong pangalan ng tao, phone number, email o food pictures. Gamitin yung `Juan Dela Cruz`, `09XX XXX XXXX`, `placeholder-domain.com`, at gray boxes. (Okay lang yung totoong pangalan ng restaurant, logo, menu at presyo: nasa `sampleData.ts` na sila)
 - Magdagdag ng pages o features na wala sa wireframes
 - Galawin yung backend o settings files
 - Mag-paste ng passwords o secret keys sa chat o sa code

@@ -77,8 +77,8 @@ test('reserve a table goes to the deposit page', async ({ page }) => {
 
 - One `test()` per behaviour, named in plain words.
 - Find things with `getByRole`, `getByLabel`, `getByText`. Never CSS classes or `nth-child`.
-- Expected data comes from `frontend/src/services/sampleData.ts`: `Menu Item 1`, `T1`, `RSV-000001`, `Customer Name`, `09000000000`, `admin@placeholder-domain.com`. Import from `@/services/sampleData` instead of copying values when the list is long.
-- Typed values are placeholders too: `Customer Name`, `09000000000`, `customer@placeholder-domain.com`, `₱000.00`.
+- Expected data comes from `frontend/src/services/sampleData.ts`: `Hungarian Sausage with Bread and Egg` (item 1, ₱285.00), `Breakfast Corner`, `T1`, `RSV-000001`, `Customer Name`, `09000000000`, `admin@placeholder-domain.com`. Import from `@/services/sampleData` instead of copying values when the list is long.
+- Typed values are placeholders too: `Customer Name`, `09000000000`, `customer@placeholder-domain.com`.
 - Actions that need the backend pretend to succeed, so check the next screen opens. Don't call real endpoints; use `page.route` only for endpoints listed in `docs/api.md`.
 - No comments, no `test.skip`, no `.only`, no `waitForTimeout`.
 
