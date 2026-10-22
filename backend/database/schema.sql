@@ -140,8 +140,13 @@ CREATE TABLE IF NOT EXISTS restaurant_settings (
     logo_url VARCHAR(255) NULL,
     deposit_per_guest DECIMAL(10,2) NOT NULL DEFAULT 0.00,
     service_charge_percent DECIMAL(5,2) NOT NULL DEFAULT 0.00,
+    slot_minutes SMALLINT UNSIGNED NOT NULL DEFAULT 60,
+    max_pax TINYINT UNSIGNED NOT NULL DEFAULT 10,
+    deposit_required TINYINT(1) NOT NULL DEFAULT 1,
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    CONSTRAINT restaurant_settings_service_charge_chk CHECK (service_charge_percent BETWEEN 0 AND 100)
+    CONSTRAINT restaurant_settings_service_charge_chk CHECK (service_charge_percent BETWEEN 0 AND 100),
+    CONSTRAINT restaurant_settings_slot_chk CHECK (slot_minutes BETWEEN 15 AND 240),
+    CONSTRAINT restaurant_settings_max_pax_chk CHECK (max_pax >= 1)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS opening_hours (

@@ -113,6 +113,9 @@ export type RestaurantSettings = {
   logo_url: string | null
   deposit_per_guest: number
   service_charge_percent: number
+  slot_minutes: number
+  max_pax: number
+  deposit_required: boolean
   updated_at: string
 }
 
