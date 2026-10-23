@@ -21,20 +21,28 @@ Words on screens:
 
 ## Colours
 
-These are already theme tokens in `frontend/src/index.css`, so every one has Tailwind classes (`bg-brand-green`, `text-brand-brown`, `border-brand-leaf`, …). The values were measured from the menu photos.
+These are theme tokens in `frontend/src/index.css`, so every one has Tailwind classes (`bg-brand-charcoal`, `text-brand-maroon`, …).
+
+**Current palette (since 2026-10-23): charcoal, gold, cream and maroon.** An elegant, dark-and-warm look for evening dining. Maroon comes from the restaurant's menu.
 
 | Token | Hex | Use it for |
 |---|---|---|
-| `brand-green` | `#385D05` | Section banners, header bars, main buttons, active sidebar item |
-| `brand-leaf` | `#678E24` | Logo ring colour, icons, accents, hover on green |
-| `brand-gold` | `#E0C326` | Badges ("Best seller"), highlights, the script title colour |
-| `brand-peach` | `#F0CB95` | Soft fills, chips, selected filters |
-| `brand-cream` | `#F9F3CC` | Cards and panels on the white page |
-| `brand-sage` | `#8EA287` | Dividers and decoration only |
-| `brand-brown` | `#6C422D` | Dish names, headings |
-| `brand-maroon` | `#5C161A` | Prices, strong labels |
-| `brand-ink` | `#3A4B2E` | Body text (the default on `body`) |
-| white | `#FFFFFF` | Page background, text on green or maroon |
+| `brand-charcoal` | `#1C1917` | Dark sections, header, main buttons, footer |
+| `brand-gold` | `#C5A059` | Accent buttons, small labels, lines and icons, only on charcoal or maroon |
+| `brand-cream` | `#F7F2E9` | Soft section backgrounds, cards and panels |
+| `brand-maroon` | `#5C161A` | Headings, prices, strong labels, accent |
+| `brand-ink` | `#2B2522` | Body text (the default on `body`) |
+| white | `#FFFFFF` | Page background, text on charcoal or maroon |
+
+**Old palette, being phased out.** Screens 05 and 07 still use these. Remove each token once no screen uses it.
+
+| Token | Hex |
+|---|---|
+| `brand-green` | `#385D05` |
+| `brand-leaf` | `#678E24` |
+| `brand-peach` | `#F0CB95` |
+| `brand-sage` | `#8EA287` |
+| `brand-brown` | `#6C422D` |
 
 Shades of these (for example `bg-brand-green/90` for hover) are fine. New or replacement colours are fine too: add them as tokens in `index.css` and list them here. Don't write hex values in components.
 
@@ -44,16 +52,13 @@ Checked with the WCAG contrast formula. 4.5:1 or more is fine for any text; 3:1 
 
 | Text | On | Contrast | OK for |
 |---|---|---|---|
-| `brand-ink` | white / cream / peach | 9.4 / 8.4 / 6.2 | Any text |
-| `brand-brown` | white / cream / peach | 8.6 / 7.6 / 5.6 | Any text |
-| `brand-maroon` | white / cream | 13.3 / 11.8 | Any text |
-| `brand-green` | white / cream | 7.7 / 6.8 | Any text |
-| white | `brand-green` / `brand-maroon` | 7.7 / 13.3 | Any text |
-| `brand-ink` | `brand-gold` | 5.4 | Any text (badges) |
-| white | `brand-leaf` | 3.8 | Large or bold text only |
-| `brand-gold` | `brand-green` | 4.4 | Large or bold text only |
-| `brand-gold` | white | 1.8 | Never |
-| any text | `brand-sage` | below 3.5 | Never |
+| `brand-ink` | white / cream | 15.1 / 13.5 | Any text |
+| `brand-maroon` | white / cream | 13.3 / 11.9 | Any text |
+| white / cream | `brand-charcoal` | 17.5 / 15.7 | Any text |
+| white | `brand-maroon` | 13.3 | Any text |
+| `brand-gold` | `brand-charcoal` | 7.1 | Any text |
+| `brand-charcoal` | `brand-gold` | 7.1 | Any text (gold buttons) |
+| `brand-gold` | white / cream | 2.5 / 2.2 | Never |
 
 ## Fonts
 
@@ -103,7 +108,7 @@ Suggested sizes:
 | Do | Don't |
 |---|---|
 | Use the `brand-*` classes | Write hex values or `bg-[#...]` in components |
-| Keep text in ink, brown, maroon or green | Put gold text on white, or any text on sage |
+| Keep text in ink or maroon on light backgrounds; white, cream or gold on charcoal | Put gold text on white or cream |
 | Use Dancing Script for one big title at a time | Use Dancing Script for paragraphs or buttons |
 | Leave white space around the logo | Squash, recolour or crop the logo |
 

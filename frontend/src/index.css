@@ -5,15 +5,16 @@
 @import '@fontsource/dancing-script/700.css';
 
 @theme {
+  --color-brand-charcoal: #1c1917;
+  --color-brand-gold: #c5a059;
+  --color-brand-cream: #f7f2e9;
+  --color-brand-maroon: #5c161a;
+  --color-brand-ink: #2b2522;
   --color-brand-green: #385d05;
   --color-brand-leaf: #678e24;
-  --color-brand-gold: #e0c326;
   --color-brand-peach: #f0cb95;
-  --color-brand-cream: #f9f3cc;
   --color-brand-sage: #8ea287;
   --color-brand-brown: #6c422d;
-  --color-brand-maroon: #5c161a;
-  --color-brand-ink: #3a4b2e;
 
   --font-sans: 'Montserrat', ui-sans-serif, system-ui, sans-serif;
   --font-display: 'Dancing Script', cursive;
