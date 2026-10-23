@@ -29,6 +29,8 @@ These are theme tokens in `frontend/src/index.css`, so every one has Tailwind cl
 |---|---|---|
 | `brand-charcoal` | `#1C1917` | Dark sections, header, footer |
 | `brand-red` | `#B3121B` | Main buttons ("Reserve"), accents, with white text |
+| `brand-line` | `#D8C6A3` | Thin 1px borders on cream (map, cards, hours list, photo frame) |
+| `brand-red-light` | `#EF5B5B` | Red text on charcoal (for example "served with heart." on Home); `brand-red` is too dark there |
 | `brand-gold` | `#C5A059` | Lines, icons and text on charcoal; never text on white or cream |
 | `brand-gold-deep` | `#8A6A2B` | Gold text on white or cream: small labels, the script name, highlights |
 | `brand-cream` | `#F7F2E9` | Page background on screen 07 (About Us), soft panels |
@@ -58,6 +60,8 @@ Checked with the WCAG contrast formula. 4.5:1 or more is fine for any text; 3:1 
 | `brand-gold-deep` | white / cream | 5.0 / 4.5 | Any text |
 | white / cream | `brand-charcoal` | 17.5 / 15.7 | Any text |
 | white | `brand-red` | 7.0 | Any text |
+| `brand-red-light` | `brand-charcoal` | 5.3 | Any text |
+| `brand-red` | `brand-charcoal` | 2.5 | Never as text |
 | `brand-gold` | `brand-red` | 2.8 | Decoration only, not text |
 | `brand-gold` | `brand-charcoal` | 7.1 | Any text |
 | `brand-charcoal` | `brand-gold` | 7.1 | Any text (gold buttons) |

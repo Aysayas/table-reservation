@@ -3,6 +3,7 @@ import CustomerLayout from '@/layouts/CustomerLayout'
 import DashboardLayout, { type NavItem } from '@/layouts/DashboardLayout'
 import Placeholder from '@/pages/Placeholder'
 import About from '@/pages/customer/About'
+import Home from '@/pages/customer/Home'
 import ReservationConfirmation from '@/pages/customer/ReservationConfirmation'
 import StaffLogin from '@/pages/staff/StaffLogin'
 
@@ -30,7 +31,7 @@ export const router = createBrowserRouter([
   {
     element: <CustomerLayout />,
     children: [
-      { path: '/', element: <Placeholder screen="01" title="Home" /> },
+      { path: '/', element: <Home /> },
       { path: '/menu', element: <Placeholder screen="02" title="Menu" /> },
       { path: '/reserve', element: <Placeholder screen="03" title="Reserve a Table" /> },
       { path: '/reserve/payment', element: <Placeholder screen="04" title="Deposit Payment" /> },

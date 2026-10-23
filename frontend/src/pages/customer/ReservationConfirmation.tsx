@@ -3,6 +3,7 @@ import { addHours, format, parseISO } from 'date-fns'
 import { CalendarDays, Check, Copy, MapPin } from 'lucide-react'
 import { Link, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
+import { directionsUrl } from '@/lib/maps'
 import { getReservationByCode } from '@/services/reservations'
 import { getSettings } from '@/services/settings'
 
@@ -55,7 +56,6 @@ export default function ReservationConfirmation() {
   }
 
   const start = parseISO(`${reservation.reservation_date}T${reservation.reservation_time}`)
-  const placeName = `${settings?.restaurant_name ?? ''} Hotel and Restaurant`
 
   const downloadCalendar = () => {
     const ics = [
@@ -178,7 +178,7 @@ export default function ReservationConfirmation() {
                 Calendar
               </button>
               <a
-                href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(placeName)}`}
+                href={directionsUrl(settings?.restaurant_name)}
                 target="_blank"
                 rel="noreferrer"
                 className={actionCard}
