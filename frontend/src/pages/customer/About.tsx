@@ -7,7 +7,8 @@ import { getOpeningHours, getSettings } from '@/services/settings'
 const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 const weekOrder = [1, 2, 3, 4, 5, 6, 0]
 const eyebrow = 'text-brand-red text-xs font-bold tracking-[0.25em] uppercase'
-const title = 'text-brand-charcoal mt-3 font-serif text-4xl leading-tight'
+const title = 'text-brand-charcoal mt-3 font-serif text-4xl leading-tight md:text-5xl'
+const wrap = 'md:mx-auto md:max-w-5xl md:px-10'
 
 function formatTime(time: string) {
   const [hours, minutes] = time.split(':').map(Number)
@@ -38,7 +39,7 @@ export default function About() {
 
   return (
     <div className="bg-brand-cream">
-      <nav aria-label="Breadcrumb" className="px-4 pt-4 text-sm">
+      <nav aria-label="Breadcrumb" className={`px-4 pt-4 text-sm md:pt-6 ${wrap}`}>
         <Link to="/" className="text-brand-red hover:underline">
           Home
         </Link>
@@ -46,7 +47,7 @@ export default function About() {
         <h1 className="text-brand-ink/75 inline">About Us</h1>
       </nav>
 
-      <section className="px-4 pt-8 pb-14">
+      <section className={`px-4 pt-8 pb-14 md:pb-20 ${wrap}`}>
         <div className="text-center">
           <div aria-hidden="true" className="flex items-center justify-center gap-3">
             <span className="bg-brand-gold h-px w-14" />
@@ -54,124 +55,136 @@ export default function About() {
             <span className="bg-brand-gold h-px w-14" />
           </div>
           <p className={`${eyebrow} mt-4`}>Our heritage</p>
-          <h2 className="text-brand-charcoal mt-3 font-serif text-5xl leading-tight">
+          <h2 className="text-brand-charcoal mt-3 font-serif text-5xl leading-tight lg:text-6xl">
             A Taste Handed Down
           </h2>
-          <p className="font-display text-brand-red text-5xl">{settings?.restaurant_name}</p>
+          <p className="font-display text-brand-red text-5xl lg:text-6xl">
+            {settings?.restaurant_name}
+          </p>
         </div>
 
-        <div className="border-brand-gold/40 mt-8 rounded-t-full rounded-b-lg border bg-white p-1.5">
-          <img
-            src="/photos/stock-dining.jpg"
-            alt="Restaurant dining area"
-            className="h-72 w-full rounded-t-full rounded-b-md object-cover"
-          />
-        </div>
+        <div className="md:mt-12 md:grid md:grid-cols-2 md:items-center md:gap-12">
+          <div className="border-brand-gold/40 mt-8 rounded-t-full rounded-b-lg border bg-white p-1.5 md:mt-0">
+            <img
+              src="/photos/stock-dining.jpg"
+              alt="Restaurant dining area"
+              className="h-72 w-full rounded-t-full rounded-b-md object-cover md:h-[28rem]"
+            />
+          </div>
 
-        <div className="mt-10">
-          <p className="text-brand-charcoal font-serif text-xl leading-snug">
-            <span className="text-brand-red float-left mr-2 font-serif text-6xl leading-[0.85]">
-              O
-            </span>
-            ur recipes were never written down.
-          </p>
-          <p className="mt-5 text-sm leading-7">
-            They were passed from hand to hand, kitchen to kitchen, generation to generation. At{' '}
-            {settings?.restaurant_name}, we cook them the way they were taught to us, with patience,
-            with respect, and with pride in every Filipino flavour.
-          </p>
-          <blockquote className="bg-brand-charcoal mt-8 rounded-lg px-5 py-5 font-serif text-lg leading-relaxed text-white italic">
-            “This is our heritage. Today, it's on your plate.”
-          </blockquote>
+          <div className="mt-10 md:mt-0">
+            <p className="text-brand-charcoal font-serif text-xl leading-snug">
+              <span className="text-brand-red float-left mr-2 font-serif text-6xl leading-[0.85]">
+                O
+              </span>
+              ur recipes were never written down.
+            </p>
+            <p className="mt-5 text-sm leading-7">
+              They were passed from hand to hand, kitchen to kitchen, generation to generation. At{' '}
+              {settings?.restaurant_name}, we cook them the way they were taught to us, with
+              patience, with respect, and with pride in every Filipino flavour.
+            </p>
+            <blockquote className="bg-brand-charcoal mt-8 rounded-lg px-5 py-5 font-serif text-lg leading-relaxed text-white italic">
+              “This is our heritage. Today, it's on your plate.”
+            </blockquote>
+          </div>
         </div>
       </section>
 
-      <section className="bg-brand-charcoal px-4 py-14 text-white">
-        <p className="text-brand-gold text-xs font-bold tracking-[0.25em] uppercase">Visit us</p>
-        <h2 className="mt-3 font-serif text-4xl leading-tight">Opening Hours</h2>
-        <ul className="mt-8 overflow-hidden rounded-lg border border-white/10">
-          {weekOrder.map((day) => {
-            const entry = hours.find((h) => h.day_of_week === day)
-            const time =
-              entry?.is_open && entry.open_time && entry.close_time
-                ? `${formatTime(entry.open_time)} – ${formatTime(entry.close_time)}`
-                : 'Closed'
-            const isToday = day === today
-            return (
-              <li
-                key={day}
-                aria-current={isToday ? 'date' : undefined}
-                className={`flex items-center justify-between gap-4 border-b border-white/10 px-4 py-3.5 text-sm last:border-b-0 ${isToday ? 'bg-brand-red/20 border-l-brand-red border-l-2 font-bold' : ''}`}
+      <section className="bg-brand-charcoal px-4 py-14 text-white md:py-20">
+        <div className={`md:grid md:grid-cols-2 md:items-start md:gap-12 ${wrap}`}>
+          <div>
+            <p className="text-brand-gold text-xs font-bold tracking-[0.25em] uppercase">
+              Visit us
+            </p>
+            <h2 className="mt-3 font-serif text-4xl leading-tight md:text-5xl">Opening Hours</h2>
+          </div>
+          <ul className="mt-8 overflow-hidden rounded-lg border border-white/10 md:mt-0">
+            {weekOrder.map((day) => {
+              const entry = hours.find((h) => h.day_of_week === day)
+              const time =
+                entry?.is_open && entry.open_time && entry.close_time
+                  ? `${formatTime(entry.open_time)} – ${formatTime(entry.close_time)}`
+                  : 'Closed'
+              const isToday = day === today
+              return (
+                <li
+                  key={day}
+                  aria-current={isToday ? 'date' : undefined}
+                  className={`flex items-center justify-between gap-4 border-b border-white/10 px-4 py-3.5 text-sm last:border-b-0 ${isToday ? 'bg-brand-red/20 border-l-brand-red border-l-2 font-bold' : ''}`}
+                >
+                  <span className="flex items-center gap-2.5">
+                    <span>{dayNames[day]}</span>
+                    {isToday && (
+                      <span className="bg-brand-red rounded-full px-2 py-0.5 text-[10px] font-bold tracking-[0.15em] uppercase">
+                        Today
+                      </span>
+                    )}
+                  </span>
+                  <span className={`tabular-nums ${isToday ? '' : 'text-white/75'}`}>{time}</span>
+                </li>
+              )
+            })}
+          </ul>
+        </div>
+      </section>
+
+      <div className={`md:grid md:grid-cols-2 md:gap-12 md:pt-20 md:pb-20 ${wrap}`}>
+        <section className="px-4 pt-14 md:px-0 md:pt-0">
+          <p className={eyebrow}>Find us</p>
+          <h2 className={title}>Location</h2>
+          {settings ? (
+            <iframe
+              title={`Map to ${settings.restaurant_name}`}
+              src={`https://maps.google.com/maps?q=${encodeURIComponent(`${settings.restaurant_name} Hotel and Restaurant`)}&output=embed`}
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              className="border-brand-gold/40 mt-8 h-52 w-full rounded-lg border"
+            />
+          ) : (
+            <div role="img" aria-label="Map" className="mt-8 h-52 rounded-lg bg-neutral-200" />
+          )}
+          <p className="mt-4 text-sm leading-7">{settings?.address}</p>
+          <a
+            href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${settings?.restaurant_name} Hotel and Restaurant`)}`}
+            target="_blank"
+            rel="noreferrer"
+            className="bg-brand-charcoal border-brand-gold text-brand-gold hover:bg-brand-charcoal/90 mt-5 block rounded-sm border py-4 text-center text-xs font-bold tracking-[0.2em] uppercase transition-colors duration-200"
+          >
+            Get Directions
+          </a>
+        </section>
+
+        <section className="px-4 pt-14 pb-16 md:px-0 md:pt-0 md:pb-0">
+          <p className={eyebrow}>Get in touch</p>
+          <h2 className={title}>Contact</h2>
+          <dl className="mt-8 space-y-3">
+            {contacts.map(({ label, value, href, icon: Icon }) => (
+              <div
+                key={label}
+                className="border-brand-gold/40 flex items-center gap-4 rounded-lg border bg-white px-4 py-3.5"
               >
-                <span className="flex items-center gap-2.5">
-                  <span>{dayNames[day]}</span>
-                  {isToday && (
-                    <span className="bg-brand-red rounded-full px-2 py-0.5 text-[10px] font-bold tracking-[0.15em] uppercase">
-                      Today
-                    </span>
-                  )}
-                </span>
-                <span className={`tabular-nums ${isToday ? '' : 'text-white/75'}`}>{time}</span>
-              </li>
-            )
-          })}
-        </ul>
-      </section>
-
-      <section className="px-4 pt-14">
-        <p className={eyebrow}>Find us</p>
-        <h2 className={title}>Location</h2>
-        {settings ? (
-          <iframe
-            title={`Map to ${settings.restaurant_name}`}
-            src={`https://maps.google.com/maps?q=${encodeURIComponent(`${settings.restaurant_name} Hotel and Restaurant`)}&output=embed`}
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-            className="border-brand-gold/40 mt-8 h-52 w-full rounded-lg border"
-          />
-        ) : (
-          <div role="img" aria-label="Map" className="mt-8 h-52 rounded-lg bg-neutral-200" />
-        )}
-        <p className="mt-4 text-sm leading-7">{settings?.address}</p>
-        <a
-          href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${settings?.restaurant_name} Hotel and Restaurant`)}`}
-          target="_blank"
-          rel="noreferrer"
-          className="bg-brand-charcoal border-brand-gold text-brand-gold hover:bg-brand-charcoal/90 mt-5 block rounded-sm border py-4 text-center text-xs font-bold tracking-[0.2em] uppercase transition-colors duration-200"
-        >
-          Get Directions
-        </a>
-      </section>
-
-      <section className="px-4 pt-14 pb-16">
-        <p className={eyebrow}>Get in touch</p>
-        <h2 className={title}>Contact</h2>
-        <dl className="mt-8 space-y-3">
-          {contacts.map(({ label, value, href, icon: Icon }) => (
-            <div
-              key={label}
-              className="border-brand-gold/40 flex items-center gap-4 rounded-lg border bg-white px-4 py-3.5"
-            >
-              <Icon className="text-brand-red size-5 shrink-0" strokeWidth={1.5} />
-              <div className="min-w-0">
-                <dt className="text-brand-ink/70 text-[11px] font-semibold tracking-[0.15em] uppercase">
-                  {label}
-                </dt>
-                <dd className="mt-0.5 text-sm">
-                  <a
-                    href={href}
-                    target={label === 'Facebook' ? '_blank' : undefined}
-                    rel={label === 'Facebook' ? 'noreferrer' : undefined}
-                    className="text-brand-charcoal hover:text-brand-red break-words transition-colors duration-200"
-                  >
-                    {value}
-                  </a>
-                </dd>
+                <Icon className="text-brand-red size-5 shrink-0" strokeWidth={1.5} />
+                <div className="min-w-0">
+                  <dt className="text-brand-ink/70 text-[11px] font-semibold tracking-[0.15em] uppercase">
+                    {label}
+                  </dt>
+                  <dd className="mt-0.5 text-sm">
+                    <a
+                      href={href}
+                      target={label === 'Facebook' ? '_blank' : undefined}
+                      rel={label === 'Facebook' ? 'noreferrer' : undefined}
+                      className="text-brand-charcoal hover:text-brand-red break-words transition-colors duration-200"
+                    >
+                      {value}
+                    </a>
+                  </dd>
+                </div>
               </div>
-            </div>
-          ))}
-        </dl>
-      </section>
+            ))}
+          </dl>
+        </section>
+      </div>
 
       <footer className="bg-brand-charcoal px-4 pt-12 pb-5 text-center">
         <p className="font-display text-brand-gold text-4xl">Salamat, and see you soon!</p>
@@ -180,7 +193,7 @@ export default function About() {
           className="bg-brand-red hover:bg-brand-red/90 mt-6 inline-block rounded-sm px-8 py-4 text-sm font-bold tracking-[0.15em] text-white uppercase transition-colors duration-200"
         >
           Reserve a Table
-        </Link>{' '}
+        </Link>
       </footer>
     </div>
   )
