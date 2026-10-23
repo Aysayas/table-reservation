@@ -24,6 +24,11 @@ test('opening hours list every day', async ({ page }) => {
   await expect(page.getByText('10:00 AM – 10:00 PM')).toHaveCount(7)
 })
 
+test('today is highlighted once', async ({ page }) => {
+  await page.goto('/about')
+  await expect(page.getByText('Today', { exact: true })).toHaveCount(1)
+})
+
 test('contact details are shown', async ({ page }) => {
   await page.goto('/about')
   await expect(

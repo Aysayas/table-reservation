@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { ChevronLeft, Globe, Mail, Phone } from 'lucide-react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getOpeningHours, getSettings } from '@/services/settings'
 
@@ -8,7 +9,6 @@ const weekOrder = [1, 2, 3, 4, 5, 6, 0]
 const eyebrow =
   'text-brand-gold-deep flex items-center gap-3 text-xs font-semibold tracking-[0.22em] uppercase before:bg-brand-gold before:h-px before:w-6'
 const title = 'text-brand-charcoal mt-2 text-3xl font-semibold tracking-tight'
-const row = 'border-brand-charcoal/10 flex justify-between gap-4 border-b py-3 text-sm'
 
 function formatTime(time: string) {
   const [hours, minutes] = time.split(':').map(Number)
@@ -18,6 +18,7 @@ function formatTime(time: string) {
 
 export default function About() {
   const navigate = useNavigate()
+  const [today] = useState(() => new Date().getDay())
   const { data: settings } = useQuery({ queryKey: ['settings'], queryFn: getSettings })
   const { data: hours = [] } = useQuery({ queryKey: ['opening-hours'], queryFn: getOpeningHours })
 
@@ -83,18 +84,37 @@ export default function About() {
 
         <section>
           <p className={eyebrow}>Visit us</p>
-          <h2 className={title}>Opening Hours</h2>
-          <ul className="border-brand-charcoal/10 mt-6 border-t">
+          <h2 className={title}>
+            Opening <span className="text-brand-red">Hours</span>
+          </h2>
+          <ul className="border-brand-gold mt-6 border-y py-1">
             {weekOrder.map((day) => {
               const entry = hours.find((h) => h.day_of_week === day)
               const time =
                 entry?.is_open && entry.open_time && entry.close_time
                   ? `${formatTime(entry.open_time)} – ${formatTime(entry.close_time)}`
                   : 'Closed'
-              return (
-                <li key={day} className={row}>
-                  <span className="text-brand-charcoal font-semibold">{dayNames[day]}</span>
-                  <span className="tabular-nums">{time}</span>
+              return day === today ? (
+                <li
+                  key={day}
+                  aria-current="date"
+                  className="bg-brand-charcoal my-1 flex items-center justify-between gap-4 rounded-md px-4 py-3.5 text-sm"
+                >
+                  <span className="flex items-center gap-2.5 font-semibold text-white">
+                    <span>{dayNames[day]}</span>
+                    <span className="bg-brand-red rounded-full px-2 py-0.5 text-[10px] font-bold tracking-[0.15em] text-white uppercase">
+                      Today
+                    </span>
+                  </span>
+                  <span className="text-brand-gold font-medium tabular-nums">{time}</span>
+                </li>
+              ) : (
+                <li
+                  key={day}
+                  className="border-brand-charcoal/10 flex justify-between gap-4 border-b px-4 py-3.5 text-sm last:border-b-0"
+                >
+                  <span className="text-brand-charcoal font-medium">{dayNames[day]}</span>
+                  <span className="text-brand-ink/75 tabular-nums">{time}</span>
                 </li>
               )
             })}
