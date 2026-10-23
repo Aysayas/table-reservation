@@ -41,3 +41,19 @@ Claude adds an entry here when the frontend developer asks for something outside
 - What Claude did instead: kept the grey placeholder box. If approved, the image goes in `frontend/public/` and the placeholder in `About.tsx` becomes an `<img>` with alt text
 - Status: Approved
 - Lead note: Approved with conditions (2026-10-23): only a photo the restaurant itself provides, with permission to use it, and with no recognisable guests (crop or blur them). Note the source in `docs/design/brand.md`. Until all three are true, keep the placeholder.
+
+### 2026-10-23: Install three fonts for the new look
+- Level: 🟡 off plan
+- Asked for: the elegant look she designed (charcoal, gold, cream and maroon) uses three free fonts: Cormorant Garamond (titles), Jost (body text) and Caveat (short handwritten notes). Please install them: `npm install @fontsource/cormorant-garamond @fontsource/jost @fontsource/caveat` in `frontend/`
+- Rule it bumps into: fonts are allowed since 2026-10-23, but `frontend/package.json` and `package-lock.json` are lead-owned, so the Protected files check fails her pull request if she installs them
+- What Claude did instead: added the colours and restyled screen 07 and the customer top bar without the new fonts. Once installed, she imports them in `src/index.css`, sets `--font-sans` and `--font-display`, and lists them in `docs/packages.md` and `docs/design/brand.md`
+- Status: Waiting for lead
+- Lead note:
+
+### 2026-10-23: Responsive desktop layout para sa customer screens 01–07
+- Level: 🟡 off plan
+- Asked for: gawing responsive ang customer website. Since web app siya, dapat nag-a-adjust ang layout depende sa gadget ng customer. Sa cellphone, pareho pa rin ang itsura gaya ng wireframes. Pero sa tablet o laptop, lalapad ang layout para magamit ang space (halimbawa mas malaking photo, o magkatabi ang mga section). Sa ngayon, naka-lock sa 390px ang lahat ng customer pages sa `CustomerLayout`, kaya sa laptop makitid na column lang sa gitna ang makikita, at mukhang kakaiba 'yon. Ang QR ordering screens 08–12, phone width pa rin, kasi sa table naman ginagamit 'yon ng customers.
+- Rule it bumps into: `docs/styling.md` says screens 01–12 are designed at 390px wide, and the wireframes only show the phone size. (First logged on branch `frontend/screen-07-elegant` after PR #42 was merged, so it never reached `main`.)
+- What Claude did instead: kept 390px. If approved: `CustomerLayout` widens for 01–07 on large screens, then `md:`/`lg:` Tailwind classes are added one screen at a time. The phone view does not change.
+- Status: Waiting for lead
+- Lead note:
