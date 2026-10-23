@@ -6,7 +6,7 @@ import { getOpeningHours, getSettings } from '@/services/settings'
 const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 const weekOrder = [1, 2, 3, 4, 5, 6, 0]
 const eyebrow =
-  'text-brand-maroon flex items-center gap-3 text-xs font-semibold tracking-[0.22em] uppercase before:bg-brand-gold before:h-px before:w-6'
+  'text-brand-gold-deep flex items-center gap-3 text-xs font-semibold tracking-[0.22em] uppercase before:bg-brand-gold before:h-px before:w-6'
 const title = 'text-brand-charcoal mt-2 text-3xl font-semibold tracking-tight'
 const row = 'border-brand-charcoal/10 flex justify-between gap-4 border-b py-3 text-sm'
 
@@ -49,7 +49,7 @@ export default function About() {
         <section>
           <p className={eyebrow}>Our heritage</p>
           <h2 className={title}>Our Story</h2>
-          <p className="font-display text-brand-maroon mt-6 text-4xl">
+          <p className="font-display text-brand-gold-deep mt-6 text-4xl">
             {settings?.restaurant_name}
           </p>
           <div className="mt-4 max-w-[60ch] space-y-4 text-sm leading-7">
@@ -61,7 +61,7 @@ export default function About() {
               At {settings?.restaurant_name}, we cook them the way they were taught to us, with
               patience, with respect, and with pride in every Filipino flavour.
             </p>
-            <p className="text-brand-maroon font-semibold">
+            <p className="text-brand-gold-deep font-semibold">
               This is our heritage. Today, it's on your plate.
             </p>
           </div>
@@ -100,7 +100,7 @@ export default function About() {
           <dl className="border-brand-charcoal/10 mt-6 border-t">
             {contacts.map((contact) => (
               <div key={contact.label} className={row}>
-                <dt className="text-brand-maroon text-xs font-semibold tracking-[0.15em] uppercase">
+                <dt className="text-brand-gold-deep text-xs font-semibold tracking-[0.15em] uppercase">
                   {contact.label}
                 </dt>
                 <dd className="text-right break-all">{contact.value}</dd>

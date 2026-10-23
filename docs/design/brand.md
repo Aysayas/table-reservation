@@ -23,21 +23,23 @@ Words on screens:
 
 These are theme tokens in `frontend/src/index.css`, so every one has Tailwind classes (`bg-brand-charcoal`, `text-brand-maroon`, …).
 
-**Current palette (since 2026-10-23): charcoal, gold, cream and maroon.** An elegant, dark-and-warm look for evening dining. Maroon comes from the restaurant's menu.
+**Current palette (since 2026-10-23): charcoal, gold, cream and red.** An elegant, dark-and-warm look for evening dining. Red and gold come from the restaurant's official logo.
 
 | Token | Hex | Use it for |
 |---|---|---|
-| `brand-charcoal` | `#1C1917` | Dark sections, header, main buttons, footer |
-| `brand-gold` | `#C5A059` | Accent buttons, small labels, lines and icons, only on charcoal or maroon |
+| `brand-charcoal` | `#1C1917` | Dark sections, header, footer |
+| `brand-red` | `#B3121B` | Main buttons ("Reserve"), accents, with white text |
+| `brand-gold` | `#C5A059` | Lines, icons and text on charcoal; never text on white or cream |
+| `brand-gold-deep` | `#8A6A2B` | Gold text on white or cream: small labels, the script name, highlights |
 | `brand-cream` | `#F7F2E9` | Soft section backgrounds, cards and panels |
-| `brand-maroon` | `#5C161A` | Headings, prices, strong labels, accent |
 | `brand-ink` | `#2B2522` | Body text (the default on `body`) |
-| white | `#FFFFFF` | Page background, text on charcoal or maroon |
+| white | `#FFFFFF` | Page background, text on charcoal or red |
 
-**Old palette, being phased out.** Screens 05 and 07 still use these. Remove each token once no screen uses it.
+**Old palette, being phased out.** Screen 05 still uses these. Remove each token once no screen uses it.
 
 | Token | Hex |
 |---|---|
+| `brand-maroon` | `#5C161A` |
 | `brand-green` | `#385D05` |
 | `brand-leaf` | `#678E24` |
 | `brand-peach` | `#F0CB95` |
@@ -53,9 +55,10 @@ Checked with the WCAG contrast formula. 4.5:1 or more is fine for any text; 3:1 
 | Text | On | Contrast | OK for |
 |---|---|---|---|
 | `brand-ink` | white / cream | 15.1 / 13.5 | Any text |
-| `brand-maroon` | white / cream | 13.3 / 11.9 | Any text |
+| `brand-gold-deep` | white / cream | 5.0 / 4.5 | Any text |
 | white / cream | `brand-charcoal` | 17.5 / 15.7 | Any text |
-| white | `brand-maroon` | 13.3 | Any text |
+| white | `brand-red` | 7.0 | Any text |
+| `brand-gold` | `brand-red` | 2.8 | Decoration only, not text |
 | `brand-gold` | `brand-charcoal` | 7.1 | Any text |
 | `brand-charcoal` | `brand-gold` | 7.1 | Any text (gold buttons) |
 | `brand-gold` | white / cream | 2.5 / 2.2 | Never |
@@ -109,7 +112,7 @@ Suggested sizes:
 | Do | Don't |
 |---|---|
 | Use the `brand-*` classes | Write hex values or `bg-[#...]` in components |
-| Keep text in ink or maroon on light backgrounds; white, cream or gold on charcoal | Put gold text on white or cream |
+| Keep text in ink or deep gold on light backgrounds; white, cream or gold on charcoal; white on red | Put bright gold text on white, cream or red |
 | Use Dancing Script for one big title at a time | Use Dancing Script for paragraphs or buttons |
 | Leave white space around the logo | Squash, recolour or crop the logo |
 
