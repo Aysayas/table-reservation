@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test'
 test('about page shows its sections', async ({ page }) => {
   await page.goto('/about')
   await expect(page.getByRole('heading', { name: 'About Us' })).toBeVisible()
-  for (const name of ['Our Story', 'Opening Hours', 'Location', 'Contact']) {
+  for (const name of ['A Taste Handed Down', 'Opening Hours', 'Location', 'Contact']) {
     await expect(page.getByRole('heading', { name })).toBeVisible()
   }
 })
@@ -46,10 +46,26 @@ test('contact details are shown', async ({ page }) => {
   )
 })
 
-test('back button returns to the previous page', async ({ page }) => {
-  await page.goto('/menu')
-  await page.getByRole('button', { name: 'Open menu' }).click()
-  await page.getByRole('link', { name: 'About' }).click()
-  await page.getByRole('button', { name: 'Back' }).click()
-  await expect(page).toHaveURL('/menu')
+test('breadcrumb home link returns to the home page', async ({ page }) => {
+  await page.goto('/about')
+  await page
+    .getByRole('navigation', { name: 'Breadcrumb' })
+    .getByRole('link', { name: 'Home' })
+    .click()
+  await expect(page).toHaveURL('/')
+})
+
+test('get directions opens google maps directions', async ({ page }) => {
+  await page.goto('/about')
+  await expect(page.getByRole('link', { name: 'Get Directions' })).toHaveAttribute(
+    'href',
+    /google\.com\/maps\/dir\//,
+  )
+})
+
+test('footer reserve button opens the reserve page', async ({ page }) => {
+  await page.goto('/about')
+  await expect(page.getByText('Salamat, and see you soon!')).toBeVisible()
+  await page.getByRole('link', { name: 'Reserve a Table' }).click()
+  await expect(page).toHaveURL('/reserve')
 })

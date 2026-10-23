@@ -69,18 +69,19 @@ Installed with `@fontsource` (they work offline) and already set in `index.css`.
 
 | Font | Class | Use it for |
 |---|---|---|
-| Montserrat 400, 600, 700 | `font-sans` (the default) | Everything: body, headings, prices, buttons, forms |
-| Dancing Script 700 | `font-display` | Only big titles: the restaurant name, a section banner like "Signature Presto Pizza". Never for body text, buttons or small labels |
+| Montserrat 400, 600, 700 | `font-sans` (the default) | Body text, labels, buttons, forms, prices |
+| Playfair Display 400, 400 italic, 700 | `font-serif` | Titles, the "Vencio's" part of the top bar name, quotes |
+| Great Vibes 400 | `font-display` | Short handwritten touches only: "Vencio's Garden" under a title, "Garden" in the top bar, a thank-you line. Never for body text, buttons or small labels |
 
 Suggested sizes:
 
 | Use | Classes |
 |---|---|
-| Restaurant name / page hero | `font-display text-4xl text-brand-green` |
-| Section banner | `bg-brand-green text-white font-bold uppercase tracking-wide text-xl` |
-| Dish name | `font-bold text-brand-brown` |
-| Description | `text-sm text-brand-ink` |
-| Price | `font-bold text-brand-maroon` |
+| Page title | `font-serif text-5xl text-brand-charcoal` |
+| Section title | `font-serif text-4xl text-brand-charcoal` |
+| Handwritten name | `font-display text-5xl text-brand-red` |
+| Small label above a title | `text-xs font-bold tracking-[0.25em] uppercase text-brand-red` |
+| Body text | `text-sm leading-7 text-brand-ink` |
 
 ## Logo
 
@@ -106,7 +107,7 @@ Suggested sizes:
 | File | Source (link) | Licence |
 |---|---|---|
 | `logo.png` | Vencio's Garden Hotel & Restaurant official Facebook page ([facebook.com/venciosgardenhotel](https://www.facebook.com/venciosgardenhotel)) | The restaurant's own logo |
-| `photos/restaurant-interior.jpg` | [Pexels: Empty Tables in Restaurant, by Sander Dalhuisen](https://www.pexels.com/photo/empty-tables-in-restaurant-2566030/) | Pexels licence (free to use) |
+| `photos/stock-dining.jpg` | [Pexels: Empty Tables in Restaurant, by Sander Dalhuisen](https://www.pexels.com/photo/empty-tables-in-restaurant-2566030/) | Pexels licence (free to use). Stock photo of another restaurant, not Vencio's Garden; replace with the restaurant's own photo when it arrives |
 
 ## Do and don't
 

@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
-import { ChevronLeft, Globe, Mail, Phone } from 'lucide-react'
+import { Globe, Mail, Phone } from 'lucide-react'
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { getOpeningHours, getSettings } from '@/services/settings'
 
 const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
@@ -16,7 +16,6 @@ function formatTime(time: string) {
 }
 
 export default function About() {
-  const navigate = useNavigate()
   const [today] = useState(() => new Date().getDay())
   const { data: settings } = useQuery({ queryKey: ['settings'], queryFn: getSettings })
   const { data: hours = [] } = useQuery({ queryKey: ['opening-hours'], queryFn: getOpeningHours })
@@ -39,34 +38,32 @@ export default function About() {
 
   return (
     <div className="bg-brand-cream">
-      <div className="bg-brand-charcoal relative flex h-16 items-center justify-center px-4">
-        <button
-          type="button"
-          aria-label="Back"
-          onClick={() => navigate(-1)}
-          className="text-brand-gold focus-visible:outline-brand-gold absolute left-3 flex size-10 items-center justify-center rounded-full transition-colors duration-200 hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2"
-        >
-          <ChevronLeft className="size-6" strokeWidth={1.5} />
-        </button>
-        <h1 className="text-sm font-semibold tracking-[0.2em] text-white uppercase">About Us</h1>
-      </div>
+      <nav aria-label="Breadcrumb" className="px-4 pt-4 text-sm">
+        <Link to="/" className="text-brand-red hover:underline">
+          Home
+        </Link>
+        <span className="text-brand-ink/60"> / </span>
+        <h1 className="text-brand-ink/75 inline">About Us</h1>
+      </nav>
 
-      <section className="px-4 pt-10 pb-14">
+      <section className="px-4 pt-8 pb-14">
         <div className="text-center">
           <div aria-hidden="true" className="flex items-center justify-center gap-3">
-            <span className="bg-brand-gold h-px w-12" />
-            <span className="border-brand-gold size-2 rotate-45 border" />
-            <span className="bg-brand-gold h-px w-12" />
+            <span className="bg-brand-gold h-px w-14" />
+            <span className="border-brand-gold h-3.5 w-2 rounded-full border" />
+            <span className="bg-brand-gold h-px w-14" />
           </div>
           <p className={`${eyebrow} mt-4`}>Our heritage</p>
-          <h2 className={title}>Our Story</h2>
-          <p className="font-display text-brand-red mt-2 text-4xl">{settings?.restaurant_name}</p>
+          <h2 className="text-brand-charcoal mt-3 font-serif text-5xl leading-tight">
+            A Taste Handed Down
+          </h2>
+          <p className="font-display text-brand-red text-5xl">{settings?.restaurant_name}</p>
         </div>
 
         <div className="border-brand-gold/40 mt-8 rounded-t-full rounded-b-lg border bg-white p-1.5">
           <img
-            src="/photos/restaurant-interior.jpg"
-            alt="Restaurant photo"
+            src="/photos/stock-dining.jpg"
+            alt="Restaurant dining area"
             className="h-72 w-full rounded-t-full rounded-b-md object-cover"
           />
         </div>
@@ -126,7 +123,7 @@ export default function About() {
         <h2 className={title}>Location</h2>
         {settings ? (
           <iframe
-            title="Map"
+            title={`Map to ${settings.restaurant_name}`}
             src={`https://maps.google.com/maps?q=${encodeURIComponent(`${settings.restaurant_name} Hotel and Restaurant`)}&output=embed`}
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
@@ -136,6 +133,14 @@ export default function About() {
           <div role="img" aria-label="Map" className="mt-8 h-52 rounded-lg bg-neutral-200" />
         )}
         <p className="mt-4 text-sm leading-7">{settings?.address}</p>
+        <a
+          href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${settings?.restaurant_name} Hotel and Restaurant`)}`}
+          target="_blank"
+          rel="noreferrer"
+          className="bg-brand-charcoal border-brand-gold text-brand-gold hover:bg-brand-charcoal/90 mt-5 block rounded-sm border py-4 text-center text-xs font-bold tracking-[0.2em] uppercase transition-colors duration-200"
+        >
+          Get Directions
+        </a>
       </section>
 
       <section className="px-4 pt-14 pb-16">
@@ -168,7 +173,15 @@ export default function About() {
         </dl>
       </section>
 
-      <footer className="bg-brand-charcoal h-14" />
+      <footer className="bg-brand-charcoal px-4 pt-12 pb-5 text-center">
+        <p className="font-display text-brand-gold text-4xl">Salamat, and see you soon!</p>
+        <Link
+          to="/reserve"
+          className="bg-brand-red hover:bg-brand-red/90 mt-6 inline-block rounded-sm px-8 py-4 text-sm font-bold tracking-[0.15em] text-white uppercase transition-colors duration-200"
+        >
+          Reserve a Table
+        </Link>{' '}
+      </footer>
     </div>
   )
 }
