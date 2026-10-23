@@ -81,10 +81,10 @@ Suggested sizes:
 
 ## Logo
 
-- File: `/logo.png` (in `frontend/public/`), round.
-- Show it on white or cream. Never stretch it, recolour it or put it on a busy background.
-- At least 40px wide; in headers 40–56px.
-- Always give it `alt="Vencio's Garden"`.
+- File: `/logo.png` (in `frontend/public/`): the official Vencio's Garden Hotel & Restaurant logo, a gold emblem and gold name on red (since 2026-10-23; the old round green logo is in git history).
+- Full logo: on large spots (login, splash), shown whole. Never stretch it or recolour it.
+- Top bar: a 32px round badge zoomed in on the gold emblem, with the restaurant name written next to it.
+- Give it `alt="Vencio's Garden"`, or `alt=""` when the name is already written right next to it.
 
 ## Layout ideas from the menu
 
@@ -102,6 +102,7 @@ Suggested sizes:
 
 | File | Source (link) | Licence |
 |---|---|---|
+| `logo.png` | Vencio's Garden Hotel & Restaurant official Facebook page ([facebook.com/venciosgardenhotel](https://www.facebook.com/venciosgardenhotel)) | The restaurant's own logo |
 
 ## Do and don't
 
