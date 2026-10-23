@@ -21,20 +21,30 @@ Words on screens:
 
 ## Colours
 
-These are already theme tokens in `frontend/src/index.css`, so every one has Tailwind classes (`bg-brand-green`, `text-brand-brown`, `border-brand-leaf`, …). The values were measured from the menu photos.
+These are theme tokens in `frontend/src/index.css`, so every one has Tailwind classes (`bg-brand-charcoal`, `text-brand-maroon`, …).
+
+**Current palette (since 2026-10-23): charcoal, gold, cream and red.** An elegant, dark-and-warm look for evening dining. Red and gold come from the restaurant's official logo.
 
 | Token | Hex | Use it for |
 |---|---|---|
-| `brand-green` | `#385D05` | Section banners, header bars, main buttons, active sidebar item |
-| `brand-leaf` | `#678E24` | Logo ring colour, icons, accents, hover on green |
-| `brand-gold` | `#E0C326` | Badges ("Best seller"), highlights, the script title colour |
-| `brand-peach` | `#F0CB95` | Soft fills, chips, selected filters |
-| `brand-cream` | `#F9F3CC` | Cards and panels on the white page |
-| `brand-sage` | `#8EA287` | Dividers and decoration only |
-| `brand-brown` | `#6C422D` | Dish names, headings |
-| `brand-maroon` | `#5C161A` | Prices, strong labels |
-| `brand-ink` | `#3A4B2E` | Body text (the default on `body`) |
-| white | `#FFFFFF` | Page background, text on green or maroon |
+| `brand-charcoal` | `#1C1917` | Dark sections, header, footer |
+| `brand-red` | `#B3121B` | Main buttons ("Reserve"), accents, with white text |
+| `brand-gold` | `#C5A059` | Lines, icons and text on charcoal; never text on white or cream |
+| `brand-gold-deep` | `#8A6A2B` | Gold text on white or cream: small labels, the script name, highlights |
+| `brand-cream` | `#F7F2E9` | Page background on screen 07 (About Us), soft panels |
+| `brand-ink` | `#2B2522` | Body text (the default on `body`) |
+| white | `#FFFFFF` | Page background, text on charcoal or red |
+
+**Old palette, being phased out.** Screen 05 still uses these. Remove each token once no screen uses it.
+
+| Token | Hex |
+|---|---|
+| `brand-maroon` | `#5C161A` |
+| `brand-green` | `#385D05` |
+| `brand-leaf` | `#678E24` |
+| `brand-peach` | `#F0CB95` |
+| `brand-sage` | `#8EA287` |
+| `brand-brown` | `#6C422D` |
 
 Shades of these (for example `bg-brand-green/90` for hover) are fine. New or replacement colours are fine too: add them as tokens in `index.css` and list them here. Don't write hex values in components.
 
@@ -44,16 +54,14 @@ Checked with the WCAG contrast formula. 4.5:1 or more is fine for any text; 3:1 
 
 | Text | On | Contrast | OK for |
 |---|---|---|---|
-| `brand-ink` | white / cream / peach | 9.4 / 8.4 / 6.2 | Any text |
-| `brand-brown` | white / cream / peach | 8.6 / 7.6 / 5.6 | Any text |
-| `brand-maroon` | white / cream | 13.3 / 11.8 | Any text |
-| `brand-green` | white / cream | 7.7 / 6.8 | Any text |
-| white | `brand-green` / `brand-maroon` | 7.7 / 13.3 | Any text |
-| `brand-ink` | `brand-gold` | 5.4 | Any text (badges) |
-| white | `brand-leaf` | 3.8 | Large or bold text only |
-| `brand-gold` | `brand-green` | 4.4 | Large or bold text only |
-| `brand-gold` | white | 1.8 | Never |
-| any text | `brand-sage` | below 3.5 | Never |
+| `brand-ink` | white / cream | 15.1 / 13.5 | Any text |
+| `brand-gold-deep` | white / cream | 5.0 / 4.5 | Any text |
+| white / cream | `brand-charcoal` | 17.5 / 15.7 | Any text |
+| white | `brand-red` | 7.0 | Any text |
+| `brand-gold` | `brand-red` | 2.8 | Decoration only, not text |
+| `brand-gold` | `brand-charcoal` | 7.1 | Any text |
+| `brand-charcoal` | `brand-gold` | 7.1 | Any text (gold buttons) |
+| `brand-gold` | white / cream | 2.5 / 2.2 | Never |
 
 ## Fonts
 
@@ -76,10 +84,10 @@ Suggested sizes:
 
 ## Logo
 
-- File: `/logo.png` (in `frontend/public/`), round.
-- Show it on white or cream. Never stretch it, recolour it or put it on a busy background.
-- At least 40px wide; in headers 40–56px.
-- Always give it `alt="Vencio's Garden"`.
+- File: `/logo.png` (in `frontend/public/`): the official Vencio's Garden Hotel & Restaurant logo, a gold emblem and gold name on red (since 2026-10-23; the old round green logo is in git history).
+- Full logo: on large spots (login, splash), shown whole. Never stretch it or recolour it.
+- Top bar: a 32px round badge zoomed in on the gold emblem, then the name in two styles: "Vencio's" in white serif and "Garden" in gold handwriting.
+- Give it `alt="Vencio's Garden"`, or `alt=""` when the name is already written right next to it.
 
 ## Layout ideas from the menu
 
@@ -97,13 +105,15 @@ Suggested sizes:
 
 | File | Source (link) | Licence |
 |---|---|---|
+| `logo.png` | Vencio's Garden Hotel & Restaurant official Facebook page ([facebook.com/venciosgardenhotel](https://www.facebook.com/venciosgardenhotel)) | The restaurant's own logo |
+| `photos/restaurant-interior.jpg` | [Pexels: Empty Tables in Restaurant, by Sander Dalhuisen](https://www.pexels.com/photo/empty-tables-in-restaurant-2566030/) | Pexels licence (free to use) |
 
 ## Do and don't
 
 | Do | Don't |
 |---|---|
 | Use the `brand-*` classes | Write hex values or `bg-[#...]` in components |
-| Keep text in ink, brown, maroon or green | Put gold text on white, or any text on sage |
+| Keep text in ink or deep gold on light backgrounds; white, cream or gold on charcoal; white on red | Put bright gold text on white, cream or red |
 | Use Dancing Script for one big title at a time | Use Dancing Script for paragraphs or buttons |
 | Leave white space around the logo | Squash, recolour or crop the logo |
 

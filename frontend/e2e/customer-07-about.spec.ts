@@ -24,6 +24,11 @@ test('opening hours list every day', async ({ page }) => {
   await expect(page.getByText('10:00 AM – 10:00 PM')).toHaveCount(7)
 })
 
+test('today is highlighted once', async ({ page }) => {
+  await page.goto('/about')
+  await expect(page.getByText('Today', { exact: true })).toHaveCount(1)
+})
+
 test('contact details are shown', async ({ page }) => {
   await page.goto('/about')
   await expect(
@@ -31,11 +36,19 @@ test('contact details are shown', async ({ page }) => {
   ).toBeVisible()
   await expect(page.getByText('0918 957 2855')).toBeVisible()
   await expect(page.getByText('venciosgarden@yahoo.com')).toBeVisible()
-  await expect(page.getByText('https://www.facebook.com/venciosgardenhotel')).toBeVisible()
+  await expect(page.getByRole('link', { name: '/venciosgardenhotel' })).toHaveAttribute(
+    'href',
+    'https://www.facebook.com/venciosgardenhotel',
+  )
+  await expect(page.getByRole('link', { name: '0918 957 2855' })).toHaveAttribute(
+    'href',
+    'tel:09189572855',
+  )
 })
 
 test('back button returns to the previous page', async ({ page }) => {
   await page.goto('/menu')
+  await page.getByRole('button', { name: 'Open menu' }).click()
   await page.getByRole('link', { name: 'About' }).click()
   await page.getByRole('button', { name: 'Back' }).click()
   await expect(page).toHaveURL('/menu')
