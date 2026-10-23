@@ -129,3 +129,11 @@ Claude adds an entry here when the frontend developer asks for something outside
 - Status: Approved (partly)
 - Lead note: (2026-10-23) (1) Yes, both hero buttons. (2) Yes; the fourth value must differ from Home's and be true, e.g. "Hospitality". (3) Yes, but no repeat: heading "We cook our recipes the way they were taught to us.", paragraph "At Vencio's Garden, every dish is made with patience, with respect, and with pride in every Filipino flavour." (4) No, Reserve already appears enough on the page. (5) Yes, use Home's footer; "Salamat, and see you soon!" may stay as a line in it. Add tests for the new links.
 
+
+### 2026-10-23: Screen 05 Reservation Confirmation footer
+- Level: 🟡 off plan
+- Asked for: Home's big footer (Quick links, Hours, Location, ©) on screen 05, so Home, About and screen 05 end the same way. Her second screen 05 mockup also restyles parts that are already there, which needs no OK: the ticket card in charcoal instead of white (gold label, white code, dark COPY CODE pill), and the word "reserved." in red with a short gold line under the title. Everything else on screen 05 stays as it is (Calendar and Directions only, no Save pass)
+- Rule it bumps into: CLAUDE.md, each screen keeps the wireframe's parts; the footer is a part the screen 05 wireframe doesn't show
+- What Claude did instead: nothing built yet; the look changes and the footer will be built together
+- Status: Waiting for lead
+- Lead note:
