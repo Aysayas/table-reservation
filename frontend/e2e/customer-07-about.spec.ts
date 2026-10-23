@@ -54,3 +54,18 @@ test('breadcrumb home link returns to the home page', async ({ page }) => {
     .click()
   await expect(page).toHaveURL('/')
 })
+
+test('get directions opens google maps directions', async ({ page }) => {
+  await page.goto('/about')
+  await expect(page.getByRole('link', { name: 'Get Directions' })).toHaveAttribute(
+    'href',
+    /google\.com\/maps\/dir\//,
+  )
+})
+
+test('footer reserve button opens the reserve page', async ({ page }) => {
+  await page.goto('/about')
+  await expect(page.getByText('Salamat, and see you soon!')).toBeVisible()
+  await page.getByRole('link', { name: 'Reserve a Table' }).click()
+  await expect(page).toHaveURL('/reserve')
+})

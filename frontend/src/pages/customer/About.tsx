@@ -17,6 +17,7 @@ function formatTime(time: string) {
 
 export default function About() {
   const [today] = useState(() => new Date().getDay())
+  const [year] = useState(() => new Date().getFullYear())
   const { data: settings } = useQuery({ queryKey: ['settings'], queryFn: getSettings })
   const { data: hours = [] } = useQuery({ queryKey: ['opening-hours'], queryFn: getOpeningHours })
 
@@ -133,6 +134,14 @@ export default function About() {
           <div role="img" aria-label="Map" className="mt-8 h-52 rounded-lg bg-neutral-200" />
         )}
         <p className="mt-4 text-sm leading-7">{settings?.address}</p>
+        <a
+          href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${settings?.restaurant_name} Hotel and Restaurant`)}`}
+          target="_blank"
+          rel="noreferrer"
+          className="bg-brand-charcoal border-brand-gold text-brand-gold hover:bg-brand-charcoal/90 mt-5 block rounded-sm border py-4 text-center text-xs font-bold tracking-[0.2em] uppercase transition-colors duration-200"
+        >
+          Get Directions
+        </a>
       </section>
 
       <section className="px-4 pt-14 pb-16">
@@ -165,7 +174,18 @@ export default function About() {
         </dl>
       </section>
 
-      <footer className="bg-brand-charcoal h-14" />
+      <footer className="bg-brand-charcoal px-4 py-12 text-center">
+        <p className="font-display text-brand-gold text-4xl">Salamat, and see you soon!</p>
+        <Link
+          to="/reserve"
+          className="bg-brand-red hover:bg-brand-red/90 mt-6 inline-block rounded-sm px-8 py-4 text-sm font-bold tracking-[0.15em] text-white uppercase transition-colors duration-200"
+        >
+          Reserve a Table
+        </Link>
+        <p className="mt-6 text-xs text-white/60">
+          © {year} {settings?.restaurant_name}
+        </p>
+      </footer>
     </div>
   )
 }
