@@ -94,7 +94,17 @@ export default function About() {
         <section>
           <p className={eyebrow}>Find us</p>
           <h2 className={title}>Location</h2>
-          <div role="img" aria-label="Map" className="mt-6 h-48 rounded-md bg-neutral-100" />
+          {settings ? (
+            <iframe
+              title="Map"
+              src={`https://maps.google.com/maps?q=${encodeURIComponent(`${settings.restaurant_name} Hotel and Restaurant`)}&output=embed`}
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              className="mt-6 h-48 w-full rounded-md border-0"
+            />
+          ) : (
+            <div role="img" aria-label="Map" className="mt-6 h-48 rounded-md bg-neutral-100" />
+          )}
           <p className="mt-4 text-sm leading-7">{settings?.address}</p>
         </section>
 
