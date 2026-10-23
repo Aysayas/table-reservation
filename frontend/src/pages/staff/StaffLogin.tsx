@@ -109,7 +109,7 @@ export default function StaffLogin() {
 
           <button
             type="submit"
-            className="bg-brand-red hover:bg-brand-red/90 focus-visible:outline-brand-red w-full rounded-lg py-4 text-sm font-bold tracking-[0.15em] text-white uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2"
+            className="bg-brand-charcoal hover:bg-brand-charcoal/85 focus-visible:outline-brand-red w-full rounded-lg py-4 text-sm font-bold tracking-[0.15em] text-white uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2"
           >
             Log In
           </button>
