@@ -31,7 +31,7 @@ These are theme tokens in `frontend/src/index.css`, so every one has Tailwind cl
 | `brand-red` | `#B3121B` | Main buttons ("Reserve"), accents, with white text |
 | `brand-gold` | `#C5A059` | Lines, icons and text on charcoal; never text on white or cream |
 | `brand-gold-deep` | `#8A6A2B` | Gold text on white or cream: small labels, the script name, highlights |
-| `brand-cream` | `#F7F2E9` | Soft section backgrounds, cards and panels |
+| `brand-cream` | `#F7F2E9` | Page background on screen 07 (About Us), soft panels |
 | `brand-ink` | `#2B2522` | Body text (the default on `body`) |
 | white | `#FFFFFF` | Page background, text on charcoal or red |
 

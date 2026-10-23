@@ -57,3 +57,11 @@ Claude adds an entry here when the frontend developer asks for something outside
 - What Claude did instead: kept 390px. If approved: `CustomerLayout` widens for 01–07 on large screens, then `md:`/`lg:` Tailwind classes are added one screen at a time. The phone view does not change.
 - Status: Waiting for lead
 - Lead note:
+
+### 2026-10-23: Screen 07 About Us extras from her mockup
+- Level: 🟡 off plan
+- Asked for: three parts of her About Us mockup that the wireframe doesn't have: (1) rename the "Our Story" title to "A Taste Handed Down"; (2) replace the back button bar with a "Home / About Us" breadcrumb; (3) a "Get Directions" button under the address that opens Google Maps directions
+- Rule it bumps into: CLAUDE.md, each screen keeps the wireframe's labels, buttons and links; (2) removes the wireframe's back button
+- What Claude did instead: built the rest of the mockup (cream page, serif titles, arch photo, drop cap, quote card, black Opening Hours band with today highlight, contact cards) and kept "Our Story", the back button, and no directions button
+- Status: Waiting for lead
+- Lead note:
