@@ -16,7 +16,8 @@ function formatTime(time: string) {
 }
 
 export default function About() {
-  const [today] = useState(() => new Date().getDay())  const { data: settings } = useQuery({ queryKey: ['settings'], queryFn: getSettings })
+  const [today] = useState(() => new Date().getDay())
+  const { data: settings } = useQuery({ queryKey: ['settings'], queryFn: getSettings })
   const { data: hours = [] } = useQuery({ queryKey: ['opening-hours'], queryFn: getOpeningHours })
 
   const contacts = [
@@ -179,7 +180,8 @@ export default function About() {
           className="bg-brand-red hover:bg-brand-red/90 mt-6 inline-block rounded-sm px-8 py-4 text-sm font-bold tracking-[0.15em] text-white uppercase transition-colors duration-200"
         >
           Reserve a Table
-        </Link>      </footer>
+        </Link>{' '}
+      </footer>
     </div>
   )
 }
