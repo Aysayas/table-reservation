@@ -35,7 +35,7 @@ Start with simple screens to learn, then the forms, then the bigger flows:
 | 10 | Cart | ⬜ | |
 | 11 | Checkout | ⬜ | |
 | 12 | Order Status | ⬜ | |
-| 13 | Staff Login | 🟨 | |
+| 13 | Staff Login | 🟦 | Subtitle and show-password button waiting for the lead (LEAD-REVIEW.md). Login pretends to succeed until the API is live |
 | 14 | Staff Dashboard | ⬜ | |
 | 15 | Today's Reservations | ⬜ | |
 | 16 | Table Status | ⬜ | |
