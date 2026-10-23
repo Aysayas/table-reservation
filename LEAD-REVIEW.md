@@ -42,34 +42,42 @@ Claude adds an entry here when the frontend developer asks for something outside
 - Status: Approved
 - Lead note: Approved with conditions (2026-10-23): only a photo the restaurant itself provides, with permission to use it, and with no recognisable guests (crop or blur them). Note the source in `docs/design/brand.md`. Until all three are true, keep the placeholder.
 
+### 2026-10-23: More design freedom for the frontend (colours, fonts, styling)
+- Level: 🟡 off plan
+- Asked for: it's hard on my side to wait for approval every time I want to change a colour, font or design. For example, right now I want to change the colours and the design, and I'm on hold. My request: can I make the frontend design decisions myself (colours and fonts in `src/index.css`, `docs/design/brand.md`, and new `@fontsource` font packages), and you review them in the pull request instead of approving them first? I won't touch the backend or any other part that's yours.
+- Rule it bumps into: CLAUDE.md, colours and fonts come from the brand guide and need the lead's approval; `package.json` and `.claude/` are lead-owned (CODEOWNERS)
+- What Claude did instead: no rules or config changed. If approved, the lead would update CLAUDE.md (the drift check) and `brand.md`, and decide whether she may add font packages.
+- Status: Approved
+- Lead note: Approved (2026-10-23). Done in #43: the design is yours (colours, fonts in `src/index.css`, new `@fontsource` packages, `motion`, `docs/design/brand.md`), reviewed in your pull requests, no approval needed first. Keep each screen's content, links and data from `docs/api.md`.
+
+### 2026-10-23: Responsive desktop layout para sa customer screens 01–07
+- Level: 🟡 off plan
+- Asked for: gawing responsive ang customer website. Since web app siya, dapat nag-a-adjust ang layout depende sa gadget ng customer. Sa cellphone, pareho pa rin ang itsura gaya ng wireframes. Pero sa tablet o laptop, lalapad ang layout para magamit ang space (halimbawa mas malaking photo, o magkatabi ang mga section). Sa ngayon, naka-lock sa 390px ang lahat ng customer pages sa `CustomerLayout`, kaya sa laptop makitid na column lang sa gitna ang makikita, at mukhang kakaiba 'yon. Ang QR ordering screens 08–12, phone width pa rin, kasi sa table naman ginagamit 'yon ng customers.
+- Rule it bumps into: CLAUDE.md, 390px lang ang screens 01–12 sa wireframes, kaya wala pa sa approved design ang desktop layout ng 01–07. Kailangan ding baguhin ang `CustomerLayout`, na shared ng lahat ng customer screens.
+- What Claude did instead: tuloy pa rin sa 390px para tugma sa wireframes. Kung ma-approve: babaguhin ang `CustomerLayout` para lumapad ang 01–07 sa malalaking screen, tapos dadagdagan ng `md:`/`lg:` Tailwind classes isa-isa bawat screen. Hindi magbabago ang phone view, kaya walang masasayang na work.
+- Status: Approved
+- Lead note: Approved (2026-10-23). Make customer screens 01–07 responsive: the phone view stays as the wireframes; tablet and laptop may use a wider layout. Screens 08–12 stay phone width. Changing `CustomerLayout` for this is fine. Keep the routes, buttons, links and data the same. Check 01–07 in the preview at 390 × 844 and at 1440 × 900; the e2e tests stay at phone size.
+
 ### 2026-10-23: Install two fonts for the new look
 - Level: 🟡 off plan
 - Asked for: her About Us mockup (charcoal, red, gold and cream) uses two free fonts: Playfair Display (titles and the top bar name) and Great Vibes (handwritten touches like "Vencio's Garden"). Please install them: `npm install @fontsource/playfair-display @fontsource/great-vibes` in `frontend/`. (This replaces her earlier ask for Cormorant Garamond, Jost and Caveat.)
 - Rule it bumps into: fonts are allowed since 2026-10-23, but `frontend/package.json` and `package-lock.json` are lead-owned, so the Protected files check fails her pull request if she installs them
 - What Claude did instead: built the look with the fonts we have: the system serif (`font-serif`) for titles and Dancing Script (`font-display`) for handwriting. Once installed, she imports them in `src/index.css`, points `--font-serif` and `--font-display` at them, and lists them in `docs/packages.md` and `docs/design/brand.md`
-- Status: Waiting for lead
-- Lead note:
-
-### 2026-10-23: Responsive desktop layout para sa customer screens 01–07
-- Level: 🟡 off plan
-- Asked for: gawing responsive ang customer website. Since web app siya, dapat nag-a-adjust ang layout depende sa gadget ng customer. Sa cellphone, pareho pa rin ang itsura gaya ng wireframes. Pero sa tablet o laptop, lalapad ang layout para magamit ang space (halimbawa mas malaking photo, o magkatabi ang mga section). Sa ngayon, naka-lock sa 390px ang lahat ng customer pages sa `CustomerLayout`, kaya sa laptop makitid na column lang sa gitna ang makikita, at mukhang kakaiba 'yon. Ang QR ordering screens 08–12, phone width pa rin, kasi sa table naman ginagamit 'yon ng customers.
-- Rule it bumps into: `docs/styling.md` says screens 01–12 are designed at 390px wide, and the wireframes only show the phone size. (First logged on branch `frontend/screen-07-elegant` after PR #42 was merged, so it never reached `main`.)
-- What Claude did instead: kept 390px. If approved: `CustomerLayout` widens for 01–07 on large screens, then `md:`/`lg:` Tailwind classes are added one screen at a time. The phone view does not change.
-- Status: Waiting for lead
-- Lead note:
+- Status: Approved
+- Lead note: Approved (2026-10-23). The lead installs `@fontsource/playfair-display` and `@fontsource/great-vibes` in a separate pull request (they change `package.json`). After it's merged, pull `main`, import them in `src/index.css`, point the font tokens at them, and list them in `docs/design/brand.md`.
 
 ### 2026-10-23: Screen 07 About Us extras from her mockup
 - Level: 🟡 off plan
 - Asked for: three parts of her About Us mockup that the wireframe doesn't have: (1) rename the "Our Story" title to "A Taste Handed Down"; (2) replace the back button bar with a "Home / About Us" breadcrumb; (3) a "Get Directions" button under the address that opens Google Maps directions
 - Rule it bumps into: CLAUDE.md, each screen keeps the wireframe's labels, buttons and links; (2) removes the wireframe's back button
 - What Claude did instead: built the rest of the mockup (cream page, serif titles, arch photo, drop cap, quote card, black Opening Hours band with today highlight, contact cards) and kept "Our Story", the back button, and no directions button
-- Status: Waiting for lead
-- Lead note:
+- Status: Approved
+- Lead note: Approved (2026-10-23): all three. Rename "Our Story" to "A Taste Handed Down", use the "Home / About Us" breadcrumb instead of the back button (the ☰ menu still gets around), and add the "Get Directions" button that opens Google Maps directions. Also, about the photo: it's a Pexels photo of another restaurant, so don't present it as Vencio's Garden's own dining room. Rename `photos/restaurant-interior.jpg` to something neutral (for example `photos/stock-dining.jpg`), update `brand.md`, and use a neutral alt text (for example "Restaurant dining area"). Swap it for a real photo once the restaurant sends one (see the interior photo entry above). Give the Google map `<iframe>` a `title` (for example "Map to Vencio's Garden") so screen readers can name it.
 
 ### 2026-10-23: "Salamat" footer on screen 07 About Us
 - Level: 🟡 off plan
 - Asked for: a black footer at the bottom of screen 07 from her mockup: "Salamat, and see you soon!" in gold handwriting, a red "RESERVE A TABLE" button (to `/reserve`) and "© 2026 Vencio's Garden"
 - Rule it bumps into: CLAUDE.md, the wireframe for screen 07 has no footer; it adds a button and a line the screen doesn't show
 - What Claude did instead: kept a plain black strip at the bottom of screen 07
-- Status: Waiting for lead
-- Lead note:
+- Status: Approved
+- Lead note: Approved (2026-10-23): the black footer with "Salamat, and see you soon!", the red RESERVE A TABLE button to `/reserve`, and "© 2026 Vencio's Garden".

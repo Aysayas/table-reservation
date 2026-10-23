@@ -2,7 +2,7 @@
 
 Every screen in `docs/wireframes/` already has a URL in `src/router.tsx`. Each one shows a placeholder until someone builds it.
 
-## Customer (mobile, 390 wide, no login)
+## Customer (390 wide on phones, responsive on tablet and laptop, no login)
 
 Layout: `CustomerLayout`
 

@@ -36,7 +36,7 @@ Mark the screen 🟨 in `docs/progress.md`.
 
 ## 4. Show it ⏸
 
-Start the preview (`frontend` in `.claude/launch.json`), set the size (390 × 844 for 01–12, 1440 × 900 for 13–29), open the screen's URL and take a screenshot. Compare its content with the wireframe (same parts, buttons and links; the look may differ) and list any differences honestly. Ask her to look at it too and tell you what to change.
+Start the preview (`frontend` in `.claude/launch.json`), set the size (390 × 844 for 01–12, 1440 × 900 for 13–29; check 01–07 at both sizes, since they are responsive), open the screen's URL and take a screenshot. Compare its content with the wireframe (same parts, buttons and links; the look may differ) and list any differences honestly. Ask her to look at it too and tell you what to change.
 
 ## 5. Test
 
