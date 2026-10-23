@@ -8,10 +8,10 @@
 
 ## Checks
 
-- [ ] Matches the wireframe in `docs/wireframes/`
+- [ ] Shows what the wireframe in `docs/wireframes/` shows (parts, buttons, links); the look is free
 - [ ] `npm run format`
 - [ ] `npm run build`
 - [ ] `npm run lint`
 - [ ] `npm run test:e2e`
 - [ ] `docs/progress.md` updated
-- [ ] Colours from the theme in `src/index.css`, placeholder people and food photos only
+- [ ] Colours from the theme in `src/index.css`, placeholder people, photo sources noted in `docs/design/brand.md`
