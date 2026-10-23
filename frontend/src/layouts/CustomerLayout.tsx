@@ -26,7 +26,7 @@ export default function CustomerLayout() {
           </span>
           <span className="flex items-baseline gap-1.5 whitespace-nowrap">
             <span className="font-serif text-lg font-bold text-white">{words.join(' ')}</span>
-            <span className="font-display text-brand-gold text-xl">{lastWord}</span>
+            <span className="font-display text-brand-gold text-2xl">{lastWord}</span>
           </span>
         </Link>
         <div className="flex shrink-0 items-center gap-2">

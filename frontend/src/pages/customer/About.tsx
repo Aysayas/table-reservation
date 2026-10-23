@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
-import { ChevronLeft, Globe, Mail, Phone } from 'lucide-react'
+import { Globe, Mail, Phone } from 'lucide-react'
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { getOpeningHours, getSettings } from '@/services/settings'
 
 const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
@@ -16,7 +16,6 @@ function formatTime(time: string) {
 }
 
 export default function About() {
-  const navigate = useNavigate()
   const [today] = useState(() => new Date().getDay())
   const { data: settings } = useQuery({ queryKey: ['settings'], queryFn: getSettings })
   const { data: hours = [] } = useQuery({ queryKey: ['opening-hours'], queryFn: getOpeningHours })
@@ -39,28 +38,26 @@ export default function About() {
 
   return (
     <div className="bg-brand-cream">
-      <div className="bg-brand-charcoal relative flex h-16 items-center justify-center px-4">
-        <button
-          type="button"
-          aria-label="Back"
-          onClick={() => navigate(-1)}
-          className="text-brand-gold focus-visible:outline-brand-gold absolute left-3 flex size-10 items-center justify-center rounded-full transition-colors duration-200 hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2"
-        >
-          <ChevronLeft className="size-6" strokeWidth={1.5} />
-        </button>
-        <h1 className="text-sm font-semibold tracking-[0.2em] text-white uppercase">About Us</h1>
-      </div>
+      <nav aria-label="Breadcrumb" className="px-4 pt-4 text-sm">
+        <Link to="/" className="text-brand-red hover:underline">
+          Home
+        </Link>
+        <span className="text-brand-ink/60"> / </span>
+        <h1 className="text-brand-ink/75 inline">About Us</h1>
+      </nav>
 
-      <section className="px-4 pt-10 pb-14">
+      <section className="px-4 pt-8 pb-14">
         <div className="text-center">
           <div aria-hidden="true" className="flex items-center justify-center gap-3">
-            <span className="bg-brand-gold h-px w-12" />
-            <span className="border-brand-gold size-2 rotate-45 border" />
-            <span className="bg-brand-gold h-px w-12" />
+            <span className="bg-brand-gold h-px w-14" />
+            <span className="border-brand-gold h-3.5 w-2 rounded-full border" />
+            <span className="bg-brand-gold h-px w-14" />
           </div>
           <p className={`${eyebrow} mt-4`}>Our heritage</p>
-          <h2 className={title}>Our Story</h2>
-          <p className="font-display text-brand-red mt-2 text-4xl">{settings?.restaurant_name}</p>
+          <h2 className="text-brand-charcoal mt-3 font-serif text-5xl leading-tight">
+            A Taste Handed Down
+          </h2>
+          <p className="font-display text-brand-red text-5xl">{settings?.restaurant_name}</p>
         </div>
 
         <div className="border-brand-gold/40 mt-8 rounded-t-full rounded-b-lg border bg-white p-1.5">
