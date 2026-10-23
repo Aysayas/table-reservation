@@ -5,9 +5,9 @@ import { Link, useParams } from 'react-router-dom'
 import { getReservationByCode } from '@/services/reservations'
 
 const primaryButton =
-  'bg-brand-green hover:bg-brand-green/90 focus-visible:outline-brand-leaf block w-full rounded-full py-3.5 text-center text-sm font-semibold text-white transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2'
+  'bg-brand-red hover:bg-brand-red/90 focus-visible:outline-brand-red block w-full rounded-sm py-4 text-center text-sm font-bold tracking-[0.15em] text-white uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2'
 const outlineButton =
-  'border-brand-green text-brand-green hover:bg-brand-cream focus-visible:outline-brand-leaf block w-full rounded-full border py-3.5 text-center text-sm font-semibold transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2'
+  'border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal focus-visible:outline-brand-red block w-full rounded-sm border py-4 text-center text-sm font-bold tracking-[0.15em] uppercase transition-colors duration-200 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2'
 
 export default function ReservationConfirmation() {
   const { code = '' } = useParams()
@@ -20,9 +20,11 @@ export default function ReservationConfirmation() {
 
   if (!reservation) {
     return (
-      <div className="px-4 py-16 text-center">
-        <h1 className="text-brand-brown text-2xl font-bold">Reservation not found</h1>
-        <p className="text-brand-ink/70 mt-3 text-sm">
+      <div className="bg-brand-cream min-h-[calc(100vh-4rem)] px-4 py-16 text-center">
+        <h1 className="text-brand-charcoal font-serif text-4xl leading-tight">
+          Reservation not found
+        </h1>
+        <p className="text-brand-ink/75 mt-3 text-sm">
           We couldn't find a reservation with that reference code.
         </p>
         <div className="mt-8">
@@ -52,38 +54,38 @@ export default function ReservationConfirmation() {
   ]
 
   return (
-    <div className="px-4 pt-12 pb-16">
+    <div className="bg-brand-cream px-4 pt-12 pb-16">
       <div className="text-center">
-        <div className="border-brand-green text-brand-green mx-auto flex size-16 items-center justify-center rounded-full border-2">
-          <Check className="size-8" strokeWidth={1.5} />
+        <div className="border-brand-gold text-brand-red mx-auto flex size-20 items-center justify-center rounded-full border bg-white">
+          <Check className="size-10" strokeWidth={1.5} />
         </div>
-        <h1 className="text-brand-brown mt-6 text-2xl font-bold tracking-tight">
+        <h1 className="text-brand-charcoal mt-6 font-serif text-4xl leading-tight">
           Reservation Confirmed
         </h1>
-        <p className="text-brand-ink/70 mt-2 text-sm">
+        <p className="text-brand-ink/75 mt-3 text-sm">
           A confirmation SMS was sent to {reservation.customer.mobile_number}
         </p>
       </div>
 
-      <div className="border-brand-sage bg-brand-cream/60 mt-8 rounded-md border border-dashed px-4 py-4 text-center">
-        <p className="text-brand-ink/70 text-xs font-semibold tracking-[0.22em] uppercase">
+      <div className="bg-brand-charcoal border-brand-gold mt-8 rounded-lg border border-dashed px-4 py-5 text-center">
+        <p className="text-brand-gold text-xs font-bold tracking-[0.25em] uppercase">
           Reference Code
         </p>
-        <p className="text-brand-green mt-1 text-2xl font-bold tracking-wide">
+        <p className="mt-2 font-serif text-3xl tracking-wide text-white">
           {reservation.reference_code}
         </p>
       </div>
 
-      <section className="border-brand-sage/40 mt-6 rounded-md border px-4 pt-4 pb-1">
-        <h2 className="text-brand-brown font-bold">Details</h2>
+      <section className="border-brand-gold/40 mt-6 rounded-lg border bg-white px-5 pt-5 pb-1">
+        <h2 className="text-brand-charcoal font-serif text-2xl">Details</h2>
         <dl className="mt-2">
           {details.map((detail) => (
             <div
               key={detail.label}
-              className="border-brand-sage/30 flex justify-between gap-4 border-b py-3 text-sm last:border-b-0"
+              className="border-brand-charcoal/10 flex justify-between gap-4 border-b py-3.5 text-sm last:border-b-0"
             >
-              <dt className="text-brand-ink/70">{detail.label}</dt>
-              <dd className="font-semibold tabular-nums">{detail.value}</dd>
+              <dt className="text-brand-ink/75">{detail.label}</dt>
+              <dd className="text-brand-charcoal font-semibold tabular-nums">{detail.value}</dd>
             </div>
           ))}
         </dl>
