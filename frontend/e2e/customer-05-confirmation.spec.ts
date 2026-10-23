@@ -31,3 +31,11 @@ test('unknown code shows not found', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Reservation not found' })).toBeVisible()
   await expect(page.getByRole('link', { name: 'Back to Home' })).toBeVisible()
 })
+
+test('copy code copies the reference code', async ({ page, context }) => {
+  await context.grantPermissions(['clipboard-read', 'clipboard-write'])
+  await page.goto(url)
+  await page.getByRole('button', { name: 'Copy code' }).click()
+  await expect(page.getByText('Code copied')).toBeVisible()
+  expect(await page.evaluate('navigator.clipboard.readText()')).toBe('RSV-000001')
+})

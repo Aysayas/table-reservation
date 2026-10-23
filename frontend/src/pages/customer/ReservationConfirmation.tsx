@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
 import { format, parseISO } from 'date-fns'
-import { Check } from 'lucide-react'
+import { Check, Copy } from 'lucide-react'
 import { Link, useParams } from 'react-router-dom'
+import { toast } from 'sonner'
 import { getReservationByCode } from '@/services/reservations'
 
 const primaryButton =
@@ -20,6 +21,13 @@ export default function ReservationConfirmation() {
   })
 
   if (isLoading) return null
+
+  const copyCode = () => {
+    navigator.clipboard
+      .writeText(code)
+      .then(() => toast.success('Code copied'))
+      .catch(() => toast.error("Couldn't copy the code"))
+  }
 
   if (!reservation) {
     return (
@@ -79,6 +87,14 @@ export default function ReservationConfirmation() {
           <p className="text-brand-charcoal mt-2 font-serif text-4xl font-bold tracking-wide">
             {reservation.reference_code}
           </p>
+          <button
+            type="button"
+            onClick={copyCode}
+            className="border-brand-gold/60 text-brand-charcoal hover:bg-brand-cream focus-visible:outline-brand-red mt-4 inline-flex items-center gap-2 rounded-full border px-5 py-2 text-xs font-bold tracking-[0.15em] uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2"
+          >
+            <Copy className="size-4" strokeWidth={1.75} />
+            Copy code
+          </button>
         </div>
 
         <div aria-hidden="true" className="relative">
