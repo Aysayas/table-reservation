@@ -62,8 +62,8 @@ export default function About() {
 
         <div className="border-brand-gold/40 mt-8 rounded-t-full rounded-b-lg border bg-white p-1.5">
           <img
-            src="/photos/restaurant-interior.jpg"
-            alt="Restaurant photo"
+            src="/photos/stock-dining.jpg"
+            alt="Restaurant dining area"
             className="h-72 w-full rounded-t-full rounded-b-md object-cover"
           />
         </div>
@@ -123,7 +123,7 @@ export default function About() {
         <h2 className={title}>Location</h2>
         {settings ? (
           <iframe
-            title="Map"
+            title={`Map to ${settings.restaurant_name}`}
             src={`https://maps.google.com/maps?q=${encodeURIComponent(`${settings.restaurant_name} Hotel and Restaurant`)}&output=embed`}
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
