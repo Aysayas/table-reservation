@@ -15,7 +15,7 @@ const schema = z.object({
 type LoginForm = z.infer<typeof schema>
 
 const input =
-  'border-brand-charcoal/20 focus:border-brand-gold focus:ring-brand-gold/30 mt-2 w-full rounded-sm border bg-white px-4 py-3 text-sm outline-none focus:ring-2 aria-invalid:border-brand-red'
+  'border-brand-gold/50 focus:border-brand-gold focus:ring-brand-gold/30 aria-invalid:border-brand-red mt-2 w-full rounded-lg border bg-white px-4 py-3.5 text-sm outline-none focus:ring-2'
 const label = 'text-brand-charcoal text-xs font-bold tracking-[0.15em] uppercase'
 
 export default function StaffLogin() {
@@ -33,17 +33,22 @@ export default function StaffLogin() {
   const onSubmit = () => navigate('/staff')
 
   return (
-    <div className="bg-brand-cream flex min-h-screen items-center justify-center px-4 py-12">
-      <div className="border-brand-gold/40 w-full max-w-[400px] rounded-lg border bg-white px-8 py-10 shadow-sm sm:px-10">
+    <div className="bg-brand-cream flex min-h-screen items-center justify-center px-4 py-16">
+      <div className="border-brand-gold/40 relative w-full max-w-[420px] rounded-2xl border bg-white px-8 pt-20 pb-10 shadow-sm sm:px-10">
         <div className="text-center">
-          <span className="border-brand-gold mx-auto block size-16 overflow-hidden rounded-full border">
-            <img
-              src={settings?.logo_url ?? '/logo.png'}
-              alt={settings?.restaurant_name ?? 'Logo'}
-              className="size-full scale-[2.2] object-cover object-top"
-            />
+          <span className="border-brand-gold/60 bg-brand-cream absolute -top-14 left-1/2 block size-28 -translate-x-1/2 rounded-full border p-2">
+            <span className="block size-full overflow-hidden rounded-full">
+              <img
+                src={settings?.logo_url ?? '/logo.png'}
+                alt={settings?.restaurant_name ?? 'Logo'}
+                className="size-full scale-[2.2] object-cover object-top"
+              />
+            </span>
           </span>
-          <h1 className="text-brand-charcoal mt-6 font-serif text-4xl">Staff Login</h1>
+          <p className="text-brand-red text-xs font-bold tracking-[0.3em] uppercase">
+            Staff portal
+          </p>
+          <h1 className="text-brand-charcoal mt-3 font-serif text-5xl">Staff Login</h1>
           <p className="text-brand-ink/75 mt-2 text-sm">Sign in to continue</p>
         </div>
 
@@ -88,7 +93,7 @@ export default function StaffLogin() {
             <label className="text-brand-ink flex items-center gap-2">
               <input
                 type="checkbox"
-                className="accent-brand-red size-4"
+                className="accent-brand-red size-5"
                 {...register('remember')}
               />
               Remember me
@@ -104,7 +109,7 @@ export default function StaffLogin() {
 
           <button
             type="submit"
-            className="bg-brand-red hover:bg-brand-red/90 focus-visible:outline-brand-red w-full rounded-sm py-4 text-sm font-bold tracking-[0.15em] text-white uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2"
+            className="bg-brand-red hover:bg-brand-red/90 focus-visible:outline-brand-red w-full rounded-lg py-4 text-sm font-bold tracking-[0.15em] text-white uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2"
           >
             Log In
           </button>
