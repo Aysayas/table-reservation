@@ -27,9 +27,9 @@ Start with simple screens to learn, then the forms, then the bigger flows:
 | 02 | Menu | ⬜ | |
 | 03 | Reserve a Table | ⬜ | |
 | 04 | Deposit Payment | ⬜ | |
-| 05 | Reservation Confirmation | 🟦 | |
+| 05 | Reservation Confirmation | 🟦 | Still the old green look; needs the new look and a laptop layout |
 | 06 | Find Reservation | ⬜ | |
-| 07 | About Us | 🟦 | Phone layout done with all approved extras. Laptop layout and real restaurant photo still to do |
+| 07 | About Us | 🟦 | Phone and laptop layouts done with all approved extras. Real restaurant photo still to come (stock photo for now) |
 | 08 | Table Menu | ⬜ | |
 | 09 | Item Details | ⬜ | |
 | 10 | Cart | ⬜ | |
