@@ -6,7 +6,7 @@ test('confirmation shows the reservation', async ({ page }) => {
   await page.goto(url)
   await expect(page.getByRole('heading', { name: 'Your table is reserved' })).toBeVisible()
   await expect(page.getByText('A confirmation SMS was sent to 09XX XXX 0000')).toBeVisible()
-  await expect(page.getByText('RSV-000001')).toBeVisible()
+  await expect(page.getByText('RSV-000001', { exact: true })).toBeVisible()
   await expect(page.getByRole('heading', { name: 'Details' })).toBeVisible()
   await expect(page.getByText('Thu, Jan 1, 2026')).toBeVisible()
   await expect(page.getByText('6:00 PM')).toBeVisible()
@@ -54,4 +54,13 @@ test('directions opens google maps directions', async ({ page }) => {
     'href',
     /google\.com\/maps\/dir\//,
   )
+})
+
+test('what happens next lists three steps', async ({ page }) => {
+  await page.goto(url)
+  await expect(page.getByRole('heading', { name: 'What happens next' })).toBeVisible()
+  for (const step of ['Check your SMS', 'Arrive and show your code', 'Scan and order']) {
+    await expect(page.getByText(step, { exact: true })).toBeVisible()
+  }
+  await expect(page.getByText('Give RSV-000001 to our staff when you arrive.')).toBeVisible()
 })

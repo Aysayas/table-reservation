@@ -78,6 +78,15 @@ export default function ReservationConfirmation() {
     URL.revokeObjectURL(link.href)
   }
 
+  const nextSteps = [
+    { title: 'Check your SMS', text: 'Your booking details are in the text we just sent.' },
+    {
+      title: 'Arrive and show your code',
+      text: `Give ${reservation.reference_code} to our staff when you arrive.`,
+    },
+    { title: 'Scan and order', text: 'Scan the QR code on your table to see the menu and order.' },
+  ]
+
   const details = [
     { label: 'Date', value: format(parseISO(reservation.reservation_date), 'EEE, MMM d, yyyy') },
     {
@@ -174,7 +183,34 @@ export default function ReservationConfirmation() {
         </a>
       </div>
 
-      <div className="mt-10 space-y-3">
+      <section className="mt-12">
+        <h2 className="text-brand-red text-xs font-bold tracking-[0.3em] uppercase">
+          What happens next
+        </h2>
+        <ol className="mt-6">
+          {nextSteps.map((step, index) => (
+            <li key={step.title} className="relative flex gap-4 pb-8 last:pb-0">
+              {index < nextSteps.length - 1 && (
+                <span
+                  aria-hidden="true"
+                  className="bg-brand-gold/60 absolute top-9 left-[17px] h-[calc(100%-2.25rem)] w-px"
+                />
+              )}
+              <span
+                className={`flex size-9 shrink-0 items-center justify-center rounded-full text-sm font-bold ${index === 0 ? 'bg-brand-red text-white' : 'border-brand-gold text-brand-gold-deep border bg-white'}`}
+              >
+                {index + 1}
+              </span>
+              <div className="pt-1">
+                <p className="text-brand-charcoal font-semibold">{step.title}</p>
+                <p className="text-brand-ink/75 mt-1 text-sm leading-6">{step.text}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <div className="mt-12 space-y-3">
         <Link to="/" className={primaryButton}>
           Back to Home
         </Link>
