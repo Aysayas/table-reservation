@@ -31,7 +31,8 @@ Fonts come from `@fontsource/*` packages (they work offline), imported once in `
 
 | Area | Designed at | Notes |
 |---|---|---|
-| Customer and QR ordering (01-12) | 390px wide | `CustomerLayout` already limits the width |
+| Customer (01-07) | 390px wide on phones, wider on tablet and laptop | Responsive: the phone view matches the wireframes; larger screens may use the space (`md:`, `lg:` classes) |
+| QR ordering (08-12) | 390px wide | Phone only, used at the table |
 | Staff, kitchen and admin (13-29) | 1440 × 900 | Sidebar is 240px wide |
 
 ## Real and placeholder content
