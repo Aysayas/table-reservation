@@ -29,6 +29,7 @@ These are theme tokens in `frontend/src/index.css`, so every one has Tailwind cl
 |---|---|---|
 | `brand-charcoal` | `#1C1917` | Dark sections, header, footer |
 | `brand-red` | `#B3121B` | Main buttons ("Reserve"), accents, with white text |
+| `brand-line` | `#D8C6A3` | Thin 1px borders on cream (map, cards, hours list, photo frame) |
 | `brand-red-light` | `#EF5B5B` | Red text on charcoal (for example "served with heart." on Home); `brand-red` is too dark there |
 | `brand-gold` | `#C5A059` | Lines, icons and text on charcoal; never text on white or cream |
 | `brand-gold-deep` | `#8A6A2B` | Gold text on white or cream: small labels, the script name, highlights |

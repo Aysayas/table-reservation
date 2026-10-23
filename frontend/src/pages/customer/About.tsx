@@ -8,8 +8,8 @@ import { directionsUrl } from '@/lib/maps'
 import { getOpeningHours, getSettings } from '@/services/settings'
 
 const eyebrow = 'text-brand-red text-xs font-bold tracking-[0.25em] uppercase'
-const title = 'text-brand-charcoal mt-3 font-serif text-4xl leading-tight md:text-5xl'
-const wrap = 'md:mx-auto md:max-w-5xl md:px-10'
+const wrap = 'md:mx-auto md:max-w-6xl md:px-10'
+const title = 'text-brand-charcoal mt-3 font-serif text-4xl leading-tight'
 
 export default function About() {
   const [today] = useState(() => new Date().getDay())
@@ -59,7 +59,7 @@ export default function About() {
         </div>
 
         <div className="md:mt-12 md:grid md:grid-cols-2 md:items-center md:gap-12">
-          <div className="border-brand-gold/40 mt-8 rounded-t-full rounded-b-lg border bg-white p-1.5 md:mt-0">
+          <div className="border-brand-line mt-8 rounded-t-full rounded-b-lg border bg-white p-1.5 md:mt-0">
             <img
               src="/photos/stock-dining.jpg"
               alt="Restaurant dining area"
@@ -68,13 +68,10 @@ export default function About() {
           </div>
 
           <div className="mt-10 md:mt-0">
-            <p className="text-brand-charcoal font-serif text-xl leading-snug">
-              <span className="text-brand-red float-left mr-2 font-serif text-6xl leading-[0.85]">
-                O
-              </span>
-              ur recipes were never written down.
+            <p className="text-brand-charcoal first-letter:text-brand-red font-serif text-xl leading-snug first-letter:text-[1.8em] md:text-[1.75rem]">
+              Our recipes were never written down.
             </p>
-            <p className="mt-5 text-sm leading-7">
+            <p className="mt-5 text-sm leading-7 md:text-base md:leading-[1.8]">
               They were passed from hand to hand, kitchen to kitchen, generation to generation. At{' '}
               {settings?.restaurant_name}, we cook them the way they were taught to us, with
               patience, with respect, and with pride in every Filipino flavour.
@@ -86,15 +83,15 @@ export default function About() {
         </div>
       </section>
 
-      <section className="bg-brand-charcoal px-4 py-14 text-white md:py-20">
-        <div className={`md:grid md:grid-cols-2 md:items-start md:gap-12 ${wrap}`}>
-          <div>
-            <p className="text-brand-gold text-xs font-bold tracking-[0.25em] uppercase">
-              Visit us
-            </p>
-            <h2 className="mt-3 font-serif text-4xl leading-tight md:text-5xl">Opening Hours</h2>
-          </div>
-          <ul className="mt-8 overflow-hidden rounded-lg border border-white/10 md:mt-0">
+      <div className={`md:grid md:grid-cols-2 md:gap-10 md:pb-20 lg:grid-cols-3 ${wrap}`}>
+        <section className="bg-brand-charcoal px-4 py-14 text-white md:bg-transparent md:p-0 md:text-inherit">
+          <p className="text-brand-gold md:text-brand-red text-xs font-bold tracking-[0.25em] uppercase">
+            Visit us
+          </p>
+          <h2 className="md:text-brand-charcoal mt-3 font-serif text-4xl leading-tight">
+            Opening Hours
+          </h2>
+          <ul className="md:border-brand-line mt-8 overflow-hidden rounded-lg border border-white/10 md:bg-white">
             {weekOrder.map((day) => {
               const time = hoursText(hours.find((h) => h.day_of_week === day))
               const isToday = day === today
@@ -102,25 +99,27 @@ export default function About() {
                 <li
                   key={day}
                   aria-current={isToday ? 'date' : undefined}
-                  className={`flex items-center justify-between gap-4 border-b border-white/10 px-4 py-3.5 text-sm last:border-b-0 ${isToday ? 'bg-brand-red/20 border-l-brand-red border-l-2 font-bold' : ''}`}
+                  className={`md:border-brand-line flex items-center justify-between gap-3 border-b border-white/10 px-4 py-3.5 text-sm last:border-b-0 ${isToday ? 'bg-brand-red/20 border-l-brand-red md:bg-brand-red/5 border-l-2 font-bold' : ''}`}
                 >
-                  <span className="flex items-center gap-2.5">
+                  <span className="md:text-brand-charcoal flex items-center gap-2.5">
                     <span>{dayNames[day]}</span>
                     {isToday && (
-                      <span className="bg-brand-red rounded-full px-2 py-0.5 text-[10px] font-bold tracking-[0.15em] uppercase">
+                      <span className="bg-brand-red rounded-full px-2 py-0.5 text-[10px] font-bold tracking-[0.15em] text-white uppercase">
                         Today
                       </span>
                     )}
                   </span>
-                  <span className={`tabular-nums ${isToday ? '' : 'text-white/75'}`}>{time}</span>
+                  <span
+                    className={`tabular-nums ${isToday ? 'md:text-brand-charcoal' : 'md:text-brand-ink/75 text-white/75'}`}
+                  >
+                    {time}
+                  </span>
                 </li>
               )
             })}
           </ul>
-        </div>
-      </section>
+        </section>
 
-      <div className={`md:grid md:grid-cols-2 md:gap-12 md:pt-20 md:pb-20 ${wrap}`}>
         <section className="px-4 pt-14 md:px-0 md:pt-0">
           <p className={eyebrow}>Find us</p>
           <h2 className={title}>Location</h2>
@@ -143,7 +142,7 @@ export default function About() {
             {contacts.map(({ label, value, href, icon: Icon }) => (
               <div
                 key={label}
-                className="border-brand-gold/40 flex items-center gap-4 rounded-lg border bg-white px-4 py-3.5"
+                className="border-brand-line flex items-center gap-4 rounded-lg border bg-white px-4 py-3.5"
               >
                 <Icon className="text-brand-red size-5 shrink-0" strokeWidth={1.5} />
                 <div className="min-w-0">

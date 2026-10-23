@@ -49,9 +49,9 @@ export default function CustomerLayout() {
             </span>
           </span>
         </Link>
-        <div className={`flex shrink-0 items-center gap-2 ${wide ? 'md:gap-8' : ''}`}>
+        <div className={`flex shrink-0 items-center gap-2 ${wide ? 'lg:gap-8' : ''}`}>
           {wide && (
-            <nav aria-label="Main" className="text-brand-cream hidden items-center gap-8 md:flex">
+            <nav aria-label="Main" className="text-brand-cream hidden items-center gap-8 lg:flex">
               {customerLinks.map((link) => (
                 <NavLink key={link.to} to={link.to} end className={wideNavLink}>
                   {link.label}
@@ -65,21 +65,21 @@ export default function CustomerLayout() {
             className={`bg-brand-red hover:bg-brand-red/90 rounded-md px-3 py-2 text-xs font-bold tracking-[0.12em] text-white uppercase transition-colors duration-200 ${wide ? 'md:px-5 md:py-2.5' : ''}`}
           >
             Reserve
-            {wide && <span className="hidden md:inline"> a Table</span>}
+            {wide && <span className="hidden lg:inline"> a Table</span>}
           </Link>
           <button
             type="button"
             aria-label={open ? 'Close menu' : 'Open menu'}
             aria-expanded={open}
             onClick={() => setOpen(!open)}
-            className={`text-brand-cream hover:text-brand-gold flex size-9 items-center justify-center rounded-md border border-white/20 transition-colors duration-200 ${wide ? 'md:hidden' : ''}`}
+            className={`text-brand-cream hover:text-brand-gold flex size-9 items-center justify-center rounded-md border border-white/20 transition-colors duration-200 ${wide ? 'lg:hidden' : ''}`}
           >
             {open ? <X className="size-5" /> : <MenuIcon className="size-5" />}
           </button>
         </div>
         {open && (
           <nav
-            className={`bg-brand-charcoal text-brand-cream absolute inset-x-0 top-full z-10 border-t border-white/10 shadow-lg ${wide ? 'md:hidden' : ''}`}
+            className={`bg-brand-charcoal text-brand-cream absolute inset-x-0 top-full z-10 border-t border-white/10 shadow-lg ${wide ? 'lg:hidden' : ''}`}
           >
             {panelLinks.map((link) => (
               <Link key={link.to} to={link.to} className={navLink} onClick={() => setOpen(false)}>

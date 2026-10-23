@@ -17,7 +17,7 @@ export default function RestaurantMap({ settings, className }: Props) {
       src={mapEmbedUrl(settings.restaurant_name)}
       loading="lazy"
       referrerPolicy="no-referrer-when-downgrade"
-      className={`${className} border-brand-gold/40 w-full border`}
+      className={`${className} border-brand-line w-full border`}
     />
   )
 }
