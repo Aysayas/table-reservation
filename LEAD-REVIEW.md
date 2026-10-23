@@ -95,5 +95,5 @@ Claude adds an entry here when the frontend developer asks for something outside
 - Asked for: from her Staff Login mockup: (1) change the subtitle "Sign in to continue" to "Sign in to manage today's reservations."; (2) an eye button inside the password box to show or hide the password. Also a question from Claude: (3) "Forgot password?" has no screen or endpoint, so it currently shows a message "Ask an admin to reset your password." Is that okay?
 - Rule it bumps into: CLAUDE.md, each screen keeps the wireframe's labels and buttons; (1) changes a label, (2) adds a button
 - What Claude did instead: built the rest of the card from her mockup (logo on the top edge of the card, "STAFF PORTAL" label, Playfair title, gold-bordered fields, red checkbox and button) and kept "Sign in to continue" with no eye button. Her mockup's pink "Incorrect email or password" box comes when the API is live, because the login pretends to succeed until then
-- Status: Waiting for lead
-- Lead note:
+- Status: Approved
+- Lead note: Approved (2026-10-23): (1) the subtitle "Sign in to manage today's reservations." (update the test if it checks the old text); (2) the eye button to show or hide the password, with an accessible name that changes ("Show password" / "Hide password"); (3) keep "Forgot password?" showing "Ask an admin to reset your password.", which is true: there's no reset endpoint, and admins change passwords on screen 28. Build (1) and (2) in your next pull request. The build's 500 kB chunk warning is fine for now; the lead will look at it before the final deploy.
