@@ -30,7 +30,7 @@ export default function CustomerLayout() {
       className={`mx-auto min-h-screen max-w-[390px] border-x border-neutral-200 ${wide ? 'md:max-w-none md:border-x-0' : ''}`}
     >
       <header
-        className={`bg-brand-charcoal relative flex items-center justify-between gap-2 border-b border-white/10 px-3 py-3 min-[380px]:px-4 ${wide ? 'md:px-10 md:py-4 lg:px-16' : ''}`}
+        className={`bg-brand-charcoal relative flex items-center justify-between gap-2 border-b border-white/10 px-3 py-3 min-[380px]:px-4 ${wide ? 'md:px-[max(2.5rem,calc((100%_-_72rem)/2_+_2.5rem))] md:py-4' : ''}`}
       >
         <Link to="/" className="flex shrink-0 items-center gap-2" onClick={() => setOpen(false)}>
           <span className={`size-8 overflow-hidden rounded-full ${wide ? 'md:size-10' : ''}`}>

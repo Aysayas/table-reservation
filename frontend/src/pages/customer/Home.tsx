@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
+import { format } from 'date-fns'
 import { ArrowRight, Plus, UtensilsCrossed } from 'lucide-react'
-import { useState, type FormEvent } from 'react'
+import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { groupHours } from '@/lib/hours'
 import { directionsUrl } from '@/lib/maps'
@@ -11,10 +12,10 @@ const wrap = 'md:mx-auto md:max-w-6xl md:px-10'
 const eyebrow = 'text-brand-red text-xs font-bold tracking-[0.25em] uppercase'
 const goldEyebrow = 'text-brand-gold text-xs font-bold tracking-[0.25em] uppercase'
 const button =
-  'focus-visible:outline-brand-gold block rounded-sm px-6 py-4 text-center text-xs font-bold tracking-[0.12em] uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 md:text-sm md:tracking-[0.15em]'
+  'focus-visible:outline-brand-gold block rounded-sm px-3 py-4 text-center whitespace-nowrap md:px-6 text-xs font-bold tracking-[0.12em] uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 md:text-sm md:tracking-[0.15em]'
 const footerLink = 'hover:text-brand-gold transition-colors duration-200'
 const field =
-  'mt-2 w-full rounded-sm border border-white/40 bg-transparent px-3 py-3 text-sm text-white outline-none [color-scheme:dark] focus:border-brand-gold'
+  'mt-2 w-full rounded-sm border border-white/40 bg-transparent px-3 py-3 text-sm font-normal tracking-normal text-white normal-case outline-none [color-scheme:dark] focus:border-brand-gold'
 const fieldLabel = 'text-xs font-bold tracking-[0.2em] uppercase'
 
 const features = [
@@ -27,6 +28,7 @@ const features = [
 export default function Home() {
   const navigate = useNavigate()
   const [year] = useState(() => new Date().getFullYear())
+  const [today] = useState(() => format(new Date(), 'yyyy-MM-dd'))
   const [date, setDate] = useState('')
   const [time, setTime] = useState('')
   const [pax, setPax] = useState('2')
@@ -40,8 +42,7 @@ export default function Home() {
   const words = settings?.restaurant_name.split(' ') ?? []
   const lastWord = words.pop()
 
-  const findTable = (event: FormEvent) => {
-    event.preventDefault()
+  const findTable = () => {
     const params = new URLSearchParams(Object.entries({ date, time, pax }).filter(([, v]) => v))
     navigate(`/reserve?${params}`)
   }
@@ -49,11 +50,11 @@ export default function Home() {
   return (
     <div className="bg-brand-cream">
       <section className="bg-brand-charcoal px-4 pt-10 pb-28 text-white md:pt-16 md:pb-32">
-        <div className={`md:grid md:grid-cols-2 md:items-center md:gap-12 ${wrap}`}>
+        <div className={`md:grid md:grid-cols-[1.15fr_1fr] md:items-center md:gap-12 ${wrap}`}>
           <div>
             <p className="font-display text-brand-gold text-4xl">Mabuhay!</p>
-            <h1 className="mt-3 font-serif text-5xl leading-tight lg:text-6xl">
-              Home-style Filipino, <span className="text-brand-red">served with heart.</span>
+            <h1 className="mt-3 font-serif text-5xl leading-tight lg:text-[3.4rem]">
+              Home-style Filipino, <span className="text-brand-red-light">served with heart.</span>
             </h1>
             <span aria-hidden="true" className="bg-brand-gold mt-8 block h-px w-16" />
             <p className="text-brand-cream/85 mt-6 max-w-md text-base leading-7">
@@ -149,7 +150,7 @@ export default function Home() {
             <h2 className="font-serif text-4xl leading-tight md:text-5xl">Popular Dishes</h2>
             <Link
               to="/menu"
-              className="text-brand-gold mb-1 flex items-center gap-1 text-xs font-bold tracking-[0.15em] uppercase hover:underline"
+              className="text-brand-gold mb-1 flex items-center gap-1 text-xs font-bold tracking-[0.15em] whitespace-nowrap uppercase hover:underline"
             >
               View full menu
               <ArrowRight className="size-4" />
@@ -188,7 +189,7 @@ export default function Home() {
       </section>
 
       <section className="bg-brand-red px-4 py-12 text-white">
-        <div className={`md:grid md:grid-cols-[1fr_auto] md:items-end md:gap-12 ${wrap}`}>
+        <div className={`lg:grid lg:grid-cols-[1fr_1.5fr] lg:items-end lg:gap-12 ${wrap}`}>
           <div>
             <h2 className="font-serif text-3xl leading-tight">Good food deserves great company.</h2>
             <p className="mt-2 text-sm text-white/85">
@@ -196,13 +197,17 @@ export default function Home() {
             </p>
           </div>
           <form
-            onSubmit={findTable}
-            className="mt-8 grid grid-cols-2 gap-3 md:mt-0 md:flex md:items-end"
+            onSubmit={(event) => {
+              event.preventDefault()
+              findTable()
+            }}
+            className="mt-8 grid grid-cols-2 gap-3 md:grid-cols-[1fr_1fr_1fr_auto] md:items-end lg:mt-0"
           >
             <label className={fieldLabel}>
               Date
               <input
                 type="date"
+                min={today}
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
                 className={field}
