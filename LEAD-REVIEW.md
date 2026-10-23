@@ -89,3 +89,11 @@ Claude adds an entry here when the frontend developer asks for something outside
 - What Claude did instead: nothing from the mockup is built yet; she asked to wait for your answer. Screen 05 currently has the screen 07 style (cream page, Playfair title, black reference code box, white details card, red and black buttons) with the wireframe's content
 - Status: Approved (except Save pass)
 - Lead note: Approved (2026-10-23): (1) the title "Salamat! / Your table is reserved" (update the e2e heading check); (2) Copy code with a "Code copied" message (sonner); (3) Calendar: an .ics file made in the browser from the reservation's date, time and guests; (4) Directions, the same Google Maps link as screen 07; (6) "What happens next" with the 3 steps. Not approved: (5) Save pass. A wallet pass has to be signed on the server, and there's no endpoint for it. The data stays the same as `GET /reservations/{code}` in `docs/api.md`, and the "Back to Home" and "Manage Reservation" links stay. Build these in your next pull request, with tests.
+
+### 2026-10-23: Screen 13 Staff Login subtitle, show-password button, forgot password
+- Level: 🟡 off plan
+- Asked for: from her Staff Login mockup: (1) change the subtitle "Sign in to continue" to "Sign in to manage today's reservations."; (2) an eye button inside the password box to show or hide the password. Also a question from Claude: (3) "Forgot password?" has no screen or endpoint, so it currently shows a message "Ask an admin to reset your password." Is that okay?
+- Rule it bumps into: CLAUDE.md, each screen keeps the wireframe's labels and buttons; (1) changes a label, (2) adds a button
+- What Claude did instead: built the rest of the card from her mockup (logo on the top edge of the card, "STAFF PORTAL" label, Playfair title, gold-bordered fields, red checkbox and button) and kept "Sign in to continue" with no eye button. Her mockup's pink "Incorrect email or password" box comes when the API is live, because the login pretends to succeed until then
+- Status: Waiting for lead
+- Lead note:
