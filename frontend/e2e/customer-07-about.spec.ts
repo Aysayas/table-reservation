@@ -48,6 +48,7 @@ test('contact details are shown', async ({ page }) => {
 
 test('back button returns to the previous page', async ({ page }) => {
   await page.goto('/menu')
+  await page.getByRole('button', { name: 'Open menu' }).click()
   await page.getByRole('link', { name: 'About' }).click()
   await page.getByRole('button', { name: 'Back' }).click()
   await expect(page).toHaveURL('/menu')

@@ -86,7 +86,7 @@ Suggested sizes:
 
 - File: `/logo.png` (in `frontend/public/`): the official Vencio's Garden Hotel & Restaurant logo, a gold emblem and gold name on red (since 2026-10-23; the old round green logo is in git history).
 - Full logo: on large spots (login, splash), shown whole. Never stretch it or recolour it.
-- Top bar: a 32px round badge zoomed in on the gold emblem, with the restaurant name written next to it.
+- Top bar: a 32px round badge zoomed in on the gold emblem, then the name in two styles: "Vencio's" in white serif and "Garden" in gold handwriting.
 - Give it `alt="Vencio's Garden"`, or `alt=""` when the name is already written right next to it.
 
 ## Layout ideas from the menu
