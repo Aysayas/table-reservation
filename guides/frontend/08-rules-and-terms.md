@@ -4,14 +4,14 @@
 
 ✅ **Gawin**
 - Isang screen lang at a time
-- I-compare lagi sa wireframe
+- I-compare lagi sa wireframe: dapat pareho yung laman, buttons at links (pwedeng iba yung itsura)
 - Magtanong ng "bakit?" kahit kailan
 - I-run ang `/check-my-work` bago mo sabihin sa team na tapos ka na
 - Sabihan ang team kung anong screen yung ginagawa mo
-- Gamitin yung brand colors at fonts sa `docs/design/brand.md` (`bg-brand-green`, `text-brand-brown`). Huwag mag-imbento ng bagong kulay
+- Ikaw na ang bahala sa design (kulay, font, layout, animation). I-update mo lang yung `docs/design/brand.md` para alam ng team
 
 ❌ **Huwag**
-- Gamitin yung totoong pangalan ng tao, phone number, email o food pictures. Gamitin yung `Juan Dela Cruz`, `09XX XXX XXXX`, `placeholder-domain.com`, at gray boxes. (Okay lang yung totoong pangalan ng restaurant, logo, menu, presyo at contact details ng restaurant mismo: nasa `sampleData.ts` na sila)
+- Gamitin yung totoong pangalan ng tao, phone number o email. Gamitin yung `Juan Dela Cruz`, `09XX XXX XXXX` at `placeholder-domain.com`. Para sa food pictures: free-licence lang (Unsplash, Pexels), at ilagay yung source sa `docs/design/brand.md`. (Okay lang yung totoong pangalan ng restaurant, logo, menu, presyo at contact details ng restaurant mismo: nasa `sampleData.ts` na sila)
 - Magdagdag ng pages o features na wala sa wireframes
 - Galawin yung backend o settings files
 - Mag-paste ng passwords o secret keys sa chat o sa code

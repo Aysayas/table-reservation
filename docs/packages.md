@@ -17,6 +17,7 @@ What each installed library is for. Check here before adding a new one, so we do
 | `recharts` | Charts on screens 19 and 27 | [recharts.org](https://recharts.org) |
 | `lucide-react` | Icons | [lucide.dev](https://lucide.dev/icons) |
 | `sonner` | Pop-up messages ("Order sent") | [sonner.emilkowal.ski](https://sonner.emilkowal.ski) |
+| `motion` | Animations: page transitions, scroll reveals, hover effects. Respect `prefers-reduced-motion` | [motion.dev](https://motion.dev) |
 | `tailwindcss` | Styling. See [Styling rules](styling.md) | [tailwindcss.com](https://tailwindcss.com/docs) |
 
 React Query and the pop-up messages are already switched on in `src/main.tsx`, so every screen can use them.
@@ -28,7 +29,7 @@ React Query and the pop-up messages are already switched on in `src/main.tsx`, s
 | `@fontsource/montserrat` | The main font (`font-sans`), weights 400, 600 and 700 | [fontsource.org](https://fontsource.org/fonts/montserrat) |
 | `@fontsource/dancing-script` | The script title font (`font-display`), weight 700 | [fontsource.org](https://fontsource.org/fonts/dancing-script) |
 
-Both are imported once in `src/index.css`. See the [brand guide](design/brand.md) for when to use each.
+Both are imported once in `src/index.css`. Any other `@fontsource/*` font may be added for the design; list it here, and in the [brand guide](design/brand.md) say what it is for.
 
 ## Developer tools
 

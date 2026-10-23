@@ -16,16 +16,16 @@ We style with [Tailwind CSS v4](https://tailwindcss.com/docs) utility classes wr
 
 ## Colours
 
-The colours come from Vencio's Garden's menu. They are already theme tokens in `src/index.css`, and [the brand guide](design/brand.md) says what each one is for. The wireframes show layout, not colour.
+The frontend developer designs the look: colours, fonts, layout and motion. The wireframes fix what each screen shows, not how it looks. The starting palette came from Vencio's Garden's menu; she may change it.
 
-- Use the brand classes: `bg-brand-green`, `text-brand-brown`, `bg-brand-cream`, and so on.
-- Shades of them are fine (for example `hover:bg-brand-green/90`). Don't add new colours.
+- Define every colour once as a theme token in `src/index.css` (`@theme`), then use its classes (`bg-…`, `text-…`).
 - Don't hard-code hex values (`#1a2b3c`, `bg-[#1a2b3c]`) in components.
-- Keep text readable. The brand guide lists which text and background pairs are safe.
+- Keep text readable: enough contrast between text and its background.
+- Write down the palette and what each colour is for in [the brand guide](design/brand.md).
 
 ## Fonts
 
-Montserrat is the default font (`font-sans`) for everything. Dancing Script (`font-display`) is only for one big title at a time, like the restaurant name or a section banner. Both are already loaded in `src/index.css`.
+Fonts come from `@fontsource/*` packages (they work offline), imported once in `src/index.css` and set as theme tokens (`--font-sans`, `--font-display`, …). Record which font is for what in [the brand guide](design/brand.md).
 
 ## Screen sizes
 
@@ -52,7 +52,7 @@ Everything else stays a placeholder:
 | Real people (customers, staff) | Generic names, e.g. `Juan Dela Cruz`, `Customer Name` |
 | A person's phone number | `09XX XXX XXXX` |
 | A person's email or other domains | `placeholder-domain.com` |
-| Food photos | A plain placeholder box |
+| Real food or restaurant photos | Free-licence stock photos (Unsplash, Pexels) with the source noted in `design/brand.md`, or a placeholder box. Real restaurant photos only with the lead's OK |
 
 ## Code comments
 

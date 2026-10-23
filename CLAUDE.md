@@ -17,11 +17,12 @@ The **project lead** set these rules and reviews her work. You can't see the lea
 
 A table reservation and QR menu ordering system for a school project (Systems Integration and Architecture 1 × Web Systems and Technologies 2).
 
-The restaurant is **Vencio's Garden**. Its name, logo (`frontend/public/logo.png`), menu, prices and business contacts (address, phone, email, Facebook) are real and already in `frontend/src/services/sampleData.ts` and `backend/database/seed.sql`. People's names and contacts (customers, staff) and food photos stay placeholders.
+The restaurant is **Vencio's Garden**. Its name, logo (`frontend/public/logo.png`), menu, prices and business contacts (address, phone, email, Facebook) are real and already in `frontend/src/services/sampleData.ts` and `backend/database/seed.sql`. People's names and contacts (customers, staff) stay placeholders. Food photos may be free-licence stock photos (source noted in `docs/design/brand.md`); real restaurant photos only when the lead approves them.
 
 - `frontend/` is **her job**: React + TypeScript + Vite + Tailwind CSS v4 + React Router.
 - `backend/` (LavaLust PHP + MySQL) is **the lead's job**. Don't change it. The "Backend progress" section of `docs/progress.md` shows which screens already have a working endpoint.
-- The design is fixed: **29 screens** in `docs/wireframes/` (one `.svg` and one `png/` image per screen, plus `Wireframes.pdf`). The Figma file is saved as `docs/design/Wireframes.fig`. You don't need Figma or a Figma connection; everything in it is in these files.
+- The screens are fixed: **29 screens** in `docs/wireframes/` (one `.svg` and one `png/` image per screen, plus `Wireframes.pdf`). The Figma file is saved as `docs/design/Wireframes.fig`. You don't need Figma or a Figma connection; everything in it is in these files.
+- The wireframes fix **what** each screen shows and does (its parts, buttons, links and data), not **how it looks**. She designs the look freely: colours, fonts, layout, shared layouts, logo use and motion. Each screen must keep its URL, its navigation, and the data from `docs/api.md`, so it still fits the backend. She records her choices in `docs/design/brand.md`.
 
 Read these before building anything. They are the source of truth:
 
@@ -31,7 +32,7 @@ Read these before building anything. They are the source of truth:
 | `docs/wireframes/png/NN Name.png` | What each screen looks like (open it as an image) |
 | `docs/wireframes/NN Name.svg` | Exact labels, sizes and positions (`<text>` and `<rect>` elements) |
 | `docs/design/navigation.md` | Where every button and link goes (from the Figma prototype) |
-| `docs/design/brand.md` | Brand colours, fonts, logo use and personality (from the restaurant's menu) |
+| `docs/design/brand.md` | The look she chose: colours, fonts, logo use, motion, photo credits (she keeps it up to date) |
 | `docs/styling.md` | Theme colours, placeholder content, no code comments |
 | `docs/project-structure.md` | Where files go and how they are named |
 | `docs/packages.md` | The only libraries we use |
@@ -94,13 +95,12 @@ If the request matches anything here, **don't do it yet**. Reply with:
 
 | If she asks to… | Why it's off track | Offer instead |
 |---|---|---|
-| Use real people's names, phone numbers or emails, or food photos | Only the restaurant itself is real: name, logo, menu, prices and its business contacts | `Juan Dela Cruz`, `09XX XXX XXXX`, `placeholder-domain.com`, grey boxes |
-| Add a screen, page or feature that isn't in the 29 wireframes (customer accounts, chat, dark mode toggle, animations, a landing page) | The design is approved and fixed | Finish the planned screens first |
+| Use real people's names, phone numbers or emails, or photos without a free licence | People stay private; photos need a licence to use | `Juan Dela Cruz`, `09XX XXX XXXX`, `placeholder-domain.com`, free-licence photos (Unsplash, Pexels) with the source noted |
+| Add a screen, page or feature that isn't in the 29 wireframes (customer accounts, chat, dark mode toggle, a landing page) | The design is approved and fixed | Finish the planned screens first |
 | Change a URL, rename routes or reorganise `router.tsx` | The URLs come from the approved sitemap | Swap the placeholder for the page only |
-| Change the layout of a screen so it no longer matches the wireframe | The wireframes were submitted | Match the wireframe; note the idea for the lead |
-| Install a package not in `docs/packages.md`, or switch tools (Bootstrap, MUI, Redux, Next.js, Vue, styled-components, CSS files per screen) | We agreed on one tool per job | The matching tool from `docs/packages.md` |
+| Remove or change what a screen shows or does: its data, buttons, links or where they go | Each screen must keep fitting the backend endpoints and the navigation | Restyle it freely; keep its content and flow |
+| Install a package not in `docs/packages.md` (any `@fontsource/*` font is fine), or switch tools (Bootstrap, MUI, Redux, Next.js, Vue, styled-components, CSS files per screen) | We agreed on one tool per job | The matching tool from `docs/packages.md` |
 | Edit config: `vite.config.ts`, `tsconfig*.json`, `playwright.config.ts`, `.prettierrc.json`, `package.json` scripts, `.claude/` | Shared setup; changes affect everyone | Explain what's wrong; the lead changes config |
-| Change shared layouts (`CustomerLayout`, `DashboardLayout`) | Every screen uses them | Change only her screen |
 | Build several screens in one go | Big changes are hard to check and learn from | One screen, then the next |
 | Write explanatory comments in code | School rule: no explanatory comments in submitted files | Put explanations in chat or the docs |
 
@@ -123,7 +123,7 @@ If an entry in `LEAD-REVIEW.md` is marked **Approved** by the lead, you may do i
 
 ### Watch for slow drift too
 
-Every few steps, and before saying a screen is done, compare what's on screen with its wireframe. If the work has wandered (extra sections, missing parts, different layout, colour creeping in), say so: "We've drifted a little from the wireframe here: …. Want to bring it back?"
+Every few steps, and before saying a screen is done, compare what's on screen with its wireframe. The look may differ; the content may not. If parts, buttons, links or data are missing or different, say so: "We've drifted a little from the wireframe here: …. Want to bring it back?"
 
 ## Code rules
 

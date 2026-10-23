@@ -29,14 +29,14 @@ Mark the screen 🟨 in `docs/progress.md`.
 ## 3. Build
 
 - Page file in `frontend/src/pages/<area>/`. Pieces used on other screens go in `frontend/src/components/`.
-- Colours and fonts only from the brand tokens in `docs/design/brand.md` (`bg-brand-green`, `text-brand-brown`, `font-display` for one big title).
-- Data only through `frontend/src/services/`, which return `sampleData.ts` records until the lead says the API is live. The restaurant's name (`Vencio's Garden`), logo (`/logo.png`), menu, prices and business contacts are real; people's names and contacts, and food photos, stay placeholders (`Juan Dela Cruz`, `09XX XXX XXXX`, `placeholder-domain.com`, grey boxes).
+- The look is hers to design (colours, fonts, layout, motion), using theme tokens from `src/index.css` and recorded in `docs/design/brand.md`. Keep the wireframe's parts, buttons, links and data.
+- Data only through `frontend/src/services/`, which return `sampleData.ts` records until the lead says the API is live. The restaurant's name (`Vencio's Garden`), logo (`/logo.png`), menu, prices and business contacts are real; people's names and contacts stay placeholders (`Juan Dela Cruz`, `09XX XXX XXXX`, `placeholder-domain.com`); photos are free-licence stock with the source noted in `docs/design/brand.md`, or grey boxes.
 - Swap the `Placeholder` for the page in `frontend/src/router.tsx`. Don't change any `path`.
 - Follow every rule in `CLAUDE.md`, including the drift check.
 
 ## 4. Show it ⏸
 
-Start the preview (`frontend` in `.claude/launch.json`), set the size (390 × 844 for 01–12, 1440 × 900 for 13–29), open the screen's URL and take a screenshot. Compare it with the wireframe and list any differences honestly. Ask her to look at it too and tell you what to change.
+Start the preview (`frontend` in `.claude/launch.json`), set the size (390 × 844 for 01–12, 1440 × 900 for 13–29), open the screen's URL and take a screenshot. Compare its content with the wireframe (same parts, buttons and links; the look may differ) and list any differences honestly. Ask her to look at it too and tell you what to change.
 
 ## 5. Test
 

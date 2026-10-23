@@ -28,10 +28,10 @@ Search `frontend/src/` and `frontend/e2e/` for:
 | `key`, `secret`, `token`, `password` with a real-looking value | No secrets in the frontend |
 | New `.css` files other than `index.css` | Tailwind classes only |
 | Imports from packages not in `docs/packages.md` | Agreed packages only |
-| Real people's names, phone numbers, emails or domains, or food photos | Only the restaurant itself is real: name, logo, menu, prices and its business contacts |
+| Real people's names, phone numbers, emails or domains, or photos without a source in `docs/design/brand.md` | People stay private; photos need a free licence or the lead's OK |
 | `path:` values in `router.tsx` that differ from `docs/screens-and-routes.md` | URLs are fixed |
 
-Also check that `package.json` dependencies match `docs/packages.md`, and that the screens marked 🟦 in `docs/progress.md` still match their wireframes in `docs/wireframes/`.
+Also check that `package.json` dependencies match `docs/packages.md`, and that the screens marked 🟦 in `docs/progress.md` still show what their wireframes show (parts, buttons, links, data); the look may differ.
 
 ## 3. Report
 

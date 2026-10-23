@@ -1,6 +1,8 @@
 # Brand guide: Vencio's Garden
 
-How the app should look and feel. It comes from the restaurant's own printed menu. Use these colours and fonts on every screen.
+How the app should look and feel.
+
+**This guide belongs to the frontend developer.** Since 2026-10-23 the lead has given her design freedom: colours, fonts, layout, logo use and motion are her choice, as long as every screen keeps its content, buttons, links and data from `docs/api.md`. When she changes the look, she updates this file, so the whole team knows the current palette, fonts and photo sources. The palette and fonts below are the starting point measured from the restaurant's printed menu.
 
 ## Personality
 
@@ -34,7 +36,7 @@ These are already theme tokens in `frontend/src/index.css`, so every one has Tai
 | `brand-ink` | `#3A4B2E` | Body text (the default on `body`) |
 | white | `#FFFFFF` | Page background, text on green or maroon |
 
-Shades of these (for example `bg-brand-green/90` for hover) are fine. Don't add new colours, and don't write hex values in components.
+Shades of these (for example `bg-brand-green/90` for hover) are fine. New or replacement colours are fine too: add them as tokens in `index.css` and list them here. Don't write hex values in components.
 
 ### Text that is easy to read
 
@@ -87,9 +89,14 @@ Suggested sizes:
 - Rounded cards (`rounded-xl`) in `brand-cream` for items and summaries.
 - The menu's green-and-gold sunburst stripes can be a small accent (for example on the home hero). Never put text on top of them.
 
-## Food photos (later)
+## Photos
 
-The app uses plain placeholder boxes for food photos for now. When real photos come, they should look like the menu: the dish cut out on white, served on a round plate with a banana-leaf garnish.
+- Stock photos only from free-licence sites (Unsplash, Pexels). Nothing copied from other restaurants' or hotels' sites.
+- Real photos of Vencio's Garden only when the restaurant provides them, with permission, and with no recognisable guests.
+- Store them in `frontend/public/` and list each one below.
+
+| File | Source (link) | Licence |
+|---|---|---|
 
 ## Do and don't
 
