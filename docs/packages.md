@@ -28,8 +28,10 @@ React Query and the pop-up messages are already switched on in `src/main.tsx`, s
 |---|---|---|
 | `@fontsource/montserrat` | The main font (`font-sans`), weights 400, 600 and 700 | [fontsource.org](https://fontsource.org/fonts/montserrat) |
 | `@fontsource/dancing-script` | The script title font (`font-display`), weight 700 | [fontsource.org](https://fontsource.org/fonts/dancing-script) |
+| `@fontsource/playfair-display` | A serif heading font, chosen by the frontend developer (see the brand guide) | [fontsource.org](https://fontsource.org/fonts/playfair-display) |
+| `@fontsource/great-vibes` | A script accent font, chosen by the frontend developer (see the brand guide) | [fontsource.org](https://fontsource.org/fonts/great-vibes) |
 
-Both are imported once in `src/index.css`. Any other `@fontsource/*` font may be added for the design; list it here, and in the [brand guide](design/brand.md) say what it is for.
+Montserrat and Dancing Script are imported once in `src/index.css`; Playfair Display and Great Vibes are installed for the frontend developer to import there. Any other `@fontsource/*` font may be added for the design; list it here, and in the [brand guide](design/brand.md) say what it is for.
 
 ## Developer tools
 
