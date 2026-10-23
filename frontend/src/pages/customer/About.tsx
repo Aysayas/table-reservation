@@ -2,19 +2,13 @@ import { useQuery } from '@tanstack/react-query'
 import { Globe, Mail, Phone } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import RestaurantMap from '@/components/RestaurantMap'
+import { dayNames, hoursText, weekOrder } from '@/lib/hours'
 import { getOpeningHours, getSettings } from '@/services/settings'
 
-const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-const weekOrder = [1, 2, 3, 4, 5, 6, 0]
 const eyebrow = 'text-brand-red text-xs font-bold tracking-[0.25em] uppercase'
 const title = 'text-brand-charcoal mt-3 font-serif text-4xl leading-tight md:text-5xl'
 const wrap = 'md:mx-auto md:max-w-5xl md:px-10'
-
-function formatTime(time: string) {
-  const [hours, minutes] = time.split(':').map(Number)
-  const suffix = hours < 12 ? 'AM' : 'PM'
-  return `${hours % 12 || 12}:${String(minutes).padStart(2, '0')} ${suffix}`
-}
 
 export default function About() {
   const [today] = useState(() => new Date().getDay())
@@ -101,11 +95,7 @@ export default function About() {
           </div>
           <ul className="mt-8 overflow-hidden rounded-lg border border-white/10 md:mt-0">
             {weekOrder.map((day) => {
-              const entry = hours.find((h) => h.day_of_week === day)
-              const time =
-                entry?.is_open && entry.open_time && entry.close_time
-                  ? `${formatTime(entry.open_time)} – ${formatTime(entry.close_time)}`
-                  : 'Closed'
+              const time = hoursText(hours.find((h) => h.day_of_week === day))
               const isToday = day === today
               return (
                 <li
@@ -133,17 +123,7 @@ export default function About() {
         <section className="px-4 pt-14 md:px-0 md:pt-0">
           <p className={eyebrow}>Find us</p>
           <h2 className={title}>Location</h2>
-          {settings ? (
-            <iframe
-              title={`Map to ${settings.restaurant_name}`}
-              src={`https://maps.google.com/maps?q=${encodeURIComponent(`${settings.restaurant_name} Hotel and Restaurant`)}&output=embed`}
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              className="border-brand-gold/40 mt-8 h-52 w-full rounded-lg border"
-            />
-          ) : (
-            <div role="img" aria-label="Map" className="mt-8 h-52 rounded-lg bg-neutral-200" />
-          )}
+          <RestaurantMap settings={settings} className="mt-8 h-52 rounded-lg" />
           <p className="mt-4 text-sm leading-7">{settings?.address}</p>
           <a
             href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${settings?.restaurant_name} Hotel and Restaurant`)}`}

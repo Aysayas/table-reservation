@@ -23,7 +23,7 @@ Start with simple screens to learn, then the forms, then the bigger flows:
 
 | # | Screen | Status | Notes |
 |---|---|---|---|
-| 01 | Home | ⬜ | |
+| 01 | Home | 🟨 | |
 | 02 | Menu | ⬜ | |
 | 03 | Reserve a Table | ⬜ | |
 | 04 | Deposit Payment | ⬜ | |
