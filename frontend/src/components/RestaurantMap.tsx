@@ -1,3 +1,4 @@
+import { mapEmbedUrl } from '@/lib/maps'
 import type { RestaurantSettings } from '@/types/db'
 
 type Props = {
@@ -13,7 +14,7 @@ export default function RestaurantMap({ settings, className }: Props) {
   return (
     <iframe
       title={`Map to ${settings.restaurant_name}`}
-      src={`https://maps.google.com/maps?q=${encodeURIComponent(`${settings.restaurant_name} Hotel and Restaurant`)}&output=embed`}
+      src={mapEmbedUrl(settings.restaurant_name)}
       loading="lazy"
       referrerPolicy="no-referrer-when-downgrade"
       className={`${className} border-brand-gold/40 w-full border`}

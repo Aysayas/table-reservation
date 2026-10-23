@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import RestaurantMap from '@/components/RestaurantMap'
 import { dayNames, hoursText, weekOrder } from '@/lib/hours'
+import { directionsUrl } from '@/lib/maps'
 import { getOpeningHours, getSettings } from '@/services/settings'
 
 const eyebrow = 'text-brand-red text-xs font-bold tracking-[0.25em] uppercase'
@@ -126,7 +127,7 @@ export default function About() {
           <RestaurantMap settings={settings} className="mt-8 h-52 rounded-lg" />
           <p className="mt-4 text-sm leading-7">{settings?.address}</p>
           <a
-            href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${settings?.restaurant_name} Hotel and Restaurant`)}`}
+            href={directionsUrl(settings?.restaurant_name)}
             target="_blank"
             rel="noreferrer"
             className="bg-brand-charcoal border-brand-gold text-brand-gold hover:bg-brand-charcoal/90 mt-5 block rounded-sm border py-4 text-center text-xs font-bold tracking-[0.2em] uppercase transition-colors duration-200"

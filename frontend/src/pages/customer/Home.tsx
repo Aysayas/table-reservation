@@ -3,6 +3,7 @@ import { ArrowRight, Plus, UtensilsCrossed } from 'lucide-react'
 import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { groupHours } from '@/lib/hours'
+import { directionsUrl } from '@/lib/maps'
 import { getMenuItems } from '@/services/menu'
 import { getOpeningHours, getSettings } from '@/services/settings'
 
@@ -38,7 +39,6 @@ export default function Home() {
   const badge = hourGroups[0]
   const words = settings?.restaurant_name.split(' ') ?? []
   const lastWord = words.pop()
-  const directions = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${settings?.restaurant_name ?? ''} Hotel and Restaurant`)}`
 
   const findTable = (event: FormEvent) => {
     event.preventDefault()
@@ -280,7 +280,7 @@ export default function Home() {
             <p className={goldEyebrow}>Location</p>
             <p className="mt-4 text-sm leading-6">{settings?.address}</p>
             <a
-              href={directions}
+              href={directionsUrl(settings?.restaurant_name)}
               target="_blank"
               rel="noreferrer"
               className="text-brand-gold mt-3 inline-flex items-center gap-1 text-sm font-semibold hover:underline"
