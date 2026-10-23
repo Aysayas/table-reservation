@@ -31,7 +31,14 @@ test('contact details are shown', async ({ page }) => {
   ).toBeVisible()
   await expect(page.getByText('0918 957 2855')).toBeVisible()
   await expect(page.getByText('venciosgarden@yahoo.com')).toBeVisible()
-  await expect(page.getByText('https://www.facebook.com/venciosgardenhotel')).toBeVisible()
+  await expect(page.getByRole('link', { name: '/venciosgardenhotel' })).toHaveAttribute(
+    'href',
+    'https://www.facebook.com/venciosgardenhotel',
+  )
+  await expect(page.getByRole('link', { name: '0918 957 2855' })).toHaveAttribute(
+    'href',
+    'tel:09189572855',
+  )
 })
 
 test('back button returns to the previous page', async ({ page }) => {

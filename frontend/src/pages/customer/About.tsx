@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { ChevronLeft } from 'lucide-react'
+import { ChevronLeft, Globe, Mail, Phone } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { getOpeningHours, getSettings } from '@/services/settings'
 
@@ -22,13 +22,23 @@ export default function About() {
   const { data: hours = [] } = useQuery({ queryKey: ['opening-hours'], queryFn: getOpeningHours })
 
   const contacts = [
-    { label: 'Phone', value: settings?.contact_number },
-    { label: 'Email', value: settings?.email },
-    { label: 'Facebook', value: settings?.facebook_url },
+    {
+      label: 'Phone',
+      value: settings?.contact_number,
+      href: `tel:${settings?.contact_number?.replace(/\s/g, '')}`,
+      icon: Phone,
+    },
+    { label: 'Email', value: settings?.email, href: `mailto:${settings?.email}`, icon: Mail },
+    {
+      label: 'Facebook',
+      value: settings?.facebook_url?.replace(/^https?:\/\/(www\.)?facebook\.com/, ''),
+      href: settings?.facebook_url ?? undefined,
+      icon: Globe,
+    },
   ]
 
   return (
-    <div className="pb-16">
+    <div>
       <div className="bg-brand-charcoal relative flex h-16 items-center justify-center px-4">
         <button
           type="button"
@@ -112,17 +122,32 @@ export default function About() {
           <p className={eyebrow}>Get in touch</p>
           <h2 className={title}>Contact</h2>
           <dl className="border-brand-charcoal/10 mt-6 border-t">
-            {contacts.map((contact) => (
-              <div key={contact.label} className={row}>
-                <dt className="text-brand-gold-deep text-xs font-semibold tracking-[0.15em] uppercase">
-                  {contact.label}
+            {contacts.map(({ label, value, href, icon: Icon }) => (
+              <div
+                key={label}
+                className="border-brand-charcoal/10 flex items-center gap-3 border-b py-4"
+              >
+                <Icon className="text-brand-gold-deep size-4 shrink-0" strokeWidth={1.5} />
+                <dt className="text-brand-gold-deep shrink-0 text-xs font-semibold tracking-[0.15em] uppercase">
+                  {label}
                 </dt>
-                <dd className="text-right break-all">{contact.value}</dd>
+                <dd className="min-w-0 flex-1 text-right text-sm">
+                  <a
+                    href={href}
+                    target={label === 'Facebook' ? '_blank' : undefined}
+                    rel={label === 'Facebook' ? 'noreferrer' : undefined}
+                    className="hover:text-brand-gold-deep break-words transition-colors duration-200"
+                  >
+                    {value}
+                  </a>
+                </dd>
               </div>
             ))}
           </dl>
         </section>
       </div>
+
+      <footer className="bg-brand-charcoal mt-16 h-14" />
     </div>
   )
 }
