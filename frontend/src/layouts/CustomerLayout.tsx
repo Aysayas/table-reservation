@@ -9,14 +9,14 @@ export default function CustomerLayout() {
 
   return (
     <div className="mx-auto min-h-screen max-w-[390px] border-x border-neutral-200">
-      <header className="bg-brand-charcoal flex items-center justify-between gap-2 border-b border-white/10 px-4 py-3">
-        <Link to="/" className="flex items-center gap-2">
-          <img src={settings?.logo_url ?? '/logo.png'} alt="" className="size-9 rounded-full" />
-          <span className="text-brand-cream text-sm font-semibold">
+      <header className="bg-brand-charcoal flex items-center justify-between gap-2 border-b border-white/10 px-3 py-3 min-[380px]:px-4">
+        <Link to="/" className="flex shrink-0 items-center gap-1.5">
+          <img src={settings?.logo_url ?? '/logo.png'} alt="" className="size-8 rounded-full" />
+          <span className="text-brand-cream text-sm font-semibold whitespace-nowrap">
             {settings?.restaurant_name}
           </span>
         </Link>
-        <nav className="text-brand-cream flex items-center gap-3 text-xs font-medium">
+        <nav className="text-brand-cream flex shrink-0 items-center gap-2 text-xs font-medium min-[380px]:gap-3">
           <Link to="/menu" className={navLink}>
             Menu
           </Link>
@@ -25,7 +25,7 @@ export default function CustomerLayout() {
           </Link>
           <Link
             to="/reserve"
-            className="bg-brand-gold text-brand-charcoal hover:bg-brand-gold/85 rounded-full px-3 py-1.5 font-semibold transition-colors duration-200"
+            className="bg-brand-gold text-brand-charcoal hover:bg-brand-gold/85 rounded-full px-2 py-1.5 font-semibold transition-colors duration-200 min-[380px]:px-3"
           >
             Reserve
           </Link>
