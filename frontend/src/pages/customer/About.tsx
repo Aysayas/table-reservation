@@ -6,9 +6,9 @@ import { getOpeningHours, getSettings } from '@/services/settings'
 const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 const weekOrder = [1, 2, 3, 4, 5, 6, 0]
 const eyebrow =
-  'text-brand-leaf flex items-center gap-3 text-xs font-semibold tracking-[0.22em] uppercase before:bg-brand-gold before:h-px before:w-6'
-const title = 'text-brand-brown mt-2 text-2xl font-bold tracking-tight'
-const row = 'border-brand-sage/30 flex justify-between gap-4 border-b py-3 text-sm'
+  'text-brand-maroon flex items-center gap-3 text-xs font-semibold tracking-[0.22em] uppercase before:bg-brand-gold before:h-px before:w-6'
+const title = 'text-brand-charcoal mt-2 text-3xl font-semibold tracking-tight'
+const row = 'border-brand-charcoal/10 flex justify-between gap-4 border-b py-3 text-sm'
 
 function formatTime(time: string) {
   const [hours, minutes] = time.split(':').map(Number)
@@ -29,16 +29,16 @@ export default function About() {
 
   return (
     <div className="pb-16">
-      <div className="border-brand-sage/30 relative flex h-16 items-center justify-center border-b px-4">
+      <div className="bg-brand-charcoal relative flex h-16 items-center justify-center px-4">
         <button
           type="button"
           aria-label="Back"
           onClick={() => navigate(-1)}
-          className="text-brand-green hover:bg-brand-cream focus-visible:outline-brand-leaf absolute left-3 flex size-10 items-center justify-center rounded-full transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2"
+          className="text-brand-gold focus-visible:outline-brand-gold absolute left-3 flex size-10 items-center justify-center rounded-full transition-colors duration-200 hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2"
         >
           <ChevronLeft className="size-6" strokeWidth={1.5} />
         </button>
-        <h1 className="text-brand-green text-base font-semibold tracking-wide">About Us</h1>
+        <h1 className="text-sm font-semibold tracking-[0.2em] text-white uppercase">About Us</h1>
       </div>
 
       <div className="px-4 pt-6">
@@ -49,7 +49,9 @@ export default function About() {
         <section>
           <p className={eyebrow}>Our heritage</p>
           <h2 className={title}>Our Story</h2>
-          <p className="font-display text-brand-green mt-6 text-4xl">{settings?.restaurant_name}</p>
+          <p className="font-display text-brand-maroon mt-6 text-4xl">
+            {settings?.restaurant_name}
+          </p>
           <div className="mt-4 max-w-[60ch] space-y-4 text-sm leading-7">
             <p>
               Our recipes were never written down. They were passed from hand to hand, kitchen to
@@ -59,7 +61,7 @@ export default function About() {
               At {settings?.restaurant_name}, we cook them the way they were taught to us, with
               patience, with respect, and with pride in every Filipino flavour.
             </p>
-            <p className="text-brand-brown font-semibold">
+            <p className="text-brand-maroon font-semibold">
               This is our heritage. Today, it's on your plate.
             </p>
           </div>
@@ -68,7 +70,7 @@ export default function About() {
         <section>
           <p className={eyebrow}>Visit us</p>
           <h2 className={title}>Opening Hours</h2>
-          <ul className="border-brand-sage/30 mt-6 border-t">
+          <ul className="border-brand-charcoal/10 mt-6 border-t">
             {weekOrder.map((day) => {
               const entry = hours.find((h) => h.day_of_week === day)
               const time =
@@ -77,7 +79,7 @@ export default function About() {
                   : 'Closed'
               return (
                 <li key={day} className={row}>
-                  <span className="text-brand-brown font-semibold">{dayNames[day]}</span>
+                  <span className="text-brand-charcoal font-semibold">{dayNames[day]}</span>
                   <span className="tabular-nums">{time}</span>
                 </li>
               )
@@ -95,10 +97,10 @@ export default function About() {
         <section>
           <p className={eyebrow}>Get in touch</p>
           <h2 className={title}>Contact</h2>
-          <dl className="border-brand-sage/30 mt-6 border-t">
+          <dl className="border-brand-charcoal/10 mt-6 border-t">
             {contacts.map((contact) => (
               <div key={contact.label} className={row}>
-                <dt className="text-brand-ink/70 text-xs font-semibold tracking-[0.15em] uppercase">
+                <dt className="text-brand-maroon text-xs font-semibold tracking-[0.15em] uppercase">
                   {contact.label}
                 </dt>
                 <dd className="text-right break-all">{contact.value}</dd>
