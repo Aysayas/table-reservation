@@ -27,7 +27,7 @@ Start with simple screens to learn, then the forms, then the bigger flows:
 | 02 | Menu | ⬜ | |
 | 03 | Reserve a Table | ⬜ | |
 | 04 | Deposit Payment | ⬜ | |
-| 05 | Reservation Confirmation | 🟦 | Still the old green look; needs the new look and a laptop layout |
+| 05 | Reservation Confirmation | 🟦 | Phone and laptop layouts done with all approved extras (Save pass was declined) |
 | 06 | Find Reservation | ⬜ | |
 | 07 | About Us | 🟦 | Phone and laptop layouts done with all approved extras. Real restaurant photo still to come (stock photo for now) |
 | 08 | Table Menu | ⬜ | |
@@ -35,7 +35,7 @@ Start with simple screens to learn, then the forms, then the bigger flows:
 | 10 | Cart | ⬜ | |
 | 11 | Checkout | ⬜ | |
 | 12 | Order Status | ⬜ | |
-| 13 | Staff Login | 🟦 | Subtitle and show-password button waiting for the lead (LEAD-REVIEW.md). Login pretends to succeed until the API is live |
+| 13 | Staff Login | 🟦 | Approved subtitle and show-password button are in #51. Login pretends to succeed until the API is live |
 | 14 | Staff Dashboard | ⬜ | |
 | 15 | Today's Reservations | ⬜ | |
 | 16 | Table Status | ⬜ | |
