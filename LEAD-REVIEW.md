@@ -126,5 +126,6 @@ Claude adds an entry here when the frontend developer asks for something outside
 - Left out on purpose (design advice she accepted): a RESERVE A TABLE button inside the Contact card (Reserve would appear 5 times on the page) and a second "Get directions →" link at the top of "Plan Your Visit" (the Location card already has the button)
 - Rule it bumps into: CLAUDE.md, each screen keeps the wireframe's labels, buttons, links and parts; (1), (2) and (4) add parts, (3) changes text, (5) replaces an approved footer
 - What Claude did instead: building only the look now, on `frontend/screen-01-home` (PR #54 also changes About), with the current content
-- Status: Waiting for lead
-- Lead note:
+- Status: Approved (partly)
+- Lead note: (2026-10-23) (1) Yes, both hero buttons. (2) Yes; the fourth value must differ from Home's and be true, e.g. "Hospitality". (3) Yes, but no repeat: heading "We cook our recipes the way they were taught to us.", paragraph "At Vencio's Garden, every dish is made with patience, with respect, and with pride in every Filipino flavour." (4) No, Reserve already appears enough on the page. (5) Yes, use Home's footer; "Salamat, and see you soon!" may stay as a line in it. Add tests for the new links.
+
