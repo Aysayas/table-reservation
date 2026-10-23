@@ -1,15 +1,19 @@
 import { useQuery } from '@tanstack/react-query'
-import { format, parseISO } from 'date-fns'
-import { Check, Copy } from 'lucide-react'
+import { addHours, format, parseISO } from 'date-fns'
+import { CalendarDays, Check, Copy, MapPin } from 'lucide-react'
 import { Link, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import { getReservationByCode } from '@/services/reservations'
+import { getSettings } from '@/services/settings'
 
 const primaryButton =
   'bg-brand-red hover:bg-brand-red/90 focus-visible:outline-brand-red block w-full rounded-sm py-4 text-center text-sm font-bold tracking-[0.15em] text-white uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2'
 const darkButton =
   'bg-brand-charcoal border-brand-gold text-brand-gold hover:bg-brand-charcoal/90 focus-visible:outline-brand-red block w-full rounded-sm border py-4 text-center text-sm font-bold tracking-[0.15em] uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2'
 const smallLabel = 'text-brand-ink/75 text-xs font-bold tracking-[0.15em] uppercase'
+const actionCard =
+  'border-brand-gold/50 text-brand-charcoal hover:bg-brand-cream focus-visible:outline-brand-red flex flex-col items-center gap-2 rounded-xl border bg-white py-4 text-sm font-semibold transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2'
+const icsTime = "yyyyMMdd'T'HHmmss"
 const notch =
   'bg-brand-cream border-brand-gold/50 absolute top-1/2 size-6 -translate-y-1/2 rounded-full border'
 
@@ -19,6 +23,7 @@ export default function ReservationConfirmation() {
     queryKey: ['reservation', code],
     queryFn: () => getReservationByCode(code),
   })
+  const { data: settings } = useQuery({ queryKey: ['settings'], queryFn: getSettings })
 
   if (isLoading) return null
 
@@ -45,6 +50,32 @@ export default function ReservationConfirmation() {
         </div>
       </div>
     )
+  }
+
+  const start = parseISO(`${reservation.reservation_date}T${reservation.reservation_time}`)
+  const placeName = `${settings?.restaurant_name ?? ''} Hotel and Restaurant`
+
+  const downloadCalendar = () => {
+    const ics = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//Vencios Garden//Reservation//EN',
+      'BEGIN:VEVENT',
+      `UID:${reservation.reference_code}@venciosgarden`,
+      `DTSTAMP:${format(new Date(), icsTime)}`,
+      `DTSTART:${format(start, icsTime)}`,
+      `DTEND:${format(addHours(start, 2), icsTime)}`,
+      `SUMMARY:Table reservation at ${settings?.restaurant_name ?? ''}`,
+      `DESCRIPTION:Reference code ${reservation.reference_code}\\, ${reservation.pax} guests`,
+      `LOCATION:${(settings?.address ?? '').replace(/,/g, '\\,')}`,
+      'END:VEVENT',
+      'END:VCALENDAR',
+    ].join('\r\n')
+    const link = document.createElement('a')
+    link.href = URL.createObjectURL(new Blob([ics], { type: 'text/calendar' }))
+    link.download = `${reservation.reference_code}.ics`
+    link.click()
+    URL.revokeObjectURL(link.href)
   }
 
   const details = [
@@ -126,6 +157,22 @@ export default function ReservationConfirmation() {
           </div>
         </div>
       </section>
+
+      <div className="mt-4 grid grid-cols-2 gap-3">
+        <button type="button" onClick={downloadCalendar} className={actionCard}>
+          <CalendarDays className="text-brand-red size-6" strokeWidth={1.5} />
+          Calendar
+        </button>
+        <a
+          href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(placeName)}`}
+          target="_blank"
+          rel="noreferrer"
+          className={actionCard}
+        >
+          <MapPin className="text-brand-red size-6" strokeWidth={1.5} />
+          Directions
+        </a>
+      </div>
 
       <div className="mt-10 space-y-3">
         <Link to="/" className={primaryButton}>

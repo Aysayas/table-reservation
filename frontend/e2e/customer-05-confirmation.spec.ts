@@ -39,3 +39,19 @@ test('copy code copies the reference code', async ({ page, context }) => {
   await expect(page.getByText('Code copied')).toBeVisible()
   expect(await page.evaluate('navigator.clipboard.readText()')).toBe('RSV-000001')
 })
+
+test('calendar downloads the reservation as an ics file', async ({ page }) => {
+  await page.goto(url)
+  const downloadPromise = page.waitForEvent('download')
+  await page.getByRole('button', { name: 'Calendar' }).click()
+  const download = await downloadPromise
+  expect(download.suggestedFilename()).toBe('RSV-000001.ics')
+})
+
+test('directions opens google maps directions', async ({ page }) => {
+  await page.goto(url)
+  await expect(page.getByRole('link', { name: 'Directions' })).toHaveAttribute(
+    'href',
+    /google\.com\/maps\/dir\//,
+  )
+})
