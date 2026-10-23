@@ -3,6 +3,7 @@ import CustomerLayout from '@/layouts/CustomerLayout'
 import DashboardLayout, { type NavItem } from '@/layouts/DashboardLayout'
 import Placeholder from '@/pages/Placeholder'
 import About from '@/pages/customer/About'
+import ReservationConfirmation from '@/pages/customer/ReservationConfirmation'
 
 const staffNav: NavItem[] = [
   { to: '/staff', label: 'Dashboard' },
@@ -34,7 +35,7 @@ export const router = createBrowserRouter([
       { path: '/reserve/payment', element: <Placeholder screen="04" title="Deposit Payment" /> },
       {
         path: '/reserve/confirmation/:code',
-        element: <Placeholder screen="05" title="Reservation Confirmation" />,
+        element: <ReservationConfirmation />,
       },
       { path: '/reservation', element: <Placeholder screen="06" title="Find Reservation" /> },
       { path: '/about', element: <About /> },

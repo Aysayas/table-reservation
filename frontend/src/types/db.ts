@@ -47,6 +47,12 @@ export type Reservation = {
   created_at: string
 }
 
+export type PublicReservation = Reservation & {
+  customer: { full_name: string; mobile_number: string }
+  table_number: string | null
+  deposit_status: 'paid' | 'unpaid'
+}
+
 export type Category = {
   category_id: number
   name: string
