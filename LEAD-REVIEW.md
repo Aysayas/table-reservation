@@ -42,11 +42,11 @@ Claude adds an entry here when the frontend developer asks for something outside
 - Status: Approved
 - Lead note: Approved with conditions (2026-10-23): only a photo the restaurant itself provides, with permission to use it, and with no recognisable guests (crop or blur them). Note the source in `docs/design/brand.md`. Until all three are true, keep the placeholder.
 
-### 2026-10-23: Install three fonts for the new look
+### 2026-10-23: Install two fonts for the new look
 - Level: 🟡 off plan
-- Asked for: the elegant look she designed (charcoal, gold, cream and maroon) uses three free fonts: Cormorant Garamond (titles), Jost (body text) and Caveat (short handwritten notes). Please install them: `npm install @fontsource/cormorant-garamond @fontsource/jost @fontsource/caveat` in `frontend/`
+- Asked for: her About Us mockup (charcoal, red, gold and cream) uses two free fonts: Playfair Display (titles and the top bar name) and Great Vibes (handwritten touches like "Vencio's Garden"). Please install them: `npm install @fontsource/playfair-display @fontsource/great-vibes` in `frontend/`. (This replaces her earlier ask for Cormorant Garamond, Jost and Caveat.)
 - Rule it bumps into: fonts are allowed since 2026-10-23, but `frontend/package.json` and `package-lock.json` are lead-owned, so the Protected files check fails her pull request if she installs them
-- What Claude did instead: added the colours and restyled screen 07 and the customer top bar without the new fonts. Once installed, she imports them in `src/index.css`, sets `--font-sans` and `--font-display`, and lists them in `docs/packages.md` and `docs/design/brand.md`
+- What Claude did instead: built the look with the fonts we have: the system serif (`font-serif`) for titles and Dancing Script (`font-display`) for handwriting. Once installed, she imports them in `src/index.css`, points `--font-serif` and `--font-display` at them, and lists them in `docs/packages.md` and `docs/design/brand.md`
 - Status: Waiting for lead
 - Lead note:
 
@@ -63,5 +63,13 @@ Claude adds an entry here when the frontend developer asks for something outside
 - Asked for: three parts of her About Us mockup that the wireframe doesn't have: (1) rename the "Our Story" title to "A Taste Handed Down"; (2) replace the back button bar with a "Home / About Us" breadcrumb; (3) a "Get Directions" button under the address that opens Google Maps directions
 - Rule it bumps into: CLAUDE.md, each screen keeps the wireframe's labels, buttons and links; (2) removes the wireframe's back button
 - What Claude did instead: built the rest of the mockup (cream page, serif titles, arch photo, drop cap, quote card, black Opening Hours band with today highlight, contact cards) and kept "Our Story", the back button, and no directions button
+- Status: Waiting for lead
+- Lead note:
+
+### 2026-10-23: "Salamat" footer on screen 07 About Us
+- Level: 🟡 off plan
+- Asked for: a black footer at the bottom of screen 07 from her mockup: "Salamat, and see you soon!" in gold handwriting, a red "RESERVE A TABLE" button (to `/reserve`) and "© 2026 Vencio's Garden"
+- Rule it bumps into: CLAUDE.md, the wireframe for screen 07 has no footer; it adds a button and a line the screen doesn't show
+- What Claude did instead: kept a plain black strip at the bottom of screen 07
 - Status: Waiting for lead
 - Lead note:
