@@ -31,7 +31,7 @@ export default function CustomerLayout() {
           </Link>
           <Link
             to="/reserve"
-            className="bg-brand-red hover:bg-brand-red/90 rounded-full px-2 py-1.5 font-semibold text-white transition-colors duration-200 min-[380px]:px-3"
+            className="bg-brand-red hover:bg-brand-red/90 rounded-md px-2 py-1.5 font-semibold text-white transition-colors duration-200 min-[380px]:px-3"
           >
             Reserve
           </Link>

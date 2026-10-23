@@ -63,7 +63,9 @@ export default function About() {
       <div className="space-y-12 px-4 pt-12">
         <section>
           <p className={eyebrow}>Our heritage</p>
-          <h2 className={title}>Our Story</h2>
+          <h2 className={title}>
+            Our <span className="text-brand-red">Story</span>
+          </h2>
           <p className="font-display text-brand-gold-deep mt-6 text-4xl">
             {settings?.restaurant_name}
           </p>
@@ -98,15 +100,15 @@ export default function About() {
                 <li
                   key={day}
                   aria-current="date"
-                  className="bg-brand-charcoal my-1 flex items-center justify-between gap-4 rounded-md px-4 py-3.5 text-sm"
+                  className="border-brand-charcoal/10 flex items-center justify-between gap-4 border-b px-4 py-3.5 text-sm last:border-b-0"
                 >
-                  <span className="flex items-center gap-2.5 font-semibold text-white">
+                  <span className="text-brand-charcoal flex items-center gap-2.5 font-semibold">
                     <span>{dayNames[day]}</span>
                     <span className="bg-brand-red rounded-full px-2 py-0.5 text-[10px] font-bold tracking-[0.15em] text-white uppercase">
                       Today
                     </span>
                   </span>
-                  <span className="text-brand-gold font-medium tabular-nums">{time}</span>
+                  <span className="text-brand-red font-semibold tabular-nums">{time}</span>
                 </li>
               ) : (
                 <li
