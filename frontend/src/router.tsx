@@ -4,6 +4,7 @@ import DashboardLayout, { type NavItem } from '@/layouts/DashboardLayout'
 import Placeholder from '@/pages/Placeholder'
 import About from '@/pages/customer/About'
 import ReservationConfirmation from '@/pages/customer/ReservationConfirmation'
+import StaffLogin from '@/pages/staff/StaffLogin'
 
 const staffNav: NavItem[] = [
   { to: '/staff', label: 'Dashboard' },
@@ -50,7 +51,7 @@ export const router = createBrowserRouter([
       { path: '/table/:tableId/orders', element: <Placeholder screen="12" title="Order Status" /> },
     ],
   },
-  { path: '/staff/login', element: <Placeholder screen="13" title="Staff Login" /> },
+  { path: '/staff/login', element: <StaffLogin /> },
   { path: '/kitchen', element: <Placeholder screen="18" title="Kitchen Display" /> },
   {
     path: '/staff',
