@@ -4,11 +4,11 @@ const url = '/reserve/confirmation/RSV-000001'
 
 test('confirmation shows the reservation', async ({ page }) => {
   await page.goto(url)
-  await expect(page.getByRole('heading', { name: 'Reservation Confirmed' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Your table is reserved' })).toBeVisible()
   await expect(page.getByText('A confirmation SMS was sent to 09XX XXX 0000')).toBeVisible()
   await expect(page.getByText('RSV-000001')).toBeVisible()
   await expect(page.getByRole('heading', { name: 'Details' })).toBeVisible()
-  await expect(page.getByText('January 1, 2026')).toBeVisible()
+  await expect(page.getByText('Thu, Jan 1, 2026')).toBeVisible()
   await expect(page.getByText('6:00 PM')).toBeVisible()
   await expect(page.getByText('₱0.00')).toBeVisible()
   await expect(page.getByText('Confirmed', { exact: true })).toBeVisible()
