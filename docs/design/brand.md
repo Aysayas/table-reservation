@@ -106,6 +106,7 @@ Suggested sizes:
 | File | Source (link) | Licence |
 |---|---|---|
 | `logo.png` | Vencio's Garden Hotel & Restaurant official Facebook page ([facebook.com/venciosgardenhotel](https://www.facebook.com/venciosgardenhotel)) | The restaurant's own logo |
+| `photos/restaurant-interior.jpg` | [Pexels: Empty Tables in Restaurant, by Sander Dalhuisen](https://www.pexels.com/photo/empty-tables-in-restaurant-2566030/) | Pexels licence (free to use) |
 
 ## Do and don't
 

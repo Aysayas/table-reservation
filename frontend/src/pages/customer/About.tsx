@@ -42,7 +42,11 @@ export default function About() {
       </div>
 
       <div className="px-4 pt-6">
-        <div role="img" aria-label="Restaurant photo" className="h-56 rounded-md bg-neutral-100" />
+        <img
+          src="/photos/restaurant-interior.jpg"
+          alt="Restaurant photo"
+          className="h-56 w-full rounded-md object-cover"
+        />
       </div>
 
       <div className="space-y-12 px-4 pt-12">
