@@ -1,5 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useQuery } from '@tanstack/react-query'
+import { Eye, EyeOff } from 'lucide-react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
@@ -21,6 +23,7 @@ const label = 'text-brand-charcoal text-xs font-bold tracking-[0.15em] uppercase
 export default function StaffLogin() {
   const navigate = useNavigate()
   const { data: settings } = useQuery({ queryKey: ['settings'], queryFn: getSettings })
+  const [showPassword, setShowPassword] = useState(false)
   const {
     register,
     handleSubmit,
@@ -49,7 +52,7 @@ export default function StaffLogin() {
             Staff portal
           </p>
           <h1 className="text-brand-charcoal mt-3 font-serif text-5xl">Staff Login</h1>
-          <p className="text-brand-ink/75 mt-2 text-sm">Sign in to continue</p>
+          <p className="text-brand-ink/75 mt-2 text-sm">Sign in to manage today's reservations.</p>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} noValidate className="mt-8 space-y-5">
@@ -75,15 +78,25 @@ export default function StaffLogin() {
             <label htmlFor="password" className={label}>
               Password
             </label>
-            <input
-              id="password"
-              type="password"
-              autoComplete="current-password"
-              placeholder="••••••••"
-              aria-invalid={errors.password ? true : undefined}
-              className={input}
-              {...register('password')}
-            />
+            <div className="relative">
+              <input
+                id="password"
+                type={showPassword ? 'text' : 'password'}
+                autoComplete="current-password"
+                placeholder="••••••••"
+                aria-invalid={errors.password ? true : undefined}
+                className={`${input} pr-12`}
+                {...register('password')}
+              />
+              <button
+                type="button"
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                onClick={() => setShowPassword(!showPassword)}
+                className="text-brand-ink/60 hover:text-brand-charcoal absolute top-1/2 right-3 mt-1 flex size-8 -translate-y-1/2 items-center justify-center rounded-md transition-colors duration-200"
+              >
+                {showPassword ? <EyeOff className="size-5" /> : <Eye className="size-5" />}
+              </button>
+            </div>
             {errors.password && (
               <p className="text-brand-red mt-1.5 text-xs">{errors.password.message}</p>
             )}
