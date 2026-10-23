@@ -173,7 +173,7 @@ export default function About() {
         </dl>
       </section>
 
-      <footer className="bg-brand-charcoal px-4 py-12 text-center">
+      <footer className="bg-brand-charcoal px-4 pt-12 pb-5 text-center">
         <p className="font-display text-brand-gold text-4xl">Salamat, and see you soon!</p>
         <Link
           to="/reserve"
