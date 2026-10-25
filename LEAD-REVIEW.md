@@ -136,3 +136,11 @@ Claude adds an entry here when the frontend developer asks for something outside
 - What Claude did instead: nothing built yet; the look changes and the footer will be built together
 - Status: Approved
 - Lead note: Approved (2026-10-25). Use Home's footer on screen 05 too, so Home, About and 05 end the same way. The charcoal ticket and the red "reserved." are restyles and need no OK. Add a test for the footer links.
+
+### 2026-10-25: Bigger building photo from another website for screen 07 About
+- Level: 🟡 off plan
+- Asked for: replace the About hero photo (`photos/vencios-exterior.png`, the restaurant's night photo from its Facebook page, only 345 × 234 so it looks blurry) with a bigger copy of the same photo, `vencio-s-garden-seafood.jpg` (550 × 367), which she downloaded from another website (not the restaurant's Facebook page; site not named yet)
+- Rule it bumps into: CLAUDE.md and the screen 01 approval, real photos of Vencio's Garden only from the restaurant (its Facebook page), with the source noted in `docs/design/brand.md`
+- What Claude did instead: kept the current photo and limited how much it stretches on wide screens (at most 34rem wide, faded on both sides on very wide screens), so the blur shows less. If approved, only the `src` in `About.tsx` and the row in `brand.md` change. Even the new copy isn't HD; a copy of 1,200 px or more (for example from the restaurant directly) would look sharp
+- Status: Waiting for lead
+- Lead note:

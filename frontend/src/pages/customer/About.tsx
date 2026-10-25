@@ -50,15 +50,21 @@ export default function About() {
         aria-label="Our heritage"
         className="bg-brand-charcoal relative overflow-hidden px-4 pt-6 pb-28 text-white md:pb-32"
       >
-        <img
-          src="/photos/vencios-exterior.png"
-          alt="Vencio's Garden at night"
-          className="absolute inset-0 h-full w-full object-cover opacity-30 md:left-auto md:w-1/2 md:opacity-70"
-        />
-        <div
-          aria-hidden="true"
-          className="from-brand-charcoal via-brand-charcoal/90 to-brand-charcoal/40 md:via-brand-charcoal absolute inset-0 bg-gradient-to-r md:to-transparent"
-        />
+        <div className="absolute inset-y-0 right-0 w-full md:right-[max(0px,calc((100%_-_100rem)/2))] md:w-1/2 md:max-w-[34rem]">
+          <img
+            src="/photos/vencios-exterior.png"
+            alt="Vencio's Garden at night"
+            className="h-full w-full object-cover opacity-30 md:opacity-70"
+          />
+          <div
+            aria-hidden="true"
+            className="from-brand-charcoal via-brand-charcoal/90 to-brand-charcoal/40 md:via-brand-charcoal/40 absolute inset-0 bg-gradient-to-r md:to-transparent"
+          />
+          <div
+            aria-hidden="true"
+            className="from-brand-charcoal absolute inset-y-0 right-0 hidden w-1/3 bg-gradient-to-l to-transparent min-[1600px]:block"
+          />
+        </div>
         <div className={`relative ${wrap}`}>
           <nav aria-label="Breadcrumb" className="text-sm">
             <Link to="/" className="text-brand-gold hover:underline">
