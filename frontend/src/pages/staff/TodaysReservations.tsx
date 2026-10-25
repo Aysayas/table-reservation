@@ -50,7 +50,7 @@ export default function TodaysReservations() {
     queryKey: ['reservations', { view, status, search, page }],
     queryFn: () => listReservations({ view, status, search, page }),
   })
-  const { data: tables = [] } = useQuery({ queryKey: ['tables'], queryFn: getTables })
+  const { data: tables = [] } = useQuery({ queryKey: ['tables'], queryFn: () => getTables() })
   const change = useMutation({
     mutationFn: (args: { id: number; status?: ReservationStatus; table_id?: number }) =>
       updateReservationStatus(args.id, { status: args.status, table_id: args.table_id }),

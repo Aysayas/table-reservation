@@ -251,7 +251,18 @@ export const sampleTables: RestaurantTable[] = Array.from({ length: 8 }, (_, i) 
   table_number: `T${i + 1}`,
   capacity: i < 4 ? 2 : 4,
   qr_token: `sample-qr-token-${i + 1}`,
-  status: i === 1 ? 'occupied' : i === 2 ? 'reserved' : 'available',
+  status: (
+    [
+      'occupied',
+      'occupied',
+      'available',
+      'reserved',
+      'reserved',
+      'reserved',
+      'occupied',
+      'occupied',
+    ] as const
+  )[i],
 }))
 
 export const sampleCustomers: Customer[] = [
@@ -332,7 +343,7 @@ export const sampleOrders: Order[] = [
     status: 'preparing',
     total_amount: 926,
     payment_status: 'unpaid',
-    created_at: '2026-01-01T12:00:00',
+    created_at: `${sampleToday}T12:00:00`,
   },
   {
     order_id: 2,
@@ -346,23 +357,23 @@ export const sampleOrders: Order[] = [
   },
   {
     order_id: 3,
-    table_id: 4,
+    table_id: 7,
     customer_id: null,
     customer_name: null,
     status: 'received',
     total_amount: 500,
     payment_status: 'unpaid',
-    created_at: '2026-01-01T13:00:00',
+    created_at: `${sampleToday}T13:00:00`,
   },
   {
     order_id: 4,
-    table_id: 6,
+    table_id: 8,
     customer_id: null,
     customer_name: 'Juan',
     status: 'ready',
     total_amount: 775,
     payment_status: 'paid',
-    created_at: '2026-01-01T13:10:00',
+    created_at: `${sampleToday}T13:10:00`,
   },
 ]
 
