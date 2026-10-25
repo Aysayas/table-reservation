@@ -40,7 +40,7 @@ Start with simple screens to learn, then the forms, then the bigger flows:
 | 15 | Today's Reservations | 🟦 | 1440 × 900. Search (all days), Day (Today / Upcoming / Past / Cancelled) and Status filters, 9 columns, Arrived / No-show / Assign Table with the API's rules, 8 per page |
 | 16 | Table Status | 🟦 | 1440 × 900. Filters with counts, a card per table: Available, Occupied (order, seated time, View Order), Reserved (next booking, Mark Arrived). Sample tables now match the bookings and orders |
 | 17 | Orders and Payments | 🟦 | 1440 × 900. All / Unpaid / Paid, order list, detail with items and totals, Cash Received and Change, Mark as Paid (Cash), Print Receipt (her 80 mm receipt design, print only) |
-| 18 | Kitchen Display | ⬜ | |
+| 18 | Kitchen Display | 🟦 | 1440 × 900 (also stacks on tablet and phone). Received, Preparing and Ready columns with counts, order cards with table, order number, waiting time chip, items and notes, Start Preparing → Mark Ready → Mark Served, clock, Log Out (her kitchen design) |
 | 19 | Admin Dashboard | ⬜ | |
 | 20 | Menu Management | ⬜ | |
 | 21 | Add / Edit Menu Item | ⬜ | |
