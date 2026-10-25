@@ -159,7 +159,8 @@ The repo root has `render.yaml` (a Render Blueprint) that builds this folder wit
 2. Render generates `APP_KEY`, `JWT_SECRET` and `JWT_REFRESH_KEY`. Fill in the others:
    - `APP_URL`: the Render URL, e.g. `https://table-reservation-api.onrender.com`
    - `CORS_ORIGINS`: the frontend URL(s), comma separated
-   - `DB_HOST`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`: from your MySQL host
+   - `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`: from your MySQL host
+   - `DB_SSL_CA`: path to the host's CA certificate, e.g. `/etc/secrets/ca.pem` (add the file under Render → Environment → Secret Files). Leave it empty locally
 3. Render has no MySQL of its own. Create one on a MySQL host (e.g. Aiven or TiDB Cloud), then import `database/schema.sql` into it.
 4. Check `https://<your-service>.onrender.com/api/health` and `/api/health/db`.
 

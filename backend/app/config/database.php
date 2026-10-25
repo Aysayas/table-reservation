@@ -65,6 +65,7 @@ $database['main'] = array(
     'password'	=> getenv('DB_PASSWORD') ?: 'table_reservation_pass',
     'database'	=> getenv('DB_NAME') ?: 'table_reservation_db',
     'charset'	=> 'utf8mb4',
+    'ssl_ca'	=> getenv('DB_SSL_CA') ?: '',
     'dbprefix'	=> '',
     // Optional for SQLite
     'path'      => ''
