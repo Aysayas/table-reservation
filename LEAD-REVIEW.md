@@ -152,7 +152,7 @@ Claude adds an entry here when the frontend developer asks for something outside
 - What Claude did instead: kept the current 4 recommended dishes with icon placeholders. If approved: the lead adds the 4 dishes (with real prices and categories) to `seed.sql` and marks them recommended; Claude mirrors them in `sampleData.ts` and uses free Unsplash or Pexels photos for them, with each source in `docs/design/brand.md`
 - Update (2026-10-25): she still prefers her 4 recipe-site photos and asked to use them now "just for sample". Claude didn't, because they have no licence (one shows another site's watermark) and the dishes aren't in the data yet. Meanwhile the current 4 recommended dishes show free Pexels photos (PR #70). Please decide: (a) may she use her photos as samples, or must they be free-licence stock; (b) will you add the 4 dishes to `seed.sql`?
 - Status: Replaced by the entry "Popular Dishes: her 4 picks from the current menu" below (she now picks 4 dishes that are already in the data)
-- Lead note:
+- Lead note: (2026-10-25) Photos: no recipe-site photos, see the lead note on "Popular Dishes: her 4 picks from the current menu". The 4 dishes stay out of `seed.sql`, since she now picks dishes already on the menu.
 
 ### 2026-10-25: Notes from screens 01, 03 and 07 (for your information)
 - Level: ℹ️ notes, nothing off plan
@@ -173,8 +173,8 @@ Claude adds an entry here when the frontend developer asks for something outside
 - What Claude did: in `sampleData.ts`, only these 4 are `is_recommended` now (before, every item was), so Popular Dishes shows them, in menu order: Sinigang na Tanigue, Palagitik Native Duck, Sizzling Sisig, Crispy Pork Kare-Kare. The cards show the icon until photos arrive; the earlier Pexels breakfast photos were removed. When she sends photos, Claude checks where they're from: the restaurant's own, or free-licence (Unsplash, Pexels) with the source noted; anything else waits for your OK. (PR #70)
 - Update (2026-10-25): she changed her picks to (1) Crispy Pork Kare-Kare, (2) Sizzling Sisig, (3) Relyenong Bangus, (4) Chicken Tinupig, all on the menu. `sampleData.ts` now marks these 4 as recommended; in menu order the cards show Chicken Tinupig, Sizzling Sisig, Crispy Pork Kare-Kare, Relyenong Bangus. She sent a photo for each, found on Pinterest or Google (photographer and licence unknown). Claude didn't add them, so the cards still show the icon
 - Please decide: (a) set `is_recommended` to only these 4 in `seed.sql` (or the admin does it on screen 20 once the API is live)? (b) may she use her Pinterest/Google photos, or must they be free-licence stock (Unsplash, Pexels) since the restaurant has no suitable photos?
-- Status: Waiting for lead
-- Lead note:
+- Status: (b) Declined; (a) waiting for lead
+- Lead note: (2026-10-25) (b) Food photos come from Pexels or Unsplash only, with the photographer and link in `docs/design/brand.md` and a neutral alt text (for example "Sizzling sisig", not "Vencio's Garden sisig"), since they aren't the restaurant's own dishes. No photos from Pinterest, Google Images or other websites, anywhere on the site: being able to view or download a photo isn't permission to publish it, and the site is public. Show the icon when there's no fitting photo, and swap in the restaurant's own photos when it sends them. This also answers PR #83 ("Allow food photos from Pinterest, Google and other sites"), which can be closed. (a) is still open.
 
 ### 2026-10-25: Screen 02 Menu mockup extras
 - Level: 🟡 off plan
