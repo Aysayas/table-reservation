@@ -159,7 +159,7 @@ Claude adds an entry here when the frontend developer asks for something outside
   1. **Deposit is ₱0 in the sample data.** `sampleSettings` has `deposit_required: true` but `deposit_per_guest: 0`, so screen 04 will show ₱0.00. What should the amount per guest be (and is it in `seed.sql`)?
   2. **How screen 03 hands the booking to 04.** After booking it opens `/reserve/payment?code=RSV-…`. The path stays the same; the code rides in the query so 04 can call `GET /reservations/code/{code}`. OK? (PR #65)
   3. **Home hero dishes photo** (`photos/vencios-dishes.png`): she says it's from the restaurant's Facebook page. It looks professionally shot and shows dishes that may not be on the menu (pasta), so you may want to double-check it.
-  4. **Photo files are heavy PNGs:** building 1.9 MB, counter 0.96 MB, dining 0.79 MB, dishes ~1.2 MB. Converting to JPG or WebP would load faster; there's no image tool on her machine.
+  4. **Photo files are heavy PNGs:** building 1.9 MB, counter 0.96 MB, dining 0.79 MB, dishes 2.0 MB. Converting to JPG or WebP would load faster; there's no image tool on her machine.
   5. **`photos/stock-dining.jpg` is no longer used** but was kept. OK to delete it?
   6. **`overscroll-behavior: none` on `html`** in `src/index.css` stops the white bounce at the page ends. It applies to every screen, staff and admin too.
 - Status: Waiting for lead
