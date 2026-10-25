@@ -5,6 +5,7 @@ import Placeholder from '@/pages/Placeholder'
 import About from '@/pages/customer/About'
 import Home from '@/pages/customer/Home'
 import ReservationConfirmation from '@/pages/customer/ReservationConfirmation'
+import ReserveTable from '@/pages/customer/ReserveTable'
 import StaffLogin from '@/pages/staff/StaffLogin'
 
 const staffNav: NavItem[] = [
@@ -33,7 +34,7 @@ export const router = createBrowserRouter([
     children: [
       { path: '/', element: <Home /> },
       { path: '/menu', element: <Placeholder screen="02" title="Menu" /> },
-      { path: '/reserve', element: <Placeholder screen="03" title="Reserve a Table" /> },
+      { path: '/reserve', element: <ReserveTable /> },
       { path: '/reserve/payment', element: <Placeholder screen="04" title="Deposit Payment" /> },
       {
         path: '/reserve/confirmation/:code',
