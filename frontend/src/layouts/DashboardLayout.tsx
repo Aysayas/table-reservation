@@ -35,8 +35,8 @@ export default function DashboardLayout({ title, items }: Props) {
     .slice(0, 2)
 
   return (
-    <div className="bg-brand-cream flex min-h-screen">
-      <aside className="bg-brand-charcoal sticky top-0 flex h-screen w-60 shrink-0 flex-col px-4 py-6 text-white">
+    <div className="bg-brand-cream flex min-h-screen print:bg-white">
+      <aside className="bg-brand-charcoal sticky top-0 flex h-screen w-60 shrink-0 flex-col px-4 py-6 text-white print:hidden">
         <Link to={items[0].to} className="flex items-center gap-2 px-2">
           <span className="size-9 overflow-hidden rounded-full">
             <img
@@ -77,7 +77,7 @@ export default function DashboardLayout({ title, items }: Props) {
       </aside>
 
       <div className="min-w-0 flex-1">
-        <header className="border-brand-line flex items-center justify-between border-b bg-white px-8 py-4">
+        <header className="border-brand-line flex items-center justify-between border-b bg-white px-8 py-4 print:hidden">
           <h1 className="text-brand-charcoal font-serif text-3xl font-bold">
             {current?.title ?? current?.label}
           </h1>
