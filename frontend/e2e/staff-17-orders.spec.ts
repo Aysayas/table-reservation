@@ -7,7 +7,7 @@ test('orders and payments lists the orders and shows the chosen one', async ({ p
   for (const column of ['Order #', 'Table', 'Time', 'Total', 'Status', 'Payment']) {
     await expect(page.getByRole('columnheader', { name: column })).toBeVisible()
   }
-  await expect(page.getByRole('row')).toHaveCount(5)
+  await expect(page.getByRole('row')).toHaveCount(11)
   const detail = page.getByRole('region', { name: 'Order #1' })
   await expect(detail).toContainText('Table T2 · 12:00 PM')
   await expect(detail).toContainText('2x Hungarian Sausage with Bread and Egg')
@@ -20,7 +20,7 @@ test('the payment filter shows only unpaid or paid orders', async ({ page }) => 
   await page.getByRole('button', { name: 'Unpaid' }).click()
   await expect(page.getByRole('row')).toHaveCount(3)
   await page.getByRole('button', { name: 'Paid', exact: true }).click()
-  await expect(page.getByRole('row')).toHaveCount(3)
+  await expect(page.getByRole('row')).toHaveCount(9)
 })
 
 test('cash received works out the change and marks the order paid', async ({ page }) => {
