@@ -161,7 +161,13 @@ The repo root has `render.yaml` (a Render Blueprint) that builds this folder wit
    - `CORS_ORIGINS`: the frontend URL(s), comma separated
    - `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`: from your MySQL host
    - `DB_SSL_CA`: path to the host's CA certificate, e.g. `/etc/secrets/ca.pem` (add the file under Render → Environment → Secret Files). Leave it empty locally
-3. Render has no MySQL of its own. Create one on a MySQL host (e.g. Aiven or TiDB Cloud), then import `database/schema.sql` into it.
+3. Render has no MySQL of its own. Create one on a MySQL host (e.g. Aiven or TiDB Cloud). Do not import `schema.sql` or `seed.sql`: the container runs `php public/index.php migrate` on every start, which creates the tables (migration `001_initial_schema`). Create the first admin user by hand.
 4. Check `https://<your-service>.onrender.com/api/health` and `/api/health/db`.
 
 Only changes inside `backend/` trigger a redeploy. The free plan sleeps after about 15 minutes idle, and the first request after that takes up to a minute.
+
+## Migrations
+
+- `database/schema.sql` is frozen as the baseline. Every later schema change is a new file in `app/migrations/` (`002_name.php`, class `Name`), plus the model `$fillable`, `frontend/src/types/db.ts` and `sampleData.ts`.
+- `php public/index.php migrate` runs pending migrations; `migrate/status` lists them. Both are CLI only (HTTP gets a 404). In Docker: `docker compose exec php php public/index.php migrate`.
+- Local Docker still loads `schema.sql` and `seed.sql` on a fresh volume, so run `migrate` afterwards to apply later migrations. `001` is safe to run on a database that already has the tables.
