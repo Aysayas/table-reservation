@@ -1,0 +1,156 @@
+import { useQuery } from '@tanstack/react-query'
+import { format, parseISO } from 'date-fns'
+import { ArrowLeft, CreditCard, Smartphone, Wallet } from 'lucide-react'
+import { useState } from 'react'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { getReservationByCode } from '@/services/reservations'
+import { getSettings } from '@/services/settings'
+
+const card = 'border-brand-line rounded-lg border bg-white p-5 md:p-6'
+const redButton =
+  'bg-brand-red hover:bg-brand-red/90 focus-visible:outline-brand-gold block w-full rounded-sm py-4 text-center text-sm font-bold tracking-[0.15em] text-white uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2'
+const methods = [
+  { name: 'GCash', icon: Smartphone },
+  { name: 'Maya', icon: Wallet },
+  { name: 'Credit / Debit Card', icon: CreditCard },
+]
+
+const peso = (amount: number) =>
+  `₱${amount.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+
+export default function DepositPayment() {
+  const navigate = useNavigate()
+  const [params] = useSearchParams()
+  const code = params.get('code') ?? ''
+  const [method, setMethod] = useState(methods[0].name)
+  const { data: reservation, isLoading } = useQuery({
+    queryKey: ['reservation', code],
+    queryFn: () => getReservationByCode(code),
+    enabled: !!code,
+  })
+  const { data: settings } = useQuery({ queryKey: ['settings'], queryFn: getSettings })
+
+  const header = (
+    <div className="flex items-center gap-4">
+      <button
+        type="button"
+        aria-label="Back"
+        onClick={() => navigate(-1)}
+        className="border-brand-line text-brand-charcoal hover:border-brand-gold flex size-10 shrink-0 items-center justify-center rounded-full border bg-white transition-colors duration-200"
+      >
+        <ArrowLeft className="size-5" />
+      </button>
+      <h1 className="text-brand-charcoal font-serif text-3xl md:text-4xl">Deposit Payment</h1>
+    </div>
+  )
+
+  if (code && isLoading) return null
+
+  if (!reservation) {
+    return (
+      <div className="bg-brand-cream min-h-[calc(100vh-4rem)] px-4 pt-6 md:py-12">
+        <div className="md:mx-auto md:max-w-4xl">
+          {header}
+          <div className={`${card} mt-8 text-center md:mx-auto md:max-w-md`}>
+            <h2 className="text-brand-charcoal font-serif text-2xl">Reservation not found</h2>
+            <p className="text-brand-ink/75 mt-3 text-sm">
+              We couldn't find a reservation to pay for. Please book a table first.
+            </p>
+            <Link to="/reserve" className={`${redButton} mt-6`}>
+              Reserve a Table
+            </Link>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  const amount = peso(reservation.deposit_amount)
+  const summary = [
+    { label: 'Date', value: format(parseISO(reservation.reservation_date), 'MMMM d, yyyy') },
+    {
+      label: 'Time',
+      value: format(
+        parseISO(`${reservation.reservation_date}T${reservation.reservation_time}`),
+        'h:mm a',
+      ),
+    },
+    { label: 'Guests', value: String(reservation.pax) },
+    { label: 'Name', value: reservation.customer.full_name },
+  ]
+
+  return (
+    <div className="bg-brand-cream min-h-[calc(100vh-4rem)] px-4 pt-6 md:py-12">
+      <div className="md:mx-auto md:max-w-4xl">
+        {header}
+
+        <div className="mt-8 space-y-6 md:grid md:grid-cols-2 md:items-start md:gap-8 md:space-y-0">
+          <div className="space-y-6">
+            <section className={card}>
+              <h2 className="text-brand-charcoal font-serif text-2xl">Reservation Summary</h2>
+              <dl className="mt-4 space-y-3 text-sm">
+                {summary.map((row) => (
+                  <div key={row.label} className="flex justify-between gap-4">
+                    <dt className="text-brand-ink/70">{row.label}</dt>
+                    <dd className="text-brand-charcoal text-right font-semibold">{row.value}</dd>
+                  </div>
+                ))}
+              </dl>
+            </section>
+
+            <section className="bg-brand-charcoal rounded-lg px-5 py-6 text-white md:px-6">
+              <h2 className="text-brand-gold text-xs font-bold tracking-[0.2em] uppercase">
+                Deposit Amount
+              </h2>
+              <p className="mt-2 font-serif text-4xl">{amount}</p>
+              {settings && (
+                <p className="mt-3 text-sm text-white/75">
+                  {peso(settings.deposit_per_guest)} per guest × {reservation.pax}{' '}
+                  {reservation.pax === 1 ? 'guest' : 'guests'}. This holds your table.
+                </p>
+              )}
+            </section>
+          </div>
+
+          <form
+            onSubmit={(event) => {
+              event.preventDefault()
+              navigate(`/reserve/confirmation/${reservation.reference_code}`)
+            }}
+          >
+            <fieldset>
+              <legend className="text-brand-charcoal font-serif text-2xl">Payment Method</legend>
+              <div className="mt-4 space-y-3">
+                {methods.map(({ name, icon: Icon }) => (
+                  <label
+                    key={name}
+                    className={`flex cursor-pointer items-center gap-4 rounded-lg border bg-white px-4 py-4 transition-colors duration-200 ${method === name ? 'border-brand-red ring-brand-red ring-1' : 'border-brand-line hover:border-brand-gold'}`}
+                  >
+                    <input
+                      type="radio"
+                      name="method"
+                      value={name}
+                      checked={method === name}
+                      onChange={() => setMethod(name)}
+                      className="accent-brand-red size-4"
+                    />
+                    <span className="bg-brand-cream text-brand-charcoal flex size-10 items-center justify-center rounded-md">
+                      <Icon className="size-5" strokeWidth={1.5} />
+                    </span>
+                    <span className="text-brand-charcoal text-sm font-semibold">{name}</span>
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+
+            <div className="bg-brand-cream/95 border-brand-line sticky bottom-0 -mx-4 mt-8 border-t px-4 py-4 md:static md:mx-0 md:border-0 md:bg-transparent md:p-0">
+              <button type="submit" className={redButton}>
+                Pay {amount}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  )
+}

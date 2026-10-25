@@ -171,7 +171,21 @@ Claude adds an entry here when the frontend developer asks for something outside
 - Asked for: show these 4 dishes in Home's Popular Dishes: (1) Palagitik Native Duck, (2) Crispy Pork Kare-Kare, (3) Sinigang na Tanigue, (4) Sizzling Sisig. All 4 are already on the menu (`sampleData.ts` and `seed.sql`). She will provide their photos. Her note for you: Vencio's Garden has no clear photos of these dishes, and the ones that exist aren't suitable for the website
 - Rule it bumps into: which dishes are recommended is menu data (`is_recommended`, default 1 for every item in `schema.sql`, set by the admin on screens 20–21), and the frontend's sample data should match the backend. Photos must be the restaurant's own or free-licence stock with the source in `docs/design/brand.md`
 - What Claude did: in `sampleData.ts`, only these 4 are `is_recommended` now (before, every item was), so Popular Dishes shows them, in menu order: Sinigang na Tanigue, Palagitik Native Duck, Sizzling Sisig, Crispy Pork Kare-Kare. The cards show the icon until photos arrive; the earlier Pexels breakfast photos were removed. When she sends photos, Claude checks where they're from: the restaurant's own, or free-licence (Unsplash, Pexels) with the source noted; anything else waits for your OK. (PR #70)
-- Please decide: (a) set `is_recommended` to only these 4 in `seed.sql` (or the admin does it on screen 20 once the API is live)? (b) since the restaurant has no suitable photos, are free-licence stock photos of these dishes OK on the live site?
+- Update (2026-10-25): she changed her picks to (1) Crispy Pork Kare-Kare, (2) Sizzling Sisig, (3) Relyenong Bangus, (4) Chicken Tinupig, all on the menu. `sampleData.ts` now marks these 4 as recommended; in menu order the cards show Chicken Tinupig, Sizzling Sisig, Crispy Pork Kare-Kare, Relyenong Bangus. She sent a photo for each, found on Pinterest or Google (photographer and licence unknown). Claude didn't add them, so the cards still show the icon
+- Please decide: (a) set `is_recommended` to only these 4 in `seed.sql` (or the admin does it on screen 20 once the API is live)? (b) may she use her Pinterest/Google photos, or must they be free-licence stock (Unsplash, Pexels) since the restaurant has no suitable photos?
+- Status: Waiting for lead
+- Lead note:
+
+### 2026-10-25: Screen 02 Menu mockup extras
+- Level: 🟡 off plan
+- Asked for: her Menu mockup. The look only restyles the wireframe's parts and is built (PR #79): a dark top band with the title, a laptop sidebar with Search and Categories (with dish counts), a card grid with a gold Best Seller badge (`is_recommended`) and a red category tag, large red prices, and a dark "Dining in? Scan the QR code on your table to order." bar. These parts are new and need your OK:
+  1. "Add to order" buttons on each dish. Ordering is the QR flow (08–12) and the wireframe says to scan the table's QR code to order, so these buttons would have nowhere to go
+  2. A price range slider and "popular tags" filters (Best Seller, Seafood, Good for 3–4, Pinoy, Spicy). There are no tags in the data or API
+  3. A tagline on each card ("Good for 2–3", "Single order", "Whole pizza", "House special"). Only a few descriptions have "Good for 3-4 pax" or "Single order"; the rest would be made up
+  4. A "Home / Menu" breadcrumb instead of the back button, and the title "Our Menu" with "Kain na!" in handwriting instead of "Menu"
+  5. Pagination (pages 01–10) instead of the Popular and category sections the wireframe shows
+- Rule it bumps into: CLAUDE.md, each screen keeps the wireframe's labels, buttons, links, parts and data; (1) adds a flow, (2) and (3) add data that doesn't exist, (4) changes labels and removes the back button, (5) removes the sections
+- What Claude did instead: built the look with the wireframe's content: the back button, the title "Menu", search, category filter, the Popular section and one section per category, no add buttons
 - Status: Waiting for lead
 - Lead note:
 

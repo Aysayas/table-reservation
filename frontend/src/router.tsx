@@ -3,8 +3,10 @@ import CustomerLayout from '@/layouts/CustomerLayout'
 import DashboardLayout, { type NavItem } from '@/layouts/DashboardLayout'
 import Placeholder from '@/pages/Placeholder'
 import About from '@/pages/customer/About'
+import DepositPayment from '@/pages/customer/DepositPayment'
 import Home from '@/pages/customer/Home'
 import ItemDetails from '@/pages/customer/ItemDetails'
+import Menu from '@/pages/customer/Menu'
 import ReservationConfirmation from '@/pages/customer/ReservationConfirmation'
 import ReserveTable from '@/pages/customer/ReserveTable'
 import TableMenu from '@/pages/customer/TableMenu'
@@ -35,9 +37,9 @@ export const router = createBrowserRouter([
     element: <CustomerLayout />,
     children: [
       { path: '/', element: <Home /> },
-      { path: '/menu', element: <Placeholder screen="02" title="Menu" /> },
+      { path: '/menu', element: <Menu /> },
       { path: '/reserve', element: <ReserveTable /> },
-      { path: '/reserve/payment', element: <Placeholder screen="04" title="Deposit Payment" /> },
+      { path: '/reserve/payment', element: <DepositPayment /> },
       {
         path: '/reserve/confirmation/:code',
         element: <ReservationConfirmation />,

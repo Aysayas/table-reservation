@@ -227,10 +227,10 @@ const menu: [number, string, number, string?][] = [
 const sampleImages: Record<string, string> = {}
 
 const recommended = [
-  'Palagitik Native Duck',
   'Crispy Pork Kare-Kare',
-  'Sinigang na Tanigue',
   'Sizzling Sisig',
+  'Relyenong Bangus',
+  'Chicken Tinupig',
 ]
 
 export const sampleMenuItems: MenuItem[] = menu.map(
