@@ -224,7 +224,10 @@ const menu: [number, string, number, string?][] = [
   [16, 'Blow Job', 100],
 ]
 
-const sampleImages: Record<string, string> = {}
+const sampleImages: Record<string, string> = {
+  'Crispy Pork Kare-Kare': '/photos/stock-dish-kare-kare.jpg',
+  'Sizzling Sisig': '/photos/stock-dish-sisig.jpg',
+}
 
 const recommended = [
   'Crispy Pork Kare-Kare',
@@ -296,6 +299,7 @@ export const sampleReservations: Reservation[] = [
     special_request: null,
     deposit_amount: 0,
     status: 'confirmed',
+    reminder_sent_at: null,
     created_at: '2026-01-01T00:00:00',
   },
   {
@@ -309,6 +313,7 @@ export const sampleReservations: Reservation[] = [
     special_request: null,
     deposit_amount: 0,
     status: 'pending',
+    reminder_sent_at: null,
     created_at: '2026-01-01T00:00:00',
   },
   ...(
@@ -330,6 +335,7 @@ export const sampleReservations: Reservation[] = [
     special_request: null,
     deposit_amount: 0,
     status,
+    reminder_sent_at: null,
     created_at: '2026-01-01T00:00:00',
   })),
 ]

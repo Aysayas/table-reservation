@@ -210,6 +210,9 @@ class Payments extends Controller {
 		if ($order_id !== null) {
 			$this->call->library('pusher');
 			$this->pusher->order_changed($order_id, 'order.paid');
+		} else {
+			$this->call->library('sms');
+			$this->sms->reservation($reservation_id, 'deposit_paid');
 		}
 
 		$payment = $this->Payment_model->find($id);
@@ -261,6 +264,9 @@ class Payments extends Controller {
 		}
 		if ($payment['reservation_id'] !== null && count($this->Payment_model->query()->where(['reservation_id' => $payment['reservation_id'], 'status' => 'paid'])->get_all()) > 1) {
 			error_log("Reservation {$payment['reservation_id']} has more than one paid deposit; payment {$id} needs a refund");
+		} elseif ($payment['reservation_id'] !== null) {
+			$this->call->library('sms');
+			$this->sms->reservation((int) $payment['reservation_id'], 'deposit_paid');
 		}
 		$this->api->respond(['received' => true]);
 	}

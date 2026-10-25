@@ -27,7 +27,7 @@ Start with simple screens to learn, then the forms, then the bigger flows:
 | 02 | Menu | 🟦 | Phone and laptop. Popular plus one section per category, search, category buttons (sticky on phones), QR note. Popular shows the recommended dishes |
 | 03 | Reserve a Table | 🟦 | Phone and laptop. Pre-fills date, time and guests from Home. Booking pretends to succeed and opens `/reserve/payment?code=RSV-…` for screen 04 |
 | 04 | Deposit Payment | 🟦 | Phone and laptop. Loads the booking from `?code=` with `getReservationByCode`; Pay pretends to succeed and opens screen 05. Shows ₱0.00 until the lead sets `deposit_per_guest` |
-| 05 | Reservation Confirmation | 🟦 | Phone and laptop layouts done with all approved extras (Save pass was declined) |
+| 05 | Reservation Confirmation | 🟦 | Phone and laptop with all approved extras (Save pass was declined), the charcoal ticket card, red "reserved." and Home's footer |
 | 06 | Find Reservation | ⬜ | |
 | 07 | About Us | 🟦 | Final mockup with the approved extras (hero buttons, 4 values, new story text, Home's footer), phone and laptop. The restaurant's own photos are in |
 | 08 | Table Menu | 🟦 | Phone width. Table pill and cart count in the top bar, search, categories, Recommended for You, + Add, View Cart bar. Cart kept in sessionStorage (zustand); QR token `?t=` saved for screen 11 |
@@ -114,7 +114,7 @@ Every staff, kitchen and admin route already checks the login token and role, so
 | Integration | Status |
 |---|---|
 | Payment gateway | ✅ PayMongo (test mode), deposits and order payments |
-| SMS notification | ⬜ provider not chosen |
+| SMS notification | 🟨 built in fake mode (texts logged, reminders scheduled); no provider yet |
 | Real-time messaging (kitchen and order status) | ✅ Pusher: backend sends events; screens 12, 17, 18 subscribe with `pusher-js` |
 | Cloud storage (menu and logo images) | ✅ Cloudinary (local disk without keys) |
 | Recommendation engine | ✅ Python service (`recommender/`) behind `GET /recommendations`, with a fallback when it sleeps |
