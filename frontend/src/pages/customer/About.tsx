@@ -3,6 +3,7 @@ import { Globe, Mail, Phone } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import RestaurantMap from '@/components/RestaurantMap'
+import SiteFooter from '@/components/SiteFooter'
 import { dayNames, hoursText, weekOrder } from '@/lib/hours'
 import { directionsUrl } from '@/lib/maps'
 import { getOpeningHours, getSettings } from '@/services/settings'
@@ -166,15 +167,9 @@ export default function About() {
         </section>
       </div>
 
-      <footer className="bg-brand-charcoal px-4 pt-12 pb-5 text-center">
+      <SiteFooter>
         <p className="font-display text-brand-gold text-4xl">Salamat, and see you soon!</p>
-        <Link
-          to="/reserve"
-          className="bg-brand-red hover:bg-brand-red/90 mt-6 inline-block rounded-sm px-8 py-4 text-sm font-bold tracking-[0.15em] text-white uppercase transition-colors duration-200"
-        >
-          Reserve a Table
-        </Link>
-      </footer>
+      </SiteFooter>
     </div>
   )
 }

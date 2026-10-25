@@ -21,7 +21,11 @@ test('opening hours list every day', async ({ page }) => {
   ]) {
     await expect(page.getByText(day, { exact: true })).toBeVisible()
   }
-  await expect(page.getByText('10:00 AM – 10:00 PM')).toHaveCount(7)
+  await expect(
+    page
+      .locator('section', { has: page.getByRole('heading', { name: 'Opening Hours' }) })
+      .getByText('10:00 AM – 10:00 PM'),
+  ).toHaveCount(7)
 })
 
 test('today is highlighted once', async ({ page }) => {
@@ -32,7 +36,9 @@ test('today is highlighted once', async ({ page }) => {
 test('contact details are shown', async ({ page }) => {
   await page.goto('/about')
   await expect(
-    page.getByText('#08 Nautical Highway, Tawiran, Calapan City, Oriental Mindoro'),
+    page
+      .locator('section', { has: page.getByRole('heading', { name: 'Location' }) })
+      .getByText('#08 Nautical Highway, Tawiran, Calapan City, Oriental Mindoro'),
   ).toBeVisible()
   await expect(page.getByText('0918 957 2855')).toBeVisible()
   await expect(page.getByText('venciosgarden@yahoo.com')).toBeVisible()
@@ -57,15 +63,22 @@ test('breadcrumb home link returns to the home page', async ({ page }) => {
 
 test('get directions opens google maps directions', async ({ page }) => {
   await page.goto('/about')
-  await expect(page.getByRole('link', { name: 'Get Directions' })).toHaveAttribute(
+  await expect(page.getByRole('link', { name: 'Get Directions', exact: true })).toHaveAttribute(
     'href',
     /google\.com\/maps\/dir\//,
   )
 })
 
-test('footer reserve button opens the reserve page', async ({ page }) => {
+test('footer has the farewell line and quick links', async ({ page }) => {
   await page.goto('/about')
-  await expect(page.getByText('Salamat, and see you soon!')).toBeVisible()
-  await page.getByRole('link', { name: 'Reserve a Table' }).click()
-  await expect(page).toHaveURL('/reserve')
+  const footer = page.locator('footer')
+  await expect(footer.getByText('Salamat, and see you soon!')).toBeVisible()
+  for (const [name, url] of [
+    ['About Us', '/about'],
+    ['Menu', '/menu'],
+    ['Find My Reservation', '/reservation'],
+    ['Staff Login', '/staff/login'],
+  ]) {
+    await expect(footer.getByRole('link', { name, exact: true })).toHaveAttribute('href', url)
+  }
 })
