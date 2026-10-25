@@ -253,13 +253,9 @@ class Api
      */
     public function client_ip()
     {
-        $remote = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
-        if (getenv('APP_ENV') !== 'production' || empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            return $remote;
-        }
-        // shortcut: trusts the first X-Forwarded-For entry, which a client can forge; use the proxy's own client-IP header once the host is chosen
-        $first = trim(explode(',', $_SERVER['HTTP_X_FORWARDED_FOR'])[0]);
-        return filter_var($first, FILTER_VALIDATE_IP) ? $first : $remote;
+        // shortcut: the built-in also trusts Client-IP and X-Real-IP, which a client can forge; use the host's own client-IP header once the host is chosen
+        $trust_proxy = strtolower((string) config_item('environment')) === 'production';
+        return $this->_lava->request->ip_address($trust_proxy) ?: 'unknown';
     }
 
     /**
