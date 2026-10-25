@@ -170,6 +170,8 @@ Frontend: Netlify reads `netlify.toml` at the repo root (base `frontend`, publis
 
 Only changes inside `backend/` trigger a redeploy. The free plan sleeps after about 15 minutes idle, and the first request after that takes up to a minute.
 
+The PHP version is pinned in the `Dockerfile` (`php:8.3.36-fpm-alpine`). Bump it when PHP ships a security release.
+
 ## Migrations
 
 - `database/schema.sql` is frozen as the baseline. Every later schema change is a new file in `app/migrations/` (`002_name.php`, class `Name`), plus the model `$fillable`, `frontend/src/types/db.ts` and `sampleData.ts`.

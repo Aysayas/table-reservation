@@ -1,5 +1,5 @@
 # ---- PHP-FPM + Nginx runtime (single container for Render) ----
-FROM php:8.3-fpm-alpine
+FROM php:8.3.36-fpm-alpine
 
 # Install system dependencies + nginx + supervisor (Render runs one process
 # per service, so php-fpm and nginx are supervised together in this image)
