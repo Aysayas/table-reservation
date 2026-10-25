@@ -76,8 +76,8 @@ export default function About() {
             </h2>
             <span aria-hidden="true" className="bg-brand-gold mt-8 block h-px w-16" />
             <p className="text-brand-cream/85 mt-6 text-base leading-7">
-              Our recipes were never written down. They were passed from hand to hand, kitchen to
-              kitchen, generation to generation.
+              Home-style Filipino dishes, served with heart on the Nautical Highway in Calapan City,
+              Oriental Mindoro.
             </p>
             <div className="mt-8 grid grid-cols-2 gap-3 md:flex md:gap-4">
               <Link

@@ -150,7 +150,8 @@ Claude adds an entry here when the frontend developer asks for something outside
 - Asked for: show Beef Biryani, Salmon with Grilled Potato and Broccoli, Crispy Fried Chicken Steak, and Baby Back Ribs in Home's Popular Dishes, with photos. She says these are on Vencio's Garden's real menu, but they aren't in `sampleData.ts` or `seed.sql` yet. The restaurant has no clear photos of them, so she found photos on recipe websites
 - Rule it bumps into: CLAUDE.md, the menu data must match `backend/database/seed.sql` (Popular Dishes shows the first 4 available `is_recommended` items), and photos must be the restaurant's own or free-licence stock with the source noted. The recipe-site photos have no licence (one has a site watermark), so Claude didn't use them
 - What Claude did instead: kept the current 4 recommended dishes with icon placeholders. If approved: the lead adds the 4 dishes (with real prices and categories) to `seed.sql` and marks them recommended; Claude mirrors them in `sampleData.ts` and uses free Unsplash or Pexels photos for them, with each source in `docs/design/brand.md`
-- Status: Waiting for lead
+- Update (2026-10-25): she still prefers her 4 recipe-site photos and asked to use them now "just for sample". Claude didn't, because they have no licence (one shows another site's watermark) and the dishes aren't in the data yet. Meanwhile the current 4 recommended dishes show free Pexels photos (PR #70). Please decide: (a) may she use her photos as samples, or must they be free-licence stock; (b) will you add the 4 dishes to `seed.sql`?
+- Status: Replaced by the entry "Popular Dishes: her 4 picks from the current menu" below (she now picks 4 dishes that are already in the data)
 - Lead note:
 
 ### 2026-10-25: Notes from screens 01, 03 and 07 (for your information)
@@ -162,5 +163,14 @@ Claude adds an entry here when the frontend developer asks for something outside
   4. **Photo files are heavy PNGs:** building 1.9 MB, counter 0.96 MB, dining 0.79 MB, dishes 2.0 MB. Converting to JPG or WebP would load faster; there's no image tool on her machine.
   5. **`photos/stock-dining.jpg` is no longer used** but was kept. OK to delete it?
   6. **`overscroll-behavior: none` on `html`** in `src/index.css` stops the white bounce at the page ends. It applies to every screen, staff and admin too.
+- Status: Waiting for lead
+- Lead note:
+
+### 2026-10-25: Popular Dishes: her 4 picks from the current menu
+- Level: 🟡 off plan (data and photos)
+- Asked for: show these 4 dishes in Home's Popular Dishes: (1) Palagitik Native Duck, (2) Crispy Pork Kare-Kare, (3) Sinigang na Tanigue, (4) Sizzling Sisig. All 4 are already on the menu (`sampleData.ts` and `seed.sql`). She will provide their photos. Her note for you: Vencio's Garden has no clear photos of these dishes, and the ones that exist aren't suitable for the website
+- Rule it bumps into: which dishes are recommended is menu data (`is_recommended`, default 1 for every item in `schema.sql`, set by the admin on screens 20–21), and the frontend's sample data should match the backend. Photos must be the restaurant's own or free-licence stock with the source in `docs/design/brand.md`
+- What Claude did: in `sampleData.ts`, only these 4 are `is_recommended` now (before, every item was), so Popular Dishes shows them, in menu order: Sinigang na Tanigue, Palagitik Native Duck, Sizzling Sisig, Crispy Pork Kare-Kare. The cards show the icon until photos arrive; the earlier Pexels breakfast photos were removed. When she sends photos, Claude checks where they're from: the restaurant's own, or free-licence (Unsplash, Pexels) with the source noted; anything else waits for your OK. (PR #70)
+- Please decide: (a) set `is_recommended` to only these 4 in `seed.sql` (or the admin does it on screen 20 once the API is live)? (b) since the restaurant has no suitable photos, are free-licence stock photos of these dishes OK on the live site?
 - Status: Waiting for lead
 - Lead note:
