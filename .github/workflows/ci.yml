@@ -72,3 +72,17 @@ jobs:
       - name: Docker build
         if: steps.exists.outputs.present == 'true'
         run: docker build -t table-reservation-api backend
+
+  recommender:
+    name: Recommender
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: recommender
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -r requirements-dev.txt
+      - run: python -m pytest -q
