@@ -71,13 +71,11 @@ export default function Home() {
             </div>
           </div>
           <div className="relative mt-10 md:mt-0">
-            <div
-              role="img"
-              aria-label="Signature dish photo"
-              className="text-brand-gold/60 flex h-64 items-center justify-center rounded-lg bg-white/5 md:h-[26rem]"
-            >
-              <UtensilsCrossed className="size-12" strokeWidth={1} />
-            </div>
+            <img
+              src="/photos/vencios-dishes.png"
+              alt="Filipino dishes from Vencio's Garden on a table"
+              className="h-64 w-full rounded-lg object-cover md:h-[26rem]"
+            />
             {badge && (
               <div className="bg-brand-cream border-brand-gold absolute -right-2 -bottom-6 flex size-32 flex-col items-center justify-center rounded-full border border-dashed text-center md:-right-6 md:size-36">
                 <p className="text-brand-red text-[10px] font-bold tracking-[0.2em] uppercase">
