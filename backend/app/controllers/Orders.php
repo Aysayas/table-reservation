@@ -94,7 +94,7 @@ class Orders extends Controller {
 
 	public function show($id)
 	{
-		$this->api->rate_limit('order_view_' . ($_SERVER['REMOTE_ADDR'] ?? 'unknown'), 60, 60);
+		$this->api->rate_limit('order_view_' . $this->api->client_ip(), 60, 60);
 		$order = $this->Order_model->find($id);
 		$token = $this->api->get_query_params()['qr_token'] ?? '';
 
@@ -107,7 +107,7 @@ class Orders extends Controller {
 
 	public function store()
 	{
-		$this->api->rate_limit('order_' . ($_SERVER['REMOTE_ADDR'] ?? 'unknown'), 10, 60);
+		$this->api->rate_limit('order_' . $this->api->client_ip(), 10, 60);
 		$input = $this->api->body();
 		$errors = [];
 

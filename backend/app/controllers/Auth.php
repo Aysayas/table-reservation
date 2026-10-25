@@ -12,7 +12,7 @@ class Auth extends Controller {
 
 	public function login()
 	{
-		$this->api->rate_limit('login_' . ($_SERVER['REMOTE_ADDR'] ?? 'unknown'), 10, 60);
+		$this->api->rate_limit('login_' . $this->api->client_ip(), 10, 60);
 
 		$input = $this->input();
 		$_POST = $input;
