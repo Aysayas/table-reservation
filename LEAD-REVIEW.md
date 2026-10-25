@@ -186,7 +186,8 @@ Claude adds an entry here when the frontend developer asks for something outside
   5. Pagination (pages 01–10) instead of the Popular and category sections the wireframe shows
 - Rule it bumps into: CLAUDE.md, each screen keeps the wireframe's labels, buttons, links, parts and data; (1) adds a flow, (2) and (3) add data that doesn't exist, (4) changes labels and removes the back button, (5) removes the sections
 - What Claude did instead: built the look with the wireframe's content: the back button, the title "Menu", search, category filter, the Popular section and one section per category, no add buttons
-- Status: Waiting for lead
+- Update (2026-10-25): she dropped (1) "Add to order" and (5) pagination after your question. Ordering stays in the QR flow (08–12), and the menu stays one scrolling page grouped by category with search, the category filter and Popular, as built in PR #79
+- Status: (1) and (5) dropped; (2), (3) and (4) waiting for lead
 - Lead note:
 
 ### 2026-10-25: What should "Often Ordered With" show on screen 09?
