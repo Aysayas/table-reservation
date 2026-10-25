@@ -13,3 +13,12 @@ export async function getTable(tableId: number): Promise<PublicTable | undefined
     status: table.status,
   }
 }
+
+export async function getTables(): Promise<PublicTable[]> {
+  return sampleTables.map(({ table_id, table_number, capacity, status }) => ({
+    table_id,
+    table_number,
+    capacity,
+    status,
+  }))
+}
