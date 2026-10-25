@@ -1,6 +1,7 @@
 services:
   - type: web
-    name: table-reservation-api
+    name: vencios-api
+    region: singapore
     runtime: docker
     rootDir: backend
     dockerfilePath: ./Dockerfile
@@ -63,11 +64,12 @@ services:
       - key: RECOMMENDER_SECRET
         fromService:
           type: web
-          name: table-reservation-recommender
+          name: vencios-recommender
           envVarKey: RECOMMENDER_SECRET
 
   - type: web
-    name: table-reservation-recommender
+    name: vencios-recommender
+    region: singapore
     runtime: python
     rootDir: recommender
     plan: free
