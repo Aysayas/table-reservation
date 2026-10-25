@@ -12,7 +12,7 @@ test('dashboard shows the sidebar, staff name and the four numbers', async ({ pa
     ['Reservations Today', '5'],
     ['Guests Arrived', '2'],
     ['Active Orders', '3'],
-    ['Available Tables', '6 / 8'],
+    ['Available Tables', '1 / 8'],
   ]) {
     await expect(page.locator('dl > div', { hasText: label })).toContainText(value)
   }
@@ -26,7 +26,7 @@ test('the two lists show their columns and active orders', async ({ page }) => {
   }
   const orders = page.getByRole('region', { name: 'Active Orders' })
   await expect(orders.getByRole('row')).toHaveCount(4)
-  await expect(orders.getByRole('row', { name: /#4 T6 2 ₱775.00 Ready/ })).toBeVisible()
+  await expect(orders.getByRole('row', { name: /#4 T8 2 ₱775.00 Ready/ })).toBeVisible()
 })
 
 test('view all opens the reservations and orders pages', async ({ page }) => {
