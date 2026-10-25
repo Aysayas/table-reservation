@@ -345,7 +345,31 @@ class Reservations extends Controller {
 
 	public function deposit($code)
 	{
-		$this->api->respond_error('Not implemented', 501);
+		$this->limit();
+		$reservation = $this->Reservation_model->find_by('reference_code', $code);
+		if (!$reservation) {
+			$this->api->respond_error('Reservation not found', 404);
+		}
+		if (!in_array($reservation['status'], ['pending', 'confirmed'], true)) {
+			$this->api->respond_error("This reservation is {$reservation['status']}", 409);
+		}
+		if ($this->Payment_model->exists(['reservation_id' => $reservation['reservation_id'], 'status' => 'paid'])) {
+			$this->api->respond_error('This is already paid', 409);
+		}
+		$due = (float) $reservation['deposit_amount'];
+		if ($due <= 0) {
+			$this->api->respond_error('There is nothing to pay', 409);
+		}
+
+		$this->call->library('paymongo');
+		$code = $reservation['reference_code'];
+		try {
+			$checkout = $this->paymongo->start('reservation_id', (int) $reservation['reservation_id'], $due, "Reservation deposit {$code}", $code,
+				$this->paymongo->frontend_url("/reserve/confirmation/{$code}"), $this->paymongo->frontend_url('/reserve/payment?code=' . rawurlencode($code)));
+		} catch (RuntimeException $e) {
+			$this->api->respond_error('The payment service is not available, please try again', 502);
+		}
+		$this->api->respond(['data' => $checkout]);
 	}
 
 	private function validate_booking($rules, $pax = null, $customer = true)

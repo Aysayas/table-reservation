@@ -218,7 +218,43 @@ class Payments extends Controller {
 
 	public function webhook()
 	{
-		$this->api->respond_error('Not implemented', 501);
+		$raw = file_get_contents('php://input');
+		$this->call->library('paymongo');
+		if (!$this->paymongo->verify($_SERVER['HTTP_PAYMONGO_SIGNATURE'] ?? null, $raw)) {
+			$this->api->respond_error('Invalid signature', 401);
+		}
+
+		$event = json_decode($raw, true);
+		if (($event['data']['attributes']['type'] ?? '') !== 'checkout_session.payment.paid') {
+			$this->api->respond(['received' => true]);
+		}
+		$session = $event['data']['attributes']['data'] ?? [];
+		$payment = $this->Payment_model->find_by('provider_reference', (string) ($session['id'] ?? ''));
+		if (!$payment || $payment['method'] !== 'online') {
+			error_log('PayMongo webhook for an unknown checkout session ' . ($session['id'] ?? ''));
+			$this->api->respond(['received' => true]);
+		}
+
+		$paid = array_filter($session['attributes']['payments'] ?? [], fn($p) => ($p['attributes']['status'] ?? '') === 'paid');
+		$cents = (int) (reset($paid)['attributes']['amount'] ?? 0);
+		if ($cents !== (int) round((float) $payment['amount'] * 100)) {
+			error_log("PayMongo amount mismatch for payment {$payment['payment_id']}: got {$cents} centavos");
+			$this->api->respond(['received' => true]);
+		}
+
+		$paid_at = ['status' => 'paid', 'paid_at' => date('Y-m-d H:i:s')];
+		$id = $payment['payment_id'];
+		if (!$this->Payment_model->update_where(['payment_id' => $id, 'status' => 'pending'], $paid_at)
+			&& !$this->Payment_model->update_where(['payment_id' => $id, 'status' => 'failed'], $paid_at)) {
+			$this->api->respond(['received' => true]);
+		}
+		if ($payment['order_id'] !== null && !$this->Order_model->update_where(['order_id' => $payment['order_id'], 'payment_status' => 'unpaid'], ['payment_status' => 'paid'])) {
+			error_log("Order {$payment['order_id']} was already paid; online payment {$id} needs a refund");
+		}
+		if ($payment['reservation_id'] !== null && count($this->Payment_model->query()->where(['reservation_id' => $payment['reservation_id'], 'status' => 'paid'])->get_all()) > 1) {
+			error_log("Reservation {$payment['reservation_id']} has more than one paid deposit; payment {$id} needs a refund");
+		}
+		$this->api->respond(['received' => true]);
 	}
 }
 ?>

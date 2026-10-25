@@ -141,6 +141,9 @@ export async function getMenuItems() {
 | GET | `/orders` | Staff, kitchen, admin. Filters: `table_id`, `status` (comma list, e.g. `received,preparing,ready` for the kitchen), `payment_status`, `date_from`, `date_to` (YYYY-MM-DD), `search` (order number like `12` or `#12`, or a table number). Without `page`: every match, newest first (kitchen and staff lists). With `page`: 8 per page plus `meta { total, page, per_page }` (Order History). Each order has `payment_method` (`cash`, `online` or `null` while unpaid). 422 for a bad filter. Screens 17, 18, 25 |
 | PATCH | `/orders/{id}/status` | Staff, kitchen, admin. Body `status`, one step forward only: received → preparing → ready → served. Skipping, going back or changing a served order gives 409. Screens 17, 18 |
 | POST | `/payments` | Staff, admin. Records a cash payment. Body: exactly one of `order_id` or `reservation_id`, and `amount`, which must equal the order's `total_amount` or the reservation's `deposit_amount` (422 otherwise). 409 if already paid, if there's nothing to pay, or if the reservation is no-show or cancelled. 201 `{ "data": Payment }`; an order becomes `payment_status` `paid`. Cash Received and Change are worked out on the screen. Screen 17 |
+| POST | `/reservations/code/{code}/deposit` | Starts the online deposit payment (PayMongo: GCash, Maya or card). No body. `{ "data": { payment_id, checkout_url } }`: send the customer to `checkout_url`. After paying, PayMongo sends them back to `/reserve/confirmation/{code}`; cancelling goes back to `/reserve/payment?code={code}`. Read the result from `GET /reservations/code/{code}` (`deposit_status`), never from the return URL, and expect a few seconds' delay. Calling it again reuses the open checkout. 404, 409 if already paid, nothing to pay, or the reservation isn't pending or confirmed, 502 if PayMongo is down, 429 after 20 a minute. Screen 04 |
+| POST | `/orders/{id}/pay` | Starts the online payment for an order. Body `qr_token`. `{ "data": { payment_id, checkout_url } }`; return pages are `/table/{table_id}/orders` (paid) and `/table/{table_id}/checkout` (cancelled). Read `payment_status` from `GET /orders/{id}`. 404 (also for a wrong `qr_token`), 409 if already paid or nothing to pay, 502, 429 after 10 a minute. Screen 11 |
+| POST | `/payments/webhook` | PayMongo only. Checks the `Paymongo-Signature` header (401 if wrong), then marks the payment `paid` with `paid_at` on `checkout_session.payment.paid`, and the order `payment_status` `paid`. Repeats change nothing. Not for the frontend |
 | GET | `/dashboard/staff` | Staff, admin. `{ "data": { reservations_today, guests_arrived, active_orders, available_tables, total_tables, upcoming_reservations, active_orders_list } }`. Today's pending, confirmed and arrived bookings are counted; `guests_arrived` adds up `pax` of arrived ones. `upcoming_reservations`: up to 7 pending or confirmed from now on, by time (`reservation_id, reference_code, reservation_time, full_name, pax, table_number, status`). `active_orders_list`: up to 7 orders not yet served, newest first (`order_id, table_number, item_count, total_amount, status`); `item_count` adds up quantities. Screen 14 |
 | GET | `/payments` | Admin. Filters: `method` (`online`, `cash`), `status` (`pending`, `paid`, `failed`, `refunded`), `date_from`, `date_to` (by `paid_at`), `search` (payment ID like `PAY-12` or `12`, order number, deposit ref code, provider reference), `page` (8 per page). `{ "data": Payment[], "totals": { total_collected, online, cash, deposits }, "meta": { total, page, per_page } }`. Each payment has `for` (`{ type: "order", order_id }` or `{ type: "deposit", reservation_id, reference_code }`) and `received_by` (`{ user_id, full_name }` or null). Totals are paid payments in the date range. Payments without `paid_at` (pending, failed) only show when no date filter is set. Screen 26 |
 | GET | `/payments/{id}` | Admin. `{ "data": Payment }` in the same shape, or 404. Screen 26 |
@@ -157,15 +160,7 @@ All times are Asia/Manila, in the database too. Field names and types match `fro
 
 ## Planned endpoints
 
-These routes are registered in `backend/app/config/routes.php`, but every one still answers **501 Not implemented**. Keep using `sampleData.ts` for a screen until its endpoint moves up to "Endpoints that exist now".
-
-Who: **public** needs no login. **staff**, **kitchen** and **admin** need the login token. Admin can use everything staff can. These role checks already work: a protected route answers 401 or 403 before it gets to 501.
-
-| Method | URL | Who | Screens | Does |
-|---|---|---|---|---|
-| POST | `/reservations/code/{code}/deposit` | public | 04 | Start the online deposit payment. Returns the payment page URL |
-| POST | `/orders/{id}/pay` | public | 11 | Start the online payment for an order. Returns the payment page URL |
-| POST | `/payments/webhook` | payment provider | none | The provider reports a paid or failed payment |
+None. Every route in `backend/app/config/routes.php` is built.
 
 Before wiring a screen, also confirm with whoever builds the backend:
 

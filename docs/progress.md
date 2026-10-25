@@ -55,7 +55,7 @@ Start with simple screens to learn, then the forms, then the bigger flows:
 
 ## Backend progress
 
-Updated 2026-10-22. Full endpoint details are in [api.md](api.md). Every screen keeps using `sampleData.ts` until the lead deploys the backend and says the API is live. ✅ means the endpoint is ready for that switch.
+Updated 2026-10-25. Full endpoint details are in [api.md](api.md). Every screen keeps using `sampleData.ts` until the lead deploys the backend and says the API is live. ✅ means the endpoint is ready for that switch.
 
 | Status | Meaning |
 |---|---|
@@ -70,14 +70,14 @@ Updated 2026-10-22. Full endpoint details are in [api.md](api.md). Every screen 
 | 01 | Home | ✅ | `GET /menu-items`, `/settings`, `/opening-hours` |
 | 02 | Menu | ✅ | `GET /categories`, `/menu-items` |
 | 03 | Reserve a Table | ✅ | `GET /reservations/availability`, `POST /reservations` |
-| 04 | Deposit Payment | 🟨 | `GET /reservations/code/{code}` works; paying waits for the payment gateway |
+| 04 | Deposit Payment | ✅ | `GET /reservations/code/{code}`, `POST /reservations/code/{code}/deposit` (PayMongo checkout) |
 | 05 | Reservation Confirmation | ✅ | `GET /reservations/code/{code}` |
 | 06 | Find Reservation | ✅ | `POST /reservations/find`, `/cancel`, `/reschedule` |
 | 07 | About Us | ✅ | `GET /settings`, `/opening-hours` |
 | 08 | Table Menu | ✅ | `GET /menu-items`, `GET /tables/{id}` |
 | 09 | Item Details | ✅ | `GET /menu-items/{id}` |
 | 10 | Cart | ✅ | No API needed. The cart stays in the browser |
-| 11 | Checkout | 🟨 | `POST /orders` works; `/orders/{id}/pay` waits for the payment gateway |
+| 11 | Checkout | ✅ | `POST /orders`, `POST /orders/{id}/pay` (PayMongo checkout) |
 | 12 | Order Status | ✅ | `GET /orders/{id}` |
 | 13 | Staff Login | ✅ | `POST /auth/login`, `/auth/refresh`, `/auth/logout`, `GET /auth/me` |
 | 14 | Staff Dashboard | ✅ | `GET /dashboard/staff` |
