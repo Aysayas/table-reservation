@@ -15,6 +15,7 @@ import ReserveTable from '@/pages/customer/ReserveTable'
 import TableMenu from '@/pages/customer/TableMenu'
 import OrdersPayments from '@/pages/staff/OrdersPayments'
 import StaffDashboard from '@/pages/staff/StaffDashboard'
+import KitchenDisplay from '@/pages/staff/KitchenDisplay'
 import StaffLogin from '@/pages/staff/StaffLogin'
 import TableStatus from '@/pages/staff/TableStatus'
 import TodaysReservations from '@/pages/staff/TodaysReservations'
@@ -65,7 +66,7 @@ export const router = createBrowserRouter([
     ],
   },
   { path: '/staff/login', element: <StaffLogin /> },
-  { path: '/kitchen', element: <Placeholder screen="18" title="Kitchen Display" /> },
+  { path: '/kitchen', element: <KitchenDisplay /> },
   {
     path: '/staff',
     element: <DashboardLayout title="Staff" items={staffNav} />,

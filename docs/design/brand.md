@@ -109,6 +109,16 @@ Suggested sizes:
 - Dishes are cards: a dark photo area, a gold "Best Seller" badge for recommended dishes, a red category tag, the name, two lines of description, and the price large in red Playfair.
 - The QR note is a dark bar at the end of the dishes.
 
+## Kitchen display
+
+Screen 18 is read from across the kitchen, so it uses bigger text and buttons than the other staff screens.
+
+- Charcoal header with the waiting-time chips: On time (green), 10+ min (gold), 15+ min (red). Each card's time chip uses the same colours.
+- Each column has a coloured top line and a round count: grey for Received, gold for Preparing, red for Ready.
+- Notes are red chips so the cook doesn't miss them.
+- Buttons get stronger as the order moves: outline Start Preparing, charcoal Mark Ready, red Mark Served.
+- Below 1024 px the columns stack.
+
 ## Photos
 
 - Stock photos only from free-licence sites (Unsplash, Pexels). Nothing copied from other restaurants' or hotels' sites.
