@@ -46,6 +46,16 @@ test('home values fill in the date, guests and time', async ({ page }) => {
   )
 })
 
+test('guests from the link are kept to a whole number within the limit', async ({ page }) => {
+  const guests = page.getByRole('group', { name: 'Number of Guests' }).getByRole('status')
+  await page.goto('/reserve?pax=99')
+  await expect(guests).toHaveText('10')
+  await page.goto('/reserve?pax=2.5')
+  await expect(guests).toHaveText('2')
+  await page.goto('/reserve?pax=-3')
+  await expect(guests).toHaveText('1')
+})
+
 test('an empty form shows errors and stays on the page', async ({ page }) => {
   await page.goto('/reserve')
   await page.getByRole('button', { name: 'Continue to Deposit' }).click()

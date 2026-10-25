@@ -61,7 +61,7 @@ export default function ReserveTable() {
     resolver: zodResolver(schema),
     defaultValues: {
       reservation_date: params.get('date') ?? '',
-      pax: Math.max(1, Number(params.get('pax')) || 2),
+      pax: Math.max(1, Math.floor(Number(params.get('pax'))) || 2),
       reservation_time: timeParam.length === 5 ? `${timeParam}:00` : timeParam,
       full_name: '',
       mobile_number: '',
@@ -85,6 +85,10 @@ export default function ReserveTable() {
       setValue('reservation_time', '')
     }
   }, [slots, isFetched, time, setValue])
+
+  useEffect(() => {
+    if (pax > maxPax) setValue('pax', maxPax)
+  }, [pax, maxPax, setValue])
 
   const setPax = (value: number) =>
     setValue('pax', Math.min(maxPax, Math.max(1, value)), { shouldValidate: true })
