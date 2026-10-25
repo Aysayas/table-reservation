@@ -50,15 +50,19 @@ export default function About() {
         aria-label="Our heritage"
         className="bg-brand-charcoal relative overflow-hidden px-4 pt-6 pb-28 text-white md:pb-32"
       >
-        <div className="absolute inset-y-0 right-0 w-full md:w-1/2">
+        <div className="absolute inset-y-0 right-0 w-full md:right-[max(0px,calc((100%_-_100rem)/2))] md:w-1/2 md:max-w-[34rem]">
           <img
-            src="/photos/vencios-building.png"
-            alt="Vencio's Garden Hotel and Restaurant building"
-            className="h-full w-full object-cover opacity-30 md:opacity-80"
+            src="/photos/vencios-exterior.png"
+            alt="Vencio's Garden at night"
+            className="h-full w-full object-cover opacity-30 md:opacity-70"
           />
           <div
             aria-hidden="true"
-            className="from-brand-charcoal via-brand-charcoal/90 to-brand-charcoal/40 md:via-brand-charcoal/30 absolute inset-0 bg-gradient-to-r md:to-transparent"
+            className="from-brand-charcoal via-brand-charcoal/90 to-brand-charcoal/40 md:via-brand-charcoal/40 absolute inset-0 bg-gradient-to-r md:to-transparent"
+          />
+          <div
+            aria-hidden="true"
+            className="from-brand-charcoal absolute inset-y-0 right-0 hidden w-1/3 bg-gradient-to-l to-transparent min-[1600px]:block"
           />
         </div>
         <div className={`relative ${wrap}`}>
