@@ -9,6 +9,7 @@ import DepositPayment from '@/pages/customer/DepositPayment'
 import Home from '@/pages/customer/Home'
 import ItemDetails from '@/pages/customer/ItemDetails'
 import Menu from '@/pages/customer/Menu'
+import OrderStatus from '@/pages/customer/OrderStatus'
 import ReservationConfirmation from '@/pages/customer/ReservationConfirmation'
 import ReserveTable from '@/pages/customer/ReserveTable'
 import TableMenu from '@/pages/customer/TableMenu'
@@ -56,7 +57,7 @@ export const router = createBrowserRouter([
       },
       { path: '/table/:tableId/cart', element: <Cart /> },
       { path: '/table/:tableId/checkout', element: <Checkout /> },
-      { path: '/table/:tableId/orders', element: <Placeholder screen="12" title="Order Status" /> },
+      { path: '/table/:tableId/orders', element: <OrderStatus /> },
     ],
   },
   { path: '/staff/login', element: <StaffLogin /> },
