@@ -128,7 +128,7 @@ export default function ReserveTable() {
               {index > 0 && (
                 <span
                   aria-hidden="true"
-                  className="bg-brand-line absolute top-4 right-1/2 h-px w-full -translate-x-4"
+                  className="bg-brand-line absolute top-4 right-[calc(50%+1.25rem)] left-[calc(-50%+1.25rem)] h-px"
                 />
               )}
               <span
