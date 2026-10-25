@@ -68,6 +68,27 @@ services:
     depends_on:
       - mysql
 
+  recommender:
+    image: python:3.12-slim
+    container_name: table_reservation_recommender
+    profiles: ["recommender"]
+    working_dir: /app
+    command: sh -c "pip install -q -r requirements.txt && uvicorn main:app --host 0.0.0.0 --port 8001"
+    volumes:
+      - ../recommender:/app
+    environment:
+      DB_HOST: mysql
+      DB_NAME: table_reservation_db
+      DB_USER: table_reservation_user
+      DB_PASSWORD: table_reservation_pass
+      RECOMMENDER_SECRET: local-recommender-secret
+    ports:
+      - "8001:8001"
+    networks:
+      - table_reservation_network
+    depends_on:
+      - mysql
+
 
 networks:
   table_reservation_network:

@@ -44,6 +44,45 @@ class Menu extends Controller {
 		$this->api->respond(['data' => $this->format($item)]);
 	}
 
+	public function recommendations()
+	{
+		$this->api->rate_limit('reco_' . $this->api->client_ip(), 60, 60);
+		$query = $this->api->get_query_params();
+		$raw_ids = is_string($query['item_ids'] ?? null) ? trim($query['item_ids']) : '';
+		$raw_limit = $query['limit'] ?? '4';
+
+		$errors = [];
+		$item_ids = $raw_ids === '' ? [] : explode(',', $raw_ids);
+		if (count($item_ids) > 50 || array_filter($item_ids, fn($id) => !ctype_digit(trim($id)))) {
+			$errors[] = '"item_ids" must be up to 50 item IDs separated by commas.';
+		}
+		if (!(is_string($raw_limit) && ctype_digit($raw_limit) && (int) $raw_limit >= 1 && (int) $raw_limit <= 12)) {
+			$errors[] = '"limit" must be 1 to 12.';
+		}
+		if ($errors) {
+			$this->api->respond(['error' => 'Invalid input', 'status' => 422, 'errors' => $errors], 422);
+		}
+		$item_ids = array_values(array_unique(array_map('intval', $item_ids)));
+		$limit = (int) $raw_limit;
+
+		$this->call->library('recommender');
+		$result = $this->recommender->recommend($item_ids, $limit);
+		$flagged = $this->Menu_item_model->filter(['is_available' => 1, 'is_recommended' => 1])->get_all();
+		$by_id = array_column(array_map([$this, 'format'], $flagged), null, 'item_id');
+
+		if ($result) {
+			$picks = $result['item_ids'];
+			$source = $result['source'];
+		} else {
+			$best = array_column($this->Order_item_model->best_sellers(date('Y-m-d', strtotime('-30 days')), date('Y-m-d'), 50), 'item_id');
+			$picks = array_merge($best, array_map('intval', array_keys($by_id)));
+			$source = 'fallback';
+		}
+
+		$picks = array_slice(array_values(array_unique(array_filter($picks, fn($id) => isset($by_id[$id]) && !in_array($id, $item_ids, true)))), 0, $limit);
+		$this->api->respond(['data' => array_map(fn($id) => $by_id[$id], $picks), 'meta' => ['source' => $source]]);
+	}
+
 	private function format($item)
 	{
 		$item['price'] = (float) $item['price'];

@@ -11,7 +11,7 @@ class Paymongo {
 	{
 		$this->_lava = lava_instance();
 		$this->secret_key = getenv('PAYMONGO_SECRET_KEY') ?: '';
-		$this->webhook_secret = getenv('PAYMONGO_WEBHOOK_SECRET') ?: '';
+		$this->webhook_secret = trim(getenv('PAYMONGO_WEBHOOK_SECRET') ?: '');
 	}
 
 	public function frontend_url($path)
@@ -48,8 +48,11 @@ class Paymongo {
 
 	public function verify($header, $raw)
 	{
-		if ($this->webhook_secret === '' || !is_string($header)) {
-			return false;
+		if ($this->webhook_secret === '') {
+			return $this->refuse('PAYMONGO_WEBHOOK_SECRET is empty');
+		}
+		if (!is_string($header) || $header === '') {
+			return $this->refuse('no Paymongo-Signature header');
 		}
 		$parts = [];
 		foreach (explode(',', $header) as $pair) {
@@ -57,11 +60,21 @@ class Paymongo {
 			$parts[$key] = $value;
 		}
 		$event = json_decode($raw, true);
-		$signature = ($event['data']['attributes']['livemode'] ?? false) ? ($parts['li'] ?? '') : ($parts['te'] ?? '');
+		$live = (bool) ($event['data']['attributes']['livemode'] ?? false);
+		$signature = $live ? ($parts['li'] ?? '') : ($parts['te'] ?? '');
 		if (($parts['t'] ?? '') === '' || $signature === '') {
-			return false;
+			return $this->refuse('header has no t or ' . ($live ? 'li' : 'te') . ' (keys: ' . implode(',', array_keys($parts)) . ')');
 		}
-		return hash_equals(hash_hmac('sha256', $parts['t'] . '.' . $raw, $this->webhook_secret), $signature);
+		if (!hash_equals(hash_hmac('sha256', $parts['t'] . '.' . $raw, $this->webhook_secret), $signature)) {
+			return $this->refuse('signature mismatch (' . ($live ? 'live' : 'test') . ' event, secret starts ' . substr($this->webhook_secret, 0, 5) . ', length ' . strlen($this->webhook_secret) . ')');
+		}
+		return true;
+	}
+
+	private function refuse($reason)
+	{
+		error_log("PayMongo webhook refused: {$reason}");
+		return false;
 	}
 
 	private function create_session($cents, $name, $reference, $success_url, $cancel_url)

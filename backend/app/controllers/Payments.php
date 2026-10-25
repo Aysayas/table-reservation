@@ -236,7 +236,8 @@ class Payments extends Controller {
 		}
 
 		$paid = array_filter($session['attributes']['payments'] ?? [], fn($p) => ($p['attributes']['status'] ?? '') === 'paid');
-		$cents = (int) (reset($paid)['attributes']['amount'] ?? 0);
+		$line_total = array_sum(array_map(fn($line) => (int) ($line['amount'] ?? 0) * (int) ($line['quantity'] ?? 0), $session['attributes']['line_items'] ?? []));
+		$cents = $paid ? (int) (reset($paid)['attributes']['amount'] ?? $line_total) : 0;
 		if ($cents !== (int) round((float) $payment['amount'] * 100)) {
 			error_log("PayMongo amount mismatch for payment {$payment['payment_id']}: got {$cents} centavos");
 			$this->api->respond(['received' => true]);

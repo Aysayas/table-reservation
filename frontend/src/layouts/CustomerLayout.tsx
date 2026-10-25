@@ -1,8 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
-import { Menu as MenuIcon, X } from 'lucide-react'
+import { Menu as MenuIcon, ShoppingCart, X } from 'lucide-react'
 import { useState } from 'react'
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 import { getSettings } from '@/services/settings'
+import { getTable } from '@/services/tables'
+import { cartCount, useCart } from '@/stores/cart'
 
 const navLink =
   'hover:text-brand-gold block border-b border-white/10 px-4 py-3.5 text-sm font-semibold tracking-[0.15em] uppercase transition-colors duration-200 last:border-b-0'
@@ -24,6 +26,15 @@ export default function CustomerLayout() {
   const words = settings?.restaurant_name.split(' ') ?? []
   const lastWord = words.pop()
   const panelLinks = wide ? customerLinks : tableLinks
+  const tableId = Number(pathname.match(/^\/table\/(\d+)/)?.[1]) || null
+  const { data: table } = useQuery({
+    queryKey: ['table', tableId],
+    queryFn: () => getTable(tableId ?? 0),
+    enabled: tableId !== null,
+  })
+  const cartTable = useCart((s) => s.tableId)
+  const lines = useCart((s) => s.lines)
+  const count = cartTable === tableId ? cartCount(lines) : 0
 
   return (
     <div
@@ -59,14 +70,36 @@ export default function CustomerLayout() {
               ))}
             </nav>
           )}
-          <Link
-            to="/reserve"
-            onClick={() => setOpen(false)}
-            className={`bg-brand-red hover:bg-brand-red/90 rounded-md px-3 py-2 text-xs font-bold tracking-[0.12em] text-white uppercase transition-colors duration-200 ${wide ? 'md:px-5 md:py-2.5' : ''}`}
-          >
-            Reserve
-            {wide && <span className="hidden lg:inline"> a Table</span>}
-          </Link>
+          {tableId ? (
+            <>
+              {table && (
+                <span className="bg-brand-gold text-brand-charcoal rounded-full px-3 py-1 text-xs font-bold">
+                  Table {table.table_number}
+                </span>
+              )}
+              <Link
+                to={`/table/${tableId}/cart`}
+                aria-label={`Cart, ${count} ${count === 1 ? 'item' : 'items'}`}
+                className="text-brand-cream hover:text-brand-gold relative flex size-9 items-center justify-center transition-colors duration-200"
+              >
+                <ShoppingCart className="size-5" />
+                {count > 0 && (
+                  <span className="bg-brand-red absolute -top-0.5 -right-0.5 flex size-4.5 items-center justify-center rounded-full text-[10px] font-bold text-white">
+                    {count}
+                  </span>
+                )}
+              </Link>
+            </>
+          ) : (
+            <Link
+              to="/reserve"
+              onClick={() => setOpen(false)}
+              className={`bg-brand-red hover:bg-brand-red/90 rounded-md px-3 py-2 text-xs font-bold tracking-[0.12em] text-white uppercase transition-colors duration-200 ${wide ? 'md:px-5 md:py-2.5' : ''}`}
+            >
+              Reserve
+              {wide && <span className="hidden lg:inline"> a Table</span>}
+            </Link>
+          )}
           <button
             type="button"
             aria-label={open ? 'Close menu' : 'Open menu'}
