@@ -497,7 +497,7 @@ class Reservations extends Controller {
 
 	private function limit()
 	{
-		$this->api->rate_limit('res_' . ($_SERVER['REMOTE_ADDR'] ?? 'unknown'), 20, 60);
+		$this->api->rate_limit('res_' . $this->api->client_ip(), 20, 60);
 	}
 
 	private function make_code()

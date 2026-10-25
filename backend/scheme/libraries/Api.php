@@ -247,6 +247,22 @@ class Api
     }
 
     /**
+     * client_ip
+     *
+     * @return string
+     */
+    public function client_ip()
+    {
+        $remote = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+        if (getenv('APP_ENV') !== 'production' || empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            return $remote;
+        }
+        // shortcut: trusts the first X-Forwarded-For entry, which a client can forge; use the proxy's own client-IP header once the host is chosen
+        $first = trim(explode(',', $_SERVER['HTTP_X_FORWARDED_FOR'])[0]);
+        return filter_var($first, FILTER_VALIDATE_IP) ? $first : $remote;
+    }
+
+    /**
      * rate_limit
      *
      * @param string|null $key
@@ -265,7 +281,7 @@ class Api
 
         // Generate safe cache key (Windows-friendly)
         if ($key === null) {
-            $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+            $ip = $this->client_ip();
             $raw_key = 'rate_limit:' . $ip;
         } else {
             $raw_key = 'rate_limit:' . $key;
