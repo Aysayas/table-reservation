@@ -72,8 +72,8 @@ export default function Home() {
           </div>
           <div className="relative mt-10 md:mt-0">
             <img
-              src="/photos/stock-filipino-feast.jpg"
-              alt="A Filipino feast with lechon, pancit and kinilaw on a table"
+              src="/photos/stock-sisig.jpg"
+              alt="Sizzling pork sisig in a cast-iron pan"
               className="h-64 w-full rounded-lg object-cover md:h-[26rem]"
             />
             {badge && (
@@ -154,13 +154,21 @@ export default function Home() {
                 key={item.item_id}
                 className={`flex flex-col overflow-hidden rounded-lg border border-white/10 bg-white/5 ${index >= 2 ? 'hidden md:flex' : ''}`}
               >
-                <div
-                  role="img"
-                  aria-label={`${item.name} photo`}
-                  className="text-brand-gold/60 flex h-32 items-center justify-center bg-white/5 md:h-44"
-                >
-                  <UtensilsCrossed className="size-8" strokeWidth={1.25} />
-                </div>
+                {item.image_url ? (
+                  <img
+                    src={item.image_url}
+                    alt={`${item.name} photo`}
+                    className="h-32 w-full object-cover md:h-44"
+                  />
+                ) : (
+                  <div
+                    role="img"
+                    aria-label={`${item.name} photo`}
+                    className="text-brand-gold/60 flex h-32 items-center justify-center bg-white/5 md:h-44"
+                  >
+                    <UtensilsCrossed className="size-8" strokeWidth={1.25} />
+                  </div>
+                )}
                 <div className="flex flex-1 flex-col px-4 py-4">
                   <p className="text-sm font-semibold">{item.name}</p>
                   <div className="mt-auto flex items-center justify-between gap-2 pt-3">

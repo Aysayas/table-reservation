@@ -224,6 +224,13 @@ const menu: [number, string, number, string?][] = [
   [16, 'Blow Job', 100],
 ]
 
+const sampleImages: Record<string, string> = {
+  'Hungarian Sausage with Bread and Egg': '/photos/stock-dish-sausage.jpg',
+  'Tapa with Dilis and Banana Garlic Oleo': '/photos/stock-dish-tapa.jpg',
+  'Crispy Biya with Egg and Fried Banana': '/photos/stock-dish-biya.jpg',
+  'Smoked Salmon Egg Benedict': '/photos/stock-dish-salmon.jpg',
+}
+
 export const sampleMenuItems: MenuItem[] = menu.map(
   ([category_id, name, price, description], i) => ({
     item_id: i + 1,
@@ -231,7 +238,7 @@ export const sampleMenuItems: MenuItem[] = menu.map(
     name,
     description: description ?? defaultDescription,
     price,
-    image_url: null,
+    image_url: sampleImages[name] ?? null,
     is_available: name !== 'Gac Juice Pitcher (Seasonal)',
     is_recommended: true,
   }),
