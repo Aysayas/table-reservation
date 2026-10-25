@@ -72,8 +72,8 @@ export default function Home() {
           </div>
           <div className="relative mt-10 md:mt-0">
             <img
-              src="/photos/vencios-dishes.png"
-              alt="Filipino dishes from Vencio's Garden on a table"
+              src="/photos/stock-filipino-feast.jpg"
+              alt="A Filipino feast with lechon, pancit and kinilaw on a table"
               className="h-64 w-full rounded-lg object-cover md:h-[26rem]"
             />
             {badge && (
@@ -118,8 +118,8 @@ export default function Home() {
             More than a meal, <span className="text-brand-red">it's our heritage.</span>
           </h2>
           <p className="mt-5 text-sm leading-7">
-            Our recipes were never written down. They were passed from hand to hand, kitchen to
-            kitchen, generation to generation.
+            Get to know the place behind the food, on the Nautical Highway in Calapan City, Oriental
+            Mindoro.
           </p>
           <Link
             to="/about"
