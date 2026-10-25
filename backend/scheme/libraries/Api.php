@@ -253,8 +253,12 @@ class Api
      */
     public function client_ip()
     {
-        // shortcut: the built-in also trusts Client-IP and X-Real-IP, which a client can forge; use the host's own client-IP header once the host is chosen
         $trust_proxy = strtolower((string) config_item('environment')) === 'production';
+        $cf_ip = $_SERVER['HTTP_CF_CONNECTING_IP'] ?? '';
+        if ($trust_proxy && $this->_lava->request->valid_ip($cf_ip)) {
+            return $cf_ip;
+        }
+        // shortcut: without Cloudflare's CF-Connecting-IP the built-in trusts X-Forwarded-For, which a client can forge; drop the fallback if every production host sits behind Cloudflare
         return $this->_lava->request->ip_address($trust_proxy) ?: 'unknown';
     }
 
