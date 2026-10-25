@@ -54,19 +54,40 @@ export async function createOrder(body: NewOrder): Promise<PublicOrder> {
   }
   sampleOrders.push(order)
   let nextItemId = Math.max(0, ...sampleOrderItems.map((i) => i.order_item_id))
-  const items = lines.map(({ line, item }) => {
-    const orderItem: OrderItem = {
+  for (const { line, item } of lines) {
+    sampleOrderItems.push({
       order_item_id: ++nextItemId,
       order_id,
       item_id: item.item_id,
       quantity: line.quantity,
       unit_price: item.price,
       notes: line.notes,
-    }
-    sampleOrderItems.push(orderItem)
-    return { ...orderItem, name: item.name }
-  })
-  return { ...order, table_number: table.table_number, subtotal, service_charge, items }
+    })
+  }
+  return toPublic(order)
+}
+
+const toPublic = (order: Order): PublicOrder => {
+  const items = sampleOrderItems
+    .filter((i) => i.order_id === order.order_id)
+    .map((i) => ({ ...i, name: sampleMenuItems.find((m) => m.item_id === i.item_id)?.name ?? '' }))
+  const subtotal = toCents(items.reduce((sum, i) => sum + i.unit_price * i.quantity, 0))
+  return {
+    ...order,
+    table_number: sampleTables.find((t) => t.table_id === order.table_id)?.table_number ?? '',
+    subtotal,
+    service_charge: toCents(order.total_amount - subtotal),
+    items,
+  }
+}
+
+export async function getOrder(
+  order_id: number,
+  qr_token: string,
+): Promise<PublicOrder | undefined> {
+  const order = sampleOrders.find((o) => o.order_id === order_id)
+  const table = sampleTables.find((t) => t.table_id === order?.table_id)
+  return order && table?.qr_token === qr_token ? toPublic(order) : undefined
 }
 
 export async function payOrder(order_id: number, qr_token: string): Promise<void> {

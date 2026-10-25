@@ -3,6 +3,7 @@ import { ArrowLeft } from 'lucide-react'
 import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
+import { readTableToken } from '@/lib/tableToken'
 import { createOrder, payOrder } from '@/services/orders'
 import { getSettings } from '@/services/settings'
 import { cartTotal, useCart } from '@/stores/cart'
@@ -14,14 +15,6 @@ const methods = [
   { value: 'now', title: 'Pay Now', text: 'GCash, Maya or Card' },
   { value: 'counter', title: 'Pay at the Counter', text: 'Pay with cash after your meal' },
 ]
-
-const readToken = (tableId: number) => {
-  try {
-    return sessionStorage.getItem(`qr_token:${tableId}`)
-  } catch {
-    return null
-  }
-}
 
 export default function Checkout() {
   const navigate = useNavigate()
@@ -35,7 +28,7 @@ export default function Checkout() {
   const [name, setName] = useState('')
   const [placing, setPlacing] = useState(false)
   const { data: settings } = useQuery({ queryKey: ['settings'], queryFn: getSettings })
-  const token = readToken(table)
+  const token = readTableToken(table)
   const subtotal = cartTotal(lines)
   const total = subtotal + Math.round(subtotal * (settings?.service_charge_percent ?? 0)) / 100
 
