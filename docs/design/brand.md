@@ -102,6 +102,13 @@ Suggested sizes:
 - Rounded cards (`rounded-xl`) in `brand-cream` for items and summaries.
 - The menu's green-and-gold sunburst stripes can be a small accent (for example on the home hero). Never put text on top of them.
 
+## Menu page
+
+- A dark top band with the title, then a cream page.
+- Laptop: a sticky sidebar of white cards (Search, Categories), each with a spaced uppercase heading and a dashed gold rule. The active category is red with a ▸ marker and shows its dish count. Phone: the categories are one sticky sideways row.
+- Dishes are cards: a dark photo area, a gold "Best Seller" badge for recommended dishes, a red category tag, the name, two lines of description, and the price large in red Playfair.
+- The QR note is a dark bar at the end of the dishes.
+
 ## Photos
 
 - Stock photos only from free-licence sites (Unsplash, Pexels). Nothing copied from other restaurants' or hotels' sites.

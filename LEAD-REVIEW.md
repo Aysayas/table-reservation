@@ -174,3 +174,16 @@ Claude adds an entry here when the frontend developer asks for something outside
 - Please decide: (a) set `is_recommended` to only these 4 in `seed.sql` (or the admin does it on screen 20 once the API is live)? (b) since the restaurant has no suitable photos, are free-licence stock photos of these dishes OK on the live site?
 - Status: Waiting for lead
 - Lead note:
+
+### 2026-10-25: Screen 02 Menu mockup extras
+- Level: 🟡 off plan
+- Asked for: her Menu mockup. The look only restyles the wireframe's parts and is built (PR #79): a dark top band with the title, a laptop sidebar with Search and Categories (with dish counts), a card grid with a gold Best Seller badge (`is_recommended`) and a red category tag, large red prices, and a dark "Dining in? Scan the QR code on your table to order." bar. These parts are new and need your OK:
+  1. "Add to order" buttons on each dish. Ordering is the QR flow (08–12) and the wireframe says to scan the table's QR code to order, so these buttons would have nowhere to go
+  2. A price range slider and "popular tags" filters (Best Seller, Seafood, Good for 3–4, Pinoy, Spicy). There are no tags in the data or API
+  3. A tagline on each card ("Good for 2–3", "Single order", "Whole pizza", "House special"). Only a few descriptions have "Good for 3-4 pax" or "Single order"; the rest would be made up
+  4. A "Home / Menu" breadcrumb instead of the back button, and the title "Our Menu" with "Kain na!" in handwriting instead of "Menu"
+  5. Pagination (pages 01–10) instead of the Popular and category sections the wireframe shows
+- Rule it bumps into: CLAUDE.md, each screen keeps the wireframe's labels, buttons, links, parts and data; (1) adds a flow, (2) and (3) add data that doesn't exist, (4) changes labels and removes the back button, (5) removes the sections
+- What Claude did instead: built the look with the wireframe's content: the back button, the title "Menu", search, category filter, the Popular section and one section per category, no add buttons
+- Status: Waiting for lead
+- Lead note:

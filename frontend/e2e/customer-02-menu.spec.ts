@@ -39,3 +39,11 @@ test('an unavailable dish is marked', async ({ page }) => {
   await page.getByRole('searchbox', { name: 'Search menu' }).fill('gac juice')
   await expect(page.getByText('Not available')).toBeVisible()
 })
+
+test('recommended dishes show a best seller badge and their category', async ({ page }) => {
+  await page.goto('/menu')
+  const popular = page.getByRole('region', { name: 'Popular' })
+  await expect(popular.getByText('Best Seller').first()).toBeVisible()
+  await expect(popular.getByText("Vencio's Classics").first()).toBeVisible()
+  await expect(page.getByText('Dining in? Scan the QR code on your table to order.')).toBeVisible()
+})
