@@ -224,7 +224,10 @@ const menu: [number, string, number, string?][] = [
   [16, 'Blow Job', 100],
 ]
 
-const sampleImages: Record<string, string> = {}
+const sampleImages: Record<string, string> = {
+  'Crispy Pork Kare-Kare': '/photos/stock-dish-kare-kare.jpg',
+  'Sizzling Sisig': '/photos/stock-dish-sisig.jpg',
+}
 
 const recommended = [
   'Crispy Pork Kare-Kare',
@@ -251,7 +254,18 @@ export const sampleTables: RestaurantTable[] = Array.from({ length: 8 }, (_, i) 
   table_number: `T${i + 1}`,
   capacity: i < 4 ? 2 : 4,
   qr_token: `sample-qr-token-${i + 1}`,
-  status: i === 1 ? 'occupied' : i === 2 ? 'reserved' : 'available',
+  status: (
+    [
+      'occupied',
+      'occupied',
+      'available',
+      'reserved',
+      'reserved',
+      'reserved',
+      'occupied',
+      'occupied',
+    ] as const
+  )[i],
 }))
 
 export const sampleCustomers: Customer[] = [
@@ -271,6 +285,8 @@ export const sampleCustomers: Customer[] = [
   },
 ]
 
+const sampleToday = new Date().toLocaleDateString('en-CA')
+
 export const sampleReservations: Reservation[] = [
   {
     reservation_id: 1,
@@ -283,6 +299,7 @@ export const sampleReservations: Reservation[] = [
     special_request: null,
     deposit_amount: 0,
     status: 'confirmed',
+    reminder_sent_at: null,
     created_at: '2026-01-01T00:00:00',
   },
   {
@@ -296,8 +313,31 @@ export const sampleReservations: Reservation[] = [
     special_request: null,
     deposit_amount: 0,
     status: 'pending',
+    reminder_sent_at: null,
     created_at: '2026-01-01T00:00:00',
   },
+  ...(
+    [
+      [3, 1, '11:00:00', 2, 'arrived'],
+      [4, 4, '12:00:00', 2, 'confirmed'],
+      [5, 5, '18:00:00', 4, 'confirmed'],
+      [6, 6, '19:00:00', 4, 'confirmed'],
+      [7, null, '20:00:00', 3, 'pending'],
+    ] as const
+  ).map(([n, table_id, reservation_time, pax, status]): Reservation => ({
+    reservation_id: n,
+    customer_id: 1,
+    table_id,
+    reference_code: `RSV-00000${n}`,
+    reservation_date: sampleToday,
+    reservation_time,
+    pax,
+    special_request: null,
+    deposit_amount: 0,
+    status,
+    reminder_sent_at: null,
+    created_at: '2026-01-01T00:00:00',
+  })),
 ]
 
 export const sampleOrders: Order[] = [
@@ -309,7 +349,7 @@ export const sampleOrders: Order[] = [
     status: 'preparing',
     total_amount: 926,
     payment_status: 'unpaid',
-    created_at: '2026-01-01T12:00:00',
+    created_at: `${sampleToday}T12:00:00`,
   },
   {
     order_id: 2,
@@ -321,12 +361,42 @@ export const sampleOrders: Order[] = [
     payment_status: 'paid',
     created_at: '2026-01-01T12:30:00',
   },
+  {
+    order_id: 3,
+    table_id: 7,
+    customer_id: null,
+    customer_name: null,
+    status: 'received',
+    total_amount: 500,
+    payment_status: 'unpaid',
+    created_at: `${sampleToday}T13:00:00`,
+  },
+  {
+    order_id: 4,
+    table_id: 8,
+    customer_id: null,
+    customer_name: 'Juan',
+    status: 'ready',
+    total_amount: 775,
+    payment_status: 'paid',
+    created_at: `${sampleToday}T13:10:00`,
+  },
 ]
 
 export const sampleOrderItems: OrderItem[] = [
   { order_item_id: 1, order_id: 1, item_id: 1, quantity: 2, unit_price: 285, notes: null },
   { order_item_id: 2, order_id: 1, item_id: 4, quantity: 1, unit_price: 356, notes: 'No onions' },
   { order_item_id: 3, order_id: 2, item_id: 2, quantity: 1, unit_price: 250, notes: null },
+  { order_item_id: 4, order_id: 3, item_id: 2, quantity: 2, unit_price: 250, notes: null },
+  { order_item_id: 5, order_id: 4, item_id: 41, quantity: 1, unit_price: 450, notes: null },
+  {
+    order_item_id: 6,
+    order_id: 4,
+    item_id: 50,
+    quantity: 1,
+    unit_price: 325,
+    notes: 'Extra calamansi',
+  },
 ]
 
 export const samplePayments: Payment[] = [

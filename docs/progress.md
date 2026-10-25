@@ -27,7 +27,7 @@ Start with simple screens to learn, then the forms, then the bigger flows:
 | 02 | Menu | 🟦 | Phone and laptop. Popular plus one section per category, search, category buttons (sticky on phones), QR note. Popular shows the recommended dishes |
 | 03 | Reserve a Table | 🟦 | Phone and laptop. Pre-fills date, time and guests from Home. Booking pretends to succeed and opens `/reserve/payment?code=RSV-…` for screen 04 |
 | 04 | Deposit Payment | 🟦 | Phone and laptop. Loads the booking from `?code=` with `getReservationByCode`; Pay pretends to succeed and opens screen 05. Shows ₱0.00 until the lead sets `deposit_per_guest` |
-| 05 | Reservation Confirmation | 🟦 | Phone and laptop layouts done with all approved extras (Save pass was declined) |
+| 05 | Reservation Confirmation | 🟦 | Phone and laptop with all approved extras (Save pass was declined), the charcoal ticket card, red "reserved." and Home's footer |
 | 06 | Find Reservation | 🟦 | Phone and laptop. Find by code and mobile, Cancel (asks first), Reschedule opens `/reserve?pax=…` per the navigation (question for the lead in LEAD-REVIEW.md) |
 | 07 | About Us | 🟦 | Final mockup with the approved extras (hero buttons, 4 values, new story text, Home's footer), phone and laptop. The restaurant's own photos are in |
 | 08 | Table Menu | 🟦 | Phone width. Table pill and cart count in the top bar, search, categories, Recommended for You, + Add, View Cart bar. Cart kept in sessionStorage (zustand); QR token `?t=` saved for screen 11 |
@@ -36,10 +36,10 @@ Start with simple screens to learn, then the forms, then the bigger flows:
 | 11 | Checkout | 🟦 | Phone width. Order Summary and Total, Pay Now or Pay at the Counter, optional name (60), Place Order via `createOrder` with the table QR token; Pay Now pretends to pay until the API is live; then opens 12 with `?order=` |
 | 12 | Order Status | 🟦 | Phone width. Order number and time, Received → Preparing → Ready → Served, Your Items and Total, Payment, Order More. Loads `?order=` with the table QR token and checks again every 15 s until real-time updates exist |
 | 13 | Staff Login | 🟦 | Approved subtitle and show-password button are in #51. Login pretends to succeed until the API is live |
-| 14 | Staff Dashboard | ⬜ | |
-| 15 | Today's Reservations | ⬜ | |
-| 16 | Table Status | ⬜ | |
-| 17 | Orders and Payments | ⬜ | |
+| 14 | Staff Dashboard | 🟦 | 1440 × 900. New charcoal sidebar and top bar (shared by staff and admin, page title from the sidebar item), 4 numbers, Upcoming Reservations, Active Orders, View all links. Sample data now has bookings for today and 2 more active orders |
+| 15 | Today's Reservations | 🟦 | 1440 × 900. Search (all days), Day (Today / Upcoming / Past / Cancelled) and Status filters, 9 columns, Arrived / No-show / Assign Table with the API's rules, 8 per page |
+| 16 | Table Status | 🟦 | 1440 × 900. Filters with counts, a card per table: Available, Occupied (order, seated time, View Order), Reserved (next booking, Mark Arrived). Sample tables now match the bookings and orders |
+| 17 | Orders and Payments | 🟦 | 1440 × 900. All / Unpaid / Paid, order list, detail with items and totals, Cash Received and Change, Mark as Paid (Cash), Print Receipt (her 80 mm receipt design, print only) |
 | 18 | Kitchen Display | ⬜ | |
 | 19 | Admin Dashboard | ⬜ | |
 | 20 | Menu Management | ⬜ | |
@@ -114,7 +114,7 @@ Every staff, kitchen and admin route already checks the login token and role, so
 | Integration | Status |
 |---|---|
 | Payment gateway | ✅ PayMongo (test mode), deposits and order payments |
-| SMS notification | ⬜ provider not chosen |
+| SMS notification | 🟨 built in fake mode (texts logged, reminders scheduled); no provider yet |
 | Real-time messaging (kitchen and order status) | ✅ Pusher: backend sends events; screens 12, 17, 18 subscribe with `pusher-js` |
 | Cloud storage (menu and logo images) | ✅ Cloudinary (local disk without keys) |
 | Recommendation engine | ✅ Python service (`recommender/`) behind `GET /recommendations`, with a fallback when it sleeps |

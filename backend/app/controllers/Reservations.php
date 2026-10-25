@@ -122,6 +122,7 @@ class Reservations extends Controller {
 			}
 		}
 
+		$moved = $input['reservation_date'] !== $reservation['reservation_date'] || $input['reservation_time'] !== $reservation['reservation_time'];
 		$this->Reservation_model->transaction();
 		try {
 			$this->Reservation_model->update($id, [
@@ -130,7 +131,7 @@ class Reservations extends Controller {
 				'pax' => $input['pax'],
 				'table_id' => $new_table,
 				'special_request' => array_key_exists('special_request', $body) ? $input['special_request'] : $reservation['special_request'],
-			]);
+			] + ($moved ? ['reminder_sent_at' => null] : []));
 			if ($old_table !== null && $old_table !== $new_table) {
 				$this->release_table($old_table);
 			}
@@ -143,6 +144,10 @@ class Reservations extends Controller {
 			$this->api->respond_error('Could not update the reservation', 500);
 		}
 
+		if ($moved) {
+			$this->call->library('sms');
+			$this->sms->reservation((int) $id, 'rescheduled');
+		}
 		$this->api->respond(['data' => $this->format($this->Reservation_model->find($id), true)]);
 	}
 
@@ -232,6 +237,10 @@ class Reservations extends Controller {
 			$this->api->respond_error('Could not update the reservation', 500);
 		}
 
+		if ($next === 'cancelled') {
+			$this->call->library('sms');
+			$this->sms->reservation((int) $id, 'cancelled');
+		}
 		$this->api->respond(['data' => $this->format($this->Reservation_model->find($id), true)]);
 	}
 
@@ -291,6 +300,8 @@ class Reservations extends Controller {
 			$this->api->respond_error('Could not save the reservation', 500);
 		}
 
+		$this->call->library('sms');
+		$this->sms->reservation((int) $id, 'booked');
 		$this->api->respond(['data' => $this->format($this->Reservation_model->find($id))], 201);
 	}
 
@@ -322,6 +333,8 @@ class Reservations extends Controller {
 		if ($reservation['table_id'] !== null) {
 			$this->release_table((int) $reservation['table_id']);
 		}
+		$this->call->library('sms');
+		$this->sms->reservation((int) $reservation['reservation_id'], 'cancelled');
 		$this->api->respond(['data' => $this->format($this->Reservation_model->find($reservation['reservation_id']))]);
 	}
 
@@ -339,7 +352,10 @@ class Reservations extends Controller {
 			'reservation_date' => $input['reservation_date'],
 			'reservation_time' => $input['reservation_time'],
 			'table_id' => null,
+			'reminder_sent_at' => null,
 		]);
+		$this->call->library('sms');
+		$this->sms->reservation((int) $reservation['reservation_id'], 'rescheduled');
 		$this->api->respond(['data' => $this->format($this->Reservation_model->find($reservation['reservation_id']))]);
 	}
 
@@ -457,6 +473,12 @@ class Reservations extends Controller {
 			return [];
 		}
 
+		$fitting = $this->fitting_tables($pax);
+		$booked = array_count_values(array_column(
+			$this->Reservation_model->filter(['reservation_date' => $date])->in('status', $this->active)->get_all(),
+			'reservation_time'
+		));
+
 		$slots = [];
 		$now = time();
 		$step = $this->settings()['slot_minutes'] * 60;
@@ -465,14 +487,19 @@ class Reservations extends Controller {
 				continue;
 			}
 			$time = date('H:i:s', $t);
-			$slots[] = ['time' => $time, 'available' => $this->is_open($date, $time, $pax)];
+			$slots[] = ['time' => $time, 'available' => ($booked[$time] ?? 0) < $fitting];
 		}
 		return $slots;
 	}
 
+	private function fitting_tables($pax)
+	{
+		return count(array_filter($this->Table_model->all(), fn($table) => (int) $table['capacity'] >= $pax));
+	}
+
 	private function is_open($date, $time, $pax, $except_id = null)
 	{
-		$fitting = count(array_filter($this->Table_model->all(), fn($table) => (int) $table['capacity'] >= $pax));
+		$fitting = $this->fitting_tables($pax);
 
 		$query = $this->Reservation_model
 			->filter(['reservation_date' => $date, 'reservation_time' => $time])

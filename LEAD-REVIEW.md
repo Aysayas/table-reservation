@@ -200,3 +200,9 @@ Claude adds an entry here when the frontend developer asks for something outside
 - Notes: the screen 09 wireframe has "Often Ordered With" (2 dishes with "+ Add"), but `docs/progress.md` says the recommendation engine's approach isn't decided and `docs/api.md` has no endpoint for it. For now it shows 2 other available dishes from the same category, from the menu data. When you decide (for example dishes most often in the same order, from `order_items`), the screen only needs the list from a service. (PR for screen 09)
 - Status: Waiting for lead
 - Lead note:
+
+### 2026-10-25: How does a table become available again on screen 16?
+- Level: ℹ️ question, nothing off plan
+- Notes: the screen 16 wireframe gives occupied tables only "View Order" and reserved tables only "Mark Arrived". There's no way to set a table back to Available after the guests leave, though `PATCH /tables/{id}/status` allows any change ("for example, freeing a table after guests leave"). Should screen 16 get a small "Free table" button on occupied tables (for example only when the order is served and paid), or does something else free it (screen 17 after payment, or the backend)? (PR for screen 16)
+- Status: Waiting for lead
+- Lead note:
