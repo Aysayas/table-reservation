@@ -1,0 +1,23 @@
+name: SMS reminders
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  send:
+    name: Send due reminders
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call the reminders endpoint
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          if [ -z "$CRON_SECRET" ]; then echo "CRON_SECRET is not set, skipping."; exit 0; fi
+          curl -fsS --max-time 120 --retry 2 --retry-delay 20 -X POST \
+            -H "X-Cron-Secret: $CRON_SECRET" \
+            https://vencios-api.onrender.com/api/notifications/reminders

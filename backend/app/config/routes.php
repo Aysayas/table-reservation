@@ -105,6 +105,7 @@ $router->group(['prefix' => 'api'], function ($router) {
     $router->post('/payments', 'Payments::store');
     $router->post('/payments/webhook', 'Payments::webhook');
     $router->post('/realtime/auth', 'Realtime::auth');
+    $router->post('/notifications/reminders', 'Notifications::reminders');
 
     $router->get('/users', 'Users::index');
     $router->post('/users', 'Users::store');
