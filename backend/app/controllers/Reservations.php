@@ -457,6 +457,12 @@ class Reservations extends Controller {
 			return [];
 		}
 
+		$fitting = $this->fitting_tables($pax);
+		$booked = array_count_values(array_column(
+			$this->Reservation_model->filter(['reservation_date' => $date])->in('status', $this->active)->get_all(),
+			'reservation_time'
+		));
+
 		$slots = [];
 		$now = time();
 		$step = $this->settings()['slot_minutes'] * 60;
@@ -465,14 +471,19 @@ class Reservations extends Controller {
 				continue;
 			}
 			$time = date('H:i:s', $t);
-			$slots[] = ['time' => $time, 'available' => $this->is_open($date, $time, $pax)];
+			$slots[] = ['time' => $time, 'available' => ($booked[$time] ?? 0) < $fitting];
 		}
 		return $slots;
 	}
 
+	private function fitting_tables($pax)
+	{
+		return count(array_filter($this->Table_model->all(), fn($table) => (int) $table['capacity'] >= $pax));
+	}
+
 	private function is_open($date, $time, $pax, $except_id = null)
 	{
-		$fitting = count(array_filter($this->Table_model->all(), fn($table) => (int) $table['capacity'] >= $pax));
+		$fitting = $this->fitting_tables($pax);
 
 		$query = $this->Reservation_model
 			->filter(['reservation_date' => $date, 'reservation_time' => $time])
