@@ -36,7 +36,7 @@ Start with simple screens to learn, then the forms, then the bigger flows:
 | 11 | Checkout | 🟦 | Phone width. Order Summary and Total, Pay Now or Pay at the Counter, optional name (60), Place Order via `createOrder` with the table QR token; Pay Now pretends to pay until the API is live; then opens 12 with `?order=` |
 | 12 | Order Status | 🟦 | Phone width. Order number and time, Received → Preparing → Ready → Served, Your Items and Total, Payment, Order More. Loads `?order=` with the table QR token and checks again every 15 s until real-time updates exist |
 | 13 | Staff Login | 🟦 | Approved subtitle and show-password button are in #51. Login pretends to succeed until the API is live |
-| 14 | Staff Dashboard | ⬜ | |
+| 14 | Staff Dashboard | 🟦 | 1440 × 900. New charcoal sidebar and top bar (shared by staff and admin, page title from the sidebar item), 4 numbers, Upcoming Reservations, Active Orders, View all links. Sample data now has bookings for today and 2 more active orders |
 | 15 | Today's Reservations | ⬜ | |
 | 16 | Table Status | ⬜ | |
 | 17 | Orders and Payments | ⬜ | |
