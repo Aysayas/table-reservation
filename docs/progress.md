@@ -30,7 +30,7 @@ Start with simple screens to learn, then the forms, then the bigger flows:
 | 05 | Reservation Confirmation | 🟦 | Phone and laptop layouts done with all approved extras (Save pass was declined) |
 | 06 | Find Reservation | ⬜ | |
 | 07 | About Us | 🟦 | Final mockup with the approved extras (hero buttons, 4 values, new story text, Home's footer), phone and laptop. The restaurant's own photos are in |
-| 08 | Table Menu | ⬜ | |
+| 08 | Table Menu | 🟦 | Phone width. Table pill and cart count in the top bar, search, categories, Recommended for You, + Add, View Cart bar. Cart kept in sessionStorage (zustand); QR token `?t=` saved for screen 11 |
 | 09 | Item Details | ⬜ | |
 | 10 | Cart | ⬜ | |
 | 11 | Checkout | ⬜ | |

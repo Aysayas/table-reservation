@@ -6,6 +6,7 @@ import About from '@/pages/customer/About'
 import Home from '@/pages/customer/Home'
 import ReservationConfirmation from '@/pages/customer/ReservationConfirmation'
 import ReserveTable from '@/pages/customer/ReserveTable'
+import TableMenu from '@/pages/customer/TableMenu'
 import StaffLogin from '@/pages/staff/StaffLogin'
 
 const staffNav: NavItem[] = [
@@ -42,8 +43,8 @@ export const router = createBrowserRouter([
       },
       { path: '/reservation', element: <Placeholder screen="06" title="Find Reservation" /> },
       { path: '/about', element: <About /> },
-      { path: '/table/:tableId', element: <Placeholder screen="08" title="Table Menu" /> },
-      { path: '/table/:tableId/menu', element: <Placeholder screen="08" title="Table Menu" /> },
+      { path: '/table/:tableId', element: <TableMenu /> },
+      { path: '/table/:tableId/menu', element: <TableMenu /> },
       {
         path: '/table/:tableId/menu/:itemId',
         element: <Placeholder screen="09" title="Item Details" />,
