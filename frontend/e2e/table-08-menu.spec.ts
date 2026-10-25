@@ -45,3 +45,12 @@ test('an unknown table asks to scan again', async ({ page }) => {
   await page.goto('/table/99')
   await expect(page.getByRole('heading', { name: 'Table not found' })).toBeVisible()
 })
+
+test('recommended for you slides gently and stands still with reduced motion', async ({ page }) => {
+  await page.goto(url)
+  const row = page.getByRole('region', { name: 'Recommended for You' }).getByRole('list')
+  await expect(row).toHaveCSS('animation-name', 'marquee')
+  await expect(row.getByRole('link')).toHaveCount(4)
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await expect(row).toHaveCSS('animation-name', 'none')
+})
