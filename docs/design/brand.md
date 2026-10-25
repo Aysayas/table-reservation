@@ -102,6 +102,15 @@ Suggested sizes:
 - Rounded cards (`rounded-xl`) in `brand-cream` for items and summaries.
 - The menu's green-and-gold sunburst stripes can be a small accent (for example on the home hero). Never put text on top of them.
 
+## Motion
+
+Gentle and slow, so it never makes anyone dizzy. Made with Tailwind only (no motion package yet).
+
+- **Scroll reveal:** sections fade in and rise 16px over 0.7s as they scroll into view, once only. Wrap a section's content in `<Reveal>` (`src/components/Reveal.tsx`). The hero isn't wrapped, so the page never looks empty on open.
+- **Hover:** photos zoom 5% inside their frame (0.7s); dish cards lift 4px and get a gold border; main buttons lift 2px; the numbered circles fill with gold.
+- **Never:** parallax, things that move on their own (carousels, bouncing), or entrance animations that delay the content.
+- **Reduce motion:** every animation uses Tailwind's `motion-safe:`, so people who turn on "reduce motion" see everything at once with no movement.
+
 ## Photos
 
 - Stock photos only from free-licence sites (Unsplash, Pexels). Nothing copied from other restaurants' or hotels' sites.

@@ -3,6 +3,7 @@ import { format } from 'date-fns'
 import { ArrowRight, Plus, UtensilsCrossed } from 'lucide-react'
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import Reveal from '@/components/Reveal'
 import SiteFooter from '@/components/SiteFooter'
 import { groupHours } from '@/lib/hours'
 import { getMenuItems } from '@/services/menu'
@@ -11,10 +12,12 @@ import { getOpeningHours } from '@/services/settings'
 const wrap = 'md:mx-auto md:max-w-6xl md:px-10'
 const eyebrow = 'text-brand-red text-xs font-bold tracking-[0.25em] uppercase'
 const button =
-  'focus-visible:outline-brand-gold block rounded-sm px-3 py-4 text-center whitespace-nowrap md:px-6 text-xs font-bold tracking-[0.12em] uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 md:text-sm md:tracking-[0.15em]'
+  'focus-visible:outline-brand-gold block rounded-sm px-3 py-4 text-center whitespace-nowrap md:px-6 text-xs font-bold tracking-[0.12em] uppercase transition duration-200 motion-safe:hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 md:text-sm md:tracking-[0.15em]'
 const field =
   'mt-2 w-full rounded-sm border border-white/40 bg-transparent px-3 py-3 text-sm font-normal tracking-normal text-white normal-case outline-none [color-scheme:dark] focus:border-brand-gold'
 const fieldLabel = 'text-xs font-bold tracking-[0.2em] uppercase'
+const zoom =
+  'motion-safe:transition-transform motion-safe:duration-700 motion-safe:group-hover:scale-105'
 
 const features = [
   { title: 'Fresh seafood', text: 'Straight from Mindoro waters.' },
@@ -90,14 +93,14 @@ export default function Home() {
         </div>
       </section>
 
-      <section className={`relative -mt-16 px-4 ${wrap}`}>
+      <Reveal className={`relative -mt-16 px-4 ${wrap}`}>
         <ul className="bg-brand-charcoal grid grid-cols-2 overflow-hidden rounded-lg border border-white/10 text-white md:grid-cols-4">
           {features.map((feature, index) => (
             <li
               key={feature.title}
-              className="flex gap-3 border-white/10 px-4 py-5 odd:border-r md:border-r md:border-b-0 md:px-6 md:last:border-r-0 [&:nth-child(-n+2)]:border-b"
+              className="group flex gap-3 border-white/10 px-4 py-5 odd:border-r md:border-r md:border-b-0 md:px-6 md:last:border-r-0 [&:nth-child(-n+2)]:border-b"
             >
-              <span className="border-brand-gold text-brand-gold flex size-9 shrink-0 items-center justify-center rounded-full border font-serif text-sm">
+              <span className="border-brand-gold text-brand-gold group-hover:bg-brand-gold group-hover:text-brand-charcoal flex size-9 shrink-0 items-center justify-center rounded-full border font-serif text-sm transition-colors duration-300">
                 {index + 1}
               </span>
               <div>
@@ -107,9 +110,9 @@ export default function Home() {
             </li>
           ))}
         </ul>
-      </section>
+      </Reveal>
 
-      <section
+      <Reveal
         className={`px-4 py-16 md:grid md:grid-cols-2 md:items-center md:gap-12 md:py-24 ${wrap}`}
       >
         <div>
@@ -129,15 +132,17 @@ export default function Home() {
             <ArrowRight className="size-4" />
           </Link>
         </div>
-        <img
-          src="/photos/vencios-dining.png"
-          alt="Vencio's Garden dining room"
-          className="mt-10 h-64 w-full rounded-lg object-cover md:mt-0 md:h-80"
-        />
-      </section>
+        <div className="group mt-10 overflow-hidden rounded-lg md:mt-0">
+          <img
+            src="/photos/vencios-dining.png"
+            alt="Vencio's Garden dining room"
+            className={`h-64 w-full object-cover md:h-80 ${zoom}`}
+          />
+        </div>
+      </Reveal>
 
       <section className="bg-brand-charcoal px-4 py-16 text-white md:py-20">
-        <div className={wrap}>
+        <Reveal className={wrap}>
           <div className="flex items-end justify-between gap-4">
             <h2 className="font-serif text-4xl leading-tight md:text-5xl">Popular Dishes</h2>
             <Link
@@ -152,14 +157,16 @@ export default function Home() {
             {popular.map((item, index) => (
               <li
                 key={item.item_id}
-                className={`flex flex-col overflow-hidden rounded-lg border border-white/10 bg-white/5 ${index >= 2 ? 'hidden md:flex' : ''}`}
+                className={`group hover:border-brand-gold/40 flex flex-col overflow-hidden rounded-lg border border-white/10 bg-white/5 transition duration-300 motion-safe:hover:-translate-y-1 ${index >= 2 ? 'hidden md:flex' : ''}`}
               >
                 {item.image_url ? (
-                  <img
-                    src={item.image_url}
-                    alt={`${item.name} photo`}
-                    className="h-32 w-full object-cover md:h-44"
-                  />
+                  <div className="overflow-hidden">
+                    <img
+                      src={item.image_url}
+                      alt={`${item.name} photo`}
+                      className={`h-32 w-full object-cover md:h-44 ${zoom}`}
+                    />
+                  </div>
                 ) : (
                   <div
                     role="img"
@@ -185,11 +192,11 @@ export default function Home() {
               </li>
             ))}
           </ul>
-        </div>
+        </Reveal>
       </section>
 
       <section className="bg-brand-red px-4 py-12 text-white">
-        <div className={`lg:grid lg:grid-cols-[1fr_1.5fr] lg:items-end lg:gap-12 ${wrap}`}>
+        <Reveal className={`lg:grid lg:grid-cols-[1fr_1.5fr] lg:items-end lg:gap-12 ${wrap}`}>
           <div>
             <h2 className="font-serif text-3xl leading-tight">Good food deserves great company.</h2>
             <p className="mt-2 text-sm text-white/85">
@@ -239,7 +246,7 @@ export default function Home() {
               Find a Table
             </button>
           </form>
-        </div>
+        </Reveal>
       </section>
 
       <SiteFooter />

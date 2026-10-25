@@ -3,6 +3,7 @@ import { Globe, Mail, Phone } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import RestaurantMap from '@/components/RestaurantMap'
+import Reveal from '@/components/Reveal'
 import SiteFooter from '@/components/SiteFooter'
 import { dayNames, hoursText, weekOrder } from '@/lib/hours'
 import { directionsUrl } from '@/lib/maps'
@@ -12,7 +13,7 @@ const wrap = 'md:mx-auto md:max-w-6xl md:px-10'
 const eyebrow = 'text-brand-red text-xs font-bold tracking-[0.25em] uppercase'
 const goldEyebrow = 'text-brand-gold text-xs font-bold tracking-[0.25em] uppercase'
 const button =
-  'focus-visible:outline-brand-gold block rounded-sm px-3 py-4 text-center whitespace-nowrap md:px-6 text-xs font-bold tracking-[0.12em] uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 md:text-sm md:tracking-[0.15em]'
+  'focus-visible:outline-brand-gold block rounded-sm px-3 py-4 text-center whitespace-nowrap md:px-6 text-xs font-bold tracking-[0.12em] uppercase transition duration-200 motion-safe:hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 md:text-sm md:tracking-[0.15em]'
 const card = 'rounded-lg border border-white/10 bg-white/5 p-4 md:p-6'
 const cardTitle = 'font-serif text-2xl'
 
@@ -98,25 +99,27 @@ export default function About() {
       </section>
 
       <section aria-label="Our values" className={`relative -mt-16 px-4 ${wrap}`}>
-        <ul className="bg-brand-charcoal grid grid-cols-2 overflow-hidden rounded-lg border border-white/10 text-white md:grid-cols-4">
-          {values.map((value, index) => (
-            <li
-              key={value.title}
-              className="flex gap-3 border-white/10 px-4 py-5 odd:border-r md:border-r md:border-b-0 md:px-6 md:last:border-r-0 [&:nth-child(-n+2)]:border-b"
-            >
-              <span className="border-brand-gold text-brand-gold flex size-9 shrink-0 items-center justify-center rounded-full border font-serif text-sm">
-                {index + 1}
-              </span>
-              <div>
-                <p className="text-xs font-bold tracking-[0.15em] uppercase">{value.title}</p>
-                <p className="mt-1 text-xs text-white/70">{value.text}</p>
-              </div>
-            </li>
-          ))}
-        </ul>
+        <Reveal>
+          <ul className="bg-brand-charcoal grid grid-cols-2 overflow-hidden rounded-lg border border-white/10 text-white md:grid-cols-4">
+            {values.map((value, index) => (
+              <li
+                key={value.title}
+                className="group flex gap-3 border-white/10 px-4 py-5 odd:border-r md:border-r md:border-b-0 md:px-6 md:last:border-r-0 [&:nth-child(-n+2)]:border-b"
+              >
+                <span className="border-brand-gold text-brand-gold group-hover:bg-brand-gold group-hover:text-brand-charcoal flex size-9 shrink-0 items-center justify-center rounded-full border font-serif text-sm transition-colors duration-300">
+                  {index + 1}
+                </span>
+                <div>
+                  <p className="text-xs font-bold tracking-[0.15em] uppercase">{value.title}</p>
+                  <p className="mt-1 text-xs text-white/70">{value.text}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </Reveal>
       </section>
 
-      <section
+      <Reveal
         className={`px-4 py-16 md:grid md:grid-cols-2 md:items-center md:gap-12 md:py-24 ${wrap}`}
       >
         <div>
@@ -132,15 +135,17 @@ export default function About() {
             “This is our heritage. Today, it's on your plate.”
           </blockquote>
         </div>
-        <img
-          src="/photos/vencios-counter.png"
-          alt="Vencio's Garden counter"
-          className="mt-10 h-72 w-full rounded-lg object-cover md:mt-0 md:h-[26rem]"
-        />
-      </section>
+        <div className="group mt-10 overflow-hidden rounded-lg md:mt-0">
+          <img
+            src="/photos/vencios-counter.png"
+            alt="Vencio's Garden counter"
+            className="h-72 w-full object-cover motion-safe:transition-transform motion-safe:duration-700 motion-safe:group-hover:scale-105 md:h-[26rem]"
+          />
+        </div>
+      </Reveal>
 
       <section className="bg-brand-charcoal px-4 py-16 text-white md:py-24">
-        <div className={wrap}>
+        <Reveal className={wrap}>
           <p className={goldEyebrow}>Visit us</p>
           <h2 className="mt-3 font-serif text-4xl leading-tight md:text-5xl">Plan Your Visit</h2>
           <div className="mt-10 grid gap-6 lg:grid-cols-[1.3fr_1fr_1fr]">
@@ -218,7 +223,7 @@ export default function About() {
               </dl>
             </div>
           </div>
-        </div>
+        </Reveal>
       </section>
 
       <SiteFooter>
