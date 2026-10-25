@@ -146,12 +146,19 @@ class Menu extends Controller {
 			->is_image()
 			->encrypt_name();
 
-		// shortcut: photos are saved on the server's disk, which Render wipes on every deploy; move to cloud storage before production
 		if (!$this->upload->do_upload()) {
 			$this->api->respond(['error' => 'Invalid input', 'status' => 422, 'errors' => $this->upload->get_errors()], 422);
 		}
 
-		$this->Menu_item_model->update($id, ['image_url' => '/uploads/menu/' . $this->upload->get_filename()]);
+		$file = $this->upload->get_filename();
+		$this->call->library('cloudinary');
+		try {
+			$url = $this->cloudinary->store(ROOT_DIR . $this->photo_dir . $file, 'menu') ?? '/uploads/menu/' . $file;
+		} catch (RuntimeException $e) {
+			$this->api->respond_error('The photo could not be stored, please try again', 502);
+		}
+
+		$this->Menu_item_model->update($id, ['image_url' => $url]);
 		$this->delete_photo($item['image_url']);
 		$this->api->respond(['data' => $this->format($this->Menu_item_model->find($id))]);
 	}
@@ -217,6 +224,8 @@ class Menu extends Controller {
 		if (is_string($url) && str_starts_with($url, '/uploads/menu/')) {
 			@unlink(ROOT_DIR . $this->photo_dir . basename($url));
 		}
+		$this->call->library('cloudinary');
+		$this->cloudinary->delete($url);
 	}
 }
 ?>
