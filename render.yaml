@@ -44,3 +44,36 @@ services:
         sync: false
       - key: PAYMONGO_WEBHOOK_SECRET
         sync: false
+      - key: RECOMMENDER_URL
+        sync: false
+      - key: RECOMMENDER_SECRET
+        fromService:
+          type: web
+          name: table-reservation-recommender
+          envVarKey: RECOMMENDER_SECRET
+
+  - type: web
+    name: table-reservation-recommender
+    runtime: python
+    rootDir: recommender
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.8
+      - key: RECOMMENDER_SECRET
+        generateValue: true
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        sync: false
+      - key: DB_NAME
+        sync: false
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_SSL_CA
+        value: /etc/secrets/ca.pem

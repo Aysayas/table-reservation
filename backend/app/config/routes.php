@@ -68,6 +68,7 @@ $router->group(['prefix' => 'api'], function ($router) {
 
     $router->get('/menu-items', 'Menu::index');
     $router->get('/menu-items/{id}', 'Menu::show')->where_number('id');
+    $router->get('/recommendations', 'Menu::recommendations');
     $router->post('/menu-items', 'Menu::store');
     $router->put('/menu-items/{id}', 'Menu::update')->where_number('id');
     $router->patch('/menu-items/{id}/availability', 'Menu::availability')->where_number('id');
