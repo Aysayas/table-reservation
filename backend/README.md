@@ -194,3 +194,10 @@ The PHP version is pinned in the `Dockerfile` (`php:8.3.36-fpm-alpine`). Bump it
 - Env: `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` (Cloudinary dashboard → API Keys).
 - **Fake mode:** with any of them empty, files stay in `public/uploads/` as before (lost on every Render deploy).
 - Replacing or deleting a photo also deletes the old one at Cloudinary (best effort; a failure is only logged).
+
+## Live updates (Pusher)
+
+- `app/libraries/Pusher.php` sends events over Pusher's REST API (HMAC-SHA256 signed, no SDK): `order.created` (new order), `order.status` (kitchen or staff moves it), `order.paid` (cash or online). Data is only `{ order_id, status, payment_status }`.
+- Channels: `private-orders` for staff and kitchen (subscribing needs a staff, kitchen or admin token through `POST /api/realtime/auth`), and each table's `order-status-<hash of its QR token>` for the customer.
+- Env: `PUSHER_APP_ID`, `PUSHER_KEY`, `PUSHER_SECRET`, `PUSHER_CLUSTER`. The frontend needs only the key and cluster, which are public.
+- **Fake mode:** without the keys, events are written to the log only. A Pusher failure is logged and never stops an order or a payment.

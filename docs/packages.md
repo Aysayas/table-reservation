@@ -103,7 +103,7 @@ toast.success('Order sent to the kitchen')
 
 | Integration | Package | When |
 |---|---|---|
-| Real-Time Messaging | `pusher-js`, `ably` or `firebase` | After the team picks a provider |
+| Real-Time Messaging | `pusher-js` (Pusher was chosen on 2026-10-25) | The lead installs it when screens 12, 17 or 18 need live updates |
 
 Payments, SMS, cloud storage and recommendations need no frontend package. The backend handles them and React calls the API.
 

@@ -207,6 +207,10 @@ class Payments extends Controller {
 			$this->Payment_model->rollback();
 			$this->api->respond_error('Could not save the payment', 500);
 		}
+		if ($order_id !== null) {
+			$this->call->library('pusher');
+			$this->pusher->order_changed($order_id, 'order.paid');
+		}
 
 		$payment = $this->Payment_model->find($id);
 		foreach (['payment_id', 'order_id', 'reservation_id', 'received_by'] as $field) {
@@ -251,6 +255,9 @@ class Payments extends Controller {
 		}
 		if ($payment['order_id'] !== null && !$this->Order_model->update_where(['order_id' => $payment['order_id'], 'payment_status' => 'unpaid'], ['payment_status' => 'paid'])) {
 			error_log("Order {$payment['order_id']} was already paid; online payment {$id} needs a refund");
+		} elseif ($payment['order_id'] !== null) {
+			$this->call->library('pusher');
+			$this->pusher->order_changed($payment['order_id'], 'order.paid');
 		}
 		if ($payment['reservation_id'] !== null && count($this->Payment_model->query()->where(['reservation_id' => $payment['reservation_id'], 'status' => 'paid'])->get_all()) > 1) {
 			error_log("Reservation {$payment['reservation_id']} has more than one paid deposit; payment {$id} needs a refund");
