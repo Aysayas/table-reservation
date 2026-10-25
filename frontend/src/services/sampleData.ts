@@ -224,7 +224,10 @@ const menu: [number, string, number, string?][] = [
   [16, 'Blow Job', 100],
 ]
 
-const sampleImages: Record<string, string> = {}
+const sampleImages: Record<string, string> = {
+  'Crispy Pork Kare-Kare': '/photos/stock-dish-kare-kare.jpg',
+  'Sizzling Sisig': '/photos/stock-dish-sisig.jpg',
+}
 
 const recommended = [
   'Crispy Pork Kare-Kare',
