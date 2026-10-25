@@ -55,11 +55,11 @@ export default function About() {
           <img
             src="/photos/vencios-building.png"
             alt="Vencio's Garden Hotel and Restaurant building"
-            className="h-full w-full object-cover opacity-30 md:opacity-90"
+            className="h-full w-full object-cover opacity-30 md:[mask-image:linear-gradient(to_right,transparent,rgb(0_0_0/0.45)_35%,black_75%)] md:opacity-90"
           />
           <div
             aria-hidden="true"
-            className="from-brand-charcoal via-brand-charcoal/90 to-brand-charcoal/40 md:via-brand-charcoal/55 absolute inset-0 bg-gradient-to-r md:via-35% md:to-transparent"
+            className="from-brand-charcoal via-brand-charcoal/90 to-brand-charcoal/40 absolute inset-0 bg-gradient-to-r md:hidden"
           />
         </div>
         <div className={`relative ${wrap}`}>
