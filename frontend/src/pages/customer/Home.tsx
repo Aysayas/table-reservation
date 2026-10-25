@@ -195,7 +195,7 @@ export default function Home() {
               event.preventDefault()
               findTable()
             }}
-            className="mt-8 grid grid-cols-2 gap-3 md:grid-cols-[1fr_1fr_1fr_auto] md:items-end lg:mt-0"
+            className="mt-8 grid grid-cols-2 gap-3 md:grid-cols-[1fr_1fr_minmax(9rem,1fr)_auto] md:items-end lg:mt-0"
           >
             <label className={fieldLabel}>
               Date
