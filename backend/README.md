@@ -164,6 +164,10 @@ The repo root has `render.yaml` (a Render Blueprint) that builds this folder wit
 3. Render has no MySQL of its own. Create one on a MySQL host (e.g. Aiven or TiDB Cloud). Do not import `schema.sql` or `seed.sql`: the container runs `php public/index.php migrate` on every start, which creates the tables (migration `001_initial_schema`). Create the first admin user by hand.
 4. Check `https://<your-service>.onrender.com/api/health` and `/api/health/db`.
 
+`render.yaml` sets `DB_SSL_CA=/etc/secrets/ca.pem`: add the host's CA certificate as a Secret File named `ca.pem` in the Render dashboard. The production image turns PHP `display_errors` off. Menu photos uploaded in production are lost on each deploy until cloud storage is added.
+
+Frontend: Netlify reads `netlify.toml` at the repo root (base `frontend`, publish `dist`, all routes to `index.html`). Set `VITE_API_URL` to `https://<your-service>.onrender.com/api` in Netlify, then add that Netlify URL to `CORS_ORIGINS` on Render.
+
 Only changes inside `backend/` trigger a redeploy. The free plan sleeps after about 15 minutes idle, and the first request after that takes up to a minute.
 
 ## Migrations

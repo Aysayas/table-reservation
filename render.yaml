@@ -34,3 +34,7 @@ services:
         sync: false
       - key: DB_PASSWORD
         sync: false
+      - key: DB_SSL_CA
+        value: /etc/secrets/ca.pem
+      - key: APP_TIMEZONE
+        value: Asia/Manila
