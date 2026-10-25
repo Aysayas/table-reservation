@@ -50,7 +50,7 @@ test('calendar downloads the reservation as an ics file', async ({ page }) => {
 
 test('directions opens google maps directions', async ({ page }) => {
   await page.goto(url)
-  await expect(page.getByRole('link', { name: 'Directions' })).toHaveAttribute(
+  await expect(page.getByRole('link', { name: 'Directions', exact: true })).toHaveAttribute(
     'href',
     /google\.com\/maps\/dir\//,
   )
@@ -63,4 +63,22 @@ test('what happens next lists three steps', async ({ page }) => {
     await expect(page.getByText(step, { exact: true })).toBeVisible()
   }
   await expect(page.getByText('Give RSV-000001 to our staff when you arrive.')).toBeVisible()
+})
+
+test('the footer has the quick links, hours and directions', async ({ page }) => {
+  await page.goto(url)
+  const footer = page.locator('footer')
+  for (const [name, href] of [
+    ['About Us', '/about'],
+    ['Menu', '/menu'],
+    ['Find My Reservation', '/reservation'],
+    ['Staff Login', '/staff/login'],
+  ]) {
+    await expect(footer.getByRole('link', { name, exact: true })).toHaveAttribute('href', href)
+  }
+  await expect(footer.getByText('Monday – Sunday')).toBeVisible()
+  await expect(footer.getByRole('link', { name: 'Get directions' })).toHaveAttribute(
+    'href',
+    /google\.com\/maps\/dir\//,
+  )
 })
