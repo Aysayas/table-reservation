@@ -2,6 +2,8 @@
 defined('PREVENT_DIRECT_ACCESS') OR exit('No direct script access allowed');
 
 class Categories extends Controller {
+	private $counts;
+
 	public function __construct()
 	{
 		parent::__construct();
@@ -88,8 +90,17 @@ class Categories extends Controller {
 	{
 		$category['category_id'] = (int) $category['category_id'];
 		$category['sort_order'] = (int) $category['sort_order'];
-		$category['item_count'] = (int) $this->Menu_item_model->filter(['category_id' => $category['category_id']])->count();
+		$category['item_count'] = $this->item_counts()[$category['category_id']] ?? 0;
 		return $category;
+	}
+
+	private function item_counts()
+	{
+		if ($this->counts === null) {
+			$rows = $this->db->raw('SELECT category_id, COUNT(*) AS items FROM menu_items GROUP BY category_id')->fetchAll(PDO::FETCH_ASSOC);
+			$this->counts = array_map('intval', array_column($rows, 'items', 'category_id'));
+		}
+		return $this->counts;
 	}
 }
 ?>
