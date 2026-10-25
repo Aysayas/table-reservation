@@ -15,6 +15,7 @@ type CartState = {
   add: (tableId: number, line: CartLine) => void
   setQuantity: (line: CartLine, quantity: number) => void
   remove: (line: CartLine) => void
+  clear: () => void
 }
 
 const sameLine = (a: CartLine, b: CartLine) => a.item_id === b.item_id && a.notes === b.notes
@@ -44,6 +45,7 @@ export const useCart = create<CartState>()(
           ),
         })),
       remove: (line) => set((state) => ({ lines: state.lines.filter((l) => !sameLine(l, line)) })),
+      clear: () => set({ lines: [] }),
     }),
     { name: 'cart', storage: createJSONStorage(() => sessionStorage) },
   ),

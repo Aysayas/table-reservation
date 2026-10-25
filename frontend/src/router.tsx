@@ -4,6 +4,7 @@ import DashboardLayout, { type NavItem } from '@/layouts/DashboardLayout'
 import Placeholder from '@/pages/Placeholder'
 import About from '@/pages/customer/About'
 import Cart from '@/pages/customer/Cart'
+import Checkout from '@/pages/customer/Checkout'
 import DepositPayment from '@/pages/customer/DepositPayment'
 import Home from '@/pages/customer/Home'
 import ItemDetails from '@/pages/customer/ItemDetails'
@@ -54,7 +55,7 @@ export const router = createBrowserRouter([
         element: <ItemDetails />,
       },
       { path: '/table/:tableId/cart', element: <Cart /> },
-      { path: '/table/:tableId/checkout', element: <Placeholder screen="11" title="Checkout" /> },
+      { path: '/table/:tableId/checkout', element: <Checkout /> },
       { path: '/table/:tableId/orders', element: <Placeholder screen="12" title="Order Status" /> },
     ],
   },
