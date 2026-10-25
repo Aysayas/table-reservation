@@ -189,6 +189,12 @@ Claude adds an entry here when the frontend developer asks for something outside
 - Status: Approved (partly)
 - Lead note: (2026-10-25) (1) No, ordering stays in the QR flow. (2) Yes to the price range filter. Tag filters only from data we already have: "Best Seller" from `is_recommended` and category tags like "Seafood" from the categories. "Good for 3–4", "Pinoy" and "Spicy" need data the menu doesn't have yet, so leave them out until the lead adds it. (3) No, most taglines would be made up. (4) Yes, the "Home / Menu" breadcrumb and the title "Our Menu" with "Kain na!" (the ☰ menu still gets around, like About). (5) Yes to pagination, but first tell the lead in this entry why you want it instead of the Popular and category sections, and how Popular and the category filter will work with pages. Add tests for the filters and the pages.
 
+### 2026-10-25: How should Reschedule work on screen 06?
+- Level: ℹ️ question, nothing off plan
+- Notes: `docs/design/navigation.md` sends 06's Reschedule button to screen 03 Reserve a Table, so for now it opens `/reserve?pax=<guests>`. But 03 makes a new booking (`POST /reservations`), and the old one stays active. The API has `POST /reservations/code/{code}/reschedule` for this. Should 03 get a reschedule mode (for example `/reserve?reschedule=RSV-…`, same URL, calling `/reschedule` instead of booking), or should 06 pick the new date and time itself? (PR for screen 06)
+- Status: Waiting for lead
+- Lead note:
+
 ### 2026-10-25: What should "Often Ordered With" show on screen 09?
 - Level: ℹ️ question, nothing off plan
 - Notes: the screen 09 wireframe has "Often Ordered With" (2 dishes with "+ Add"), but `docs/progress.md` says the recommendation engine's approach isn't decided and `docs/api.md` has no endpoint for it. For now it shows 2 other available dishes from the same category, from the menu data. When you decide (for example dishes most often in the same order, from `order_items`), the screen only needs the list from a service. (PR for screen 09)
