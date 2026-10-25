@@ -11,6 +11,7 @@ class Orders extends Controller {
 		$this->call->library('api');
 		$this->call->database();
 		$this->call->model(['Order_model', 'Order_item_model', 'Menu_item_model', 'Table_model', 'Setting_model', 'Payment_model']);
+		$this->call->library('pusher');
 	}
 
 	public function index()
@@ -199,6 +200,7 @@ class Orders extends Controller {
 			$this->api->respond_error('Could not save the order', 500);
 		}
 
+		$this->pusher->order_changed($id, 'order.created');
 		$this->api->respond(['data' => $this->format($this->Order_model->find($id))], 201);
 	}
 
@@ -221,6 +223,7 @@ class Orders extends Controller {
 		}
 
 		$this->Order_model->update($id, ['status' => $status]);
+		$this->pusher->order_changed($id, 'order.status');
 		$this->api->respond(['data' => $this->format($this->Order_model->find($id))]);
 	}
 
@@ -269,6 +272,7 @@ class Orders extends Controller {
 		$order['subtotal'] = round(array_sum(array_map(fn($item) => (float) $item['unit_price'] * (int) $item['quantity'], $items)), 2);
 		$order['service_charge'] = round($order['total_amount'] - $order['subtotal'], 2);
 		$order['table_number'] = $table['table_number'] ?? null;
+		$order['channel'] = $table ? $this->pusher->table_channel($table['qr_token']) : null;
 		$paid = $this->Payment_model->filter(['order_id' => $order['order_id'], 'status' => 'paid'])->order_by('payment_id', 'DESC')->get();
 		$order['payment_method'] = $paid['method'] ?? null;
 		$order['items'] = array_map(fn($item) => [
