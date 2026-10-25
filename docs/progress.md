@@ -23,13 +23,13 @@ Start with simple screens to learn, then the forms, then the bigger flows:
 
 | # | Screen | Status | Notes |
 |---|---|---|---|
-| 01 | Home | 🟦 | Her mockup with all approved extras, phone and laptop. Real dish and dining-room photos still to come (placeholders for now) |
+| 01 | Home | 🟦 | Her mockup with all approved extras, phone and laptop. Real dining-room photo in; dish photos still placeholders. Footer is now the shared `SiteFooter` |
 | 02 | Menu | ⬜ | |
 | 03 | Reserve a Table | ⬜ | |
 | 04 | Deposit Payment | ⬜ | |
 | 05 | Reservation Confirmation | 🟦 | Phone and laptop layouts done with all approved extras (Save pass was declined) |
 | 06 | Find Reservation | ⬜ | |
-| 07 | About Us | 🟦 | Phone and laptop layouts done with all approved extras. Real restaurant photo still to come (stock photo for now) |
+| 07 | About Us | 🟦 | Final mockup with the approved extras (hero buttons, 4 values, new story text, Home's footer), phone and laptop. The restaurant's own photos are in |
 | 08 | Table Menu | ⬜ | |
 | 09 | Item Details | ⬜ | |
 | 10 | Cart | ⬜ | |

@@ -3,9 +3,29 @@ import { expect, test } from '@playwright/test'
 test('about page shows its sections', async ({ page }) => {
   await page.goto('/about')
   await expect(page.getByRole('heading', { name: 'About Us' })).toBeVisible()
-  for (const name of ['A Taste Handed Down', 'Opening Hours', 'Location', 'Contact']) {
+  for (const name of [
+    'A Taste Handed Down',
+    'We cook our recipes the way they were taught to us.',
+    'Plan Your Visit',
+    'Opening Hours',
+    'Location',
+    'Contact',
+  ]) {
     await expect(page.getByRole('heading', { name })).toBeVisible()
   }
+  for (const value of ['Patience', 'Respect', 'Pride', 'Hospitality']) {
+    await expect(page.getByText(value, { exact: true })).toBeVisible()
+  }
+})
+
+test('hero buttons open the reserve and menu pages', async ({ page }) => {
+  await page.goto('/about')
+  const hero = page.getByRole('region', { name: 'Our heritage' })
+  await hero.getByRole('link', { name: 'Reserve a Table' }).click()
+  await expect(page).toHaveURL('/reserve')
+  await page.goto('/about')
+  await hero.getByRole('link', { name: 'View Menu' }).click()
+  await expect(page).toHaveURL('/menu')
 })
 
 test('opening hours list every day', async ({ page }) => {

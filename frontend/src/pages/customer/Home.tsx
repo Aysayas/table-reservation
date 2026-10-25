@@ -132,8 +132,8 @@ export default function Home() {
           </Link>
         </div>
         <img
-          src="/photos/stock-dining.jpg"
-          alt="Restaurant dining area"
+          src="/photos/vencios-dining.png"
+          alt="Vencio's Garden dining room"
           className="mt-10 h-64 w-full rounded-lg object-cover md:mt-0 md:h-80"
         />
       </section>

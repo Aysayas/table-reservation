@@ -8,9 +8,20 @@ import { dayNames, hoursText, weekOrder } from '@/lib/hours'
 import { directionsUrl } from '@/lib/maps'
 import { getOpeningHours, getSettings } from '@/services/settings'
 
-const eyebrow = 'text-brand-red text-xs font-bold tracking-[0.25em] uppercase'
 const wrap = 'md:mx-auto md:max-w-6xl md:px-10'
-const title = 'text-brand-charcoal mt-3 font-serif text-4xl leading-tight'
+const eyebrow = 'text-brand-red text-xs font-bold tracking-[0.25em] uppercase'
+const goldEyebrow = 'text-brand-gold text-xs font-bold tracking-[0.25em] uppercase'
+const button =
+  'focus-visible:outline-brand-gold block rounded-sm px-3 py-4 text-center whitespace-nowrap md:px-6 text-xs font-bold tracking-[0.12em] uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 md:text-sm md:tracking-[0.15em]'
+const card = 'rounded-lg border border-white/10 bg-white/5 p-4 md:p-6'
+const cardTitle = 'font-serif text-2xl'
+
+const values = [
+  { title: 'Patience', text: 'Cooked slowly, the way it was taught.' },
+  { title: 'Respect', text: 'For the recipes and the hands that kept them.' },
+  { title: 'Pride', text: 'In every Filipino flavour we serve.' },
+  { title: 'Hospitality', text: 'Every guest welcomed like family.' },
+]
 
 export default function About() {
   const [today] = useState(() => new Date().getDay())
@@ -35,137 +46,178 @@ export default function About() {
 
   return (
     <div className="bg-brand-cream">
-      <nav aria-label="Breadcrumb" className={`px-4 pt-4 text-sm md:pt-6 ${wrap}`}>
-        <Link to="/" className="text-brand-red hover:underline">
-          Home
-        </Link>
-        <span className="text-brand-ink/60"> / </span>
-        <h1 className="text-brand-ink/75 inline">About Us</h1>
-      </nav>
-
-      <section className={`px-4 pt-8 pb-14 md:pb-20 ${wrap}`}>
-        <div className="text-center">
-          <div aria-hidden="true" className="flex items-center justify-center gap-3">
-            <span className="bg-brand-gold h-px w-14" />
-            <span className="border-brand-gold h-3.5 w-2 rounded-full border" />
-            <span className="bg-brand-gold h-px w-14" />
-          </div>
-          <p className={`${eyebrow} mt-4`}>Our heritage</p>
-          <h2 className="text-brand-charcoal mt-3 font-serif text-5xl leading-tight lg:text-6xl">
-            A Taste Handed Down
-          </h2>
-          <p className="font-display text-brand-red text-5xl lg:text-6xl">
-            {settings?.restaurant_name}
-          </p>
-        </div>
-
-        <div className="md:mt-12 md:grid md:grid-cols-2 md:items-center md:gap-12">
-          <div className="border-brand-line mt-8 rounded-t-full rounded-b-lg border bg-white p-1.5 md:mt-0">
-            <img
-              src="/photos/stock-dining.jpg"
-              alt="Restaurant dining area"
-              className="h-72 w-full rounded-t-full rounded-b-md object-cover md:h-[28rem]"
-            />
-          </div>
-
-          <div className="mt-10 md:mt-0">
-            <p className="text-brand-charcoal first-letter:text-brand-red font-serif text-xl leading-snug first-letter:text-[1.8em] md:text-[1.75rem]">
-              Our recipes were never written down.
+      <section
+        aria-label="Our heritage"
+        className="bg-brand-charcoal relative overflow-hidden px-4 pt-6 pb-28 text-white md:pb-32"
+      >
+        <img
+          src="/photos/vencios-exterior.png"
+          alt="Vencio's Garden at night"
+          className="absolute inset-0 h-full w-full object-cover opacity-30 md:left-auto md:w-1/2 md:opacity-70"
+        />
+        <div
+          aria-hidden="true"
+          className="from-brand-charcoal via-brand-charcoal/90 to-brand-charcoal/40 md:via-brand-charcoal absolute inset-0 bg-gradient-to-r md:to-transparent"
+        />
+        <div className={`relative ${wrap}`}>
+          <nav aria-label="Breadcrumb" className="text-sm">
+            <Link to="/" className="text-brand-gold hover:underline">
+              Home
+            </Link>
+            <span className="text-white/60"> / </span>
+            <h1 className="inline text-white/80">About Us</h1>
+          </nav>
+          <div className="max-w-xl pt-12 md:pt-20">
+            <p className="font-display text-brand-gold text-4xl">Our Heritage</p>
+            <h2 className="mt-3 font-serif text-5xl leading-tight lg:text-6xl">
+              A Taste Handed Down.
+            </h2>
+            <span aria-hidden="true" className="bg-brand-gold mt-8 block h-px w-16" />
+            <p className="text-brand-cream/85 mt-6 text-base leading-7">
+              Our recipes were never written down. They were passed from hand to hand, kitchen to
+              kitchen, generation to generation.
             </p>
-            <p className="mt-5 text-sm leading-7 md:text-base md:leading-[1.8]">
-              They were passed from hand to hand, kitchen to kitchen, generation to generation. At{' '}
-              {settings?.restaurant_name}, we cook them the way they were taught to us, with
-              patience, with respect, and with pride in every Filipino flavour.
-            </p>
-            <blockquote className="bg-brand-charcoal mt-8 rounded-lg px-5 py-5 font-serif text-lg leading-relaxed text-white italic">
-              “This is our heritage. Today, it's on your plate.”
-            </blockquote>
+            <div className="mt-8 grid grid-cols-2 gap-3 md:flex md:gap-4">
+              <Link
+                to="/reserve"
+                className={`${button} bg-brand-red hover:bg-brand-red/90 text-white`}
+              >
+                Reserve a Table
+              </Link>
+              <Link
+                to="/menu"
+                className={`${button} border border-white/80 text-white hover:bg-white/10`}
+              >
+                View Menu
+              </Link>
+            </div>
           </div>
         </div>
       </section>
 
-      <div className={`md:grid md:grid-cols-2 md:gap-10 md:pb-20 lg:grid-cols-3 ${wrap}`}>
-        <section className="bg-brand-charcoal px-4 py-14 text-white md:bg-transparent md:p-0 md:text-inherit">
-          <p className="text-brand-gold md:text-brand-red text-xs font-bold tracking-[0.25em] uppercase">
-            Visit us
-          </p>
-          <h2 className="md:text-brand-charcoal mt-3 font-serif text-4xl leading-tight">
-            Opening Hours
-          </h2>
-          <ul className="md:border-brand-line mt-8 overflow-hidden rounded-lg border border-white/10 md:bg-white">
-            {weekOrder.map((day) => {
-              const time = hoursText(hours.find((h) => h.day_of_week === day))
-              const isToday = day === today
-              return (
-                <li
-                  key={day}
-                  aria-current={isToday ? 'date' : undefined}
-                  className={`md:border-brand-line flex items-center justify-between gap-3 border-b border-white/10 px-4 py-3.5 text-sm last:border-b-0 ${isToday ? 'bg-brand-red/20 border-l-brand-red md:bg-brand-red/5 border-l-2 font-bold' : ''}`}
-                >
-                  <span className="md:text-brand-charcoal flex items-center gap-2.5">
-                    <span>{dayNames[day]}</span>
-                    {isToday && (
-                      <span className="bg-brand-red rounded-full px-2 py-0.5 text-[10px] font-bold tracking-[0.15em] text-white uppercase">
-                        Today
-                      </span>
-                    )}
-                  </span>
-                  <span
-                    className={`tabular-nums ${isToday ? 'md:text-brand-charcoal' : 'md:text-brand-ink/75 text-white/75'}`}
-                  >
-                    {time}
-                  </span>
-                </li>
-              )
-            })}
-          </ul>
-        </section>
-
-        <section className="px-4 pt-14 md:px-0 md:pt-0">
-          <p className={eyebrow}>Find us</p>
-          <h2 className={title}>Location</h2>
-          <RestaurantMap settings={settings} className="mt-8 h-52 rounded-lg" />
-          <p className="mt-4 text-sm leading-7">{settings?.address}</p>
-          <a
-            href={directionsUrl(settings?.restaurant_name)}
-            target="_blank"
-            rel="noreferrer"
-            className="bg-brand-charcoal border-brand-gold text-brand-gold hover:bg-brand-charcoal/90 mt-5 block rounded-sm border py-4 text-center text-xs font-bold tracking-[0.2em] uppercase transition-colors duration-200"
-          >
-            Get Directions
-          </a>
-        </section>
-
-        <section className="px-4 pt-14 pb-16 md:px-0 md:pt-0 md:pb-0">
-          <p className={eyebrow}>Get in touch</p>
-          <h2 className={title}>Contact</h2>
-          <dl className="mt-8 space-y-3">
-            {contacts.map(({ label, value, href, icon: Icon }) => (
-              <div
-                key={label}
-                className="border-brand-line flex items-center gap-4 rounded-lg border bg-white px-4 py-3.5"
-              >
-                <Icon className="text-brand-red size-5 shrink-0" strokeWidth={1.5} />
-                <div className="min-w-0">
-                  <dt className="text-brand-ink/70 text-[11px] font-semibold tracking-[0.15em] uppercase">
-                    {label}
-                  </dt>
-                  <dd className="mt-0.5 text-sm">
-                    <a
-                      href={href}
-                      target={label === 'Facebook' ? '_blank' : undefined}
-                      rel={label === 'Facebook' ? 'noreferrer' : undefined}
-                      className="text-brand-charcoal hover:text-brand-red break-words transition-colors duration-200"
-                    >
-                      {value}
-                    </a>
-                  </dd>
-                </div>
+      <section aria-label="Our values" className={`relative -mt-16 px-4 ${wrap}`}>
+        <ul className="bg-brand-charcoal grid grid-cols-2 overflow-hidden rounded-lg border border-white/10 text-white md:grid-cols-4">
+          {values.map((value, index) => (
+            <li
+              key={value.title}
+              className="flex gap-3 border-white/10 px-4 py-5 odd:border-r md:border-r md:border-b-0 md:px-6 md:last:border-r-0 [&:nth-child(-n+2)]:border-b"
+            >
+              <span className="border-brand-gold text-brand-gold flex size-9 shrink-0 items-center justify-center rounded-full border font-serif text-sm">
+                {index + 1}
+              </span>
+              <div>
+                <p className="text-xs font-bold tracking-[0.15em] uppercase">{value.title}</p>
+                <p className="mt-1 text-xs text-white/70">{value.text}</p>
               </div>
-            ))}
-          </dl>
-        </section>
-      </div>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section
+        className={`px-4 py-16 md:grid md:grid-cols-2 md:items-center md:gap-12 md:py-24 ${wrap}`}
+      >
+        <div>
+          <p className={eyebrow}>Our story</p>
+          <h2 className="text-brand-charcoal mt-3 font-serif text-4xl leading-tight md:text-5xl">
+            We cook our recipes the way they were taught to us.
+          </h2>
+          <p className="mt-5 text-sm leading-7 md:text-base md:leading-[1.8]">
+            At {settings?.restaurant_name}, every dish is made with patience, with respect, and with
+            pride in every Filipino flavour.
+          </p>
+          <blockquote className="border-brand-gold text-brand-charcoal mt-8 border-l-4 pl-5 font-serif text-xl leading-relaxed italic">
+            “This is our heritage. Today, it's on your plate.”
+          </blockquote>
+        </div>
+        <img
+          src="/photos/vencios-counter.png"
+          alt="Vencio's Garden counter"
+          className="mt-10 h-72 w-full rounded-lg object-cover md:mt-0 md:h-[26rem]"
+        />
+      </section>
+
+      <section className="bg-brand-charcoal px-4 py-16 text-white md:py-24">
+        <div className={wrap}>
+          <p className={goldEyebrow}>Visit us</p>
+          <h2 className="mt-3 font-serif text-4xl leading-tight md:text-5xl">Plan Your Visit</h2>
+          <div className="mt-10 grid gap-6 lg:grid-cols-[1.3fr_1fr_1fr]">
+            <div className={card}>
+              <h3 className={cardTitle}>Opening Hours</h3>
+              <ul className="mt-6 overflow-hidden rounded-lg border border-white/10">
+                {weekOrder.map((day) => {
+                  const time = hoursText(hours.find((h) => h.day_of_week === day))
+                  const isToday = day === today
+                  return (
+                    <li
+                      key={day}
+                      aria-current={isToday ? 'date' : undefined}
+                      className={`flex items-center justify-between gap-3 border-b border-white/10 px-4 py-3 text-sm last:border-b-0 ${isToday ? 'bg-brand-red/20 border-l-brand-red border-l-2 font-bold' : ''}`}
+                    >
+                      <span className="flex items-center gap-2.5">
+                        <span>{dayNames[day]}</span>
+                        {isToday && (
+                          <span className="bg-brand-red rounded-full px-2 py-0.5 text-[10px] font-bold tracking-[0.15em] uppercase">
+                            Today
+                          </span>
+                        )}
+                      </span>
+                      <span
+                        className={`whitespace-nowrap tabular-nums ${isToday ? '' : 'text-white/75'}`}
+                      >
+                        {time}
+                      </span>
+                    </li>
+                  )
+                })}
+              </ul>
+            </div>
+
+            <div className={`${card} flex flex-col`}>
+              <h3 className={cardTitle}>Location</h3>
+              <RestaurantMap settings={settings} className="mt-6 h-52 rounded-lg" />
+              <p className="mt-4 text-sm leading-7 text-white/85">{settings?.address}</p>
+              <a
+                href={directionsUrl(settings?.restaurant_name)}
+                target="_blank"
+                rel="noreferrer"
+                className="border-brand-gold text-brand-gold hover:bg-brand-gold/10 mt-auto block rounded-sm border py-4 text-center text-xs font-bold tracking-[0.2em] uppercase transition-colors duration-200"
+              >
+                Get Directions
+              </a>
+            </div>
+
+            <div className={card}>
+              <h3 className={cardTitle}>Contact</h3>
+              <dl className="mt-6 space-y-3">
+                {contacts.map(({ label, value, href, icon: Icon }) => (
+                  <div
+                    key={label}
+                    className="flex items-center gap-4 rounded-lg border border-white/10 px-4 py-3.5"
+                  >
+                    <Icon className="text-brand-gold size-5 shrink-0" strokeWidth={1.5} />
+                    <div className="min-w-0">
+                      <dt className="text-[11px] font-semibold tracking-[0.15em] text-white/60 uppercase">
+                        {label}
+                      </dt>
+                      <dd className="mt-0.5 text-sm">
+                        <a
+                          href={href}
+                          target={label === 'Facebook' ? '_blank' : undefined}
+                          rel={label === 'Facebook' ? 'noreferrer' : undefined}
+                          className="hover:text-brand-gold break-words transition-colors duration-200"
+                        >
+                          {value}
+                        </a>
+                      </dd>
+                    </div>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          </div>
+        </div>
+      </section>
 
       <SiteFooter>
         <p className="font-display text-brand-gold text-4xl">Salamat, and see you soon!</p>
