@@ -3,9 +3,16 @@ import CustomerLayout from '@/layouts/CustomerLayout'
 import DashboardLayout, { type NavItem } from '@/layouts/DashboardLayout'
 import Placeholder from '@/pages/Placeholder'
 import About from '@/pages/customer/About'
+import Cart from '@/pages/customer/Cart'
+import Checkout from '@/pages/customer/Checkout'
+import DepositPayment from '@/pages/customer/DepositPayment'
 import Home from '@/pages/customer/Home'
+import ItemDetails from '@/pages/customer/ItemDetails'
+import Menu from '@/pages/customer/Menu'
+import OrderStatus from '@/pages/customer/OrderStatus'
 import ReservationConfirmation from '@/pages/customer/ReservationConfirmation'
 import ReserveTable from '@/pages/customer/ReserveTable'
+import TableMenu from '@/pages/customer/TableMenu'
 import StaffLogin from '@/pages/staff/StaffLogin'
 
 const staffNav: NavItem[] = [
@@ -33,24 +40,24 @@ export const router = createBrowserRouter([
     element: <CustomerLayout />,
     children: [
       { path: '/', element: <Home /> },
-      { path: '/menu', element: <Placeholder screen="02" title="Menu" /> },
+      { path: '/menu', element: <Menu /> },
       { path: '/reserve', element: <ReserveTable /> },
-      { path: '/reserve/payment', element: <Placeholder screen="04" title="Deposit Payment" /> },
+      { path: '/reserve/payment', element: <DepositPayment /> },
       {
         path: '/reserve/confirmation/:code',
         element: <ReservationConfirmation />,
       },
       { path: '/reservation', element: <Placeholder screen="06" title="Find Reservation" /> },
       { path: '/about', element: <About /> },
-      { path: '/table/:tableId', element: <Placeholder screen="08" title="Table Menu" /> },
-      { path: '/table/:tableId/menu', element: <Placeholder screen="08" title="Table Menu" /> },
+      { path: '/table/:tableId', element: <TableMenu /> },
+      { path: '/table/:tableId/menu', element: <TableMenu /> },
       {
         path: '/table/:tableId/menu/:itemId',
-        element: <Placeholder screen="09" title="Item Details" />,
+        element: <ItemDetails />,
       },
-      { path: '/table/:tableId/cart', element: <Placeholder screen="10" title="Cart" /> },
-      { path: '/table/:tableId/checkout', element: <Placeholder screen="11" title="Checkout" /> },
-      { path: '/table/:tableId/orders', element: <Placeholder screen="12" title="Order Status" /> },
+      { path: '/table/:tableId/cart', element: <Cart /> },
+      { path: '/table/:tableId/checkout', element: <Checkout /> },
+      { path: '/table/:tableId/orders', element: <OrderStatus /> },
     ],
   },
   { path: '/staff/login', element: <StaffLogin /> },

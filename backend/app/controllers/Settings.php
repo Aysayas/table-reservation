@@ -122,16 +122,24 @@ class Settings extends Controller {
 			->is_image()
 			->encrypt_name();
 
-		// shortcut: the logo is saved on the server's disk, which Render wipes on every deploy; move to cloud storage before production
 		if (!$this->upload->do_upload()) {
 			$this->api->respond(['error' => 'Invalid input', 'status' => 422, 'errors' => $this->upload->get_errors()], 422);
 		}
 
-		$this->Setting_model->update($settings['setting_id'], ['logo_url' => '/uploads/logo/' . $this->upload->get_filename()]);
+		$file = $this->upload->get_filename();
+		$this->call->library('cloudinary');
+		try {
+			$url = $this->cloudinary->store(ROOT_DIR . $this->logo_dir . $file, 'logo') ?? '/uploads/logo/' . $file;
+		} catch (RuntimeException $e) {
+			$this->api->respond_error('The logo could not be stored, please try again', 502);
+		}
+
+		$this->Setting_model->update($settings['setting_id'], ['logo_url' => $url]);
 		$old = $settings['logo_url'];
 		if (is_string($old) && str_starts_with($old, '/uploads/logo/')) {
 			@unlink(ROOT_DIR . $this->logo_dir . basename($old));
 		}
+		$this->cloudinary->delete($old);
 		$this->api->respond(['data' => $this->current()]);
 	}
 
