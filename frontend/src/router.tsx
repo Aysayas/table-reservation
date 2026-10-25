@@ -13,6 +13,7 @@ import OrderStatus from '@/pages/customer/OrderStatus'
 import ReservationConfirmation from '@/pages/customer/ReservationConfirmation'
 import ReserveTable from '@/pages/customer/ReserveTable'
 import TableMenu from '@/pages/customer/TableMenu'
+import OrdersPayments from '@/pages/staff/OrdersPayments'
 import StaffDashboard from '@/pages/staff/StaffDashboard'
 import StaffLogin from '@/pages/staff/StaffLogin'
 import TableStatus from '@/pages/staff/TableStatus'
@@ -72,7 +73,7 @@ export const router = createBrowserRouter([
       { index: true, element: <StaffDashboard /> },
       { path: 'reservations', element: <TodaysReservations /> },
       { path: 'tables', element: <TableStatus /> },
-      { path: 'orders', element: <Placeholder screen="17" title="Orders and Payments" /> },
+      { path: 'orders', element: <OrdersPayments /> },
     ],
   },
   {

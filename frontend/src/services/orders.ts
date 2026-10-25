@@ -3,6 +3,7 @@ import {
   sampleMenuItems,
   sampleOrderItems,
   sampleOrders,
+  samplePayments,
   sampleSettings,
   sampleTables,
 } from '@/services/sampleData'
@@ -96,4 +97,45 @@ export async function payOrder(order_id: number, qr_token: string): Promise<void
   if (!order || table?.qr_token !== qr_token) throw new Error('Order not found')
   if (order.payment_status === 'paid') throw new Error('This order is already paid')
   order.payment_status = 'paid'
+}
+
+export type StaffOrder = PublicOrder & { payment_method: 'cash' | 'online' | null }
+
+export async function listOrders(
+  filter: { payment_status?: 'paid' | 'unpaid' } = {},
+): Promise<StaffOrder[]> {
+  return sampleOrders
+    .filter((o) => !filter.payment_status || o.payment_status === filter.payment_status)
+    .sort((a, b) => b.created_at.localeCompare(a.created_at))
+    .map((o) => ({
+      ...toPublic(o),
+      payment_method:
+        o.payment_status === 'paid'
+          ? (samplePayments.find((p) => p.order_id === o.order_id && p.status === 'paid')?.method ??
+            'online')
+          : null,
+    }))
+}
+
+export async function recordPayment(body: { order_id: number; amount: number }) {
+  const order = sampleOrders.find((o) => o.order_id === body.order_id)
+  if (!order) throw new Error('Order not found')
+  if (order.payment_status === 'paid') throw new Error('This order is already paid')
+  if (toCents(body.amount) !== order.total_amount) {
+    throw new Error("The amount doesn't match the order total")
+  }
+  const payment = {
+    payment_id: Math.max(0, ...samplePayments.map((p) => p.payment_id)) + 1,
+    order_id: order.order_id,
+    reservation_id: null,
+    received_by: 2,
+    method: 'cash' as const,
+    provider_reference: null,
+    amount: order.total_amount,
+    status: 'paid' as const,
+    paid_at: format(new Date(), "yyyy-MM-dd'T'HH:mm:ss"),
+  }
+  samplePayments.push(payment)
+  order.payment_status = 'paid'
+  return payment
 }
