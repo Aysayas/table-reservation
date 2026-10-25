@@ -124,19 +124,29 @@ export default function TableMenu() {
           <h2 id="recommended" className="text-brand-charcoal px-4 font-serif text-2xl">
             Recommended for You
           </h2>
-          <ul className="mt-3 flex [scrollbar-width:none] gap-3 overflow-x-auto px-4 pb-1">
-            {recommended.map((item) => (
-              <li key={item.item_id} className="w-32 shrink-0">
-                <Link to={itemLink(item)} className="block">
-                  <Photo item={item} className="h-24 w-32 rounded-lg" />
-                  <p className="text-brand-charcoal mt-2 line-clamp-2 text-xs font-semibold">
-                    {item.name}
-                  </p>
-                  <p className="text-brand-red mt-0.5 font-serif text-sm">{peso(item.price)}</p>
-                </Link>
-              </li>
-            ))}
-          </ul>
+          <div className="group/marquee mt-3 [scrollbar-width:none] overflow-x-auto motion-safe:overflow-hidden">
+            <ul className="motion-safe:animate-marquee flex px-4 pb-1 motion-safe:w-max motion-safe:pr-0 motion-safe:group-focus-within/marquee:[animation-play-state:paused] motion-safe:group-hover/marquee:[animation-play-state:paused] motion-safe:group-active/marquee:[animation-play-state:paused]">
+              {[...recommended, ...recommended].map((item, index) => {
+                const copy = index >= recommended.length
+                return (
+                  <li
+                    key={`${item.item_id}-${copy}`}
+                    aria-hidden={copy || undefined}
+                    inert={copy}
+                    className={`mr-3 w-32 shrink-0 ${copy ? 'motion-reduce:hidden' : ''}`}
+                  >
+                    <Link to={itemLink(item)} className="block">
+                      <Photo item={item} className="h-24 w-32 rounded-lg" />
+                      <p className="text-brand-charcoal mt-2 line-clamp-2 text-xs font-semibold">
+                        {item.name}
+                      </p>
+                      <p className="text-brand-red mt-0.5 font-serif text-sm">{peso(item.price)}</p>
+                    </Link>
+                  </li>
+                )
+              })}
+            </ul>
+          </div>
         </section>
       )}
 

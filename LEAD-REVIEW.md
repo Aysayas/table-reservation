@@ -188,3 +188,9 @@ Claude adds an entry here when the frontend developer asks for something outside
 - What Claude did instead: built the look with the wireframe's content: the back button, the title "Menu", search, category filter, the Popular section and one section per category, no add buttons
 - Status: Waiting for lead
 - Lead note:
+
+### 2026-10-25: What should "Often Ordered With" show on screen 09?
+- Level: ℹ️ question, nothing off plan
+- Notes: the screen 09 wireframe has "Often Ordered With" (2 dishes with "+ Add"), but `docs/progress.md` says the recommendation engine's approach isn't decided and `docs/api.md` has no endpoint for it. For now it shows 2 other available dishes from the same category, from the menu data. When you decide (for example dishes most often in the same order, from `order_items`), the screen only needs the list from a service. (PR for screen 09)
+- Status: Waiting for lead
+- Lead note:

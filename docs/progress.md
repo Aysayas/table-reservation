@@ -31,7 +31,7 @@ Start with simple screens to learn, then the forms, then the bigger flows:
 | 06 | Find Reservation | ⬜ | |
 | 07 | About Us | 🟦 | Final mockup with the approved extras (hero buttons, 4 values, new story text, Home's footer), phone and laptop. The restaurant's own photos are in |
 | 08 | Table Menu | 🟦 | Phone width. Table pill and cart count in the top bar, search, categories, Recommended for You, + Add, View Cart bar. Cart kept in sessionStorage (zustand); QR token `?t=` saved for screen 11 |
-| 09 | Item Details | ⬜ | |
+| 09 | Item Details | 🟦 | Phone width. Photo, name, price, description, quantity 1–99, notes up to 255, Often Ordered With (same category for now), Add to Cart opens 10 |
 | 10 | Cart | ⬜ | |
 | 11 | Checkout | ⬜ | |
 | 12 | Order Status | ⬜ | |

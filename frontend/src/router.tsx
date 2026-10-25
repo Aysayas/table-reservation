@@ -5,6 +5,7 @@ import Placeholder from '@/pages/Placeholder'
 import About from '@/pages/customer/About'
 import DepositPayment from '@/pages/customer/DepositPayment'
 import Home from '@/pages/customer/Home'
+import ItemDetails from '@/pages/customer/ItemDetails'
 import Menu from '@/pages/customer/Menu'
 import ReservationConfirmation from '@/pages/customer/ReservationConfirmation'
 import ReserveTable from '@/pages/customer/ReserveTable'
@@ -49,7 +50,7 @@ export const router = createBrowserRouter([
       { path: '/table/:tableId/menu', element: <TableMenu /> },
       {
         path: '/table/:tableId/menu/:itemId',
-        element: <Placeholder screen="09" title="Item Details" />,
+        element: <ItemDetails />,
       },
       { path: '/table/:tableId/cart', element: <Placeholder screen="10" title="Cart" /> },
       { path: '/table/:tableId/checkout', element: <Placeholder screen="11" title="Checkout" /> },
