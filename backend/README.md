@@ -155,6 +155,8 @@ Tell the frontend developer the URL and JSON shape, and update `../docs/api.md`.
 
 The repo root has `render.yaml` (a Render Blueprint) that builds this folder with Docker.
 
+Both services run in Render's **Singapore** region, next to the Aiven database (DigitalOcean Bangalore) and Pusher's `ap1` cluster. A Render service's region can't be changed later, so moving region means new services (new names in `render.yaml`).
+
 1. Render dashboard → **New → Blueprint** → pick this repo.
 2. Render generates `APP_KEY`, `JWT_SECRET` and `JWT_REFRESH_KEY`. Fill in the others:
    - `APP_URL`: the Render URL, e.g. `https://table-reservation-api.onrender.com`
