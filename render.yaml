@@ -38,3 +38,9 @@ services:
         value: /etc/secrets/ca.pem
       - key: APP_TIMEZONE
         value: Asia/Manila
+      - key: FRONTEND_URL
+        sync: false
+      - key: PAYMONGO_SECRET_KEY
+        sync: false
+      - key: PAYMONGO_WEBHOOK_SECRET
+        sync: false

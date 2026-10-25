@@ -226,7 +226,28 @@ class Orders extends Controller {
 
 	public function pay($id)
 	{
-		$this->api->respond_error('Not implemented', 501);
+		$this->api->rate_limit('order_pay_' . $this->api->client_ip(), 10, 60);
+		$order = $this->Order_model->find($id);
+		if (!$order || !$this->token_matches($order['table_id'], $this->api->body()['qr_token'] ?? '')) {
+			$this->api->respond_error('Order not found', 404);
+		}
+		if ($order['payment_status'] === 'paid') {
+			$this->api->respond_error('This is already paid', 409);
+		}
+		$due = (float) $order['total_amount'];
+		if ($due <= 0) {
+			$this->api->respond_error('There is nothing to pay', 409);
+		}
+
+		$this->call->library('paymongo');
+		$table_id = (int) $order['table_id'];
+		try {
+			$checkout = $this->paymongo->start('order_id', (int) $order['order_id'], $due, "Order #{$order['order_id']}", "ORDER-{$order['order_id']}",
+				$this->paymongo->frontend_url("/table/{$table_id}/orders"), $this->paymongo->frontend_url("/table/{$table_id}/checkout"));
+		} catch (RuntimeException $e) {
+			$this->api->respond_error('The payment service is not available, please try again', 502);
+		}
+		$this->api->respond(['data' => $checkout]);
 	}
 
 	private function token_matches($table_id, $token)

@@ -178,3 +178,12 @@ The PHP version is pinned in the `Dockerfile` (`php:8.3.36-fpm-alpine`). Bump it
 - `php public/index.php migrate` runs pending migrations; `migrate/status` lists them. Both are CLI only (HTTP gets a 404). In Docker: `docker compose exec php php public/index.php migrate`.
 - Local Docker still loads `schema.sql` and `seed.sql` on a fresh volume, so run `migrate` afterwards to apply later migrations. `001` is safe to run on a database that already has the tables.
 - `002_starting_data` copies the restaurant's settings, opening hours, categories, menu and tables from `seed.sql` into any of those tables that is still empty, with new random QR tokens. It never adds users, customers, reservations, orders or payments, so production starts with no logins: create the first admin by hand.
+
+## Payments (PayMongo)
+
+- `app/libraries/Paymongo.php` creates PayMongo Checkout Sessions and checks webhook signatures (`Paymongo-Signature`: HMAC-SHA256 of `t.raw_body` with the webhook secret; `te` for test events, `li` for live).
+- Env: `PAYMONGO_SECRET_KEY`, `PAYMONGO_WEBHOOK_SECRET`, `FRONTEND_URL` (the return pages). Render asks for them; locally they go in `.env`.
+- **Fake mode:** with `PAYMONGO_SECRET_KEY` empty, no request goes to PayMongo; `checkout_url` is the return page and the payment stays `pending`. With `PAYMONGO_WEBHOOK_SECRET` empty, every webhook is refused (401).
+- To simulate a paid webhook locally, set `PAYMONGO_WEBHOOK_SECRET` in `.env`, sign `t.body` with it (`openssl dgst -sha256 -hmac`) and POST the event to `/api/payments/webhook` with `Paymongo-Signature: t=<t>,te=<signature>,li=`.
+- In the PayMongo dashboard, add a webhook for `checkout_session.payment.paid` pointing at `https://<your-service>.onrender.com/api/payments/webhook`, and copy its secret into `PAYMONGO_WEBHOOK_SECRET`.
+- "needs a refund" lines in the logs mean a customer paid twice (an old tab, or cash plus online). Refund those in the PayMongo dashboard.

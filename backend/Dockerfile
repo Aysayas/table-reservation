@@ -50,7 +50,7 @@ COPY . .
 
 # Copy PHP config
 COPY docker/php/php.ini /usr/local/etc/php/conf.d/custom.ini
-RUN echo 'display_errors = Off' > /usr/local/etc/php/conf.d/zz-production.ini
+RUN printf 'display_errors = Off\nerror_log = /proc/self/fd/2\n' > /usr/local/etc/php/conf.d/zz-production.ini
 
 # Copy nginx + supervisor config
 # NOTE: Alpine's nginx package (unlike Debian/Ubuntu's) includes
