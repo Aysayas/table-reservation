@@ -174,3 +174,9 @@ Claude adds an entry here when the frontend developer asks for something outside
 - Please decide: (a) set `is_recommended` to only these 4 in `seed.sql` (or the admin does it on screen 20 once the API is live)? (b) since the restaurant has no suitable photos, are free-licence stock photos of these dishes OK on the live site?
 - Status: Waiting for lead
 - Lead note:
+
+### 2026-10-25: How should Reschedule work on screen 06?
+- Level: ℹ️ question, nothing off plan
+- Notes: `docs/design/navigation.md` sends 06's Reschedule button to screen 03 Reserve a Table, so for now it opens `/reserve?pax=<guests>`. But 03 makes a new booking (`POST /reservations`), and the old one stays active. The API has `POST /reservations/code/{code}/reschedule` for this. Should 03 get a reschedule mode (for example `/reserve?reschedule=RSV-…`, same URL, calling `/reschedule` instead of booking), or should 06 pick the new date and time itself? (PR for screen 06)
+- Status: Waiting for lead
+- Lead note:

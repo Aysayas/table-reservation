@@ -3,6 +3,7 @@ import CustomerLayout from '@/layouts/CustomerLayout'
 import DashboardLayout, { type NavItem } from '@/layouts/DashboardLayout'
 import Placeholder from '@/pages/Placeholder'
 import About from '@/pages/customer/About'
+import FindReservation from '@/pages/customer/FindReservation'
 import Home from '@/pages/customer/Home'
 import ReservationConfirmation from '@/pages/customer/ReservationConfirmation'
 import ReserveTable from '@/pages/customer/ReserveTable'
@@ -40,7 +41,7 @@ export const router = createBrowserRouter([
         path: '/reserve/confirmation/:code',
         element: <ReservationConfirmation />,
       },
-      { path: '/reservation', element: <Placeholder screen="06" title="Find Reservation" /> },
+      { path: '/reservation', element: <FindReservation /> },
       { path: '/about', element: <About /> },
       { path: '/table/:tableId', element: <Placeholder screen="08" title="Table Menu" /> },
       { path: '/table/:tableId/menu', element: <Placeholder screen="08" title="Table Menu" /> },

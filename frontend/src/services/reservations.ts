@@ -102,3 +102,32 @@ export async function getReservationByCode(code: string): Promise<PublicReservat
     deposit_status: paid ? 'paid' : 'unpaid',
   }
 }
+
+const ownedBy = (code: string, mobile: string) => {
+  const reservation = sampleReservations.find((r) => r.reference_code === code)
+  const customer = sampleCustomers.find((c) => c.customer_id === reservation?.customer_id)
+  return reservation && customer?.mobile_number === mobile.replace(/\s/g, '')
+    ? reservation
+    : undefined
+}
+
+export async function findReservation(
+  reference_code: string,
+  mobile_number: string,
+): Promise<PublicReservation | undefined> {
+  const reservation = ownedBy(reference_code, mobile_number)
+  return reservation && getReservationByCode(reservation.reference_code)
+}
+
+export async function cancelReservation(
+  code: string,
+  mobile_number: string,
+): Promise<PublicReservation | undefined> {
+  const reservation = ownedBy(code, mobile_number)
+  if (!reservation) throw new Error('Reservation not found')
+  if (reservation.status !== 'pending' && reservation.status !== 'confirmed') {
+    throw new Error('This reservation can no longer be cancelled')
+  }
+  reservation.status = 'cancelled'
+  return getReservationByCode(code)
+}

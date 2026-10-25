@@ -28,7 +28,7 @@ Start with simple screens to learn, then the forms, then the bigger flows:
 | 03 | Reserve a Table | 🟦 | Phone and laptop. Pre-fills date, time and guests from Home. Booking pretends to succeed and opens `/reserve/payment?code=RSV-…` for screen 04 |
 | 04 | Deposit Payment | ⬜ | |
 | 05 | Reservation Confirmation | 🟦 | Phone and laptop layouts done with all approved extras (Save pass was declined) |
-| 06 | Find Reservation | ⬜ | |
+| 06 | Find Reservation | 🟦 | Phone and laptop. Find by code and mobile, Cancel (asks first), Reschedule opens `/reserve?pax=…` per the navigation (question for the lead in LEAD-REVIEW.md) |
 | 07 | About Us | 🟦 | Final mockup with the approved extras (hero buttons, 4 values, new story text, Home's footer), phone and laptop. The restaurant's own photos are in |
 | 08 | Table Menu | ⬜ | |
 | 09 | Item Details | ⬜ | |
