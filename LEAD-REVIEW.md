@@ -188,3 +188,11 @@ Claude adds an entry here when the frontend developer asks for something outside
 - What Claude did instead: built the look with the wireframe's content: the back button, the title "Menu", search, category filter, the Popular section and one section per category, no add buttons
 - Status: Waiting for lead
 - Lead note:
+
+### 2026-10-25: Allow food photos from Pinterest, Google and other sites
+- Level: 🟡 off plan
+- Asked for: she'd like to use food photos found on Pinterest, Google Images and similar sites for the dishes and the site's sections, because the restaurant has no clear photos of most dishes (for example the 4 Popular Dishes photos she saved in her Downloads: Crispy Pork Kare-Kare, Sizzling Sisig, Relyenong Bangus, Chicken Tinupig)
+- Rule it bumps into: CLAUDE.md, food photos may be free-licence stock (Unsplash, Pexels) with the source in `docs/design/brand.md`, or the restaurant's own photos. Pinterest and Google show photos that other people own; they aren't stock photos, the photographer and licence are usually unknown, and a pin is often a re-post of someone else's photo. Customers would also take them as the restaurant's own dishes
+- What Claude did instead: used free Pexels photos with their sources in `brand.md` where the look needed a photo (Home hero), kept icons on dishes without a photo, and didn't add her Pinterest/Google photos. Possible ways forward: (a) ask the restaurant to take or send photos of the dishes; (b) Pexels or Unsplash photos of similar dishes; (c) if you allow it for this school project only, use her photos with a visible credit and the source link of each in `brand.md`, and replace them before the site goes public
+- Status: Waiting for lead
+- Lead note:
