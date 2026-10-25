@@ -78,6 +78,7 @@ export async function createReservation(body: NewReservation): Promise<Reservati
       ? body.pax * sampleSettings.deposit_per_guest
       : 0,
     status: 'pending',
+    reminder_sent_at: null,
     created_at,
   }
   sampleReservations.push(reservation)

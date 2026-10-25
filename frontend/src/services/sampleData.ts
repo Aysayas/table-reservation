@@ -283,6 +283,7 @@ export const sampleReservations: Reservation[] = [
     special_request: null,
     deposit_amount: 0,
     status: 'confirmed',
+    reminder_sent_at: null,
     created_at: '2026-01-01T00:00:00',
   },
   {
@@ -296,6 +297,7 @@ export const sampleReservations: Reservation[] = [
     special_request: null,
     deposit_amount: 0,
     status: 'pending',
+    reminder_sent_at: null,
     created_at: '2026-01-01T00:00:00',
   },
 ]
