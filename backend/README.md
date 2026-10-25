@@ -155,6 +155,8 @@ Tell the frontend developer the URL and JSON shape, and update `../docs/api.md`.
 
 The repo root has `render.yaml` (a Render Blueprint) that builds this folder with Docker.
 
+Both services run in Render's **Singapore** region, next to the Aiven database (DigitalOcean Bangalore) and Pusher's `ap1` cluster. A Render service's region can't be changed later, so moving region means new services (new names in `render.yaml`).
+
 1. Render dashboard → **New → Blueprint** → pick this repo.
 2. Render generates `APP_KEY`, `JWT_SECRET` and `JWT_REFRESH_KEY`. Fill in the others:
    - `APP_URL`: the Render URL, e.g. `https://table-reservation-api.onrender.com`
@@ -187,3 +189,17 @@ The PHP version is pinned in the `Dockerfile` (`php:8.3.36-fpm-alpine`). Bump it
 - To simulate a paid webhook locally, set `PAYMONGO_WEBHOOK_SECRET` in `.env`, sign `t.body` with it (`openssl dgst -sha256 -hmac`) and POST the event to `/api/payments/webhook` with `Paymongo-Signature: t=<t>,te=<signature>,li=`.
 - In the PayMongo dashboard, add a webhook for `checkout_session.payment.paid` pointing at `https://<your-service>.onrender.com/api/payments/webhook`, and copy its secret into `PAYMONGO_WEBHOOK_SECRET`.
 - "needs a refund" lines in the logs mean a customer paid twice (an old tab, or cash plus online). Refund those in the PayMongo dashboard.
+
+## Photos (Cloudinary)
+
+- `app/libraries/Cloudinary.php` uploads menu photos and the logo after the `Upload` library has checked them (JPG or PNG, up to 2 MB, a real image). Signed uploads: sorted parameters, then the API secret, SHA-1. Files go to the folders `vencios-garden/menu` and `vencios-garden/logo`.
+- Env: `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` (Cloudinary dashboard → API Keys).
+- **Fake mode:** with any of them empty, files stay in `public/uploads/` as before (lost on every Render deploy).
+- Replacing or deleting a photo also deletes the old one at Cloudinary (best effort; a failure is only logged).
+
+## Live updates (Pusher)
+
+- `app/libraries/Pusher.php` sends events over Pusher's REST API (HMAC-SHA256 signed, no SDK): `order.created` (new order), `order.status` (kitchen or staff moves it), `order.paid` (cash or online). Data is only `{ order_id, status, payment_status }`.
+- Channels: `private-orders` for staff and kitchen (subscribing needs a staff, kitchen or admin token through `POST /api/realtime/auth`), and each table's `order-status-<hash of its QR token>` for the customer.
+- Env: `PUSHER_APP_ID`, `PUSHER_KEY`, `PUSHER_SECRET`, `PUSHER_CLUSTER`. The frontend needs only the key and cluster, which are public.
+- **Fake mode:** without the keys, events are written to the log only. A Pusher failure is logged and never stops an order or a payment.

@@ -1,6 +1,7 @@
 services:
   - type: web
-    name: table-reservation-api
+    name: vencios-api
+    region: singapore
     runtime: docker
     rootDir: backend
     dockerfilePath: ./Dockerfile
@@ -44,16 +45,31 @@ services:
         sync: false
       - key: PAYMONGO_WEBHOOK_SECRET
         sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: PUSHER_APP_ID
+        sync: false
+      - key: PUSHER_KEY
+        sync: false
+      - key: PUSHER_SECRET
+        sync: false
+      - key: PUSHER_CLUSTER
+        sync: false
       - key: RECOMMENDER_URL
         sync: false
       - key: RECOMMENDER_SECRET
         fromService:
           type: web
-          name: table-reservation-recommender
+          name: vencios-recommender
           envVarKey: RECOMMENDER_SECRET
 
   - type: web
-    name: table-reservation-recommender
+    name: vencios-recommender
+    region: singapore
     runtime: python
     rootDir: recommender
     plan: free

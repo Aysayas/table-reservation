@@ -31,10 +31,10 @@ Start with simple screens to learn, then the forms, then the bigger flows:
 | 06 | Find Reservation | 🟦 | Phone and laptop. Find by code and mobile, Cancel (asks first), Reschedule opens `/reserve?pax=…` per the navigation (question for the lead in LEAD-REVIEW.md) |
 | 07 | About Us | 🟦 | Final mockup with the approved extras (hero buttons, 4 values, new story text, Home's footer), phone and laptop. The restaurant's own photos are in |
 | 08 | Table Menu | 🟦 | Phone width. Table pill and cart count in the top bar, search, categories, Recommended for You, + Add, View Cart bar. Cart kept in sessionStorage (zustand); QR token `?t=` saved for screen 11 |
-| 09 | Item Details | ⬜ | |
-| 10 | Cart | ⬜ | |
-| 11 | Checkout | ⬜ | |
-| 12 | Order Status | ⬜ | |
+| 09 | Item Details | 🟦 | Phone width. Photo, name, price, description, quantity 1–99, notes up to 255, Often Ordered With (same category for now), Add to Cart opens 10 |
+| 10 | Cart | 🟦 | Phone width. Lines with note, − / + (1–99), Remove, You Might Also Like (recommended, not in the cart), Subtotal, Service Charge from settings, Total, Proceed to Checkout. Empty cart links to the menu |
+| 11 | Checkout | 🟦 | Phone width. Order Summary and Total, Pay Now or Pay at the Counter, optional name (60), Place Order via `createOrder` with the table QR token; Pay Now pretends to pay until the API is live; then opens 12 with `?order=` |
+| 12 | Order Status | 🟦 | Phone width. Order number and time, Received → Preparing → Ready → Served, Your Items and Total, Payment, Order More. Loads `?order=` with the table QR token and checks again every 15 s until real-time updates exist |
 | 13 | Staff Login | 🟦 | Approved subtitle and show-password button are in #51. Login pretends to succeed until the API is live |
 | 14 | Staff Dashboard | ⬜ | |
 | 15 | Today's Reservations | ⬜ | |
@@ -115,8 +115,8 @@ Every staff, kitchen and admin route already checks the login token and role, so
 |---|---|
 | Payment gateway | ✅ PayMongo (test mode), deposits and order payments |
 | SMS notification | ⬜ provider not chosen |
-| Real-time messaging (kitchen and order status) | ⬜ |
-| Cloud storage (menu and logo images) | ⬜ |
+| Real-time messaging (kitchen and order status) | ✅ Pusher: backend sends events; screens 12, 17, 18 subscribe with `pusher-js` |
+| Cloud storage (menu and logo images) | ✅ Cloudinary (local disk without keys) |
 | Recommendation engine | ✅ Python service (`recommender/`) behind `GET /recommendations`, with a fallback when it sleeps |
 
 ### Deployment

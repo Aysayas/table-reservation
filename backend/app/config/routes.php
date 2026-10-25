@@ -104,6 +104,7 @@ $router->group(['prefix' => 'api'], function ($router) {
     $router->get('/payments/{id}', 'Payments::show')->where_number('id');
     $router->post('/payments', 'Payments::store');
     $router->post('/payments/webhook', 'Payments::webhook');
+    $router->post('/realtime/auth', 'Realtime::auth');
 
     $router->get('/users', 'Users::index');
     $router->post('/users', 'Users::store');
