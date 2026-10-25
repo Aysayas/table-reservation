@@ -163,8 +163,8 @@ Claude adds an entry here when the frontend developer asks for something outside
   4. **Photo files are heavy PNGs:** building 1.9 MB, counter 0.96 MB, dining 0.79 MB, dishes 2.0 MB. Converting to JPG or WebP would load faster; there's no image tool on her machine.
   5. **`photos/stock-dining.jpg` is no longer used** but was kept. OK to delete it?
   6. **`overscroll-behavior: none` on `html`** in `src/index.css` stops the white bounce at the page ends. It applies to every screen, staff and admin too.
-- Status: Waiting for lead
-- Lead note:
+- Status: Answered
+- Lead note: (2026-10-25) (1) The deposit is ₱100 per guest, and `deposit_required` stays true. Set `deposit_per_guest: 100` in `sampleSettings`; the lead sets the real value on the backend. (2) Yes, `/reserve/payment?code=RSV-…` is fine. (3) Already answered: the photo was replaced with a Pexels photo in PR #70. (4) Yes, convert the 4 restaurant photos to JPG or WebP and update their names in the code and `docs/design/brand.md`. (5) Yes, delete `photos/stock-dining.jpg` and its row in `brand.md`. (6) Keep `overscroll-behavior: none`. Also: the "Family recipes, cooked the way they were taught to us" and "Passed down, never written" lines on Home and About stay as approved.
 
 ### 2026-10-25: Popular Dishes: her 4 picks from the current menu
 - Level: 🟡 off plan (data and photos)
@@ -173,8 +173,8 @@ Claude adds an entry here when the frontend developer asks for something outside
 - What Claude did: in `sampleData.ts`, only these 4 are `is_recommended` now (before, every item was), so Popular Dishes shows them, in menu order: Sinigang na Tanigue, Palagitik Native Duck, Sizzling Sisig, Crispy Pork Kare-Kare. The cards show the icon until photos arrive; the earlier Pexels breakfast photos were removed. When she sends photos, Claude checks where they're from: the restaurant's own, or free-licence (Unsplash, Pexels) with the source noted; anything else waits for your OK. (PR #70)
 - Update (2026-10-25): she changed her picks to (1) Crispy Pork Kare-Kare, (2) Sizzling Sisig, (3) Relyenong Bangus, (4) Chicken Tinupig, all on the menu. `sampleData.ts` now marks these 4 as recommended; in menu order the cards show Chicken Tinupig, Sizzling Sisig, Crispy Pork Kare-Kare, Relyenong Bangus. She sent a photo for each, found on Pinterest or Google (photographer and licence unknown). Claude didn't add them, so the cards still show the icon
 - Please decide: (a) set `is_recommended` to only these 4 in `seed.sql` (or the admin does it on screen 20 once the API is live)? (b) may she use her Pinterest/Google photos, or must they be free-licence stock (Unsplash, Pexels) since the restaurant has no suitable photos?
-- Status: (b) Declined; (a) waiting for lead
-- Lead note: (2026-10-25) (b) Food photos come from Pexels or Unsplash only, with the photographer and link in `docs/design/brand.md` and a neutral alt text (for example "Sizzling sisig", not "Vencio's Garden sisig"), since they aren't the restaurant's own dishes. No photos from Pinterest, Google Images or other websites, anywhere on the site: being able to view or download a photo isn't permission to publish it, and the site is public. Show the icon when there's no fitting photo, and swap in the restaurant's own photos when it sends them. This also answers PR #83 ("Allow food photos from Pinterest, Google and other sites"), which can be closed. (a) is still open.
+- Status: (b) Declined; (a) answered
+- Lead note: (2026-10-25) (b) Food photos come from Pexels or Unsplash only, with the photographer and link in `docs/design/brand.md` and a neutral alt text (for example "Sizzling sisig", not "Vencio's Garden sisig"), since they aren't the restaurant's own dishes. No photos from Pinterest, Google Images or other websites, anywhere on the site: being able to view or download a photo isn't permission to publish it, and the site is public. Show the icon when there's no fitting photo, and swap in the restaurant's own photos when it sends them. This also answers PR #83 ("Allow food photos from Pinterest, Google and other sites"), which can be closed. (a) (2026-10-25) The admin picks the recommended dishes on screen 20; `seed.sql` stays as it is. Keep your 4 picks in `sampleData.ts` for the demo.
 
 ### 2026-10-25: Screen 02 Menu mockup extras
 - Level: 🟡 off plan
@@ -186,17 +186,17 @@ Claude adds an entry here when the frontend developer asks for something outside
   5. Pagination (pages 01–10) instead of the Popular and category sections the wireframe shows
 - Rule it bumps into: CLAUDE.md, each screen keeps the wireframe's labels, buttons, links, parts and data; (1) adds a flow, (2) and (3) add data that doesn't exist, (4) changes labels and removes the back button, (5) removes the sections
 - What Claude did instead: built the look with the wireframe's content: the back button, the title "Menu", search, category filter, the Popular section and one section per category, no add buttons
-- Status: Waiting for lead
-- Lead note:
+- Status: Approved (partly)
+- Lead note: (2026-10-25) (1) No, ordering stays in the QR flow. (2) Yes to the price range filter. Tag filters only from data we already have: "Best Seller" from `is_recommended` and category tags like "Seafood" from the categories. "Good for 3–4", "Pinoy" and "Spicy" need data the menu doesn't have yet, so leave them out until the lead adds it. (3) No, most taglines would be made up. (4) Yes, the "Home / Menu" breadcrumb and the title "Our Menu" with "Kain na!" (the ☰ menu still gets around, like About). (5) Yes to pagination, but first tell the lead in this entry why you want it instead of the Popular and category sections, and how Popular and the category filter will work with pages. Add tests for the filters and the pages.
 
 ### 2026-10-25: What should "Often Ordered With" show on screen 09?
 - Level: ℹ️ question, nothing off plan
 - Notes: the screen 09 wireframe has "Often Ordered With" (2 dishes with "+ Add"), but `docs/progress.md` says the recommendation engine's approach isn't decided and `docs/api.md` has no endpoint for it. For now it shows 2 other available dishes from the same category, from the menu data. When you decide (for example dishes most often in the same order, from `order_items`), the screen only needs the list from a service. (PR for screen 09)
-- Status: Waiting for lead
-- Lead note:
+- Status: Answered
+- Lead note: (2026-10-25) Use `GET /recommendations` (now in `docs/api.md`) through a service function: on 09 with `item_ids` set to the dish on screen, on 10 with the cart's dishes. Until the lead says the API is live, the service keeps the current sample logic (same category on 09, recommended and not in the cart on 10).
 
 ### 2026-10-25: How does a table become available again on screen 16?
 - Level: ℹ️ question, nothing off plan
 - Notes: the screen 16 wireframe gives occupied tables only "View Order" and reserved tables only "Mark Arrived". There's no way to set a table back to Available after the guests leave, though `PATCH /tables/{id}/status` allows any change ("for example, freeing a table after guests leave"). Should screen 16 get a small "Free table" button on occupied tables (for example only when the order is served and paid), or does something else free it (screen 17 after payment, or the backend)? (PR for screen 16)
-- Status: Waiting for lead
-- Lead note:
+- Status: Approved
+- Lead note: (2026-10-25) Both. Add the "Free table" button on occupied tables, shown only when the table has no order that is unserved or unpaid; it calls `PATCH /tables/{id}/status` with `available` (in the sample data until the API is live). Add a test for it. The lead will also make the backend free the table when its order is served and paid.
