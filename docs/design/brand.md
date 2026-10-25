@@ -108,7 +108,8 @@ Gentle and slow, so it never makes anyone dizzy. Made with Tailwind only (no mot
 
 - **Scroll reveal:** sections fade in and rise 16px over 0.7s as they scroll into view, once only. Wrap a section's content in `<Reveal>` (`src/components/Reveal.tsx`). The hero isn't wrapped, so the page never looks empty on open.
 - **Hover:** photos zoom 5% inside their frame (0.7s); dish cards lift 4px and get a gold border; main buttons lift 2px; the numbered circles fill with gold.
-- **Never:** parallax, things that move on their own (carousels, bouncing), or entrance animations that delay the content.
+- **Popular Dishes slider:** the dish cards slide slowly to the left in a loop (35s, `animate-marquee` in `src/index.css`), pause when the mouse is over them or a card has keyboard focus, and stand still in a normal grid with "reduce motion". No edge fade.
+- **Never:** parallax, fast or bouncing movement, anything else that moves on its own, or entrance animations that delay the content.
 - **Reduce motion:** every animation uses Tailwind's `motion-safe:`, so people who turn on "reduce motion" see everything at once with no movement.
 
 ## Photos

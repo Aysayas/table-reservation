@@ -26,6 +26,14 @@
   --font-sans: 'Montserrat', ui-sans-serif, system-ui, sans-serif;
   --font-serif: 'Playfair Display', ui-serif, Georgia, serif;
   --font-display: 'Great Vibes', cursive;
+
+  --animate-marquee: marquee 35s linear infinite;
+
+  @keyframes marquee {
+    to {
+      transform: translateX(-50%);
+    }
+  }
 }
 
 html {

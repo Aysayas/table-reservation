@@ -34,12 +34,25 @@ test('story and dishes link to about and menu', async ({ page }) => {
   await page.goto('/')
   await page.getByRole('link', { name: 'View full menu' }).click()
   await expect(page).toHaveURL('/menu')
+  await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.goto('/')
   await page
     .getByRole('link', { name: /on the menu$/ })
     .first()
     .click()
   await expect(page).toHaveURL('/menu')
+})
+
+test('popular dishes slide gently and stand still with reduced motion', async ({ page }) => {
+  await page.goto('/')
+  const dishes = page.getByRole('link', { name: /on the menu$/ })
+  await expect(dishes).toHaveCount(4)
+  await expect(page.locator('ul.motion-safe\\:animate-marquee')).toHaveCSS(
+    'animation-name',
+    'marquee',
+  )
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await expect(page.locator('ul.motion-safe\\:animate-marquee')).toHaveCSS('animation-name', 'none')
 })
 
 test('find a table passes date, time and guests to reserve', async ({ page }) => {

@@ -153,45 +153,54 @@ export default function Home() {
               <ArrowRight className="size-4" />
             </Link>
           </div>
-          <ul className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
-            {popular.map((item, index) => (
-              <li
-                key={item.item_id}
-                className={`group hover:border-brand-gold/40 flex flex-col overflow-hidden rounded-lg border border-white/10 bg-white/5 transition duration-300 motion-safe:hover:-translate-y-1 ${index >= 2 ? 'hidden md:flex' : ''}`}
-              >
-                {item.image_url ? (
-                  <div className="overflow-hidden">
-                    <img
-                      src={item.image_url}
-                      alt={`${item.name} photo`}
-                      className={`h-32 w-full object-cover md:h-44 ${zoom}`}
-                    />
-                  </div>
-                ) : (
-                  <div
-                    role="img"
-                    aria-label={`${item.name} photo`}
-                    className="text-brand-gold/60 flex h-32 items-center justify-center bg-white/5 md:h-44"
+          <div className="group/marquee mt-8 motion-safe:overflow-hidden motion-safe:py-2">
+            <ul className="motion-safe:animate-marquee grid grid-cols-2 gap-4 motion-safe:flex motion-safe:w-max motion-safe:gap-0 motion-safe:group-focus-within/marquee:[animation-play-state:paused] motion-safe:group-hover/marquee:[animation-play-state:paused] md:grid-cols-4 md:gap-6">
+              {[...popular, ...popular].map((item, index) => {
+                const copy = index >= popular.length
+                return (
+                  <li
+                    key={`${item.item_id}-${copy}`}
+                    aria-hidden={copy || undefined}
+                    inert={copy}
+                    className={`group hover:border-brand-gold/40 flex flex-col overflow-hidden rounded-lg border border-white/10 bg-white/5 transition duration-300 motion-safe:mr-4 motion-safe:w-56 motion-safe:shrink-0 motion-safe:hover:-translate-y-1 md:motion-safe:mr-6 md:motion-safe:w-64 ${copy ? 'motion-reduce:hidden' : index >= 2 ? 'motion-reduce:hidden md:motion-reduce:flex' : ''}`}
                   >
-                    <UtensilsCrossed className="size-8" strokeWidth={1.25} />
-                  </div>
-                )}
-                <div className="flex flex-1 flex-col px-4 py-4">
-                  <p className="text-sm font-semibold">{item.name}</p>
-                  <div className="mt-auto flex items-center justify-between gap-2 pt-3">
-                    <p className="text-brand-gold font-serif text-lg">₱{item.price.toFixed(2)}</p>
-                    <Link
-                      to="/menu"
-                      aria-label={`See ${item.name} on the menu`}
-                      className="bg-brand-red hover:bg-brand-red/90 flex size-8 shrink-0 items-center justify-center rounded-full transition-colors duration-200"
-                    >
-                      <Plus className="size-4" />
-                    </Link>
-                  </div>
-                </div>
-              </li>
-            ))}
-          </ul>
+                    {item.image_url ? (
+                      <div className="overflow-hidden">
+                        <img
+                          src={item.image_url}
+                          alt={`${item.name} photo`}
+                          className={`h-32 w-full object-cover md:h-44 ${zoom}`}
+                        />
+                      </div>
+                    ) : (
+                      <div
+                        role="img"
+                        aria-label={`${item.name} photo`}
+                        className="text-brand-gold/60 flex h-32 items-center justify-center bg-white/5 md:h-44"
+                      >
+                        <UtensilsCrossed className="size-8" strokeWidth={1.25} />
+                      </div>
+                    )}
+                    <div className="flex flex-1 flex-col px-4 py-4">
+                      <p className="text-sm font-semibold">{item.name}</p>
+                      <div className="mt-auto flex items-center justify-between gap-2 pt-3">
+                        <p className="text-brand-gold font-serif text-lg">
+                          ₱{item.price.toFixed(2)}
+                        </p>
+                        <Link
+                          to="/menu"
+                          aria-label={`See ${item.name} on the menu`}
+                          className="bg-brand-red hover:bg-brand-red/90 flex size-8 shrink-0 items-center justify-center rounded-full transition-colors duration-200"
+                        >
+                          <Plus className="size-4" />
+                        </Link>
+                      </div>
+                    </div>
+                  </li>
+                )
+              })}
+            </ul>
+          </div>
         </Reveal>
       </section>
 
