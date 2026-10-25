@@ -116,7 +116,7 @@ Every staff, kitchen and admin route already checks the login token and role, so
 | Payment gateway | ✅ PayMongo (test mode), deposits and order payments |
 | SMS notification | ⬜ provider not chosen |
 | Real-time messaging (kitchen and order status) | ⬜ |
-| Cloud storage (menu and logo images) | ⬜ |
+| Cloud storage (menu and logo images) | ✅ Cloudinary (local disk without keys) |
 | Recommendation engine | ✅ Python service (`recommender/`) behind `GET /recommendations`, with a fallback when it sleeps |
 
 ### Deployment
