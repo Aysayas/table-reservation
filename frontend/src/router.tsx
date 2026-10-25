@@ -13,11 +13,12 @@ import OrderStatus from '@/pages/customer/OrderStatus'
 import ReservationConfirmation from '@/pages/customer/ReservationConfirmation'
 import ReserveTable from '@/pages/customer/ReserveTable'
 import TableMenu from '@/pages/customer/TableMenu'
+import StaffDashboard from '@/pages/staff/StaffDashboard'
 import StaffLogin from '@/pages/staff/StaffLogin'
 
 const staffNav: NavItem[] = [
   { to: '/staff', label: 'Dashboard' },
-  { to: '/staff/reservations', label: "Today's Reservations" },
+  { to: '/staff/reservations', label: 'Reservations', title: "Today's Reservations" },
   { to: '/staff/tables', label: 'Table Status' },
   { to: '/staff/orders', label: 'Orders and Payments' },
 ]
@@ -66,7 +67,7 @@ export const router = createBrowserRouter([
     path: '/staff',
     element: <DashboardLayout title="Staff" items={staffNav} />,
     children: [
-      { index: true, element: <Placeholder screen="14" title="Staff Dashboard" /> },
+      { index: true, element: <StaffDashboard /> },
       { path: 'reservations', element: <Placeholder screen="15" title="Today's Reservations" /> },
       { path: 'tables', element: <Placeholder screen="16" title="Table Status" /> },
       { path: 'orders', element: <Placeholder screen="17" title="Orders and Payments" /> },
