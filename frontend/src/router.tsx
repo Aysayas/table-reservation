@@ -15,6 +15,7 @@ import ReserveTable from '@/pages/customer/ReserveTable'
 import TableMenu from '@/pages/customer/TableMenu'
 import StaffDashboard from '@/pages/staff/StaffDashboard'
 import StaffLogin from '@/pages/staff/StaffLogin'
+import TodaysReservations from '@/pages/staff/TodaysReservations'
 
 const staffNav: NavItem[] = [
   { to: '/staff', label: 'Dashboard' },
@@ -68,7 +69,7 @@ export const router = createBrowserRouter([
     element: <DashboardLayout title="Staff" items={staffNav} />,
     children: [
       { index: true, element: <StaffDashboard /> },
-      { path: 'reservations', element: <Placeholder screen="15" title="Today's Reservations" /> },
+      { path: 'reservations', element: <TodaysReservations /> },
       { path: 'tables', element: <Placeholder screen="16" title="Table Status" /> },
       { path: 'orders', element: <Placeholder screen="17" title="Orders and Payments" /> },
     ],

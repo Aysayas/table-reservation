@@ -37,7 +37,7 @@ Start with simple screens to learn, then the forms, then the bigger flows:
 | 12 | Order Status | 🟦 | Phone width. Order number and time, Received → Preparing → Ready → Served, Your Items and Total, Payment, Order More. Loads `?order=` with the table QR token and checks again every 15 s until real-time updates exist |
 | 13 | Staff Login | 🟦 | Approved subtitle and show-password button are in #51. Login pretends to succeed until the API is live |
 | 14 | Staff Dashboard | 🟦 | 1440 × 900. New charcoal sidebar and top bar (shared by staff and admin, page title from the sidebar item), 4 numbers, Upcoming Reservations, Active Orders, View all links. Sample data now has bookings for today and 2 more active orders |
-| 15 | Today's Reservations | ⬜ | |
+| 15 | Today's Reservations | 🟦 | 1440 × 900. Search (all days), Day (Today / Upcoming / Past / Cancelled) and Status filters, 9 columns, Arrived / No-show / Assign Table with the API's rules, 8 per page |
 | 16 | Table Status | ⬜ | |
 | 17 | Orders and Payments | ⬜ | |
 | 18 | Kitchen Display | ⬜ | |
