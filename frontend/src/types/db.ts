@@ -44,6 +44,7 @@ export type Reservation = {
   special_request: string | null
   deposit_amount: number
   status: ReservationStatus
+  reminder_sent_at: string | null
   created_at: string
 }
 
