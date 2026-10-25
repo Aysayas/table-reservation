@@ -111,7 +111,11 @@ Suggested sizes:
 | File | Source (link) | Licence |
 |---|---|---|
 | `logo.png` | Vencio's Garden Hotel & Restaurant official Facebook page ([facebook.com/venciosgardenhotel](https://www.facebook.com/venciosgardenhotel)) | The restaurant's own logo |
-| `photos/stock-dining.jpg` | [Pexels: Empty Tables in Restaurant, by Sander Dalhuisen](https://www.pexels.com/photo/empty-tables-in-restaurant-2566030/) | Pexels licence (free to use). Stock photo of another restaurant, not Vencio's Garden; replace with the restaurant's own photo when it arrives |
+| `photos/stock-dining.jpg` | [Pexels: Empty Tables in Restaurant, by Sander Dalhuisen](https://www.pexels.com/photo/empty-tables-in-restaurant-2566030/) | Pexels licence (free to use). Stock photo of another restaurant, not Vencio's Garden. No longer used since the restaurant's own photos below |
+| `photos/vencios-dining.png` | Vencio's Garden Hotel & Restaurant official Facebook page ([facebook.com/venciosgardenhotel](https://www.facebook.com/venciosgardenhotel)) | The restaurant's own photo, used with its permission. No guests. Home, Our Story block |
+| `photos/vencios-dishes.png` | Vencio's Garden Hotel & Restaurant official Facebook page ([facebook.com/venciosgardenhotel](https://www.facebook.com/venciosgardenhotel)) | The restaurant's own photo, used with its permission. No guests. Home hero (1200 × 900) |
+| `photos/vencios-building.png` | Vencio's Garden Hotel & Restaurant official Facebook page ([facebook.com/venciosgardenhotel](https://www.facebook.com/venciosgardenhotel)) | The restaurant's own photo, used with its permission. No guests. About hero, faded on the right (1280 × 960) |
+| `photos/vencios-counter.png` | Vencio's Garden Hotel & Restaurant official Facebook page ([facebook.com/venciosgardenhotel](https://www.facebook.com/venciosgardenhotel)) | The restaurant's own photo, used with its permission. No recognisable guests. About, Our Story block |
 
 ## Do and don't
 

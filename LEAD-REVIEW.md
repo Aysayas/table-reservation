@@ -136,3 +136,31 @@ Claude adds an entry here when the frontend developer asks for something outside
 - What Claude did instead: nothing built yet; the look changes and the footer will be built together
 - Status: Approved
 - Lead note: Approved (2026-10-25). Use Home's footer on screen 05 too, so Home, About and 05 end the same way. The charcoal ticket and the red "reserved." are restyles and need no OK. Add a test for the footer links.
+
+### 2026-10-25: Bigger building photo from another website for screen 07 About
+- Level: 🟡 off plan
+- Asked for: replace the About hero photo (`photos/vencios-exterior.png`, the restaurant's night photo from its Facebook page, only 345 × 234 so it looks blurry) with a bigger copy of the same photo, `vencio-s-garden-seafood.jpg` (550 × 367), which she found through a Google image search. It shows the restaurant's own building (the "Vencio's" sign is visible), but the site that hosts it and who took it are unknown; the file name suggests a listing site
+- Rule it bumps into: CLAUDE.md and the screen 01 approval, real photos of Vencio's Garden only from the restaurant (its Facebook page), with the source noted in `docs/design/brand.md`
+- What Claude did instead: kept the current photo and limited how much it stretches on wide screens (at most 34rem wide, faded on both sides on very wide screens), so the blur shows less. If approved, only the `src` in `About.tsx` and the row in `brand.md` change. Even the new copy isn't HD; a copy of 1,200 px or more (for example from the restaurant directly) would look sharp
+- Status: No longer needed. She found a sharp daytime photo of the building (1280 × 960) on the restaurant's Facebook page, which is already approved, and it replaced the night photo. The Google photo is not used
+- Lead note:
+
+### 2026-10-25: Four more dishes in Popular Dishes on screen 01 Home
+- Level: 🟡 off plan
+- Asked for: show Beef Biryani, Salmon with Grilled Potato and Broccoli, Crispy Fried Chicken Steak, and Baby Back Ribs in Home's Popular Dishes, with photos. She says these are on Vencio's Garden's real menu, but they aren't in `sampleData.ts` or `seed.sql` yet. The restaurant has no clear photos of them, so she found photos on recipe websites
+- Rule it bumps into: CLAUDE.md, the menu data must match `backend/database/seed.sql` (Popular Dishes shows the first 4 available `is_recommended` items), and photos must be the restaurant's own or free-licence stock with the source noted. The recipe-site photos have no licence (one has a site watermark), so Claude didn't use them
+- What Claude did instead: kept the current 4 recommended dishes with icon placeholders. If approved: the lead adds the 4 dishes (with real prices and categories) to `seed.sql` and marks them recommended; Claude mirrors them in `sampleData.ts` and uses free Unsplash or Pexels photos for them, with each source in `docs/design/brand.md`
+- Status: Waiting for lead
+- Lead note:
+
+### 2026-10-25: Notes from screens 01, 03 and 07 (for your information)
+- Level: ℹ️ notes, nothing off plan
+- Notes:
+  1. **Deposit is ₱0 in the sample data.** `sampleSettings` has `deposit_required: true` but `deposit_per_guest: 0`, so screen 04 will show ₱0.00. What should the amount per guest be (and is it in `seed.sql`)?
+  2. **How screen 03 hands the booking to 04.** After booking it opens `/reserve/payment?code=RSV-…`. The path stays the same; the code rides in the query so 04 can call `GET /reservations/code/{code}`. OK? (PR #65)
+  3. **Home hero dishes photo** (`photos/vencios-dishes.png`): she says it's from the restaurant's Facebook page. It looks professionally shot and shows dishes that may not be on the menu (pasta), so you may want to double-check it.
+  4. **Photo files are heavy PNGs:** building 1.9 MB, counter 0.96 MB, dining 0.79 MB, dishes 2.0 MB. Converting to JPG or WebP would load faster; there's no image tool on her machine.
+  5. **`photos/stock-dining.jpg` is no longer used** but was kept. OK to delete it?
+  6. **`overscroll-behavior: none` on `html`** in `src/index.css` stops the white bounce at the page ends. It applies to every screen, staff and admin too.
+- Status: Waiting for lead
+- Lead note:

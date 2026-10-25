@@ -3,17 +3,15 @@ import { format } from 'date-fns'
 import { ArrowRight, Plus, UtensilsCrossed } from 'lucide-react'
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import SiteFooter from '@/components/SiteFooter'
 import { groupHours } from '@/lib/hours'
-import { directionsUrl } from '@/lib/maps'
 import { getMenuItems } from '@/services/menu'
-import { getOpeningHours, getSettings } from '@/services/settings'
+import { getOpeningHours } from '@/services/settings'
 
 const wrap = 'md:mx-auto md:max-w-6xl md:px-10'
 const eyebrow = 'text-brand-red text-xs font-bold tracking-[0.25em] uppercase'
-const goldEyebrow = 'text-brand-gold text-xs font-bold tracking-[0.25em] uppercase'
 const button =
   'focus-visible:outline-brand-gold block rounded-sm px-3 py-4 text-center whitespace-nowrap md:px-6 text-xs font-bold tracking-[0.12em] uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 md:text-sm md:tracking-[0.15em]'
-const footerLink = 'hover:text-brand-gold transition-colors duration-200'
 const field =
   'mt-2 w-full rounded-sm border border-white/40 bg-transparent px-3 py-3 text-sm font-normal tracking-normal text-white normal-case outline-none [color-scheme:dark] focus:border-brand-gold'
 const fieldLabel = 'text-xs font-bold tracking-[0.2em] uppercase'
@@ -27,20 +25,16 @@ const features = [
 
 export default function Home() {
   const navigate = useNavigate()
-  const [year] = useState(() => new Date().getFullYear())
   const [today] = useState(() => format(new Date(), 'yyyy-MM-dd'))
   const [date, setDate] = useState('')
   const [time, setTime] = useState('')
   const [pax, setPax] = useState('2')
-  const { data: settings } = useQuery({ queryKey: ['settings'], queryFn: getSettings })
   const { data: hours = [] } = useQuery({ queryKey: ['opening-hours'], queryFn: getOpeningHours })
   const { data: items = [] } = useQuery({ queryKey: ['menu-items'], queryFn: () => getMenuItems() })
 
   const popular = items.filter((item) => item.is_recommended && item.is_available).slice(0, 4)
   const hourGroups = groupHours(hours)
   const badge = hourGroups[0]
-  const words = settings?.restaurant_name.split(' ') ?? []
-  const lastWord = words.pop()
 
   const findTable = () => {
     const params = new URLSearchParams(Object.entries({ date, time, pax }).filter(([, v]) => v))
@@ -77,13 +71,11 @@ export default function Home() {
             </div>
           </div>
           <div className="relative mt-10 md:mt-0">
-            <div
-              role="img"
-              aria-label="Signature dish photo"
-              className="text-brand-gold/60 flex h-64 items-center justify-center rounded-lg bg-white/5 md:h-[26rem]"
-            >
-              <UtensilsCrossed className="size-12" strokeWidth={1} />
-            </div>
+            <img
+              src="/photos/vencios-dishes.png"
+              alt="Filipino dishes from Vencio's Garden on a table"
+              className="h-64 w-full rounded-lg object-cover md:h-[26rem]"
+            />
             {badge && (
               <div className="bg-brand-cream border-brand-gold absolute -right-2 -bottom-6 flex size-32 flex-col items-center justify-center rounded-full border border-dashed text-center md:-right-6 md:size-36">
                 <p className="text-brand-red text-[10px] font-bold tracking-[0.2em] uppercase">
@@ -138,8 +130,8 @@ export default function Home() {
           </Link>
         </div>
         <img
-          src="/photos/stock-dining.jpg"
-          alt="Restaurant dining area"
+          src="/photos/vencios-dining.png"
+          alt="Vencio's Garden dining room"
           className="mt-10 h-64 w-full rounded-lg object-cover md:mt-0 md:h-80"
         />
       </section>
@@ -201,7 +193,7 @@ export default function Home() {
               event.preventDefault()
               findTable()
             }}
-            className="mt-8 grid grid-cols-2 gap-3 md:grid-cols-[1fr_1fr_1fr_auto] md:items-end lg:mt-0"
+            className="mt-8 grid grid-cols-2 gap-3 md:grid-cols-[1fr_1fr_minmax(9rem,1fr)_auto] md:items-end lg:mt-0"
           >
             <label className={fieldLabel}>
               Date
@@ -242,65 +234,7 @@ export default function Home() {
         </div>
       </section>
 
-      <footer className="bg-brand-charcoal px-4 pt-14 pb-8 text-white">
-        <div className={`grid gap-10 md:grid-cols-4 md:gap-12 ${wrap}`}>
-          <div>
-            <p className="flex items-baseline gap-2">
-              <span className="font-serif text-2xl font-bold">{words.join(' ')}</span>
-              <span className="font-display text-brand-gold text-3xl">{lastWord}</span>
-            </p>
-            <p className="mt-3 text-sm text-white/70">
-              Home-style Filipino dishes, served with heart.
-            </p>
-          </div>
-          <nav aria-label="Footer">
-            <p className={goldEyebrow}>Quick links</p>
-            <div className="mt-4 flex flex-col gap-3 text-sm">
-              <Link to="/about" className={footerLink}>
-                About Us
-              </Link>
-              <Link to="/menu" className={footerLink}>
-                Menu
-              </Link>
-              <Link to="/reservation" className={footerLink}>
-                Find My Reservation
-              </Link>
-              <Link to="/staff/login" className={footerLink}>
-                Staff Login
-              </Link>
-            </div>
-          </nav>
-          <div>
-            <p className={goldEyebrow}>Hours</p>
-            <ul className="mt-4 space-y-2 text-sm">
-              {hourGroups.map((group) => (
-                <li key={group.days}>
-                  <p>{group.days}</p>
-                  <p className="text-white/70">{group.time}</p>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div>
-            <p className={goldEyebrow}>Location</p>
-            <p className="mt-4 text-sm leading-6">{settings?.address}</p>
-            <a
-              href={directionsUrl(settings?.restaurant_name)}
-              target="_blank"
-              rel="noreferrer"
-              className="text-brand-gold mt-3 inline-flex items-center gap-1 text-sm font-semibold hover:underline"
-            >
-              Get directions
-              <ArrowRight className="size-4" />
-            </a>
-          </div>
-        </div>
-        <p
-          className={`mt-12 border-t border-white/10 pt-6 text-center text-xs text-white/60 ${wrap}`}
-        >
-          © {year} {settings?.restaurant_name}
-        </p>
-      </footer>
+      <SiteFooter />
     </div>
   )
 }

@@ -28,6 +28,10 @@
   --font-display: 'Great Vibes', cursive;
 }
 
+html {
+  overscroll-behavior: none;
+}
+
 body {
   @apply text-brand-ink bg-white antialiased;
 }
