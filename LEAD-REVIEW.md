@@ -144,3 +144,11 @@ Claude adds an entry here when the frontend developer asks for something outside
 - What Claude did instead: kept the current photo and limited how much it stretches on wide screens (at most 34rem wide, faded on both sides on very wide screens), so the blur shows less. If approved, only the `src` in `About.tsx` and the row in `brand.md` change. Even the new copy isn't HD; a copy of 1,200 px or more (for example from the restaurant directly) would look sharp
 - Status: No longer needed. She found a sharp daytime photo of the building (1280 × 960) on the restaurant's Facebook page, which is already approved, and it replaced the night photo. The Google photo is not used
 - Lead note:
+
+### 2026-10-25: Four more dishes in Popular Dishes on screen 01 Home
+- Level: 🟡 off plan
+- Asked for: show Beef Biryani, Salmon with Grilled Potato and Broccoli, Crispy Fried Chicken Steak, and Baby Back Ribs in Home's Popular Dishes, with photos. She says these are on Vencio's Garden's real menu, but they aren't in `sampleData.ts` or `seed.sql` yet. The restaurant has no clear photos of them, so she found photos on recipe websites
+- Rule it bumps into: CLAUDE.md, the menu data must match `backend/database/seed.sql` (Popular Dishes shows the first 4 available `is_recommended` items), and photos must be the restaurant's own or free-licence stock with the source noted. The recipe-site photos have no licence (one has a site watermark), so Claude didn't use them
+- What Claude did instead: kept the current 4 recommended dishes with icon placeholders. If approved: the lead adds the 4 dishes (with real prices and categories) to `seed.sql` and marks them recommended; Claude mirrors them in `sampleData.ts` and uses free Unsplash or Pexels photos for them, with each source in `docs/design/brand.md`
+- Status: Waiting for lead
+- Lead note:
