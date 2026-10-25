@@ -174,3 +174,9 @@ Claude adds an entry here when the frontend developer asks for something outside
 - Please decide: (a) set `is_recommended` to only these 4 in `seed.sql` (or the admin does it on screen 20 once the API is live)? (b) since the restaurant has no suitable photos, are free-licence stock photos of these dishes OK on the live site?
 - Status: Waiting for lead
 - Lead note:
+
+### 2026-10-25: What should "Often Ordered With" show on screen 09?
+- Level: ℹ️ question, nothing off plan
+- Notes: the screen 09 wireframe has "Often Ordered With" (2 dishes with "+ Add"), but `docs/progress.md` says the recommendation engine's approach isn't decided and `docs/api.md` has no endpoint for it. For now it shows 2 other available dishes from the same category, from the menu data. When you decide (for example dishes most often in the same order, from `order_items`), the screen only needs the list from a service. (PR for screen 09)
+- Status: Waiting for lead
+- Lead note:

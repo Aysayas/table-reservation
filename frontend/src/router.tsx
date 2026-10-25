@@ -4,6 +4,7 @@ import DashboardLayout, { type NavItem } from '@/layouts/DashboardLayout'
 import Placeholder from '@/pages/Placeholder'
 import About from '@/pages/customer/About'
 import Home from '@/pages/customer/Home'
+import ItemDetails from '@/pages/customer/ItemDetails'
 import ReservationConfirmation from '@/pages/customer/ReservationConfirmation'
 import ReserveTable from '@/pages/customer/ReserveTable'
 import TableMenu from '@/pages/customer/TableMenu'
@@ -47,7 +48,7 @@ export const router = createBrowserRouter([
       { path: '/table/:tableId/menu', element: <TableMenu /> },
       {
         path: '/table/:tableId/menu/:itemId',
-        element: <Placeholder screen="09" title="Item Details" />,
+        element: <ItemDetails />,
       },
       { path: '/table/:tableId/cart', element: <Placeholder screen="10" title="Cart" /> },
       { path: '/table/:tableId/checkout', element: <Placeholder screen="11" title="Checkout" /> },
