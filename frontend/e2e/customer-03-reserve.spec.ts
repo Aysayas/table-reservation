@@ -1,0 +1,67 @@
+import { expect, test } from '@playwright/test'
+
+const nextYear = new Date().getFullYear() + 1
+const date = `${nextYear}-12-01`
+
+test('reserve page shows the steps and the form', async ({ page }) => {
+  await page.goto('/reserve')
+  await expect(page.getByRole('heading', { name: 'Reserve a Table' })).toBeVisible()
+  for (const step of ['Details', 'Deposit', 'Confirm']) {
+    await expect(page.getByText(step, { exact: true })).toBeVisible()
+  }
+  for (const name of [
+    'Date',
+    'Full Name',
+    'Mobile Number',
+    'Email (optional)',
+    'Special Request (optional)',
+  ]) {
+    await expect(page.getByLabel(name)).toBeVisible()
+  }
+  await expect(page.getByRole('group', { name: 'Number of Guests' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Continue to Deposit' })).toBeVisible()
+})
+
+test('guest buttons change the number of guests', async ({ page }) => {
+  await page.goto('/reserve')
+  const guests = page.getByRole('group', { name: 'Number of Guests' })
+  await expect(guests.getByRole('status')).toHaveText('2')
+  await page.getByRole('button', { name: 'More guests' }).click()
+  await expect(guests.getByRole('status')).toHaveText('3')
+  await page.getByRole('button', { name: 'Fewer guests' }).click()
+  await page.getByRole('button', { name: 'Fewer guests' }).click()
+  await expect(guests.getByRole('status')).toHaveText('1')
+  await expect(page.getByRole('button', { name: 'Fewer guests' })).toBeDisabled()
+})
+
+test('home values fill in the date, guests and time', async ({ page }) => {
+  await page.goto(`/reserve?date=${date}&time=18:00&pax=4`)
+  await expect(page.getByLabel('Date')).toHaveValue(date)
+  await expect(
+    page.getByRole('group', { name: 'Number of Guests' }).getByRole('status'),
+  ).toHaveText('4')
+  await expect(page.getByRole('button', { name: '6:00 PM' })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  )
+})
+
+test('an empty form shows errors and stays on the page', async ({ page }) => {
+  await page.goto('/reserve')
+  await page.getByRole('button', { name: 'Continue to Deposit' }).click()
+  await expect(page.getByText('Choose a date', { exact: true })).toBeVisible()
+  await expect(page.getByText('Choose a time')).toBeVisible()
+  await expect(page.getByText('Enter your full name')).toBeVisible()
+  await expect(page.getByText('Enter a mobile number like 0912 345 6789')).toBeVisible()
+  await expect(page).toHaveURL('/reserve')
+})
+
+test('a full form continues to the deposit page', async ({ page }) => {
+  await page.goto('/reserve')
+  await page.getByLabel('Date').fill(date)
+  await page.getByRole('button', { name: '7:00 PM' }).click()
+  await page.getByLabel('Full Name').fill('Juan Dela Cruz')
+  await page.getByLabel('Mobile Number').fill('0912 345 6789')
+  await page.getByRole('button', { name: 'Continue to Deposit' }).click()
+  await expect(page).toHaveURL(/\/reserve\/payment\?code=RSV-[A-Z0-9]{6}$/)
+})

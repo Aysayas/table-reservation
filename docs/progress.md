@@ -25,7 +25,7 @@ Start with simple screens to learn, then the forms, then the bigger flows:
 |---|---|---|---|
 | 01 | Home | 🟦 | Her mockup with all approved extras, phone and laptop. Real dining-room photo in; dish photos still placeholders. Footer is now the shared `SiteFooter` |
 | 02 | Menu | ⬜ | |
-| 03 | Reserve a Table | ⬜ | |
+| 03 | Reserve a Table | 🟦 | Phone and laptop. Pre-fills date, time and guests from Home. Booking pretends to succeed and opens `/reserve/payment?code=RSV-…` for screen 04 |
 | 04 | Deposit Payment | ⬜ | |
 | 05 | Reservation Confirmation | 🟦 | Phone and laptop layouts done with all approved extras (Save pass was declined) |
 | 06 | Find Reservation | ⬜ | |
