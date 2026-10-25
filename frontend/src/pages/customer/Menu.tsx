@@ -18,7 +18,7 @@ function Dish({ item, category }: { item: MenuItem; category: string }) {
     <li
       className={`group border-brand-line flex flex-col overflow-hidden rounded-xl border bg-white transition duration-300 hover:shadow-md motion-safe:hover:-translate-y-1 ${item.is_available ? '' : 'opacity-50'}`}
     >
-      <div className="bg-brand-charcoal relative h-40 overflow-hidden">
+      <div className="bg-brand-charcoal relative h-28 overflow-hidden md:h-32">
         {item.image_url ? (
           <img
             src={item.image_url}
@@ -31,26 +31,26 @@ function Dish({ item, category }: { item: MenuItem; category: string }) {
             aria-label={`${item.name} photo`}
             className="text-brand-gold/50 flex h-full items-center justify-center"
           >
-            <UtensilsCrossed className={`size-8 ${zoom}`} strokeWidth={1.25} />
+            <UtensilsCrossed className={`size-7 ${zoom}`} strokeWidth={1.25} />
           </div>
         )}
         {item.is_recommended && (
-          <span className="bg-brand-gold text-brand-charcoal absolute top-3 left-3 rounded-sm px-2.5 py-1 text-[10px] font-bold tracking-[0.2em] uppercase">
+          <span className="bg-brand-gold text-brand-charcoal absolute top-2 left-2 rounded-sm px-2 py-0.5 text-[9px] font-bold tracking-[0.15em] uppercase">
             Best Seller
           </span>
         )}
-        <span className="bg-brand-red absolute right-3 bottom-0 max-w-[70%] truncate rounded-t-sm px-2.5 py-1 text-[10px] font-bold tracking-[0.15em] text-white uppercase">
+        <span className="bg-brand-red absolute right-2 bottom-0 max-w-[80%] truncate rounded-t-sm px-2 py-0.5 text-[9px] font-bold tracking-[0.1em] text-white uppercase">
           {category}
         </span>
       </div>
-      <div className="flex flex-1 flex-col px-5 py-4">
-        <h3 className="text-brand-charcoal text-base font-bold">{item.name}</h3>
+      <div className="flex flex-1 flex-col px-3 py-3 md:px-4">
+        <h3 className="text-brand-charcoal text-sm leading-5 font-bold">{item.name}</h3>
         {item.description && (
-          <p className="text-brand-ink/70 mt-1 line-clamp-2 text-sm leading-5">
+          <p className="text-brand-ink/70 mt-1 line-clamp-2 text-xs leading-5">
             {item.description}
           </p>
         )}
-        <div className="mt-auto flex items-end justify-between gap-3 pt-4">
+        <div className="mt-auto flex items-end justify-between gap-2 pt-2">
           {item.is_available ? (
             <span />
           ) : (
@@ -58,7 +58,9 @@ function Dish({ item, category }: { item: MenuItem; category: string }) {
               Not available
             </span>
           )}
-          <p className="text-brand-red font-serif text-2xl leading-none">{peso(item.price)}</p>
+          <p className="text-brand-red font-serif text-lg leading-none md:text-xl">
+            {peso(item.price)}
+          </p>
         </div>
       </div>
     </li>
@@ -196,7 +198,7 @@ export default function Menu() {
                 {section.name}
               </h2>
               <span aria-hidden="true" className="bg-brand-gold mt-3 block h-px w-12" />
-              <ul className="mt-5 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+              <ul className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4">
                 {section.items.map((item) => (
                   <Dish
                     key={`${section.id}-${item.item_id}`}
