@@ -5,6 +5,7 @@ import Placeholder from '@/pages/Placeholder'
 import About from '@/pages/customer/About'
 import DepositPayment from '@/pages/customer/DepositPayment'
 import Home from '@/pages/customer/Home'
+import Menu from '@/pages/customer/Menu'
 import ReservationConfirmation from '@/pages/customer/ReservationConfirmation'
 import ReserveTable from '@/pages/customer/ReserveTable'
 import StaffLogin from '@/pages/staff/StaffLogin'
@@ -34,7 +35,7 @@ export const router = createBrowserRouter([
     element: <CustomerLayout />,
     children: [
       { path: '/', element: <Home /> },
-      { path: '/menu', element: <Placeholder screen="02" title="Menu" /> },
+      { path: '/menu', element: <Menu /> },
       { path: '/reserve', element: <ReserveTable /> },
       { path: '/reserve/payment', element: <DepositPayment /> },
       {
