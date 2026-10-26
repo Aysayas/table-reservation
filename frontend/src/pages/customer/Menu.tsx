@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
-import { ArrowLeft, QrCode, Search, UtensilsCrossed } from 'lucide-react'
+import { QrCode, Search, UtensilsCrossed } from 'lucide-react'
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { getCategories, getMenuItems } from '@/services/menu'
 import type { MenuItem } from '@/types/db'
 
@@ -68,8 +68,9 @@ function Dish({ item, category }: { item: MenuItem; category: string }) {
 }
 
 export default function Menu() {
-  const navigate = useNavigate()
   const [search, setSearch] = useState('')
+  const [maxPrice, setMaxPrice] = useState<number | null>(null)
+  const [bestOnly, setBestOnly] = useState(false)
   const [category, setCategory] = useState<number | null>(null)
   const { data: categories = [] } = useQuery({ queryKey: ['categories'], queryFn: getCategories })
   const { data: items = [], isFetched } = useQuery({
@@ -79,7 +80,17 @@ export default function Menu() {
 
   const categoryName = (id: number) => categories.find((c) => c.category_id === id)?.name ?? ''
   const term = search.trim().toLowerCase()
-  const matching = items.filter((item) => item.name.toLowerCase().includes(term))
+  const prices = items.map((i) => i.price)
+  const lowest = prices.length ? Math.min(...prices) : 0
+  const highest = prices.length ? Math.max(...prices) : 0
+  const priceCap = maxPrice ?? highest
+  const filtered = maxPrice !== null || bestOnly
+  const matching = items.filter(
+    (item) =>
+      item.name.toLowerCase().includes(term) &&
+      item.price <= priceCap &&
+      (!bestOnly || item.is_recommended),
+  )
   const sections = [
     ...(category === null
       ? [
@@ -110,17 +121,20 @@ export default function Menu() {
   return (
     <div className="bg-brand-cream min-h-[calc(100vh-4rem)] pb-16">
       <section className="bg-brand-charcoal px-4 py-8 text-white md:py-14">
-        <div className="relative flex items-center gap-4 md:mx-auto md:max-w-6xl md:justify-center md:px-10">
-          <button
-            type="button"
-            aria-label="Back"
-            onClick={() => navigate(-1)}
-            className="hover:border-brand-gold hover:text-brand-gold flex size-10 shrink-0 items-center justify-center rounded-full border border-white/30 transition-colors duration-200 md:absolute md:left-10"
+        <div className="md:mx-auto md:max-w-6xl md:px-10">
+          <nav
+            aria-label="Breadcrumb"
+            className="text-xs tracking-[0.15em] text-white/60 uppercase"
           >
-            <ArrowLeft className="size-5" />
-          </button>
-          <div className="md:text-center">
-            <h1 className="font-serif text-4xl md:text-6xl">Menu</h1>
+            <Link to="/" className="hover:text-brand-gold transition-colors duration-200">
+              Home
+            </Link>
+            <span className="mx-2">/</span>
+            <span className="text-white">Menu</span>
+          </nav>
+          <div className="mt-6 md:text-center">
+            <p className="font-display text-brand-gold text-3xl md:text-4xl">Kain na!</p>
+            <h1 className="font-serif text-4xl md:text-6xl">Our Menu</h1>
             <span
               aria-hidden="true"
               className="bg-brand-gold mt-3 block h-px w-12 md:mx-auto md:mt-5"
@@ -146,6 +160,54 @@ export default function Menu() {
                 <Search className="my-auto size-4" />
               </span>
             </label>
+          </div>
+
+          <div className={`px-4 pt-4 lg:px-6 lg:pt-6 ${panel}`}>
+            <div className="flex items-center justify-between">
+              <p className={panelTitle}>Filters</p>
+              {filtered && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMaxPrice(null)
+                    setBestOnly(false)
+                  }}
+                  className="text-brand-red ml-auto text-xs font-bold hover:underline"
+                >
+                  Clear filters
+                </button>
+              )}
+            </div>
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-3 lg:mt-4 lg:block lg:space-y-5">
+              <label className="block min-w-48 flex-1">
+                <span className="text-brand-charcoal flex justify-between text-xs font-bold">
+                  Max price
+                  <span className="text-brand-ink/70 font-normal tabular-nums">
+                    {peso(lowest)} – {peso(priceCap)}
+                  </span>
+                </span>
+                <input
+                  type="range"
+                  min={lowest}
+                  max={highest}
+                  step={5}
+                  value={priceCap}
+                  onChange={(e) => {
+                    const value = Number(e.target.value)
+                    setMaxPrice(value >= highest ? null : value)
+                  }}
+                  className="accent-brand-red mt-2 w-full"
+                />
+              </label>
+              <button
+                type="button"
+                aria-pressed={bestOnly}
+                onClick={() => setBestOnly(!bestOnly)}
+                className={`rounded-full border px-4 py-2 text-xs font-bold tracking-[0.08em] transition-colors duration-200 ${bestOnly ? 'bg-brand-gold border-brand-gold text-brand-charcoal' : 'border-brand-line text-brand-charcoal hover:border-brand-gold bg-white'}`}
+              >
+                Best Seller
+              </button>
+            </div>
           </div>
 
           <nav

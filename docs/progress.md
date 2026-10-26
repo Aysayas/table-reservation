@@ -24,7 +24,7 @@ Start with simple screens to learn, then the forms, then the bigger flows:
 | # | Screen | Status | Notes |
 |---|---|---|---|
 | 01 | Home | 🟦 | Her mockup with all approved extras, phone and laptop. Real dining-room photo in; dish photos still placeholders. Footer is now the shared `SiteFooter` |
-| 02 | Menu | 🟦 | Phone and laptop. Popular plus one section per category, search, category buttons (sticky on phones), QR note. Popular shows the recommended dishes |
+| 02 | Menu | 🟦 | Phone and laptop. Popular plus one section per category, search, category buttons (sticky on phones), QR note. Popular shows the recommended dishes. Lead-approved extras: Home / Menu breadcrumb, "Our Menu" with "Kain na!", Max price slider and Best Seller tag with Clear filters |
 | 03 | Reserve a Table | 🟦 | Phone and laptop. Pre-fills date, time and guests from Home. Booking pretends to succeed and opens `/reserve/payment?code=RSV-…` for screen 04 |
 | 04 | Deposit Payment | 🟦 | Phone and laptop. Loads the booking from `?code=` with `getReservationByCode`; Pay pretends to succeed and opens screen 05. Shows ₱0.00 until the lead sets `deposit_per_guest` |
 | 05 | Reservation Confirmation | 🟦 | Phone and laptop with all approved extras (Save pass was declined), the charcoal ticket card, red "reserved." and Home's footer |
