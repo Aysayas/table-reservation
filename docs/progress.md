@@ -48,7 +48,7 @@ Start with simple screens to learn, then the forms, then the bigger flows:
 | 23 | Tables and QR Codes | ⬜ | |
 | 24 | Reservations | ⬜ | |
 | 25 | Order History | ⬜ | |
-| 26 | Payments | ⬜ | |
+| 26 | Payments | 🟦 | 1440 × 900. Total Collected, Online, Cash and Deposits cards (paid only, in the date range); Search (PAY-ID, order #, ref code, reference), Date Range, All Methods, All Status, Clear filters; table with Payment ID, Date, For (order or deposit), Method, Reference, Amount, Status; 8 a page |
 | 27 | Reports | ⬜ | |
 | 28 | Staff Accounts | ⬜ | |
 | 29 | Settings | ⬜ | |
