@@ -7,7 +7,7 @@ import {
   sampleSettings,
   sampleTables,
 } from '@/services/sampleData'
-import type { Order, OrderItem } from '@/types/db'
+import type { Order, OrderItem, OrderStatus } from '@/types/db'
 
 export type NewOrder = {
   table_id: number
@@ -102,10 +102,11 @@ export async function payOrder(order_id: number, qr_token: string): Promise<void
 export type StaffOrder = PublicOrder & { payment_method: 'cash' | 'online' | null }
 
 export async function listOrders(
-  filter: { payment_status?: 'paid' | 'unpaid' } = {},
+  filter: { payment_status?: 'paid' | 'unpaid'; status?: OrderStatus[] } = {},
 ): Promise<StaffOrder[]> {
   return sampleOrders
     .filter((o) => !filter.payment_status || o.payment_status === filter.payment_status)
+    .filter((o) => !filter.status || filter.status.includes(o.status))
     .sort((a, b) => b.created_at.localeCompare(a.created_at))
     .map((o) => ({
       ...toPublic(o),
@@ -138,4 +139,18 @@ export async function recordPayment(body: { order_id: number; amount: number }) 
   samplePayments.push(payment)
   order.payment_status = 'paid'
   return payment
+}
+
+const nextStatus: Partial<Record<OrderStatus, OrderStatus>> = {
+  received: 'preparing',
+  preparing: 'ready',
+  ready: 'served',
+}
+
+export async function updateOrderStatus(order_id: number, status: OrderStatus) {
+  const order = sampleOrders.find((o) => o.order_id === order_id)
+  if (!order) throw new Error('Order not found')
+  if (nextStatus[order.status] !== status) throw new Error('This order was already updated')
+  order.status = status
+  return toPublic(order)
 }

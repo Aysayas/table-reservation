@@ -119,6 +119,16 @@ Gentle and slow, so it never makes anyone dizzy. Made with Tailwind only (no mot
 - **Never:** parallax, fast or bouncing movement, anything else that moves on its own, or entrance animations that delay the content.
 - **Reduce motion:** every animation uses Tailwind's `motion-safe:`, so people who turn on "reduce motion" see everything at once with no movement.
 
+## Kitchen display
+
+Screen 18 is read from across the kitchen, so it uses bigger text and buttons than the other staff screens.
+
+- Charcoal header with the waiting-time chips: On time (green), 10+ min (gold), 15+ min (red). Each card's time chip uses the same colours.
+- Each column has a coloured top line and a round count: grey for Received, gold for Preparing, red for Ready.
+- Notes are red chips so the cook doesn't miss them.
+- Buttons get stronger as the order moves: outline Start Preparing, charcoal Mark Ready, red Mark Served.
+- Below 1024 px the columns stack.
+
 ## Photos
 
 - Stock photos only from free-licence sites (Unsplash, Pexels). Nothing copied from other restaurants' or hotels' sites.
