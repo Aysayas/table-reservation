@@ -45,7 +45,7 @@ Start with simple screens to learn, then the forms, then the bigger flows:
 | 20 | Menu Management | 🟦 | 1440 × 900. Search, All Categories filter, + Add Menu Item to 21, table with image (icon if none), name, category, price, Available switch, Edit to 21, Delete (asks first; an ordered dish shows the 409 message), 8 a page with Showing and page buttons |
 | 21 | Add / Edit Menu Item | 🟦 | 1440 × 900. `/admin/menu/new` and `/admin/menu/:id/edit`: Menu / Add (Edit) Menu Item breadcrumb, Item Name, Category, Price (₱), Description, Available and Show in Recommendations switches, Photo (drag or Upload Photo, JPG or PNG up to 2 MB, preview), Save Item and Cancel back to 20. Page title per route; Menu stays highlighted |
 | 22 | Categories | 🟦 | 1440 × 900. Table with Order, Category Name, Items (dish count) and Edit / Delete; Add Category card with Category Name, Display Order (next number filled in) and Save Category. Edit uses the same card (Edit Category, Cancel Edit). Names are unique; Delete asks first and keeps a category that still has dishes (the API's 409) |
-| 23 | Tables and QR Codes | ⬜ | |
+| 23 | Tables and QR Codes | 🟦 | 1440 × 900. "N tables", Print All QR, + Add Table; a card per table with its QR (`qrcode.react`, opens `/table/{id}?t={qr_token}`), seats, Download (PNG), Print (that table only), Edit, Delete. Add / Edit dialog with Table Number and Seats (unique number, 1–50, not below a booking); Delete asks first and keeps a table with orders or bookings |
 | 24 | Reservations | ⬜ | |
 | 25 | Order History | ⬜ | |
 | 26 | Payments | ⬜ | |
