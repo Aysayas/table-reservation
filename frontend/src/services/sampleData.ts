@@ -286,6 +286,78 @@ export const sampleCustomers: Customer[] = [
 ]
 
 const sampleToday = new Date().toLocaleDateString('en-CA')
+const daysAgo = (n: number) => {
+  const day = new Date()
+  day.setDate(day.getDate() - n)
+  return day.toLocaleDateString('en-CA')
+}
+
+const pastOrders = [
+  {
+    order_id: 5,
+    table_id: 3,
+    day: 1,
+    method: 'cash',
+    items: [
+      [41, 1, 450],
+      [16, 2, 35],
+    ],
+  },
+  {
+    order_id: 6,
+    table_id: 1,
+    day: 2,
+    method: 'online',
+    items: [
+      [50, 2, 325],
+      [16, 2, 35],
+    ],
+  },
+  {
+    order_id: 7,
+    table_id: 5,
+    day: 3,
+    method: 'cash',
+    items: [
+      [51, 1, 385],
+      [42, 1, 359],
+      [16, 3, 35],
+    ],
+  },
+  {
+    order_id: 8,
+    table_id: 6,
+    day: 4,
+    method: 'online',
+    items: [
+      [41, 2, 450],
+      [29, 2, 150],
+    ],
+  },
+  {
+    order_id: 9,
+    table_id: 4,
+    day: 5,
+    method: 'cash',
+    items: [
+      [50, 1, 325],
+      [29, 1, 150],
+    ],
+  },
+  {
+    order_id: 10,
+    table_id: 7,
+    day: 6,
+    method: 'online',
+    items: [
+      [51, 2, 385],
+      [16, 2, 35],
+      [41, 1, 450],
+    ],
+  },
+] as const
+const pastTotal = (items: (typeof pastOrders)[number]['items']) =>
+  items.reduce((sum: number, [, quantity, price]) => sum + quantity * price, 0)
 
 export const sampleReservations: Reservation[] = [
   {
@@ -381,6 +453,16 @@ export const sampleOrders: Order[] = [
     payment_status: 'paid',
     created_at: `${sampleToday}T13:10:00`,
   },
+  ...pastOrders.map((o): Order => ({
+    order_id: o.order_id,
+    table_id: o.table_id,
+    customer_id: null,
+    customer_name: null,
+    status: 'served',
+    total_amount: pastTotal(o.items),
+    payment_status: 'paid',
+    created_at: `${daysAgo(o.day)}T12:30:00`,
+  })),
 ]
 
 export const sampleOrderItems: OrderItem[] = [
@@ -397,6 +479,18 @@ export const sampleOrderItems: OrderItem[] = [
     unit_price: 325,
     notes: 'Extra calamansi',
   },
+  ...pastOrders
+    .flatMap((o) =>
+      o.items.map(([item_id, quantity, unit_price]) => ({ o, item_id, quantity, unit_price })),
+    )
+    .map(({ o, item_id, quantity, unit_price }, i): OrderItem => ({
+      order_item_id: 7 + i,
+      order_id: o.order_id,
+      item_id,
+      quantity,
+      unit_price,
+      notes: null,
+    })),
 ]
 
 export const samplePayments: Payment[] = [
@@ -411,6 +505,28 @@ export const samplePayments: Payment[] = [
     status: 'paid',
     paid_at: '2026-01-01T13:00:00',
   },
+  {
+    payment_id: 2,
+    order_id: 4,
+    reservation_id: null,
+    received_by: null,
+    method: 'online',
+    provider_reference: 'pay_sample_0004',
+    amount: 775,
+    status: 'paid',
+    paid_at: `${sampleToday}T13:40:00`,
+  },
+  ...pastOrders.map((o, i): Payment => ({
+    payment_id: 3 + i,
+    order_id: o.order_id,
+    reservation_id: null,
+    received_by: o.method === 'cash' ? 2 : null,
+    method: o.method,
+    provider_reference: o.method === 'online' ? `pay_sample_000${o.order_id}` : null,
+    amount: pastTotal(o.items),
+    status: 'paid',
+    paid_at: `${daysAgo(o.day)}T13:30:00`,
+  })),
 ]
 
 export const sampleUsers: User[] = [

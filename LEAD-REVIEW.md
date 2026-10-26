@@ -186,7 +186,8 @@ Claude adds an entry here when the frontend developer asks for something outside
   5. Pagination (pages 01–10) instead of the Popular and category sections the wireframe shows
 - Rule it bumps into: CLAUDE.md, each screen keeps the wireframe's labels, buttons, links, parts and data; (1) adds a flow, (2) and (3) add data that doesn't exist, (4) changes labels and removes the back button, (5) removes the sections
 - What Claude did instead: built the look with the wireframe's content: the back button, the title "Menu", search, category filter, the Popular section and one section per category, no add buttons
-- Status: Approved (partly)
+- Update (2026-10-25): she dropped (1) "Add to order" and (5) pagination after your question. Ordering stays in the QR flow (08–12), and the menu stays one scrolling page grouped by category with search, the category filter and Popular, as built in PR #79
+- Status: Answered: (2) price and existing-data tags, (4) breadcrumb approved; (1), (3), (5) dropped or declined
 - Lead note: (2026-10-25) (1) No, ordering stays in the QR flow. (2) Yes to the price range filter. Tag filters only from data we already have: "Best Seller" from `is_recommended` and category tags like "Seafood" from the categories. "Good for 3–4", "Pinoy" and "Spicy" need data the menu doesn't have yet, so leave them out until the lead adds it. (3) No, most taglines would be made up. (4) Yes, the "Home / Menu" breadcrumb and the title "Our Menu" with "Kain na!" (the ☰ menu still gets around, like About). (5) Yes to pagination, but first tell the lead in this entry why you want it instead of the Popular and category sections, and how Popular and the category filter will work with pages. Add tests for the filters and the pages.
 
 ### 2026-10-25: How should Reschedule work on screen 06?

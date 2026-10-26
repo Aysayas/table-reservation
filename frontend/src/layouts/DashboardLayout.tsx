@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { ChevronDown, LogOut } from 'lucide-react'
 import { useState } from 'react'
-import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
+import { Link, NavLink, Outlet, useLocation, useMatches } from 'react-router-dom'
 import { getMe } from '@/services/auth'
 import { getSettings } from '@/services/settings'
 import type { UserRole } from '@/types/db'
@@ -26,6 +26,9 @@ export default function DashboardLayout({ title, items }: Props) {
   const current = [...items]
     .sort((a, b) => b.to.length - a.to.length)
     .find((i) => pathname.startsWith(i.to))
+  const pageTitle = useMatches()
+    .map((m) => (m.handle as { title?: string } | undefined)?.title)
+    .findLast(Boolean)
   const words = settings?.restaurant_name.split(' ') ?? []
   const lastWord = words.pop()
   const initials = (me?.full_name ?? '')
@@ -58,7 +61,7 @@ export default function DashboardLayout({ title, items }: Props) {
             <NavLink
               key={item.to}
               to={item.to}
-              end
+              end={item.to.split('/').length === 2}
               className={({ isActive }) =>
                 `rounded-md px-3 py-2.5 text-sm font-semibold transition-colors duration-200 ${isActive ? 'bg-brand-red text-white' : 'text-white/75 hover:bg-white/10 hover:text-white'}`
               }
@@ -79,7 +82,7 @@ export default function DashboardLayout({ title, items }: Props) {
       <div className="min-w-0 flex-1">
         <header className="border-brand-line flex items-center justify-between border-b bg-white px-8 py-4 print:hidden">
           <h1 className="text-brand-charcoal font-serif text-3xl font-bold">
-            {current?.title ?? current?.label}
+            {pageTitle ?? current?.title ?? current?.label}
           </h1>
           <div className="relative">
             <button
