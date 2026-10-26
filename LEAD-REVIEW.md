@@ -208,8 +208,8 @@ Claude adds an entry here when the frontend developer asks for something outside
 - Status: Approved
 - Lead note: (2026-10-25) Both. Add the "Free table" button on occupied tables, shown only when the table has no order that is unserved or unpaid; it calls `PATCH /tables/{id}/status` with `available` (in the sample data until the API is live). Add a test for it. The lead will also make the backend free the table when its order is served and paid.
 
-### 2026-10-26: Six pull requests waiting for review
+### 2026-10-26: Two pull requests waiting for review
 - Level: ℹ️ for your information, nothing off plan
-- Notes: six of her pull requests are open. Four are stacked, so merging them in order keeps them free of conflicts: #103 (screen 19) → #105 (20) → #107 (21) → #108 (22). Two stand alone, made from `main`: #106 (Reschedule mode on 03, your decision on #75) and #109 (the screen 02 extras you approved). She will wait for some of these to be merged before starting screen 23, so the stack doesn't grow.
+- Notes: two of her pull requests are open, both made from `main`: #106 (Reschedule mode on 03, your decision on #75) and #109 (the screen 02 extras you approved). Both have your fixes: the `\s` space cleanup on #106, and the price slider reaching the top price on #109. Next is the fixed +63 mobile field in its own pull request. Screen 23 waits for your OK.
 - Status: Waiting for lead
 - Lead note:

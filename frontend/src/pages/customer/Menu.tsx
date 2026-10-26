@@ -190,7 +190,7 @@ export default function Menu() {
                   type="range"
                   min={lowest}
                   max={highest}
-                  step={5}
+                  step={1}
                   value={priceCap}
                   onChange={(e) => {
                     const value = Number(e.target.value)

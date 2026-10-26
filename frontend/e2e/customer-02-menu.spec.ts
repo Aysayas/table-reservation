@@ -87,3 +87,13 @@ test('the best seller tag shows only best sellers', async ({ page }) => {
   await tag.click()
   await expect(page.getByRole('heading', { name: 'Plain Rice' })).toBeVisible()
 })
+
+test('dragging max price fully right shows every dish again', async ({ page }) => {
+  await page.goto('/menu')
+  const slider = page.getByLabel('Max price')
+  await slider.fill('300')
+  await expect(page.getByRole('heading', { name: 'All Star Pizza Bundle' })).toHaveCount(0)
+  await slider.fill((await slider.getAttribute('max')) ?? '')
+  await expect(page.getByRole('heading', { name: 'All Star Pizza Bundle' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Clear filters' })).toHaveCount(0)
+})
