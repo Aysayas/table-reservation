@@ -116,7 +116,7 @@ export default function ReserveTable() {
     if (code) {
       try {
         await rescheduleReservation(code, {
-          mobile_number: values.mobile_number.replace(/s/g, ''),
+          mobile_number: values.mobile_number.replace(/\s/g, ''),
           reservation_date: values.reservation_date,
           reservation_time: values.reservation_time,
         })
