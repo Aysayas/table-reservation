@@ -37,3 +37,29 @@ export async function deleteMenuItem(item_id: number): Promise<void> {
     1,
   )
 }
+
+export type MenuItemInput = Omit<MenuItem, 'item_id' | 'image_url'>
+
+export async function createMenuItem(body: MenuItemInput): Promise<MenuItem> {
+  const item: MenuItem = {
+    ...body,
+    item_id: Math.max(0, ...sampleMenuItems.map((m) => m.item_id)) + 1,
+    image_url: null,
+  }
+  sampleMenuItems.push(item)
+  return { ...item }
+}
+
+export async function updateMenuItem(item_id: number, body: MenuItemInput): Promise<MenuItem> {
+  const item = findItem(item_id)
+  Object.assign(item, body)
+  return { ...item }
+}
+
+export async function uploadMenuImage(item_id: number, photo: File): Promise<MenuItem> {
+  if (!['image/jpeg', 'image/png'].includes(photo.type)) throw new Error('Use a JPG or PNG photo')
+  if (photo.size > 2 * 1024 * 1024) throw new Error('Use a photo up to 2 MB')
+  const item = findItem(item_id)
+  item.image_url = URL.createObjectURL(photo)
+  return { ...item }
+}
