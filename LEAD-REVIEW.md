@@ -208,8 +208,10 @@ Claude adds an entry here when the frontend developer asks for something outside
 - Status: Approved
 - Lead note: (2026-10-25) Both. Add the "Free table" button on occupied tables, shown only when the table has no order that is unserved or unpaid; it calls `PATCH /tables/{id}/status` with `available` (in the sample data until the API is live). Add a test for it. The lead will also make the backend free the table when its order is served and paid.
 
-### 2026-10-26: Two pull requests waiting for review
-- Level: ℹ️ for your information, nothing off plan
-- Notes: two of her pull requests are open, both made from `main`: #106 (Reschedule mode on 03, your decision on #75) and #109 (the screen 02 extras you approved). Both have your fixes: the `\s` space cleanup on #106, and the price slider reaching the top price on #109. Next is the fixed +63 mobile field in its own pull request. Screen 23 waits for your OK.
+### 2026-10-26: Two questions about screen 24 Reservations
+- Level: ℹ️ question, nothing off plan
+- Notes:
+  1. The wireframe's Reservation Settings card has "Opening Time for Booking", but `docs/api.md` has no such setting. Booking times come from the opening hours (`PUT /opening-hours`, edited on screen 29). For now the field shows today's opening time, can't be changed, and links to Settings ("Set the hours in Settings"). Is that right, or should the API get its own booking opening time?
+  2. `docs/api.md` lists `PUT /reservations/{id}` (admin edit of date, time, guests and table) for screen 24, but the wireframe has no Edit button or row action. Should screen 24 get an Edit for each booking, or is the edit for later?
 - Status: Waiting for lead
 - Lead note:

@@ -5,6 +5,7 @@ import AdminDashboard from '@/pages/admin/AdminDashboard'
 import Categories from '@/pages/admin/Categories'
 import MenuItemForm from '@/pages/admin/MenuItemForm'
 import MenuManagement from '@/pages/admin/MenuManagement'
+import Reservations from '@/pages/admin/Reservations'
 import TablesQr from '@/pages/admin/TablesQr'
 import Placeholder from '@/pages/Placeholder'
 import About from '@/pages/customer/About'
@@ -97,7 +98,7 @@ export const router = createBrowserRouter([
       },
       { path: 'categories', element: <Categories /> },
       { path: 'tables', element: <TablesQr /> },
-      { path: 'reservations', element: <Placeholder screen="24" title="Reservations" /> },
+      { path: 'reservations', element: <Reservations /> },
       { path: 'orders', element: <Placeholder screen="25" title="Order History" /> },
       { path: 'payments', element: <Placeholder screen="26" title="Payments" /> },
       { path: 'reports', element: <Placeholder screen="27" title="Reports" /> },
