@@ -43,7 +43,7 @@ Start with simple screens to learn, then the forms, then the bigger flows:
 | 18 | Kitchen Display | 🟦 | 1440 × 900 (also stacks on tablet and phone). Received, Preparing and Ready columns with counts, order cards with table, order number, waiting time chip, items and notes, Start Preparing → Mark Ready → Mark Served, clock, Log Out (her kitchen design) |
 | 19 | Admin Dashboard | 🟦 | 1440 × 900. Sales Today, Orders Today, Reservations Today, No-show Rate, Sales (Last 7 Days) line chart (recharts), Best Sellers top 5, Recent Orders with View all to 25. Six past sample orders added for the chart |
 | 20 | Menu Management | 🟦 | 1440 × 900. Search, All Categories filter, + Add Menu Item to 21, table with image (icon if none), name, category, price, Available switch, Edit to 21, Delete (asks first; an ordered dish shows the 409 message), 8 a page with Showing and page buttons |
-| 21 | Add / Edit Menu Item | ⬜ | |
+| 21 | Add / Edit Menu Item | 🟦 | 1440 × 900. `/admin/menu/new` and `/admin/menu/:id/edit`: Menu / Add (Edit) Menu Item breadcrumb, Item Name, Category, Price (₱), Description, Available and Show in Recommendations switches, Photo (drag or Upload Photo, JPG or PNG up to 2 MB, preview), Save Item and Cancel back to 20. Page title per route; Menu stays highlighted |
 | 22 | Categories | ⬜ | |
 | 23 | Tables and QR Codes | ⬜ | |
 | 24 | Reservations | ⬜ | |
