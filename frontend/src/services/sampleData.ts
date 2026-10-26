@@ -576,7 +576,7 @@ export const sampleSettings: RestaurantSettings = {
   email: 'venciosgarden@yahoo.com',
   facebook_url: 'https://www.facebook.com/venciosgardenhotel',
   logo_url: null,
-  deposit_per_guest: 0,
+  deposit_per_guest: 100,
   service_charge_percent: 0,
   slot_minutes: 60,
   max_pax: 10,

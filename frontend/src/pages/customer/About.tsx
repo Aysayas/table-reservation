@@ -53,7 +53,7 @@ export default function About() {
       >
         <div className="absolute inset-y-0 right-0 w-full md:w-[70%]">
           <img
-            src="/photos/vencios-building.png"
+            src="/photos/vencios-building.jpg"
             alt="Vencio's Garden Hotel and Restaurant building"
             className="h-full w-full object-cover opacity-30 md:[mask-image:linear-gradient(to_right,transparent,rgb(0_0_0/0.45)_35%,black_75%)] md:opacity-90"
           />
@@ -137,7 +137,7 @@ export default function About() {
         </div>
         <div className="group mt-10 overflow-hidden rounded-lg md:mt-0">
           <img
-            src="/photos/vencios-counter.png"
+            src="/photos/vencios-counter.jpg"
             alt="Vencio's Garden counter"
             className="h-72 w-full object-cover motion-safe:transition-transform motion-safe:duration-700 motion-safe:group-hover:scale-105 md:h-[26rem]"
           />

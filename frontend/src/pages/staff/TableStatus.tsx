@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 import { toast } from 'sonner'
 import { formatTime } from '@/lib/hours'
 import { updateReservationStatus } from '@/services/reservations'
-import { getTables } from '@/services/tables'
+import { getTables, setTableStatus } from '@/services/tables'
 import type { TableStatus as Status } from '@/types/db'
 
 const peso = (amount: number) =>
@@ -46,6 +46,17 @@ export default function TableStatus() {
     onSuccess: (r) => {
       toast.success(`${r.reference_code} arrived at ${r.table_number}`)
       for (const key of ['tables', 'reservations', 'dashboard']) {
+        queryClient.invalidateQueries({ queryKey: [key] })
+      }
+    },
+    onError: (e) => toast.error(e.message),
+  })
+
+  const free = useMutation({
+    mutationFn: (table_id: number) => setTableStatus(table_id, 'available'),
+    onSuccess: (t) => {
+      toast.success(`${t.table_number} is now available`)
+      for (const key of ['tables', 'dashboard']) {
         queryClient.invalidateQueries({ queryKey: [key] })
       }
     },
@@ -116,7 +127,17 @@ export default function TableStatus() {
                     </Link>
                   </>
                 ) : (
-                  <p className="text-brand-ink/60 mb-auto">Guests seated, no order yet</p>
+                  <>
+                    <p className="text-brand-ink/60 mb-auto">No unpaid or unserved order</p>
+                    <button
+                      type="button"
+                      disabled={free.isPending}
+                      onClick={() => free.mutate(t.table_id)}
+                      className={cardButton}
+                    >
+                      Free Table
+                    </button>
+                  </>
                 ))}
 
               {t.status === 'reserved' &&
