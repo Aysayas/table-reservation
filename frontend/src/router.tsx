@@ -2,6 +2,7 @@ import { createBrowserRouter } from 'react-router-dom'
 import CustomerLayout from '@/layouts/CustomerLayout'
 import DashboardLayout, { type NavItem } from '@/layouts/DashboardLayout'
 import AdminDashboard from '@/pages/admin/AdminDashboard'
+import Categories from '@/pages/admin/Categories'
 import MenuItemForm from '@/pages/admin/MenuItemForm'
 import MenuManagement from '@/pages/admin/MenuManagement'
 import Placeholder from '@/pages/Placeholder'
@@ -93,7 +94,7 @@ export const router = createBrowserRouter([
         element: <MenuItemForm />,
         handle: { title: 'Edit Menu Item' },
       },
-      { path: 'categories', element: <Placeholder screen="22" title="Categories" /> },
+      { path: 'categories', element: <Categories /> },
       { path: 'tables', element: <Placeholder screen="23" title="Tables and QR Codes" /> },
       { path: 'reservations', element: <Placeholder screen="24" title="Reservations" /> },
       { path: 'orders', element: <Placeholder screen="25" title="Order History" /> },
