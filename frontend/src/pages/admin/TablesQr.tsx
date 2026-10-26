@@ -1,0 +1,309 @@
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { Plus, Printer } from 'lucide-react'
+import { QRCodeCanvas, QRCodeSVG } from 'qrcode.react'
+import { useState } from 'react'
+import { flushSync } from 'react-dom'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import { z } from 'zod'
+import { getSettings } from '@/services/settings'
+import {
+  createTable,
+  deleteTable,
+  getAdminTables,
+  updateTable,
+  type AdminTable,
+} from '@/services/tables'
+
+const label = 'text-brand-charcoal block text-sm font-bold'
+const field =
+  'border-brand-line focus:border-brand-gold mt-2 block w-full rounded-md border bg-white px-4 py-3 text-sm font-normal outline-none placeholder:text-brand-ink/50'
+const error = 'text-brand-red mt-1.5 text-xs'
+const outline =
+  'border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal rounded-md border py-2 text-sm font-bold transition-colors duration-200 hover:text-white'
+
+const schema = z.object({
+  table_number: z
+    .string()
+    .trim()
+    .min(1, 'Enter a table number')
+    .max(10, 'Use 10 characters or less'),
+  capacity: z
+    .number({ error: 'Enter the number of seats' })
+    .int('Use a whole number')
+    .min(1, 'At least 1 seat')
+    .max(50, 'At most 50 seats'),
+})
+
+type FormValues = z.infer<typeof schema>
+
+const orderLink = (t: AdminTable) => `${window.location.origin}/table/${t.table_id}?t=${t.qr_token}`
+
+export default function TablesQr() {
+  const queryClient = useQueryClient()
+  const [editing, setEditing] = useState<AdminTable | 'new' | null>(null)
+  const [deleting, setDeleting] = useState<AdminTable | null>(null)
+  const [printing, setPrinting] = useState<AdminTable[]>([])
+  const { data: tables = [] } = useQuery({ queryKey: ['tables', 'admin'], queryFn: getAdminTables })
+  const { data: settings } = useQuery({ queryKey: ['settings'], queryFn: getSettings })
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<FormValues>({
+    resolver: zodResolver(schema),
+    values:
+      editing && editing !== 'new'
+        ? { table_number: editing.table_number, capacity: editing.capacity }
+        : { table_number: '', capacity: 4 },
+  })
+
+  const refresh = () => queryClient.invalidateQueries({ queryKey: ['tables'] })
+
+  const onSubmit = async (values: FormValues) => {
+    try {
+      const saved =
+        editing && editing !== 'new'
+          ? await updateTable(editing.table_id, values)
+          : await createTable(values)
+      toast.success(`Table ${saved.table_number} saved`)
+      setEditing(null)
+      refresh()
+    } catch (e) {
+      toast.error((e as Error).message)
+    }
+  }
+
+  const remove = useMutation({
+    mutationFn: (t: AdminTable) => deleteTable(t.table_id),
+    onSuccess: (_, t) => {
+      toast.success(`Table ${t.table_number} deleted`)
+      refresh()
+    },
+    onError: (e) => toast.error(e.message),
+    onSettled: () => setDeleting(null),
+  })
+
+  const download = (t: AdminTable) => {
+    const canvas = document.getElementById(`qr-${t.table_id}`) as HTMLCanvasElement | null
+    if (!canvas) return
+    const link = document.createElement('a')
+    link.href = canvas.toDataURL('image/png')
+    link.download = `table-${t.table_number}-qr.png`
+    link.click()
+  }
+
+  const print = (list: AdminTable[]) => {
+    flushSync(() => setPrinting(list))
+    window.print()
+  }
+
+  return (
+    <div>
+      <div className="flex flex-wrap items-center gap-3 print:hidden">
+        <p className="text-brand-ink/70 text-sm">{tables.length} tables</p>
+        <button
+          type="button"
+          onClick={() => print(tables)}
+          className={`${outline} ml-auto flex items-center gap-2 px-5`}
+        >
+          <Printer className="size-4" />
+          Print All QR
+        </button>
+        <button
+          type="button"
+          onClick={() => setEditing('new')}
+          className="bg-brand-red hover:bg-brand-red/90 flex items-center gap-2 rounded-md px-5 py-2 text-sm font-bold text-white transition-colors duration-200"
+        >
+          <Plus className="size-4" />
+          Add Table
+        </button>
+      </div>
+
+      <ul className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 print:hidden">
+        {tables.map((t) => (
+          <li
+            key={t.table_id}
+            aria-label={`Table ${t.table_number}`}
+            className="border-brand-line rounded-lg border bg-white p-5"
+          >
+            <div className="bg-brand-cream/60 flex justify-center rounded-md p-4">
+              <QRCodeSVG
+                value={orderLink(t)}
+                size={144}
+                marginSize={2}
+                role="img"
+                aria-label={`QR code for ${orderLink(t)}`}
+                className="bg-white"
+              />
+              <QRCodeCanvas
+                id={`qr-${t.table_id}`}
+                value={orderLink(t)}
+                size={512}
+                marginSize={2}
+                aria-hidden="true"
+                className="hidden"
+              />
+            </div>
+            <div className="mt-4 flex items-baseline justify-between gap-3">
+              <p className="text-brand-charcoal font-serif text-xl font-bold">
+                Table {t.table_number}
+              </p>
+              <p className="text-brand-ink/60 text-xs">{t.capacity} seats</p>
+            </div>
+            <div className="mt-4 grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                aria-label={`Download Table ${t.table_number} QR`}
+                onClick={() => download(t)}
+                className={outline}
+              >
+                Download
+              </button>
+              <button
+                type="button"
+                aria-label={`Print Table ${t.table_number} QR`}
+                onClick={() => print([t])}
+                className={outline}
+              >
+                Print
+              </button>
+            </div>
+            <div className="mt-4 flex justify-between text-sm font-bold">
+              <button
+                type="button"
+                aria-label={`Edit Table ${t.table_number}`}
+                onClick={() => setEditing(t)}
+                className="text-brand-charcoal hover:text-brand-red"
+              >
+                Edit
+              </button>
+              <button
+                type="button"
+                aria-label={`Delete Table ${t.table_number}`}
+                onClick={() => setDeleting(t)}
+                className="text-brand-ink/50 hover:text-brand-red"
+              >
+                Delete
+              </button>
+            </div>
+          </li>
+        ))}
+      </ul>
+
+      <div className="hidden print:block">
+        {printing.map((t) => (
+          <section
+            key={t.table_id}
+            aria-label={`Printed QR for Table ${t.table_number}`}
+            className="flex h-[90vh] break-after-page flex-col items-center justify-center text-center text-black"
+          >
+            <p className="font-serif text-3xl font-bold">{settings?.restaurant_name}</p>
+            <QRCodeSVG value={orderLink(t)} size={320} marginSize={2} className="mt-8" />
+            <p className="mt-8 font-serif text-5xl font-bold">Table {t.table_number}</p>
+            <p className="mt-3 text-xl">Scan to order</p>
+          </section>
+        ))}
+      </div>
+
+      {editing && (
+        <div className="fixed inset-0 z-30 flex items-center justify-center bg-black/40 p-4 print:hidden">
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="table-form-title"
+            className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl"
+          >
+            <h2 id="table-form-title" className="text-brand-charcoal font-serif text-2xl font-bold">
+              {editing === 'new' ? 'Add Table' : `Edit Table ${editing.table_number}`}
+            </h2>
+            <form noValidate onSubmit={handleSubmit(onSubmit)} className="mt-5 space-y-5">
+              <div>
+                <label htmlFor="table_number" className={label}>
+                  Table Number
+                </label>
+                <input
+                  id="table_number"
+                  placeholder="e.g. T9"
+                  aria-invalid={!!errors.table_number}
+                  {...register('table_number')}
+                  className={field}
+                />
+                {errors.table_number && <p className={error}>{errors.table_number.message}</p>}
+              </div>
+              <div>
+                <label htmlFor="capacity" className={label}>
+                  Seats
+                </label>
+                <input
+                  id="capacity"
+                  type="number"
+                  min="1"
+                  max="50"
+                  step="1"
+                  aria-invalid={!!errors.capacity}
+                  {...register('capacity', { valueAsNumber: true })}
+                  className={field}
+                />
+                {errors.capacity && <p className={error}>{errors.capacity.message}</p>}
+              </div>
+              <div className="flex justify-end gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setEditing(null)}
+                  className="border-brand-line text-brand-charcoal rounded-md border px-4 py-2 text-sm font-bold"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="bg-brand-red hover:bg-brand-red/90 rounded-md px-4 py-2 text-sm font-bold text-white disabled:opacity-50"
+                >
+                  Save Table
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {deleting && (
+        <div className="fixed inset-0 z-30 flex items-center justify-center bg-black/40 p-4 print:hidden">
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="delete-title"
+            className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl"
+          >
+            <h2 id="delete-title" className="text-brand-charcoal font-serif text-2xl font-bold">
+              Delete Table {deleting.table_number}?
+            </h2>
+            <p className="text-brand-ink/70 mt-2 text-sm">
+              Its QR code will stop working. This can&apos;t be undone.
+            </p>
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setDeleting(null)}
+                className="border-brand-line text-brand-charcoal rounded-md border px-4 py-2 text-sm font-bold"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={remove.isPending}
+                onClick={() => remove.mutate(deleting)}
+                className="bg-brand-red hover:bg-brand-red/90 rounded-md px-4 py-2 text-sm font-bold text-white disabled:opacity-50"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}

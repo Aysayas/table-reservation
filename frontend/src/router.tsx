@@ -6,6 +6,7 @@ import Categories from '@/pages/admin/Categories'
 import MenuItemForm from '@/pages/admin/MenuItemForm'
 import MenuManagement from '@/pages/admin/MenuManagement'
 import OrderHistory from '@/pages/admin/OrderHistory'
+import TablesQr from '@/pages/admin/TablesQr'
 import Placeholder from '@/pages/Placeholder'
 import About from '@/pages/customer/About'
 import Cart from '@/pages/customer/Cart'
@@ -96,7 +97,7 @@ export const router = createBrowserRouter([
         handle: { title: 'Edit Menu Item' },
       },
       { path: 'categories', element: <Categories /> },
-      { path: 'tables', element: <Placeholder screen="23" title="Tables and QR Codes" /> },
+      { path: 'tables', element: <TablesQr /> },
       { path: 'reservations', element: <Placeholder screen="24" title="Reservations" /> },
       { path: 'orders', element: <OrderHistory /> },
       { path: 'payments', element: <Placeholder screen="26" title="Payments" /> },
