@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { ArrowLeft, Minus, Plus, UtensilsCrossed } from 'lucide-react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
-import { getMenuItems } from '@/services/menu'
+import { getMenuItems, getRecommendations } from '@/services/menu'
 import { getSettings } from '@/services/settings'
 import { cartTotal, useCart } from '@/stores/cart'
 import type { MenuItem } from '@/types/db'
@@ -38,11 +38,11 @@ export default function Cart() {
 
   const subtotal = cartTotal(lines)
   const serviceCharge = Math.round(subtotal * (settings?.service_charge_percent ?? 0)) / 100
-  const suggestions = items
-    .filter(
-      (i) => i.is_recommended && i.is_available && !lines.some((l) => l.item_id === i.item_id),
-    )
-    .slice(0, 2)
+  const cartIds = lines.map((l) => l.item_id)
+  const { data: suggestions = [] } = useQuery({
+    queryKey: ['recommendations', cartIds],
+    queryFn: () => getRecommendations(cartIds, 2),
+  })
   const itemFor = (id: number) => items.find((i) => i.item_id === id)
 
   return (

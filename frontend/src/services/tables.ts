@@ -80,3 +80,10 @@ export async function getTables(status?: TableStatus): Promise<StaffTable[]> {
       }
     })
 }
+
+export async function setTableStatus(table_id: number, status: TableStatus) {
+  const table = sampleTables.find((t) => t.table_id === table_id)
+  if (!table) throw new Error('Table not found')
+  table.status = status
+  return { ...table }
+}
