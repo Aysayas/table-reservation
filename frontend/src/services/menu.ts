@@ -115,3 +115,22 @@ export async function uploadMenuImage(item_id: number, photo: File): Promise<Men
   item.image_url = URL.createObjectURL(photo)
   return { ...item }
 }
+
+export async function getRecommendations(item_ids: number[] = [], limit = 4): Promise<MenuItem[]> {
+  const categories = new Set(
+    sampleMenuItems.filter((m) => item_ids.includes(m.item_id)).map((m) => m.category_id),
+  )
+  return sampleMenuItems
+    .filter(
+      (m) =>
+        m.is_available &&
+        !item_ids.includes(m.item_id) &&
+        (categories.has(m.category_id) || m.is_recommended),
+    )
+    .sort(
+      (a, b) =>
+        Number(categories.has(b.category_id)) - Number(categories.has(a.category_id)) ||
+        Number(b.is_recommended) - Number(a.is_recommended),
+    )
+    .slice(0, limit)
+}

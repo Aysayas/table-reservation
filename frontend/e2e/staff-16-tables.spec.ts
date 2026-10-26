@@ -44,3 +44,17 @@ test('view order opens orders and payments for that order', async ({ page }) => 
     .click()
   await expect(page).toHaveURL('/staff/orders?order=1')
 })
+
+test('free table shows only when nothing is left to serve or pay, and frees the table', async ({
+  page,
+}) => {
+  await page.goto(url)
+  const t2 = page.getByRole('listitem', { name: 'Table T2' })
+  await expect(t2.getByRole('button', { name: 'Free Table' })).toHaveCount(0)
+  const t1 = page.getByRole('listitem', { name: 'Table T1' })
+  await expect(t1).toContainText('No unpaid or unserved order')
+  await t1.getByRole('button', { name: 'Free Table' }).click()
+  await expect(page.getByText('T1 is now available')).toBeVisible()
+  await expect(t1).toContainText('Ready for guests')
+  await expect(page.getByRole('button', { name: 'Available (2)' })).toBeVisible()
+})

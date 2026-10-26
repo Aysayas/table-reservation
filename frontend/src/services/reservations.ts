@@ -260,3 +260,56 @@ export async function updateReservationStatus(
   }
   return toStaff(r)
 }
+
+export type ReservationEdit = {
+  reservation_date: string
+  reservation_time: string
+  pax: number
+  table_id: number | null
+}
+
+export async function updateReservation(
+  reservation_id: number,
+  body: ReservationEdit,
+): Promise<PublicReservation> {
+  const r = sampleReservations.find((x) => x.reservation_id === reservation_id)
+  if (!r) throw new Error('Reservation not found')
+  if (r.status !== 'pending' && r.status !== 'confirmed') {
+    throw new Error('Only pending or confirmed bookings can be edited')
+  }
+  if (body.reservation_date < format(new Date(), 'yyyy-MM-dd')) {
+    throw new Error('Choose today or a later date')
+  }
+  const biggest = Math.max(...sampleTables.map((t) => t.capacity))
+  if (body.pax < 1 || body.pax > Math.min(sampleSettings.max_pax, biggest)) {
+    throw new Error(`Guests must be 1 to ${Math.min(sampleSettings.max_pax, biggest)}`)
+  }
+  const slots = await getAvailability(body.reservation_date, body.pax)
+  if (!slots.some((s) => s.time === body.reservation_time)) {
+    throw new Error('That time is not open on this day')
+  }
+  const others = sampleReservations.filter(
+    (x) =>
+      x.reservation_id !== r.reservation_id &&
+      x.reservation_date === body.reservation_date &&
+      x.reservation_time === body.reservation_time &&
+      (x.status === 'pending' || x.status === 'confirmed'),
+  )
+  if (others.length >= sampleTables.filter((t) => t.capacity >= body.pax).length) {
+    throw new Error('That time is fully booked')
+  }
+  const table =
+    body.table_id === null ? null : sampleTables.find((t) => t.table_id === body.table_id)
+  if (body.table_id !== null && !table) throw new Error('Table not found')
+  if (table && table.capacity < body.pax)
+    throw new Error('That table is too small for this booking')
+  if (table && others.some((x) => x.table_id === table.table_id)) {
+    throw new Error('That table is already booked at this time')
+  }
+
+  const old = sampleTables.find((t) => t.table_id === r.table_id)
+  if (old && old.table_id !== table?.table_id && old.status === 'reserved') old.status = 'available'
+  if (table && table.status === 'available') table.status = 'reserved'
+  Object.assign(r, body)
+  return toStaff(r)
+}

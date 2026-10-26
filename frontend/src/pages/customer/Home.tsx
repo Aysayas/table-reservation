@@ -134,7 +134,7 @@ export default function Home() {
         </div>
         <div className="group mt-10 overflow-hidden rounded-lg md:mt-0">
           <img
-            src="/photos/vencios-dining.png"
+            src="/photos/vencios-dining.jpg"
             alt="Vencio's Garden dining room"
             className={`h-64 w-full object-cover md:h-80 ${zoom}`}
           />

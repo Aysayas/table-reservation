@@ -144,13 +144,12 @@ Screen 18 is read from across the kitchen, so it uses bigger text and buttons th
 | File | Source (link) | Licence |
 |---|---|---|
 | `logo.png` | Vencio's Garden Hotel & Restaurant official Facebook page ([facebook.com/venciosgardenhotel](https://www.facebook.com/venciosgardenhotel)) | The restaurant's own logo |
-| `photos/stock-dining.jpg` | [Pexels: Empty Tables in Restaurant, by Sander Dalhuisen](https://www.pexels.com/photo/empty-tables-in-restaurant-2566030/) | Pexels licence (free to use). Stock photo of another restaurant, not Vencio's Garden. No longer used since the restaurant's own photos below |
-| `photos/vencios-dining.png` | Vencio's Garden Hotel & Restaurant official Facebook page ([facebook.com/venciosgardenhotel](https://www.facebook.com/venciosgardenhotel)) | The restaurant's own photo, used with its permission. No guests. Home, Our Story block |
+| `photos/vencios-dining.jpg` | Vencio's Garden Hotel & Restaurant official Facebook page ([facebook.com/venciosgardenhotel](https://www.facebook.com/venciosgardenhotel)) | The restaurant's own photo, used with its permission. No guests. Home, Our Story block |
 | `photos/stock-sisig.jpg` | [Pexels: Cooked meat on black cast iron cookware, by Eiliv Aceron](https://www.pexels.com/photo/cooked-meat-on-black-cast-iron-cookware-6896281/) | Pexels licence (free to use). Stock photo, not Vencio's Garden's own dish. Home hero; dark background to match the site |
 | `photos/stock-dish-sisig.jpg` | [Pexels: Sizzling sisig with steamed rice on hotplate, by Mark John Hilario](https://www.pexels.com/photo/sizzling-sisig-with-steamed-rice-on-hotplate-30355484/) | Pexels licence. Stock photo for Sizzling Sisig (Popular Dishes and the menus), not the restaurant's own dish |
 | `photos/stock-dish-kare-kare.jpg` | [Pexels: Kare-kare, by Aril Alejandro](https://www.pexels.com/photo/kare-kare-27313072/) | Pexels licence. Stock photo for Crispy Pork Kare-Kare (Popular Dishes and the menus), not the restaurant's own dish. Relyenong Bangus and Chicken Tinupig have no fitting Pexels or Unsplash photo, so they keep the icon |
-| `photos/vencios-building.png` | Vencio's Garden Hotel & Restaurant official Facebook page ([facebook.com/venciosgardenhotel](https://www.facebook.com/venciosgardenhotel)) | The restaurant's own photo, used with its permission. No guests. About hero, faded on the right (1280 × 960) |
-| `photos/vencios-counter.png` | Vencio's Garden Hotel & Restaurant official Facebook page ([facebook.com/venciosgardenhotel](https://www.facebook.com/venciosgardenhotel)) | The restaurant's own photo, used with its permission. No recognisable guests. About, Our Story block |
+| `photos/vencios-building.jpg` | Vencio's Garden Hotel & Restaurant official Facebook page ([facebook.com/venciosgardenhotel](https://www.facebook.com/venciosgardenhotel)) | The restaurant's own photo, used with its permission. No guests. About hero, faded on the right (1280 × 960) |
+| `photos/vencios-counter.jpg` | Vencio's Garden Hotel & Restaurant official Facebook page ([facebook.com/venciosgardenhotel](https://www.facebook.com/venciosgardenhotel)) | The restaurant's own photo, used with its permission. No recognisable guests. About, Our Story block |
 
 ## Do and don't
 
