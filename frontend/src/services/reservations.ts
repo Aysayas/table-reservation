@@ -133,6 +133,25 @@ export async function cancelReservation(
   return getReservationByCode(code)
 }
 
+export async function rescheduleReservation(
+  code: string,
+  body: { mobile_number: string; reservation_date: string; reservation_time: string },
+): Promise<PublicReservation | undefined> {
+  const reservation = ownedBy(code, body.mobile_number)
+  if (!reservation) throw new Error('Reservation not found')
+  if (reservation.status !== 'pending' && reservation.status !== 'confirmed') {
+    throw new Error('This reservation can no longer be rescheduled')
+  }
+  const slots = await getAvailability(body.reservation_date, reservation.pax)
+  if (!slots.some((s) => s.time === body.reservation_time && s.available)) {
+    throw new Error('That time is no longer available')
+  }
+  reservation.reservation_date = body.reservation_date
+  reservation.reservation_time = body.reservation_time
+  reservation.table_id = null
+  return getReservationByCode(code)
+}
+
 export type ReservationView = 'today' | 'upcoming' | 'past' | 'cancelled'
 
 export type ReservationFilter = {

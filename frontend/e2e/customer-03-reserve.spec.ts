@@ -75,3 +75,35 @@ test('a full form continues to the deposit page', async ({ page }) => {
   await page.getByRole('button', { name: 'Continue to Deposit' }).click()
   await expect(page).toHaveURL(/\/reserve\/payment\?code=RSV-[A-Z0-9]{6}$/)
 })
+
+test('reschedule mode shows the code and keeps the booking guests', async ({ page }) => {
+  await page.goto('/reserve?reschedule=RSV-000001')
+  await expect(page.getByRole('heading', { name: 'Reschedule RSV-000001' })).toBeVisible()
+  await expect(page.getByRole('group', { name: 'Number of Guests' })).toContainText('4')
+  await expect(page.getByRole('button', { name: 'More guests' })).toBeDisabled()
+  await expect(page.getByLabel('Full Name')).toBeHidden()
+  await expect(page.getByLabel('Mobile Number')).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Confirm New Time' })).toBeVisible()
+})
+
+test('rescheduling moves the booking and opens its confirmation', async ({ page }) => {
+  await page.goto('/reserve?reschedule=RSV-000001')
+  await page.getByLabel('Date').fill(date)
+  await page.getByRole('button', { name: '7:00 PM' }).click()
+  await page.getByLabel('Mobile Number').fill('09000000000')
+  await page.getByRole('button', { name: 'Confirm New Time' }).click()
+  await expect(page.getByText('Your reservation was moved')).toBeVisible()
+  await expect(page).toHaveURL('/reserve/confirmation/RSV-000001')
+  await expect(page.getByText('Dec 1, ' + nextYear)).toBeVisible()
+  await expect(page.getByText('7:00 PM')).toBeVisible()
+})
+
+test('rescheduling with the wrong mobile number shows an error', async ({ page }) => {
+  await page.goto('/reserve?reschedule=RSV-000001')
+  await page.getByLabel('Date').fill(date)
+  await page.getByRole('button', { name: '7:00 PM' }).click()
+  await page.getByLabel('Mobile Number').fill('09111111111')
+  await page.getByRole('button', { name: 'Confirm New Time' }).click()
+  await expect(page.getByText('Reservation not found')).toBeVisible()
+  await expect(page).toHaveURL('/reserve?reschedule=RSV-000001')
+})
