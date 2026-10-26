@@ -49,7 +49,7 @@ Start with simple screens to learn, then the forms, then the bigger flows:
 | 24 | Reservations | ⬜ | |
 | 25 | Order History | ⬜ | |
 | 26 | Payments | ⬜ | |
-| 27 | Reports | ⬜ | |
+| 27 | Reports | 🟦 | 1440 × 900. Daily / Weekly / Monthly with From – To (defaults: 7 days, 8 weeks, 6 months), Export PDF (print, report only); Sales Over Time line chart, Best-Selling Items top 10, Reservations per Day, Summary (Total Sales, Total Orders, Average Order Value, Reservations, No-shows, Busiest Hour) |
 | 28 | Staff Accounts | ⬜ | |
 | 29 | Settings | ⬜ | |
 
