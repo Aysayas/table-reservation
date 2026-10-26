@@ -4,10 +4,18 @@ import { format } from 'date-fns'
 import { ArrowLeft, Minus, Plus } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { toast } from 'sonner'
 import { z } from 'zod'
+import MobileInput from '@/components/MobileInput'
 import { formatTime } from '@/lib/hours'
-import { createReservation, getAvailability } from '@/services/reservations'
+import { cleanMobile, mobileSchema, toLocalMobile } from '@/lib/mobile'
+import {
+  createReservation,
+  getAvailability,
+  getReservationByCode,
+  rescheduleReservation,
+} from '@/services/reservations'
 import { getSettings } from '@/services/settings'
 
 const label = 'text-brand-charcoal text-xs font-bold tracking-[0.15em] uppercase'
@@ -28,12 +36,7 @@ const schema = z.object({
     .trim()
     .min(1, 'Enter your full name')
     .max(100, 'Use 100 characters or less'),
-  mobile_number: z
-    .string()
-    .refine(
-      (v) => /^09\d{9}$/.test(v.replace(/\s/g, '')),
-      'Enter a mobile number like 0912 345 6789',
-    ),
+  mobile_number: mobileSchema,
   email: z
     .string()
     .trim()
@@ -46,6 +49,13 @@ type FormValues = z.infer<typeof schema>
 export default function ReserveTable() {
   const navigate = useNavigate()
   const [params] = useSearchParams()
+  const { state } = useLocation()
+  const code = params.get('reschedule')
+  const { data: booking } = useQuery({
+    queryKey: ['reservation', code],
+    queryFn: () => getReservationByCode(code ?? ''),
+    enabled: !!code,
+  })
   const [today] = useState(() => format(new Date(), 'yyyy-MM-dd'))
   const { data: settings } = useQuery({ queryKey: ['settings'], queryFn: getSettings })
   const maxPax = settings?.max_pax ?? 10
@@ -64,7 +74,7 @@ export default function ReserveTable() {
       pax: Math.max(1, Math.floor(Number(params.get('pax'))) || 2),
       reservation_time: timeParam.length === 5 ? `${timeParam}:00` : timeParam,
       full_name: '',
-      mobile_number: '',
+      mobile_number: cleanMobile((state as { mobile_number?: string } | null)?.mobile_number ?? ''),
       email: '',
       special_request: '',
     },
@@ -90,13 +100,33 @@ export default function ReserveTable() {
     if (pax > maxPax) setValue('pax', maxPax)
   }, [pax, maxPax, setValue])
 
+  useEffect(() => {
+    if (!booking) return
+    setValue('pax', booking.pax)
+    setValue('full_name', booking.customer.full_name)
+  }, [booking, setValue])
+
   const setPax = (value: number) =>
     setValue('pax', Math.min(maxPax, Math.max(1, value)), { shouldValidate: true })
 
   const onSubmit = async (values: FormValues) => {
+    if (code) {
+      try {
+        await rescheduleReservation(code, {
+          mobile_number: toLocalMobile(values.mobile_number),
+          reservation_date: values.reservation_date,
+          reservation_time: values.reservation_time,
+        })
+        toast.success('Your reservation was moved')
+        navigate(`/reserve/confirmation/${code}`)
+      } catch (e) {
+        toast.error((e as Error).message)
+      }
+      return
+    }
     const reservation = await createReservation({
       ...values,
-      mobile_number: values.mobile_number.replace(/\s/g, ''),
+      mobile_number: toLocalMobile(values.mobile_number),
       email: values.email || null,
       special_request: values.special_request || null,
     })
@@ -115,10 +145,24 @@ export default function ReserveTable() {
           >
             <ArrowLeft className="size-5" />
           </button>
-          <h1 className="text-brand-charcoal font-serif text-3xl md:text-4xl">Reserve a Table</h1>
+          <h1 className="text-brand-charcoal font-serif text-3xl md:text-4xl">
+            {code ? (
+              <>
+                Reschedule <span className="whitespace-nowrap">{code}</span>
+              </>
+            ) : (
+              'Reserve a Table'
+            )}
+          </h1>
         </div>
 
-        <ol className="mt-8 flex items-start">
+        {code && (
+          <p className="text-brand-ink/70 mt-4 text-sm">
+            Pick a new date and time. Your guests and deposit stay the same.
+          </p>
+        )}
+
+        <ol className={`mt-8 flex items-start ${code ? 'hidden' : ''}`}>
           {steps.map((step, index) => (
             <li
               key={step}
@@ -175,7 +219,7 @@ export default function ReserveTable() {
                   <button
                     type="button"
                     aria-label="Fewer guests"
-                    disabled={pax <= 1}
+                    disabled={!!code || pax <= 1}
                     onClick={() => setPax(pax - 1)}
                     className="text-brand-charcoal hover:text-brand-red flex size-11 items-center justify-center disabled:opacity-40"
                   >
@@ -190,7 +234,7 @@ export default function ReserveTable() {
                   <button
                     type="button"
                     aria-label="More guests"
-                    disabled={pax >= maxPax}
+                    disabled={!!code || pax >= maxPax}
                     onClick={() => setPax(pax + 1)}
                     className="text-brand-charcoal hover:text-brand-red flex size-11 items-center justify-center disabled:opacity-40"
                   >
@@ -235,7 +279,7 @@ export default function ReserveTable() {
             </div>
 
             <div className="space-y-6">
-              <div>
+              <div className={code ? 'hidden' : ''}>
                 <label htmlFor="full_name" className={label}>
                   Full Name
                 </label>
@@ -253,19 +297,14 @@ export default function ReserveTable() {
                 <label htmlFor="mobile_number" className={label}>
                   Mobile Number
                 </label>
-                <input
+                <MobileInput
                   id="mobile_number"
-                  type="tel"
-                  inputMode="tel"
-                  autoComplete="tel"
-                  placeholder="09XX XXX XXXX"
-                  aria-invalid={!!errors.mobile_number}
+                  invalid={!!errors.mobile_number}
                   {...register('mobile_number')}
-                  className={field}
                 />
                 {errors.mobile_number && <p className={error}>{errors.mobile_number.message}</p>}
               </div>
-              <div>
+              <div className={code ? 'hidden' : ''}>
                 <label htmlFor="email" className={label}>
                   Email (optional)
                 </label>
@@ -280,7 +319,7 @@ export default function ReserveTable() {
                 />
                 {errors.email && <p className={error}>{errors.email.message}</p>}
               </div>
-              <div>
+              <div className={code ? 'hidden' : ''}>
                 <label htmlFor="special_request" className={label}>
                   Special Request (optional)
                 </label>
@@ -304,7 +343,7 @@ export default function ReserveTable() {
               disabled={isSubmitting}
               className="bg-brand-red hover:bg-brand-red/90 focus-visible:outline-brand-gold block w-full rounded-sm py-4 text-sm font-bold tracking-[0.15em] text-white uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-60 md:ml-auto md:w-auto md:px-12"
             >
-              Continue to Deposit
+              {code ? 'Confirm New Time' : 'Continue to Deposit'}
             </button>
           </div>
         </form>

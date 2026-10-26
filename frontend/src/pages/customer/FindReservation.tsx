@@ -6,6 +6,8 @@ import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { z } from 'zod'
+import MobileInput from '@/components/MobileInput'
+import { mobileSchema, toLocalMobile } from '@/lib/mobile'
 import { cancelReservation, findReservation } from '@/services/reservations'
 import type { PublicReservation, ReservationStatus } from '@/types/db'
 
@@ -26,12 +28,7 @@ const statuses: Record<ReservationStatus, { text: string; className: string }> =
 
 const schema = z.object({
   reference_code: z.string().trim().min(1, 'Enter your reference code'),
-  mobile_number: z
-    .string()
-    .refine(
-      (v) => /^09\d{9}$/.test(v.replace(/\s/g, '')),
-      'Enter a mobile number like 0912 345 6789',
-    ),
+  mobile_number: mobileSchema,
 })
 
 type FormValues = z.infer<typeof schema>
@@ -50,8 +47,9 @@ export default function FindReservation() {
   })
 
   const onSubmit = async ({ reference_code, mobile_number }: FormValues) => {
-    const found = await findReservation(reference_code.toUpperCase(), mobile_number)
-    setMobile(mobile_number)
+    const local = toLocalMobile(mobile_number)
+    const found = await findReservation(reference_code.toUpperCase(), local)
+    setMobile(local)
     setResult(found ?? null)
   }
 
@@ -104,15 +102,10 @@ export default function FindReservation() {
             <label htmlFor="mobile_number" className={label}>
               Mobile Number
             </label>
-            <input
+            <MobileInput
               id="mobile_number"
-              type="tel"
-              inputMode="tel"
-              autoComplete="tel"
-              placeholder="09XX XXX XXXX"
-              aria-invalid={!!errors.mobile_number}
+              invalid={!!errors.mobile_number}
               {...register('mobile_number')}
-              className={field}
             />
             {errors.mobile_number && <p className={error}>{errors.mobile_number.message}</p>}
           </div>
@@ -170,7 +163,11 @@ export default function FindReservation() {
               <button
                 type="button"
                 disabled={!canChange}
-                onClick={() => navigate(`/reserve?pax=${result.pax}`)}
+                onClick={() =>
+                  navigate(`/reserve?reschedule=${result.reference_code}`, {
+                    state: { mobile_number: mobile },
+                  })
+                }
                 className={outlineButton}
               >
                 Reschedule

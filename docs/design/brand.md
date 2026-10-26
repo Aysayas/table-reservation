@@ -121,6 +121,10 @@ Gentle and slow, so it never makes anyone dizzy. Made with Tailwind only (no mot
 - **Never:** parallax, fast or bouncing movement, anything else that moves on its own, or entrance animations that delay the content.
 - **Reduce motion:** every animation uses Tailwind's `motion-safe:`, so people who turn on "reduce motion" see everything at once with no movement.
 
+## Mobile numbers
+
+- Every field people type a mobile number into uses the shared `MobileInput`: a fixed cream `+63` box joined to the input, the placeholder `912 345 6789`, and the short error "Check your mobile number". Numbers that are only shown stay as `09…`.
+
 ## Kitchen display
 
 Screen 18 is read from across the kitchen, so it uses bigger text and buttons than the other staff screens.
