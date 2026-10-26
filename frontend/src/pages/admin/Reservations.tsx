@@ -10,10 +10,11 @@ import { z } from 'zod'
 import { formatTime } from '@/lib/hours'
 import { listReservations, type ReservationView } from '@/services/reservations'
 import { getOpeningHours, getSettings, updateSettings } from '@/services/settings'
-import type { ReservationStatus } from '@/types/db'
+import EditReservationDialog from '@/components/EditReservationDialog'
+import type { PublicReservation, ReservationStatus } from '@/types/db'
 
-const th = 'text-brand-ink/70 px-4 py-3 text-left text-xs font-bold tracking-[0.1em] uppercase'
-const td = 'text-brand-charcoal px-4 py-3 text-sm'
+const th = 'text-brand-ink/70 px-3 py-3 text-left text-xs font-bold tracking-[0.1em] uppercase'
+const td = 'text-brand-charcoal px-3 py-3 text-sm whitespace-nowrap'
 const label = 'text-brand-charcoal block text-sm font-bold'
 const field =
   'border-brand-line focus:border-brand-gold mt-2 block w-full rounded-md border bg-white px-4 py-3 text-sm font-normal outline-none disabled:bg-brand-cream/60 disabled:text-brand-ink/50'
@@ -58,6 +59,7 @@ export default function Reservations() {
   const queryClient = useQueryClient()
   const [view, setView] = useState<ReservationView>('upcoming')
   const [page, setPage] = useState(1)
+  const [editing, setEditing] = useState<PublicReservation | null>(null)
   const { data } = useQuery({
     queryKey: ['reservations', { view, status: '', search: '', page }],
     queryFn: () => listReservations({ view, status: '', search: '', page }),
@@ -102,7 +104,7 @@ export default function Reservations() {
   const first = total ? (page - 1) * 8 + 1 : 0
 
   return (
-    <div className="grid items-start gap-6 xl:grid-cols-[1fr_22rem]">
+    <div className="grid items-start gap-6 xl:grid-cols-[1fr_19rem]">
       <div className="min-w-0">
         <div role="group" aria-label="Reservation view" className="flex flex-wrap gap-2">
           {views.map((v) => (
@@ -121,7 +123,7 @@ export default function Reservations() {
           ))}
         </div>
 
-        <div className="border-brand-line mt-6 overflow-hidden rounded-lg border bg-white">
+        <div className="border-brand-line mt-6 overflow-x-auto rounded-lg border bg-white">
           <table className="w-full">
             <thead className="bg-brand-cream/60">
               <tr>
@@ -130,13 +132,18 @@ export default function Reservations() {
                     {h}
                   </th>
                 ))}
+                <th className={th}>
+                  <span className="sr-only">Actions</span>
+                </th>
               </tr>
             </thead>
             <tbody>
               {rows.map((r) => (
                 <tr key={r.reservation_id} className="border-brand-line border-t">
                   <td className={`${td} font-semibold`}>{r.reference_code}</td>
-                  <td className={td}>{format(parseISO(r.reservation_date), 'EEE, MMM d, yyyy')}</td>
+                  <td className={`${td} whitespace-nowrap`}>
+                    {format(parseISO(r.reservation_date), 'EEE, MMM d, yyyy')}
+                  </td>
                   <td className={`${td} tabular-nums`}>{formatTime(r.reservation_time)}</td>
                   <td className={td}>{r.customer.full_name}</td>
                   <td className={td}>{r.pax}</td>
@@ -147,11 +154,23 @@ export default function Reservations() {
                       {statusText[r.status]}
                     </span>
                   </td>
+                  <td className={`${td} text-right`}>
+                    {(r.status === 'pending' || r.status === 'confirmed') && (
+                      <button
+                        type="button"
+                        aria-label={`Edit ${r.reference_code}`}
+                        onClick={() => setEditing(r)}
+                        className="border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal rounded-md border px-3 py-1.5 text-xs font-bold transition-colors duration-200 hover:text-white"
+                      >
+                        Edit
+                      </button>
+                    )}
+                  </td>
                 </tr>
               ))}
               {rows.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="text-brand-ink/60 px-4 py-10 text-center text-sm">
+                  <td colSpan={7} className="text-brand-ink/60 px-4 py-10 text-center text-sm">
                     No reservations found.
                   </td>
                 </tr>
@@ -298,6 +317,8 @@ export default function Reservations() {
           </button>
         </form>
       </section>
+
+      {editing && <EditReservationDialog reservation={editing} onClose={() => setEditing(null)} />}
     </div>
   )
 }
