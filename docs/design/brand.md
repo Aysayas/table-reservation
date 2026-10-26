@@ -108,6 +108,8 @@ Suggested sizes:
 - Laptop: a sticky sidebar of white cards (Search, Categories), each with a spaced uppercase heading and a dashed gold rule. The active category is red with a ▸ marker and shows its dish count. Phone: the categories are one sticky sideways row.
 - Dishes are cards: a dark photo area, a gold "Best Seller" badge for recommended dishes, a red category tag, the name, two lines of description, and the price large in red Playfair.
 - The QR note is a dark bar at the end of the dishes.
+- The top band has a "Home / Menu" breadcrumb instead of a back button, and the title "Our Menu" with "Kain na!" above it in gold Great Vibes (approved by the lead).
+- A Filters card under Search: a red Max price slider and a Best Seller tag (gold when on), with Clear filters while one is on. No category tags, since the Categories list already does that.
 
 ## Motion
 
