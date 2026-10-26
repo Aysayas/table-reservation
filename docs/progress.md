@@ -47,7 +47,7 @@ Start with simple screens to learn, then the forms, then the bigger flows:
 | 22 | Categories | 🟦 | 1440 × 900. Table with Order, Category Name, Items (dish count) and Edit / Delete; Add Category card with Category Name, Display Order (next number filled in) and Save Category. Edit uses the same card (Edit Category, Cancel Edit). Names are unique; Delete asks first and keeps a category that still has dishes (the API's 409) |
 | 23 | Tables and QR Codes | ⬜ | |
 | 24 | Reservations | ⬜ | |
-| 25 | Order History | ⬜ | |
+| 25 | Order History | 🟨 | 1440 × 900. Search (order # or table), Date Range, All Status, All Payments, Clear filters, Export (CSV made in the browser); table with Order #, Date and time, Table, Items, Total, Payment, Method, Status, View (order details window); 8 a page. No PR yet |
 | 26 | Payments | ⬜ | |
 | 27 | Reports | ⬜ | |
 | 28 | Staff Accounts | ⬜ | |

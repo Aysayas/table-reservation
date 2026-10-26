@@ -102,11 +102,23 @@ export async function payOrder(order_id: number, qr_token: string): Promise<void
 export type StaffOrder = PublicOrder & { payment_method: 'cash' | 'online' | null }
 
 export async function listOrders(
-  filter: { payment_status?: 'paid' | 'unpaid'; status?: OrderStatus[] } = {},
+  filter: {
+    payment_status?: 'paid' | 'unpaid'
+    status?: OrderStatus[]
+    search?: string
+    date_from?: string
+    date_to?: string
+  } = {},
 ): Promise<StaffOrder[]> {
+  const term = (filter.search ?? '').trim().replace(/^#/, '').toLowerCase()
+  const tableOf = (o: Order) =>
+    sampleTables.find((t) => t.table_id === o.table_id)?.table_number.toLowerCase() ?? ''
   return sampleOrders
     .filter((o) => !filter.payment_status || o.payment_status === filter.payment_status)
     .filter((o) => !filter.status || filter.status.includes(o.status))
+    .filter((o) => !term || String(o.order_id) === term || tableOf(o) === term)
+    .filter((o) => !filter.date_from || o.created_at.slice(0, 10) >= filter.date_from)
+    .filter((o) => !filter.date_to || o.created_at.slice(0, 10) <= filter.date_to)
     .sort((a, b) => b.created_at.localeCompare(a.created_at))
     .map((o) => ({
       ...toPublic(o),
