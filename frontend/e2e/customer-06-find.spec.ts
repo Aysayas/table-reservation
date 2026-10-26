@@ -48,8 +48,11 @@ test('cancel asks first, then marks the reservation cancelled', async ({ page })
   await expect(page.getByRole('button', { name: 'Reschedule' })).toBeDisabled()
 })
 
-test('reschedule opens reserve a table with the same guests', async ({ page }) => {
+test('reschedule opens reserve a table in reschedule mode with the mobile filled in', async ({
+  page,
+}) => {
   await find(page, 'RSV-000001', '09000000000')
   await page.getByRole('button', { name: 'Reschedule' }).click()
-  await expect(page).toHaveURL('/reserve?pax=4')
+  await expect(page).toHaveURL('/reserve?reschedule=RSV-000001')
+  await expect(page.getByLabel('Mobile Number')).toHaveValue('09000000000')
 })

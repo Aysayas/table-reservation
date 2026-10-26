@@ -170,7 +170,11 @@ export default function FindReservation() {
               <button
                 type="button"
                 disabled={!canChange}
-                onClick={() => navigate(`/reserve?pax=${result.pax}`)}
+                onClick={() =>
+                  navigate(`/reserve?reschedule=${result.reference_code}`, {
+                    state: { mobile_number: mobile },
+                  })
+                }
                 className={outlineButton}
               >
                 Reschedule
