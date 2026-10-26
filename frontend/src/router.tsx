@@ -7,6 +7,7 @@ import About from '@/pages/customer/About'
 import Cart from '@/pages/customer/Cart'
 import Checkout from '@/pages/customer/Checkout'
 import DepositPayment from '@/pages/customer/DepositPayment'
+import FindReservation from '@/pages/customer/FindReservation'
 import Home from '@/pages/customer/Home'
 import ItemDetails from '@/pages/customer/ItemDetails'
 import Menu from '@/pages/customer/Menu'
@@ -16,6 +17,7 @@ import ReserveTable from '@/pages/customer/ReserveTable'
 import TableMenu from '@/pages/customer/TableMenu'
 import OrdersPayments from '@/pages/staff/OrdersPayments'
 import StaffDashboard from '@/pages/staff/StaffDashboard'
+import KitchenDisplay from '@/pages/staff/KitchenDisplay'
 import StaffLogin from '@/pages/staff/StaffLogin'
 import TableStatus from '@/pages/staff/TableStatus'
 import TodaysReservations from '@/pages/staff/TodaysReservations'
@@ -52,7 +54,7 @@ export const router = createBrowserRouter([
         path: '/reserve/confirmation/:code',
         element: <ReservationConfirmation />,
       },
-      { path: '/reservation', element: <Placeholder screen="06" title="Find Reservation" /> },
+      { path: '/reservation', element: <FindReservation /> },
       { path: '/about', element: <About /> },
       { path: '/table/:tableId', element: <TableMenu /> },
       { path: '/table/:tableId/menu', element: <TableMenu /> },
@@ -66,7 +68,7 @@ export const router = createBrowserRouter([
     ],
   },
   { path: '/staff/login', element: <StaffLogin /> },
-  { path: '/kitchen', element: <Placeholder screen="18" title="Kitchen Display" /> },
+  { path: '/kitchen', element: <KitchenDisplay /> },
   {
     path: '/staff',
     element: <DashboardLayout title="Staff" items={staffNav} />,

@@ -1,7 +1,12 @@
-import { expect, test } from '@playwright/test'
+import { expect, test, type Page } from '@playwright/test'
+
+const scan = async (page: Page, table: number) => {
+  await page.goto(`/table/${table}?t=sample-qr-token-${table}`)
+  await expect(page.getByRole('searchbox', { name: 'Search menu' })).toBeVisible()
+}
 
 test('a sample order shows its progress, items and payment', async ({ page }) => {
-  await page.goto('/table/2?t=sample-qr-token-2')
+  await scan(page, 2)
   await page.goto('/table/2/orders?order=1')
   await expect(page.getByRole('heading', { name: 'Order #1' })).toBeVisible()
   await expect(page.getByText('Placed at 12:00 PM')).toBeVisible()
@@ -18,7 +23,7 @@ test('a sample order shows its progress, items and payment', async ({ page }) =>
 })
 
 test('placing an order with pay now shows it received and paid', async ({ page }) => {
-  await page.goto('/table/5?t=sample-qr-token-5')
+  await scan(page, 5)
   await page.getByRole('button', { name: 'Add Bulalo' }).click()
   await page.getByRole('link', { name: /View Cart/ }).click()
   await page.getByRole('link', { name: 'Proceed to Checkout' }).click()
@@ -32,14 +37,14 @@ test('placing an order with pay now shows it received and paid', async ({ page }
 })
 
 test('order more goes back to the table menu', async ({ page }) => {
-  await page.goto('/table/2?t=sample-qr-token-2')
+  await scan(page, 2)
   await page.goto('/table/2/orders?order=1')
   await page.getByRole('link', { name: 'Order More' }).click()
   await expect(page).toHaveURL('/table/2/menu')
 })
 
 test('an order from another table is not shown', async ({ page }) => {
-  await page.goto('/table/5?t=sample-qr-token-5')
+  await scan(page, 5)
   await page.goto('/table/5/orders?order=1')
   await expect(page.getByRole('heading', { name: 'Order not found' })).toBeVisible()
   await expect(page.getByRole('link', { name: 'Order More' })).toHaveAttribute(

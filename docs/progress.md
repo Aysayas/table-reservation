@@ -28,7 +28,7 @@ Start with simple screens to learn, then the forms, then the bigger flows:
 | 03 | Reserve a Table | 🟦 | Phone and laptop. Pre-fills date, time and guests from Home. Booking pretends to succeed and opens `/reserve/payment?code=RSV-…` for screen 04 |
 | 04 | Deposit Payment | 🟦 | Phone and laptop. Loads the booking from `?code=` with `getReservationByCode`; Pay pretends to succeed and opens screen 05. Shows ₱0.00 until the lead sets `deposit_per_guest` |
 | 05 | Reservation Confirmation | 🟦 | Phone and laptop with all approved extras (Save pass was declined), the charcoal ticket card, red "reserved." and Home's footer |
-| 06 | Find Reservation | ⬜ | |
+| 06 | Find Reservation | 🟦 | Phone and laptop. Find by code and mobile, Cancel (asks first), Reschedule opens `/reserve?pax=…` per the navigation (question for the lead in LEAD-REVIEW.md) |
 | 07 | About Us | 🟦 | Final mockup with the approved extras (hero buttons, 4 values, new story text, Home's footer), phone and laptop. The restaurant's own photos are in |
 | 08 | Table Menu | 🟦 | Phone width. Table pill and cart count in the top bar, search, categories, Recommended for You, + Add, View Cart bar. Cart kept in sessionStorage (zustand); QR token `?t=` saved for screen 11 |
 | 09 | Item Details | 🟦 | Phone width. Photo, name, price, description, quantity 1–99, notes up to 255, Often Ordered With (same category for now), Add to Cart opens 10 |
@@ -40,7 +40,7 @@ Start with simple screens to learn, then the forms, then the bigger flows:
 | 15 | Today's Reservations | 🟦 | 1440 × 900. Search (all days), Day (Today / Upcoming / Past / Cancelled) and Status filters, 9 columns, Arrived / No-show / Assign Table with the API's rules, 8 per page |
 | 16 | Table Status | 🟦 | 1440 × 900. Filters with counts, a card per table: Available, Occupied (order, seated time, View Order), Reserved (next booking, Mark Arrived). Sample tables now match the bookings and orders |
 | 17 | Orders and Payments | 🟦 | 1440 × 900. All / Unpaid / Paid, order list, detail with items and totals, Cash Received and Change, Mark as Paid (Cash), Print Receipt (her 80 mm receipt design, print only) |
-| 18 | Kitchen Display | ⬜ | |
+| 18 | Kitchen Display | 🟦 | 1440 × 900 (also stacks on tablet and phone). Received, Preparing and Ready columns with counts, order cards with table, order number, waiting time chip, items and notes, Start Preparing → Mark Ready → Mark Served, clock, Log Out (her kitchen design) |
 | 19 | Admin Dashboard | 🟦 | 1440 × 900. Sales Today, Orders Today, Reservations Today, No-show Rate, Sales (Last 7 Days) line chart (recharts), Best Sellers top 5, Recent Orders with View all to 25. Six past sample orders added for the chart |
 | 20 | Menu Management | ⬜ | |
 | 21 | Add / Edit Menu Item | ⬜ | |
