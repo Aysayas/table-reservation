@@ -1,6 +1,7 @@
 import { createBrowserRouter } from 'react-router-dom'
 import CustomerLayout from '@/layouts/CustomerLayout'
 import DashboardLayout, { type NavItem } from '@/layouts/DashboardLayout'
+import AdminDashboard from '@/pages/admin/AdminDashboard'
 import Placeholder from '@/pages/Placeholder'
 import About from '@/pages/customer/About'
 import Cart from '@/pages/customer/Cart'
@@ -82,7 +83,7 @@ export const router = createBrowserRouter([
     path: '/admin',
     element: <DashboardLayout title="Admin" items={adminNav} />,
     children: [
-      { index: true, element: <Placeholder screen="19" title="Admin Dashboard" /> },
+      { index: true, element: <AdminDashboard /> },
       { path: 'menu', element: <Placeholder screen="20" title="Menu Management" /> },
       { path: 'menu/new', element: <Placeholder screen="21" title="Add Menu Item" /> },
       { path: 'menu/:id/edit', element: <Placeholder screen="21" title="Edit Menu Item" /> },
