@@ -42,4 +42,5 @@ html {
 
 body {
   @apply text-brand-ink bg-white antialiased;
+  font-feature-settings: 'lnum';
 }
