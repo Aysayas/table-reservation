@@ -207,9 +207,3 @@ Claude adds an entry here when the frontend developer asks for something outside
 - Notes: the screen 16 wireframe gives occupied tables only "View Order" and reserved tables only "Mark Arrived". There's no way to set a table back to Available after the guests leave, though `PATCH /tables/{id}/status` allows any change ("for example, freeing a table after guests leave"). Should screen 16 get a small "Free table" button on occupied tables (for example only when the order is served and paid), or does something else free it (screen 17 after payment, or the backend)? (PR for screen 16)
 - Status: Approved
 - Lead note: (2026-10-25) Both. Add the "Free table" button on occupied tables, shown only when the table has no order that is unserved or unpaid; it calls `PATCH /tables/{id}/status` with `available` (in the sample data until the API is live). Add a test for it. The lead will also make the backend free the table when its order is served and paid.
-
-### 2026-10-26: Two pull requests waiting for review
-- Level: ℹ️ for your information, nothing off plan
-- Notes: two of her pull requests are open, both made from `main`: #106 (Reschedule mode on 03, your decision on #75) and #109 (the screen 02 extras you approved). Both have your fixes: the `\s` space cleanup on #106, and the price slider reaching the top price on #109. Next is the fixed +63 mobile field in its own pull request. Screen 23 waits for your OK.
-- Status: Waiting for lead
-- Lead note:
