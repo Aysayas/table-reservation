@@ -19,7 +19,7 @@ test('an empty form shows errors', async ({ page }) => {
   await page.goto('/reservation')
   await page.getByRole('button', { name: 'Find Reservation' }).click()
   await expect(page.getByText('Enter your reference code')).toBeVisible()
-  await expect(page.getByText('Enter a mobile number like 0912 345 6789')).toBeVisible()
+  await expect(page.getByText('Check your mobile number')).toBeVisible()
 })
 
 test('a wrong code or mobile shows not found', async ({ page }) => {
@@ -54,5 +54,11 @@ test('reschedule opens reserve a table in reschedule mode with the mobile filled
   await find(page, 'RSV-000001', '09000000000')
   await page.getByRole('button', { name: 'Reschedule' }).click()
   await expect(page).toHaveURL('/reserve?reschedule=RSV-000001')
-  await expect(page.getByLabel('Mobile Number')).toHaveValue('09000000000')
+  await expect(page.getByLabel('Mobile Number')).toHaveValue('9000000000')
+})
+
+test('a pasted +63 number finds the reservation', async ({ page }) => {
+  await find(page, 'RSV-000001', '+63 900 000 0000')
+  await expect(page.getByText('RSV-000001')).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Cancel' })).toBeVisible()
 })

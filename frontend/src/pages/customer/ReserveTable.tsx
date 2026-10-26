@@ -7,7 +7,9 @@ import { useForm, useWatch } from 'react-hook-form'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import { z } from 'zod'
+import MobileInput from '@/components/MobileInput'
 import { formatTime } from '@/lib/hours'
+import { cleanMobile, mobileSchema, toLocalMobile } from '@/lib/mobile'
 import {
   createReservation,
   getAvailability,
@@ -34,12 +36,7 @@ const schema = z.object({
     .trim()
     .min(1, 'Enter your full name')
     .max(100, 'Use 100 characters or less'),
-  mobile_number: z
-    .string()
-    .refine(
-      (v) => /^09\d{9}$/.test(v.replace(/\s/g, '')),
-      'Enter a mobile number like 0912 345 6789',
-    ),
+  mobile_number: mobileSchema,
   email: z
     .string()
     .trim()
@@ -77,7 +74,7 @@ export default function ReserveTable() {
       pax: Math.max(1, Math.floor(Number(params.get('pax'))) || 2),
       reservation_time: timeParam.length === 5 ? `${timeParam}:00` : timeParam,
       full_name: '',
-      mobile_number: (state as { mobile_number?: string } | null)?.mobile_number ?? '',
+      mobile_number: cleanMobile((state as { mobile_number?: string } | null)?.mobile_number ?? ''),
       email: '',
       special_request: '',
     },
@@ -116,7 +113,7 @@ export default function ReserveTable() {
     if (code) {
       try {
         await rescheduleReservation(code, {
-          mobile_number: values.mobile_number.replace(/\s/g, ''),
+          mobile_number: toLocalMobile(values.mobile_number),
           reservation_date: values.reservation_date,
           reservation_time: values.reservation_time,
         })
@@ -129,7 +126,7 @@ export default function ReserveTable() {
     }
     const reservation = await createReservation({
       ...values,
-      mobile_number: values.mobile_number.replace(/\s/g, ''),
+      mobile_number: toLocalMobile(values.mobile_number),
       email: values.email || null,
       special_request: values.special_request || null,
     })
@@ -300,15 +297,10 @@ export default function ReserveTable() {
                 <label htmlFor="mobile_number" className={label}>
                   Mobile Number
                 </label>
-                <input
+                <MobileInput
                   id="mobile_number"
-                  type="tel"
-                  inputMode="tel"
-                  autoComplete="tel"
-                  placeholder="09XX XXX XXXX"
-                  aria-invalid={!!errors.mobile_number}
+                  invalid={!!errors.mobile_number}
                   {...register('mobile_number')}
-                  className={field}
                 />
                 {errors.mobile_number && <p className={error}>{errors.mobile_number.message}</p>}
               </div>
