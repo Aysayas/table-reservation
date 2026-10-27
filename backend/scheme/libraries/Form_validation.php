@@ -421,7 +421,7 @@ class Form_validation {
     {
         if (! is_numeric($length)) return FALSE;
 
-        if (strlen($this->value) !== (int) $length)  // also fixed: was === (wrong logic)
+        if (strlen($this->value ?? '') !== (int) $length)  // also fixed: was === (wrong logic)
         {
             $this->set_error_message($custom_error, self::$err_exact_length, $this->name, $length);
         }
@@ -439,7 +439,7 @@ class Form_validation {
     {
         if (! is_numeric($length)) return FALSE;
 
-        if (strlen($this->value) < (int) $length)
+        if (strlen($this->value ?? '') < (int) $length)
         {
             $this->set_error_message($custom_error, self::$err_min_length, $this->name, $length);
         }
@@ -457,7 +457,7 @@ class Form_validation {
     {
         if (! is_numeric($length)) return FALSE;
 
-        if (strlen($this->value) > (int) $length)
+        if (strlen($this->value ?? '') > (int) $length)
         {
             $this->set_error_message($custom_error, self::$err_max_length, $this->name, $length);
         }
