@@ -38,7 +38,7 @@ api.interceptors.response.use(undefined, async (error: AxiosError) => {
   const config = error.config as (InternalAxiosRequestConfig & { _retried?: boolean }) | undefined
   const isAuthCall = config?.url?.startsWith('/auth/')
   if (error.response?.status !== 401 || !config || config._retried || isAuthCall) {
-    throw error
+    throw readable(error)
   }
   config._retried = true
   const token = await refreshToken()
@@ -50,7 +50,7 @@ api.interceptors.response.use(undefined, async (error: AxiosError) => {
     ) {
       window.location.assign('/staff/login')
     }
-    throw error
+    throw readable(error)
   }
   config.headers.Authorization = `Bearer ${token}`
   return api(config)
@@ -69,4 +69,9 @@ export function apiError(error: unknown, fallback = 'Something went wrong. Pleas
     return data?.errors?.join(' ') || data?.error || fallback
   }
   return error instanceof Error ? error.message : fallback
+}
+
+function readable(error: AxiosError) {
+  error.message = apiError(error, error.message)
+  return error
 }

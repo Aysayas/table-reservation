@@ -3,7 +3,9 @@ import { format, parseISO } from 'date-fns'
 import { ArrowLeft, CreditCard, Smartphone, Wallet } from 'lucide-react'
 import { useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
-import { getReservationByCode } from '@/services/reservations'
+import { toast } from 'sonner'
+import { apiError } from '@/lib/api'
+import { getReservationByCode, startDeposit } from '@/services/reservations'
 import { getSettings } from '@/services/settings'
 
 const card = 'border-brand-line rounded-lg border bg-white p-5 md:p-6'
@@ -23,6 +25,7 @@ export default function DepositPayment() {
   const [params] = useSearchParams()
   const code = params.get('code') ?? ''
   const [method, setMethod] = useState(methods[0].name)
+  const [paying, setPaying] = useState(false)
   const { data: reservation, isLoading } = useQuery({
     queryKey: ['reservation', code],
     queryFn: () => getReservationByCode(code),
@@ -113,9 +116,20 @@ export default function DepositPayment() {
           </div>
 
           <form
-            onSubmit={(event) => {
+            onSubmit={async (event) => {
               event.preventDefault()
-              navigate(`/reserve/confirmation/${reservation.reference_code}`)
+              setPaying(true)
+              try {
+                const pay =
+                  reservation.deposit_amount > 0
+                    ? await startDeposit(reservation.reference_code)
+                    : null
+                if (pay) window.location.assign(pay.checkout_url)
+                else navigate(`/reserve/confirmation/${reservation.reference_code}`)
+              } catch (e) {
+                toast.error(apiError(e))
+                setPaying(false)
+              }
             }}
           >
             <fieldset>
@@ -144,7 +158,11 @@ export default function DepositPayment() {
             </fieldset>
 
             <div className="bg-brand-cream/95 border-brand-line sticky bottom-0 -mx-4 mt-8 border-t px-4 py-4 md:static md:mx-0 md:border-0 md:bg-transparent md:p-0">
-              <button type="submit" className={redButton}>
+              <button
+                type="submit"
+                disabled={paying}
+                className={`${redButton} disabled:opacity-60`}
+              >
                 Pay {amount}
               </button>
             </div>
