@@ -50,6 +50,9 @@ dd { margin: 0; overflow-wrap: anywhere; font-family: ui-monospace, "SF Mono", C
 .sim a.pay { font-weight: 600; color: var(--accent); }
 .sim img { max-width: 100%; max-height: 220px; border-radius: 8px; border: 1px solid var(--border); align-self: flex-start; }
 .sim input[type=file] { font-size: 13px; max-width: 100%; }
+.texts { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: 13px; }
+.texts li { border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; overflow-wrap: anywhere; }
+.texts .meta { color: var(--muted); }
 .note { margin: 0; font-size: 13px; color: var(--muted); }
 [hidden] { display: none !important; }
 </style>
@@ -57,7 +60,7 @@ dd { margin: 0; overflow-wrap: anywhere; font-family: ui-monospace, "SF Mono", C
 <body>
 <main>
   <h1>Integration tests</h1>
-  <p class="sub">Read-only checks of each outside service the API uses, plus a simulated payment and photo upload.</p>
+  <p class="sub">Read-only checks of each outside service the API uses, plus a simulated payment, photo upload and test SMS.</p>
 
   <form id="login">
     <label>Admin email <input id="email" type="email" autocomplete="username" required></label>
@@ -151,6 +154,7 @@ async function run(s) {
 
 function runAll() {
   services.forEach(run)
+  loadTexts()
 }
 
 function addPaymentTest(card) {
@@ -281,8 +285,49 @@ function addPhotoTest(card) {
 addPaymentTest(services[0].card)
 addPhotoTest(services[2].card)
 
+const sms = document.createElement('article')
+sms.className = 'card'
+sms.innerHTML = `<div class="head"><h2>SMS</h2><span class="pill fake">Fake mode</span></div><p class="what">No SMS provider yet: texts are only logged and saved.</p><div class="sim"><h3>Test SMS</h3><p class="note">Sends one test text to the customer "Diagnostics Test" (09000000000) and saves it in notifications.</p><div class="row"><button type="button" class="send" disabled>Send test SMS</button></div><p class="note state" aria-live="polite"></p><dl></dl></div><div class="sim"><div class="row"><h3>Latest texts</h3><button type="button" class="ghost refresh" disabled>Refresh</button></div><ol class="texts"></ol></div>`
+cards.append(sms)
+const smsState = sms.querySelector('.state')
+
+async function loadTexts() {
+  const list = sms.querySelector('.texts')
+  try {
+    const rows = await call('GET', 'api/diagnostics/sms/latest')
+    list.replaceChildren(...rows.map((r) => {
+      const li = document.createElement('li')
+      const meta = document.createElement('div')
+      meta.className = 'meta'
+      meta.textContent = `#${r.notification_id} · ${r.sent_at} · ${r.customer} (${r.mobile}) · ${r.status}`
+      li.append(meta, r.message)
+      return li
+    }))
+    if (!rows.length) list.textContent = 'No texts yet.'
+  } catch (e) {
+    list.textContent = e.message
+  }
+}
+
+sms.querySelector('.send').addEventListener('click', async (event) => {
+  const button = event.target
+  button.disabled = true
+  smsState.textContent = 'Sending…'
+  try {
+    const r = await call('POST', 'api/diagnostics/sms')
+    smsState.textContent = r.status === 'sent' ? 'Sent in fake mode: logged and saved, no text was delivered.' : 'Sending failed.'
+    fill(sms.querySelector('dl'), { message: r.message, length: `${r.length} / 160`, status: r.status })
+    await loadTexts()
+  } catch (e) {
+    smsState.textContent = e.message
+  } finally {
+    button.disabled = !token
+  }
+})
+sms.querySelector('.refresh').addEventListener('click', loadTexts)
+
 function setButtons(enabled) {
-  document.querySelectorAll('.again, .start, .upload').forEach((b) => { b.disabled = !enabled })
+  document.querySelectorAll('.again, .start, .upload, .send, .refresh').forEach((b) => { b.disabled = !enabled })
 }
 
 function signOut(message) {
