@@ -1,4 +1,6 @@
+import { isAxiosError } from 'axios'
 import { format } from 'date-fns'
+import { api, USE_SAMPLE } from '@/lib/api'
 import {
   sampleCustomers,
   sampleOpeningHours,
@@ -30,6 +32,10 @@ const toTime = (minutes: number) =>
   `${String(Math.floor(minutes / 60)).padStart(2, '0')}:${String(minutes % 60).padStart(2, '0')}:00`
 
 export async function getAvailability(date: string, pax: number): Promise<TimeSlot[]> {
+  if (!USE_SAMPLE) {
+    const res = await api.get('/reservations/availability', { params: { date, pax } })
+    return res.data.data
+  }
   const day = sampleOpeningHours.find((h) => h.day_of_week === new Date(`${date}T00:00`).getDay())
   if (!day?.is_open || !day.open_time || !day.close_time) return []
   const now = new Date()
@@ -56,6 +62,10 @@ export async function getAvailability(date: string, pax: number): Promise<TimeSl
 }
 
 export async function createReservation(body: NewReservation): Promise<Reservation> {
+  if (!USE_SAMPLE) {
+    const res = await api.post('/reservations', body)
+    return res.data.data
+  }
   const customer_id = Math.max(0, ...sampleCustomers.map((c) => c.customer_id)) + 1
   const created_at = format(new Date(), "yyyy-MM-dd'T'HH:mm:ss")
   sampleCustomers.push({
@@ -86,6 +96,15 @@ export async function createReservation(body: NewReservation): Promise<Reservati
 }
 
 export async function getReservationByCode(code: string): Promise<PublicReservation | undefined> {
+  if (!USE_SAMPLE) {
+    try {
+      const res = await api.get(`/reservations/code/${encodeURIComponent(code)}`)
+      return res.data.data
+    } catch (e) {
+      if (isAxiosError(e) && e.response?.status === 404) return undefined
+      throw e
+    }
+  }
   const reservation = sampleReservations.find((r) => r.reference_code === code)
   if (!reservation) return undefined
   const customer = sampleCustomers.find((c) => c.customer_id === reservation.customer_id)
@@ -116,6 +135,15 @@ export async function findReservation(
   reference_code: string,
   mobile_number: string,
 ): Promise<PublicReservation | undefined> {
+  if (!USE_SAMPLE) {
+    try {
+      const res = await api.post('/reservations/find', { reference_code, mobile_number })
+      return res.data.data
+    } catch (e) {
+      if (isAxiosError(e) && e.response?.status === 404) return undefined
+      throw e
+    }
+  }
   const reservation = ownedBy(reference_code, mobile_number)
   return reservation && getReservationByCode(reservation.reference_code)
 }
@@ -124,6 +152,12 @@ export async function cancelReservation(
   code: string,
   mobile_number: string,
 ): Promise<PublicReservation | undefined> {
+  if (!USE_SAMPLE) {
+    const res = await api.post(`/reservations/code/${encodeURIComponent(code)}/cancel`, {
+      mobile_number,
+    })
+    return res.data.data
+  }
   const reservation = ownedBy(code, mobile_number)
   if (!reservation) throw new Error('Reservation not found')
   if (reservation.status !== 'pending' && reservation.status !== 'confirmed') {
@@ -137,6 +171,10 @@ export async function rescheduleReservation(
   code: string,
   body: { mobile_number: string; reservation_date: string; reservation_time: string },
 ): Promise<PublicReservation | undefined> {
+  if (!USE_SAMPLE) {
+    const res = await api.post(`/reservations/code/${encodeURIComponent(code)}/reschedule`, body)
+    return res.data.data
+  }
   const reservation = ownedBy(code, body.mobile_number)
   if (!reservation) throw new Error('Reservation not found')
   if (reservation.status !== 'pending' && reservation.status !== 'confirmed') {
@@ -181,6 +219,20 @@ const toStaff = (r: Reservation): PublicReservation => {
 }
 
 export async function listReservations(filter: ReservationFilter) {
+  if (!USE_SAMPLE) {
+    const res = await api.get('/reservations', {
+      params: {
+        view: filter.view,
+        status: filter.status || undefined,
+        search: filter.search.trim() || undefined,
+        page: filter.page,
+      },
+    })
+    return res.data as {
+      data: PublicReservation[]
+      meta: { total: number; page: number; per_page: number }
+    }
+  }
   const today = format(new Date(), 'yyyy-MM-dd')
   const term = filter.search.trim().toLowerCase()
   const when = (r: Reservation) => `${r.reservation_date} ${r.reservation_time}`
@@ -220,6 +272,10 @@ export async function updateReservationStatus(
   reservation_id: number,
   change: { status?: ReservationStatus; table_id?: number },
 ): Promise<PublicReservation> {
+  if (!USE_SAMPLE) {
+    const res = await api.patch(`/reservations/${reservation_id}/status`, change)
+    return res.data.data
+  }
   const r = sampleReservations.find((x) => x.reservation_id === reservation_id)
   if (!r) throw new Error('Reservation not found')
   if (!moves[r.status]) throw new Error('This reservation can no longer be changed')
@@ -272,6 +328,10 @@ export async function updateReservation(
   reservation_id: number,
   body: ReservationEdit,
 ): Promise<PublicReservation> {
+  if (!USE_SAMPLE) {
+    const res = await api.put(`/reservations/${reservation_id}`, body)
+    return res.data.data
+  }
   const r = sampleReservations.find((x) => x.reservation_id === reservation_id)
   if (!r) throw new Error('Reservation not found')
   if (r.status !== 'pending' && r.status !== 'confirmed') {
@@ -312,4 +372,10 @@ export async function updateReservation(
   if (table && table.status === 'available') table.status = 'reserved'
   Object.assign(r, body)
   return toStaff(r)
+}
+
+export async function startDeposit(code: string): Promise<{ checkout_url: string } | null> {
+  if (USE_SAMPLE) return null
+  const res = await api.post(`/reservations/code/${encodeURIComponent(code)}/deposit`, {})
+  return res.data.data
 }

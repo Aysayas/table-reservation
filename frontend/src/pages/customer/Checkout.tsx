@@ -3,6 +3,7 @@ import { ArrowLeft } from 'lucide-react'
 import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
+import { apiError } from '@/lib/api'
 import { readTableToken } from '@/lib/tableToken'
 import { createOrder, payOrder } from '@/services/orders'
 import { getSettings } from '@/services/settings'
@@ -46,12 +47,16 @@ export default function Checkout() {
           notes: l.notes || null,
         })),
       })
-      if (method === 'now') await payOrder(order.order_id, token)
+      const pay = method === 'now' ? await payOrder(order.order_id, token) : null
       clear()
+      if (pay) {
+        window.location.assign(pay.checkout_url)
+        return
+      }
       toast.success(method === 'now' ? 'Order placed and paid' : 'Order placed')
       navigate(`/table/${table}/orders?order=${order.order_id}`)
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Couldn't place your order. Please try again.")
+      toast.error(apiError(e, "Couldn't place your order. Please try again."))
       setPlacing(false)
     }
   }

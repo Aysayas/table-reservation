@@ -8,9 +8,10 @@ In `frontend/.env.local`:
 
 ```
 VITE_API_URL=http://localhost:8000/api
+VITE_USE_SAMPLE=true
 ```
 
-Restart `npm run dev` after changing it. Only settings that start with `VITE_` reach the browser, and anything in them is public, so **never put API keys or passwords in the frontend**. Keys for payments, SMS, storage and real-time messaging belong in the backend.
+`VITE_USE_SAMPLE=true` makes every service return `src/services/sampleData.ts` (daily work and the Playwright tests, which always run this way on port 5174). `false` makes the services call `VITE_API_URL`: local Docker (`http://localhost:8000/api`) or, on purpose, the live API (`https://vencios-api.onrender.com/api`, which writes to the real database). Restart `npm run dev` after changing it. Only settings that start with `VITE_` reach the browser, and anything in them is public, so **never put API keys or passwords in the frontend**. Keys for payments, SMS, storage and real-time messaging belong in the backend.
 
 ## Making requests
 
@@ -69,24 +70,22 @@ Call `setToken(null)` on Log Out.
 
 ## Building before the backend exists
 
-Screens never call the API directly. They call a function in `src/services/`:
+Screens never call the API directly. They call a function in `src/services/`, which has both branches:
 
 ```ts
-// src/services/menu.ts, while the endpoint doesn't exist yet
-export async function getMenuItems() {
-  return sampleMenuItems
-}
-
-// after the endpoint is listed below
-export async function getMenuItems() {
-  const { data } = await api.get('/menu-items')
-  return data.data.map((item) => ({ ...item, price: Number(item.price) }))
+export async function getMenuItems(category_id?: number) {
+  if (USE_SAMPLE) {
+    return sampleMenuItems.filter((m) => category_id === undefined || m.category_id === category_id)
+  }
+  const res = await api.get('/menu-items', { params: { category_id } })
+  return res.data.data
 }
 ```
 
-- Sample data lives in `src/services/sampleData.ts`, typed by `src/types/db.ts`.
-- Field names match the database exactly, so switching to the real API changes only the service function.
-- MySQL returns `DECIMAL` values (prices, amounts) as strings. Convert them with `Number()` in the service.
+- Sample data lives in `src/services/sampleData.ts`, typed by `src/types/db.ts`. Keep it shaped like the API responses, since the tests run on it.
+- Field names match the database exactly. The API already sends numbers and true/false typed like `db.ts`, so no `Number()` conversions.
+- A new service function gets both branches. Error messages from the API (`{ "error": "..." }`) reach the screen as `error.message`, so `toast.error(e.message)` shows the API's own text.
+- Login stores the tokens; a 401 refreshes once through `/auth/refresh`, then sends staff and admin pages to `/staff/login`.
 
 ## Agree with the backend team on
 

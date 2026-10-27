@@ -124,13 +124,17 @@ export default function ReserveTable() {
       }
       return
     }
-    const reservation = await createReservation({
-      ...values,
-      mobile_number: toLocalMobile(values.mobile_number),
-      email: values.email || null,
-      special_request: values.special_request || null,
-    })
-    navigate(`/reserve/payment?code=${reservation.reference_code}`)
+    try {
+      const reservation = await createReservation({
+        ...values,
+        mobile_number: toLocalMobile(values.mobile_number),
+        email: values.email || null,
+        special_request: values.special_request || null,
+      })
+      navigate(`/reserve/payment?code=${reservation.reference_code}`)
+    } catch (e) {
+      toast.error((e as Error).message)
+    }
   }
 
   return (

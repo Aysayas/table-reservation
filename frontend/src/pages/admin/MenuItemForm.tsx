@@ -13,6 +13,7 @@ import {
   updateMenuItem,
   uploadMenuImage,
 } from '@/services/menu'
+import { apiError } from '@/lib/api'
 
 const label = 'text-brand-charcoal block text-sm font-bold'
 const field =
@@ -149,7 +150,7 @@ export default function MenuItemForm() {
       toast.success(`${saved.name} saved`)
       navigate('/admin/menu')
     } catch (e) {
-      toast.error((e as Error).message)
+      toast.error(apiError(e))
     }
   }
 
@@ -164,7 +165,10 @@ export default function MenuItemForm() {
     )
   }
 
-  const shown = preview ?? item?.image_url ?? null
+  const photoUrl = item?.image_url?.startsWith('/uploads')
+    ? `${import.meta.env.VITE_API_URL.replace(/\/api\/?$/, '')}${item.image_url}`
+    : item?.image_url
+  const shown = preview ?? photoUrl ?? null
 
   return (
     <div>

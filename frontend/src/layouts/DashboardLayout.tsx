@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
 import { ChevronDown, LogOut } from 'lucide-react'
 import { useState } from 'react'
-import { Link, NavLink, Outlet, useLocation, useMatches } from 'react-router-dom'
-import { getMe } from '@/services/auth'
+import { Link, NavLink, Outlet, useLocation, useMatches, useNavigate } from 'react-router-dom'
+import { getMe, logout } from '@/services/auth'
 import { getSettings } from '@/services/settings'
 import type { UserRole } from '@/types/db'
 
@@ -19,10 +19,20 @@ type Props = {
 
 export default function DashboardLayout({ title, items }: Props) {
   const { pathname } = useLocation()
+  const navigate = useNavigate()
   const [open, setOpen] = useState(false)
   const role = title.toLowerCase() as UserRole
   const { data: settings } = useQuery({ queryKey: ['settings'], queryFn: getSettings })
-  const { data: me } = useQuery({ queryKey: ['me', role], queryFn: () => getMe(role) })
+  const { data: me } = useQuery({
+    queryKey: ['me', role],
+    queryFn: () => getMe(role),
+    retry: false,
+  })
+  const signOut = async (e: React.MouseEvent) => {
+    e.preventDefault()
+    await logout().catch(() => undefined)
+    navigate('/staff/login')
+  }
   const current = [...items]
     .sort((a, b) => b.to.length - a.to.length)
     .find((i) => pathname.startsWith(i.to))
@@ -72,6 +82,7 @@ export default function DashboardLayout({ title, items }: Props) {
         </nav>
         <Link
           to="/staff/login"
+          onClick={signOut}
           className="flex items-center gap-2 border-t border-white/10 px-3 pt-4 text-sm text-white/75 transition-colors duration-200 hover:text-white"
         >
           <LogOut className="size-4" />
@@ -101,7 +112,8 @@ export default function DashboardLayout({ title, items }: Props) {
               <div className="border-brand-line absolute right-0 z-10 mt-2 w-44 rounded-lg border bg-white py-1 shadow-lg">
                 <Link
                   to="/staff/login"
-                  className="text-brand-charcoal hover:bg-brand-cream flex items-center gap-2 px-4 py-2 text-sm"
+                  onClick={signOut}
+                  className="text-brand-charcoal hover:bg-brand-cream flex w-full items-center gap-2 px-4 py-2 text-sm"
                 >
                   <LogOut className="size-4" />
                   Log Out
