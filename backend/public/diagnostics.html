@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Integration Tests · Vencio's Garden API</title>
+<style>
+:root {
+  --bg: #f6f5f2; --surface: #ffffff; --text: #1d1b18; --muted: #6b665e; --border: #e3dfd8;
+  --ok: #1f7a43; --ok-bg: #e6f4ea; --warn: #8a5a00; --warn-bg: #fdf1d8;
+  --fail: #b3261e; --fail-bg: #fbe9e7; --fake: #4b5563; --fake-bg: #eceff3; --accent: #7a1f1f;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #141311; --surface: #1d1c19; --text: #f1eee8; --muted: #a39d93; --border: #33302b;
+    --ok: #7fd49c; --ok-bg: #173323; --warn: #f2c66d; --warn-bg: #3a2c10;
+    --fail: #f2948c; --fail-bg: #3d1a17; --fake: #c4c9d2; --fake-bg: #2a2d33; --accent: #e8a0a0;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+main { max-width: 960px; margin: 0 auto; padding: 32px 16px 48px; }
+h1 { margin: 0 0 4px; font-size: 24px; }
+.sub { margin: 0 0 24px; color: var(--muted); }
+form, .bar { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 20px; }
+label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--muted); flex: 1 1 200px; }
+input { font: inherit; padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text); }
+button { font: inherit; font-weight: 600; padding: 8px 14px; border-radius: 8px; border: 1px solid var(--accent); background: var(--accent); color: var(--surface); cursor: pointer; }
+button.ghost { background: transparent; color: var(--accent); }
+button:disabled { opacity: .5; cursor: progress; }
+.error { color: var(--fail); margin: 0; flex-basis: 100%; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.head h2 { margin: 0; font-size: 17px; }
+.what { margin: 0; color: var(--muted); font-size: 13px; }
+.pill { font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 999px; text-transform: uppercase; letter-spacing: .03em; white-space: nowrap; }
+.pill.ok { color: var(--ok); background: var(--ok-bg); }
+.pill.warning { color: var(--warn); background: var(--warn-bg); }
+.pill.failed { color: var(--fail); background: var(--fail-bg); }
+.pill.fake, .pill.idle, .pill.running { color: var(--fake); background: var(--fake-bg); }
+dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; font-size: 13px; }
+dt { color: var(--muted); }
+dd { margin: 0; overflow-wrap: anywhere; font-family: ui-monospace, "SF Mono", Consolas, monospace; }
+.foot { display: flex; justify-content: space-between; align-items: center; margin-top: auto; font-size: 13px; color: var(--muted); }
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Integration tests</h1>
+  <p class="sub">Read-only checks of each outside service the API uses. Nothing is paid, uploaded or sent to customers.</p>
+
+  <form id="login">
+    <label>Admin email <input id="email" type="email" autocomplete="username" required></label>
+    <label>Password <input id="password" type="password" autocomplete="current-password" required></label>
+    <button type="submit">Sign in and run</button>
+    <p class="error" id="login-error" role="alert" hidden></p>
+  </form>
+
+  <div class="bar" id="bar" hidden>
+    <span id="who"></span>
+    <button type="button" id="run-all">Run all again</button>
+    <button type="button" class="ghost" id="sign-out">Sign out</button>
+  </div>
+
+  <section class="grid" id="cards" aria-live="polite"></section>
+</main>
+
+<script>
+const services = [
+  { id: 'paymongo', name: 'PayMongo', what: 'Lists your webhooks: the secret key works and a webhook points at this API.' },
+  { id: 'recommender', name: 'Recommender', what: 'Wakes the Python service, then asks it for 3 dishes with the shared secret.' },
+  { id: 'cloudinary', name: 'Cloudinary', what: 'Reads your account usage: the cloud name, key and secret work.' },
+  { id: 'pusher', name: 'Pusher', what: 'Lists the channels in use: the app ID, key, secret and cluster work.' },
+]
+const labels = { ok: 'OK', warning: 'Check', failed: 'Failed', fake: 'Fake mode', idle: 'Not run', running: 'Running' }
+let token = null
+
+const cards = document.getElementById('cards')
+for (const s of services) {
+  const card = document.createElement('article')
+  card.className = 'card'
+  card.innerHTML = `<div class="head"><h2></h2><span class="pill idle">Not run</span></div><p class="what"></p><dl></dl><div class="foot"><span class="ms"></span><button type="button" class="ghost" disabled>Run again</button></div>`
+  card.querySelector('h2').textContent = s.name
+  card.querySelector('.what').textContent = s.what
+  card.querySelector('button').setAttribute('aria-label', `Run the ${s.name} test again`)
+  card.querySelector('button').addEventListener('click', () => run(s))
+  s.card = card
+  cards.append(card)
+}
+
+function show(s, status, ms, detail) {
+  const pill = s.card.querySelector('.pill')
+  pill.className = `pill ${status}`
+  pill.textContent = labels[status] || status
+  s.card.querySelector('.ms').textContent = ms == null ? '' : `${ms} ms`
+  const dl = s.card.querySelector('dl')
+  dl.replaceChildren()
+  for (const [key, value] of Object.entries(detail || {})) {
+    const dt = document.createElement('dt')
+    dt.textContent = key.replaceAll('_', ' ')
+    const dd = document.createElement('dd')
+    dd.textContent = typeof value === 'string' ? value : JSON.stringify(value)
+    dl.append(dt, dd)
+  }
+}
+
+async function run(s) {
+  const button = s.card.querySelector('button')
+  button.disabled = true
+  show(s, 'running', null, {})
+  try {
+    const res = await fetch(`api/diagnostics/${s.id}`, { headers: { Authorization: `Bearer ${token}` } })
+    const body = await res.json().catch(() => ({}))
+    if (res.status === 401) {
+      signOut('Your sign-in expired. Sign in again.')
+      return
+    }
+    if (!res.ok) throw new Error(body.error || `HTTP ${res.status}`)
+    show(s, body.data.status, body.data.ms, body.data.detail)
+  } catch (e) {
+    show(s, 'failed', null, { message: e.message })
+  } finally {
+    button.disabled = !token
+  }
+}
+
+function runAll() {
+  services.forEach(run)
+}
+
+function signOut(message) {
+  token = null
+  document.getElementById('bar').hidden = true
+  document.getElementById('login').hidden = false
+  const error = document.getElementById('login-error')
+  error.textContent = message || ''
+  error.hidden = !message
+  services.forEach((s) => { s.card.querySelector('button').disabled = true })
+}
+
+document.getElementById('login').addEventListener('submit', async (event) => {
+  event.preventDefault()
+  const error = document.getElementById('login-error')
+  const submit = event.target.querySelector('button')
+  error.hidden = true
+  submit.disabled = true
+  try {
+    const res = await fetch('api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: document.getElementById('email').value, password: document.getElementById('password').value }),
+    })
+    const body = await res.json().catch(() => ({}))
+    if (!res.ok) throw new Error(body.error || `HTTP ${res.status}`)
+    if (body.data.user.role !== 'admin') throw new Error('Only an admin can run these tests.')
+    token = body.data.access_token
+    document.getElementById('password').value = ''
+    document.getElementById('who').textContent = `Signed in as ${body.data.user.email}`
+    document.getElementById('login').hidden = true
+    document.getElementById('bar').hidden = false
+    runAll()
+  } catch (e) {
+    error.textContent = e.message
+    error.hidden = false
+  } finally {
+    submit.disabled = false
+  }
+})
+
+document.getElementById('run-all').addEventListener('click', runAll)
+document.getElementById('sign-out').addEventListener('click', () => signOut())
+</script>
+</body>
+</html>

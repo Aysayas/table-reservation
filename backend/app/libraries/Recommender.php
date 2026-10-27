@@ -11,6 +11,26 @@ class Recommender {
 		$this->secret = trim(getenv('RECOMMENDER_SECRET') ?: '');
 	}
 
+	public function check()
+	{
+		if ($this->url === '' || $this->secret === '') {
+			return ['status' => 'fake', 'detail' => ['message' => 'RECOMMENDER_URL or RECOMMENDER_SECRET is empty, so best sellers are used']];
+		}
+		$curl = curl_init($this->url . '/health');
+		curl_setopt_array($curl, [CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 60]);
+		$health = json_decode((string) curl_exec($curl), true);
+		$code = (int) curl_getinfo($curl, CURLINFO_HTTP_CODE);
+		curl_close($curl);
+		if ($code !== 200 || ($health['status'] ?? '') !== 'ok') {
+			throw new RuntimeException("The recommender's /health answered HTTP {$code}");
+		}
+		$result = $this->recommend([], 3);
+		if (!$result) {
+			throw new RuntimeException('The recommender is up, but /recommend failed (check RECOMMENDER_SECRET and its database settings)');
+		}
+		return ['status' => 'ok', 'detail' => ['url' => $this->url, 'source' => $result['source'], 'item_ids' => $result['item_ids']]];
+	}
+
 	public function recommend($item_ids, $limit)
 	{
 		if ($this->url === '' || $this->secret === '') {
