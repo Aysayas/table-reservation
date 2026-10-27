@@ -6,7 +6,7 @@ export default defineConfig({
   retries: 0,
   reporter: 'html',
   use: {
-    baseURL: 'http://localhost:5173',
+    baseURL: 'http://localhost:5174',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
   },
@@ -23,8 +23,9 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'npm run dev',
-    url: 'http://localhost:5173',
-    reuseExistingServer: true,
+    command: 'npm run dev -- --port 5174 --strictPort',
+    url: 'http://localhost:5174',
+    reuseExistingServer: false,
+    env: { VITE_USE_SAMPLE: 'true' },
   },
 })
