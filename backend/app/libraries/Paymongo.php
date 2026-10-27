@@ -19,6 +19,31 @@ class Paymongo {
 		return rtrim(getenv('FRONTEND_URL') ?: 'http://localhost:5173', '/') . $path;
 	}
 
+	public function check()
+	{
+		if ($this->secret_key === '') {
+			return ['status' => 'fake', 'detail' => ['message' => 'PAYMONGO_SECRET_KEY is empty, so no checkout is created']];
+		}
+		$target = rtrim(getenv('APP_URL') ?: '', '/') . '/api/payments/webhook';
+		$hooks = array_map(fn($hook) => [
+			'url' => $hook['attributes']['url'] ?? '',
+			'status' => $hook['attributes']['status'] ?? '',
+			'events' => $hook['attributes']['events'] ?? [],
+		], $this->request('GET', '/webhooks')['data'] ?? []);
+		$ours = array_values(array_filter($hooks, fn($hook) => $hook['url'] === $target && $hook['status'] === 'enabled' && in_array('checkout_session.payment.paid', $hook['events'], true)));
+
+		return [
+			'status' => $ours && $this->webhook_secret !== '' ? 'ok' : 'warning',
+			'detail' => [
+				'mode' => str_starts_with($this->secret_key, 'sk_live_') ? 'live' : 'test',
+				'expected_webhook' => $target,
+				'webhook_found_and_enabled' => (bool) $ours,
+				'webhook_secret_set' => $this->webhook_secret !== '',
+				'webhooks' => $hooks,
+			],
+		];
+	}
+
 	public function start($target, $id, $due, $name, $reference, $success_url, $cancel_url)
 	{
 		$payments = $this->_lava->Payment_model;
@@ -134,7 +159,7 @@ class Paymongo {
 		curl_close($curl);
 		if ($raw === false || $code >= 400) {
 			error_log("PayMongo {$method} {$path} failed: HTTP {$code} {$error} " . substr((string) $raw, 0, 300));
-			throw new RuntimeException('PayMongo request failed');
+			throw new RuntimeException("PayMongo request failed: HTTP {$code}");
 		}
 		return json_decode($raw, true) ?: [];
 	}
