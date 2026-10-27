@@ -31,6 +31,20 @@ class Sms {
 		}
 	}
 
+	public function test($mobile)
+	{
+		$customer = $this->_lava->Customer_model->first_or_create(['mobile_number' => $mobile], ['full_name' => 'Diagnostics Test'])['record'];
+		$message = "Vencio's Garden: This is a test message from the integration tests page.";
+		$status = $this->send($customer['mobile_number'], $message) ? 'sent' : 'failed';
+		$this->_lava->Notification_model->insert([
+			'customer_id' => $customer['customer_id'],
+			'type' => 'sms',
+			'message' => $message,
+			'status' => $status,
+		]);
+		return ['message' => $message, 'length' => strlen($message), 'status' => $status, 'mode' => 'fake'];
+	}
+
 	private function message($reservation, $customer, $kind)
 	{
 		$name = mb_substr(strtok(trim($customer['full_name']), ' ') ?: 'there', 0, 20);

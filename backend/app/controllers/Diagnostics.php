@@ -154,6 +154,30 @@ class Diagnostics extends Controller {
 		$this->api->respond(['data' => ['deleted' => $this->cloudinary->delete($url)]]);
 	}
 
+	public function send_sms()
+	{
+		$this->api->require_role('admin');
+		$this->call->library('sms');
+		$this->api->respond(['data' => $this->sms->test($this->test_mobile)], 201);
+	}
+
+	public function latest_sms()
+	{
+		$this->api->require_role('admin');
+		$rows = $this->db->raw('SELECT n.notification_id, c.full_name, c.mobile_number, n.message, n.status, n.sent_at FROM notifications n JOIN customers c ON c.customer_id = n.customer_id ORDER BY n.notification_id DESC LIMIT 10')->fetchAll(PDO::FETCH_ASSOC);
+		$this->api->respond(['data' => array_map(function ($row) {
+			$mobile = $row['mobile_number'];
+			return [
+				'notification_id' => (int) $row['notification_id'],
+				'customer' => $row['full_name'],
+				'mobile' => $mobile === $this->test_mobile ? $mobile : '09XX XXX ' . substr($mobile, -4),
+				'message' => $row['message'],
+				'status' => $row['status'],
+				'sent_at' => $row['sent_at'],
+			];
+		}, $rows)]);
+	}
+
 	private function next_open_slot()
 	{
 		for ($day = 1; $day <= 7; $day++) {
