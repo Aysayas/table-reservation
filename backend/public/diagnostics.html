@@ -44,13 +44,20 @@ dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; f
 dt { color: var(--muted); }
 dd { margin: 0; overflow-wrap: anywhere; font-family: ui-monospace, "SF Mono", Consolas, monospace; }
 .foot { display: flex; justify-content: space-between; align-items: center; margin-top: auto; font-size: 13px; color: var(--muted); }
+.sim { border-top: 1px dashed var(--border); padding-top: 12px; display: flex; flex-direction: column; gap: 10px; }
+.sim h3 { margin: 0; font-size: 14px; }
+.sim .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.sim a.pay { font-weight: 600; color: var(--accent); }
+.sim img { max-width: 100%; max-height: 220px; border-radius: 8px; border: 1px solid var(--border); align-self: flex-start; }
+.sim input[type=file] { font-size: 13px; max-width: 100%; }
+.note { margin: 0; font-size: 13px; color: var(--muted); }
 [hidden] { display: none !important; }
 </style>
 </head>
 <body>
 <main>
   <h1>Integration tests</h1>
-  <p class="sub">Read-only checks of each outside service the API uses. Nothing is paid, uploaded or sent to customers.</p>
+  <p class="sub">Read-only checks of each outside service the API uses, plus a simulated payment and photo upload.</p>
 
   <form id="login">
     <label>Admin email <input id="email" type="email" autocomplete="username" required></label>
@@ -78,15 +85,44 @@ const services = [
 const labels = { ok: 'OK', warning: 'Check', failed: 'Failed', fake: 'Fake mode', idle: 'Not run', running: 'Running' }
 let token = null
 
+function fill(dl, detail) {
+  dl.replaceChildren()
+  for (const [key, value] of Object.entries(detail || {})) {
+    const dt = document.createElement('dt')
+    dt.textContent = key.replaceAll('_', ' ')
+    const dd = document.createElement('dd')
+    dd.textContent = value === null ? 'null' : typeof value === 'string' ? value : JSON.stringify(value)
+    dl.append(dt, dd)
+  }
+}
+
+async function call(method, path, body) {
+  const options = { method, headers: { Authorization: `Bearer ${token}` } }
+  if (body instanceof FormData) {
+    options.body = body
+  } else if (body) {
+    options.headers['Content-Type'] = 'application/json'
+    options.body = JSON.stringify(body)
+  }
+  const res = await fetch(path, options)
+  const data = await res.json().catch(() => ({}))
+  if (res.status === 401) {
+    signOut('Your sign-in expired. Sign in again.')
+    throw new Error('Signed out')
+  }
+  if (!res.ok) throw new Error(data.error === 'Invalid input' && data.errors ? data.errors.join(' ') : data.error || `HTTP ${res.status}`)
+  return data.data
+}
+
 const cards = document.getElementById('cards')
 for (const s of services) {
   const card = document.createElement('article')
   card.className = 'card'
-  card.innerHTML = `<div class="head"><h2></h2><span class="pill idle">Not run</span></div><p class="what"></p><dl></dl><div class="foot"><span class="ms"></span><button type="button" class="ghost" disabled>Run again</button></div>`
+  card.innerHTML = `<div class="head"><h2></h2><span class="pill idle">Not run</span></div><p class="what"></p><dl></dl><div class="foot"><span class="ms"></span><button type="button" class="ghost again" disabled>Run again</button></div>`
   card.querySelector('h2').textContent = s.name
   card.querySelector('.what').textContent = s.what
-  card.querySelector('button').setAttribute('aria-label', `Run the ${s.name} test again`)
-  card.querySelector('button').addEventListener('click', () => run(s))
+  card.querySelector('.again').setAttribute('aria-label', `Run the ${s.name} test again`)
+  card.querySelector('.again').addEventListener('click', () => run(s))
   s.card = card
   cards.append(card)
 }
@@ -96,30 +132,16 @@ function show(s, status, ms, detail) {
   pill.className = `pill ${status}`
   pill.textContent = labels[status] || status
   s.card.querySelector('.ms').textContent = ms == null ? '' : `${ms} ms`
-  const dl = s.card.querySelector('dl')
-  dl.replaceChildren()
-  for (const [key, value] of Object.entries(detail || {})) {
-    const dt = document.createElement('dt')
-    dt.textContent = key.replaceAll('_', ' ')
-    const dd = document.createElement('dd')
-    dd.textContent = typeof value === 'string' ? value : JSON.stringify(value)
-    dl.append(dt, dd)
-  }
+  fill(s.card.querySelector('dl'), detail)
 }
 
 async function run(s) {
-  const button = s.card.querySelector('button')
+  const button = s.card.querySelector('.again')
   button.disabled = true
   show(s, 'running', null, {})
   try {
-    const res = await fetch(`api/diagnostics/${s.id}`, { headers: { Authorization: `Bearer ${token}` } })
-    const body = await res.json().catch(() => ({}))
-    if (res.status === 401) {
-      signOut('Your sign-in expired. Sign in again.')
-      return
-    }
-    if (!res.ok) throw new Error(body.error || `HTTP ${res.status}`)
-    show(s, body.data.status, body.data.ms, body.data.detail)
+    const r = await call('GET', `api/diagnostics/${s.id}`)
+    show(s, r.status, r.ms, r.detail)
   } catch (e) {
     show(s, 'failed', null, { message: e.message })
   } finally {
@@ -131,6 +153,138 @@ function runAll() {
   services.forEach(run)
 }
 
+function addPaymentTest(card) {
+  const sim = document.createElement('div')
+  sim.className = 'sim'
+  sim.innerHTML = `<h3>Simulated payment</h3><p class="note">Creates a 1-guest test booking, starts its deposit, then reads the database every 3 seconds until the webhook marks it paid. The test booking is cancelled once paid.</p><div class="row"><button type="button" class="start" disabled>Start test payment</button><a class="pay" target="_blank" rel="noopener" hidden>Pay on PayMongo ↗</a></div><p class="note state" aria-live="polite"></p><dl></dl>`
+  const start = sim.querySelector('.start')
+  const pay = sim.querySelector('.pay')
+  const state = sim.querySelector('.state')
+  const dl = sim.querySelector('dl')
+  let timer = null
+  start.addEventListener('click', async () => {
+    clearInterval(timer)
+    start.disabled = true
+    pay.hidden = true
+    fill(dl, {})
+    state.textContent = 'Creating the test booking…'
+    try {
+      const t = await call('POST', 'api/diagnostics/paymongo/payment')
+      if (t.fake) {
+        state.textContent = `Fake mode: no PayMongo key, so there is nothing to pay. Booking ${t.reference_code}, payment #${t.payment_id} stays pending.`
+      } else {
+        pay.href = t.checkout_url
+        pay.hidden = false
+        state.textContent = `Booking ${t.reference_code}, deposit PHP ${Number(t.amount).toFixed(2)}. Pay with card 4343 4343 4343 4345 or GCash (Authorize). Waiting for the webhook…`
+      }
+      const started = Date.now()
+      const poll = async () => {
+        try {
+          const row = await call('GET', `api/diagnostics/paymongo/payment/${t.payment_id}`)
+          const db = {}
+          for (const [k, v] of Object.entries(row.payments_row)) db[`payments.${k}`] = v
+          db['reservation status'] = row.reservation.status
+          db['deposit status'] = row.reservation.deposit_status
+          fill(dl, db)
+          if (row.payments_row.status === 'paid') {
+            clearInterval(timer)
+            pay.hidden = true
+            start.disabled = false
+            state.textContent = `Paid. The database shows payment #${t.payment_id} as paid, and test booking ${t.reference_code} is ${row.reservation.status}.`
+          } else if (Date.now() - started > 600000) {
+            clearInterval(timer)
+            start.disabled = false
+            state.textContent = 'Stopped checking after 10 minutes. Start again to retry.'
+          }
+        } catch (e) {
+          clearInterval(timer)
+          start.disabled = false
+          state.textContent = e.message
+        }
+      }
+      await poll()
+      if (t.fake) {
+        start.disabled = false
+      } else {
+        timer = setInterval(poll, 3000)
+      }
+    } catch (e) {
+      start.disabled = false
+      state.textContent = e.message
+    }
+  })
+  card.querySelector('.foot').before(sim)
+}
+
+function addPhotoTest(card) {
+  const sim = document.createElement('div')
+  sim.className = 'sim'
+  sim.innerHTML = `<h3>Simulated upload</h3><p class="note">Uploads a JPG or PNG (up to 2 MB) to vencios-garden/diagnostics, then loads it back from Cloudinary. Menu photos are not touched.</p><label>Photo <input type="file" accept="image/jpeg,image/png"></label><div class="row"><button type="button" class="upload" disabled>Upload test photo</button><button type="button" class="ghost remove" hidden>Delete test photo</button></div><p class="note state" aria-live="polite"></p><img alt="Test photo loaded back from Cloudinary" hidden><dl></dl>`
+  const file = sim.querySelector('input')
+  const upload = sim.querySelector('.upload')
+  const remove = sim.querySelector('.remove')
+  const state = sim.querySelector('.state')
+  const img = sim.querySelector('img')
+  const dl = sim.querySelector('dl')
+  let url = null
+  upload.addEventListener('click', async () => {
+    if (!file.files[0]) {
+      state.textContent = 'Choose a photo first.'
+      return
+    }
+    upload.disabled = true
+    state.textContent = 'Uploading…'
+    try {
+      const form = new FormData()
+      form.append('photo', file.files[0])
+      const r = await call('POST', 'api/diagnostics/cloudinary/photo', form)
+      if (r.fake) {
+        state.textContent = r.message
+        fill(dl, { bytes_sent: r.bytes_sent })
+        return
+      }
+      url = r.url
+      fill(dl, { url: r.url, bytes_sent: r.bytes_sent })
+      state.textContent = 'Uploaded. Loading it back from Cloudinary…'
+      img.onload = () => { state.textContent = `Loaded back from Cloudinary (${img.naturalWidth} × ${img.naturalHeight}).` }
+      img.onerror = () => { state.textContent = 'Uploaded, but the image could not be loaded back.' }
+      img.src = r.url
+      img.hidden = false
+      remove.hidden = false
+    } catch (e) {
+      state.textContent = e.message
+    } finally {
+      upload.disabled = !token
+    }
+  })
+  remove.addEventListener('click', async () => {
+    remove.disabled = true
+    try {
+      const r = await call('DELETE', 'api/diagnostics/cloudinary/photo', { url })
+      state.textContent = r.deleted ? 'Deleted from Cloudinary.' : 'Cloudinary did not confirm the delete.'
+      if (r.deleted) {
+        img.hidden = true
+        img.removeAttribute('src')
+        remove.hidden = true
+        fill(dl, {})
+        url = null
+      }
+    } catch (e) {
+      state.textContent = e.message
+    } finally {
+      remove.disabled = false
+    }
+  })
+  card.querySelector('.foot').before(sim)
+}
+
+addPaymentTest(services[0].card)
+addPhotoTest(services[2].card)
+
+function setButtons(enabled) {
+  document.querySelectorAll('.again, .start, .upload').forEach((b) => { b.disabled = !enabled })
+}
+
 function signOut(message) {
   token = null
   document.getElementById('bar').hidden = true
@@ -138,7 +292,7 @@ function signOut(message) {
   const error = document.getElementById('login-error')
   error.textContent = message || ''
   error.hidden = !message
-  services.forEach((s) => { s.card.querySelector('button').disabled = true })
+  setButtons(false)
 }
 
 document.getElementById('login').addEventListener('submit', async (event) => {
@@ -161,6 +315,7 @@ document.getElementById('login').addEventListener('submit', async (event) => {
     document.getElementById('who').textContent = `Signed in as ${body.data.user.email}`
     document.getElementById('login').hidden = true
     document.getElementById('bar').hidden = false
+    setButtons(true)
     runAll()
   } catch (e) {
     error.textContent = e.message
