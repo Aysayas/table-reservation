@@ -34,7 +34,8 @@ class Reservations extends Controller {
 		$customer_ids = $search !== ''
 			? array_column($this->Customer_model->query()->like('full_name', "%{$search}%")->get_all(), 'customer_id')
 			: [];
-		$build = function () use ($view, $date, $status, $search, $customer_ids) {
+		$all_days = $search !== '' && $view === '' && !isset($query['reservation_date']);
+		$build = function () use ($view, $date, $status, $search, $customer_ids, $all_days) {
 			$today = date('Y-m-d');
 			$query = $this->Reservation_model->query();
 			if ($view === 'upcoming') {
@@ -43,7 +44,7 @@ class Reservations extends Controller {
 				$query->where('reservation_date', '<', $today)->where('status', '<>', 'cancelled');
 			} elseif ($view === 'cancelled') {
 				$query->where('status', 'cancelled');
-			} else {
+			} elseif (!$all_days) {
 				$query->where('reservation_date', $view === 'today' ? $today : $date);
 			}
 			if ($status !== '') {
@@ -124,6 +125,11 @@ class Reservations extends Controller {
 		}
 
 		$moved = $input['reservation_date'] !== $reservation['reservation_date'] || $input['reservation_time'] !== $reservation['reservation_time'];
+		$deposit = [];
+		if (!$this->Payment_model->exists(['reservation_id' => (int) $id, 'status' => 'paid'])) {
+			$settings = $this->settings();
+			$deposit = ['deposit_amount' => number_format($input['pax'] * ($settings['deposit_required'] ? $settings['deposit_per_guest'] : 0.0), 2, '.', '')];
+		}
 		$this->Reservation_model->transaction();
 		try {
 			$this->Reservation_model->update($id, [
@@ -132,7 +138,7 @@ class Reservations extends Controller {
 				'pax' => $input['pax'],
 				'table_id' => $new_table,
 				'special_request' => array_key_exists('special_request', $body) ? $input['special_request'] : $reservation['special_request'],
-			] + ($moved ? ['reminder_sent_at' => null] : []));
+			] + $deposit + ($moved ? ['reminder_sent_at' => null] : []));
 			if ($old_table !== null && $old_table !== $new_table) {
 				$this->release_table($old_table);
 			}
@@ -265,8 +271,8 @@ class Reservations extends Controller {
 		$this->Reservation_model->transaction();
 		try {
 			$customer = $this->Customer_model->first_or_create(
-				['mobile_number' => $input['mobile_number']],
-				['full_name' => $input['full_name'], 'email' => $input['email']]
+				['mobile_number' => $input['mobile_number'], 'full_name' => $input['full_name']],
+				['email' => $input['email']]
 			)['record'];
 
 			if (!$this->is_open($input['reservation_date'], $input['reservation_time'], $input['pax'])) {
@@ -274,11 +280,8 @@ class Reservations extends Controller {
 				$this->api->respond_error('That time is no longer available', 409);
 			}
 
-			if ($customer['full_name'] !== $input['full_name'] || ($input['email'] !== null && $customer['email'] !== $input['email'])) {
-				$this->Customer_model->update($customer['customer_id'], array_filter([
-					'full_name' => $input['full_name'],
-					'email' => $input['email'],
-				], fn($value) => $value !== null));
+			if ($input['email'] !== null && $customer['email'] === null) {
+				$this->Customer_model->update($customer['customer_id'], ['email' => $input['email']]);
 			}
 
 			$settings = $this->settings();
