@@ -24,7 +24,8 @@ class Reservations extends Controller {
 		$date = $this->valid_date($query['reservation_date'] ?? date('Y-m-d'), true);
 		$status = $query['status'] ?? '';
 		$search = is_string($query['search'] ?? null) ? trim($query['search']) : '';
-		$page = ctype_digit((string) ($query['page'] ?? '1')) ? (int) ($query['page'] ?? 1) : 0;
+		$raw_page = $query['page'] ?? '1';
+		$page = is_string($raw_page) && ctype_digit($raw_page) ? (int) $raw_page : 0;
 
 		if (($view !== '' && !in_array($view, $this->views, true)) || !$date || ($status !== '' && !in_array($status, $this->statuses, true)) || $page < 1) {
 			$this->api->respond_error('Give a view (' . implode(', ', $this->views) . ') or reservation_date as YYYY-MM-DD, a valid status and a page of 1 or more', 422);
@@ -248,7 +249,7 @@ class Reservations extends Controller {
 	{
 		$query = $this->api->get_query_params();
 		$date = $this->valid_date($query['date'] ?? '');
-		$pax = ctype_digit((string) ($query['pax'] ?? '')) ? (int) $query['pax'] : 0;
+		$pax = is_string($query['pax'] ?? null) && ctype_digit($query['pax']) ? (int) $query['pax'] : 0;
 
 		if (!$date || $pax < 1) {
 			$this->api->respond_error('Give a date (YYYY-MM-DD, today or later) and pax (1 or more)', 422);
@@ -412,14 +413,21 @@ class Reservations extends Controller {
 			$rules['special_request'] = 'max_length[255]';
 		}
 
-		$this->form_validation->validate($rules);
-		$errors = $this->form_validation->get_errors() ?? [];
-
+		$type_errors = [];
 		foreach (['full_name', 'mobile_number', 'email', 'reservation_date', 'reservation_time', 'special_request'] as $field) {
 			if (isset($input[$field]) && !is_string($input[$field])) {
-				$errors[] = "\"{$field}\" must be text.";
+				$type_errors[] = "\"{$field}\" must be text.";
 			}
 		}
+		if (isset($input['pax']) && !is_int($input['pax']) && !is_string($input['pax'])) {
+			$type_errors[] = '"pax" must be a number.';
+		}
+		if ($type_errors) {
+			$this->api->respond(['error' => 'Invalid input', 'status' => 422, 'errors' => $type_errors], 422);
+		}
+
+		$this->form_validation->validate($rules);
+		$errors = $this->form_validation->get_errors() ?? [];
 
 		$date = $this->valid_date($input['reservation_date'] ?? '');
 		if (!empty($input['reservation_date']) && !$date) {
