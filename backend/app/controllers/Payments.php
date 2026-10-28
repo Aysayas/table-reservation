@@ -207,6 +207,8 @@ class Payments extends Controller {
 			$this->Payment_model->rollback();
 			$this->api->respond_error('Could not save the payment', 500);
 		}
+		$this->call->library('paymongo');
+		$this->paymongo->cancel_pending($order_id !== null ? 'order_id' : 'reservation_id', $order_id ?? $reservation_id);
 		if ($order_id !== null) {
 			$this->call->library('pusher');
 			$this->pusher->order_changed($order_id, 'order.paid');
@@ -250,21 +252,24 @@ class Payments extends Controller {
 			$this->api->respond(['received' => true]);
 		}
 
-		$paid_at = ['status' => 'paid', 'paid_at' => date('Y-m-d H:i:s')];
 		$id = $payment['payment_id'];
+		$target = $payment['order_id'] !== null ? 'order_id' : 'reservation_id';
+		$already_paid = $payment['status'] !== 'paid' && $this->Payment_model->query()->where([$target => $payment[$target], 'status' => 'paid'])->get_all();
+		if ($already_paid) {
+			error_log("{$target} {$payment[$target]} was already paid; online payment {$id} was also paid at PayMongo and needs a refund");
+			$this->api->respond(['received' => true]);
+		}
+
+		$paid_at = ['status' => 'paid', 'paid_at' => date('Y-m-d H:i:s')];
 		if (!$this->Payment_model->update_where(['payment_id' => $id, 'status' => 'pending'], $paid_at)
 			&& !$this->Payment_model->update_where(['payment_id' => $id, 'status' => 'failed'], $paid_at)) {
 			$this->api->respond(['received' => true]);
 		}
-		if ($payment['order_id'] !== null && !$this->Order_model->update_where(['order_id' => $payment['order_id'], 'payment_status' => 'unpaid'], ['payment_status' => 'paid'])) {
-			error_log("Order {$payment['order_id']} was already paid; online payment {$id} needs a refund");
-		} elseif ($payment['order_id'] !== null) {
+		if ($payment['order_id'] !== null) {
+			$this->Order_model->update_where(['order_id' => $payment['order_id'], 'payment_status' => 'unpaid'], ['payment_status' => 'paid']);
 			$this->call->library('pusher');
 			$this->pusher->order_changed($payment['order_id'], 'order.paid');
-		}
-		if ($payment['reservation_id'] !== null && count($this->Payment_model->query()->where(['reservation_id' => $payment['reservation_id'], 'status' => 'paid'])->get_all()) > 1) {
-			error_log("Reservation {$payment['reservation_id']} has more than one paid deposit; payment {$id} needs a refund");
-		} elseif ($payment['reservation_id'] !== null) {
+		} else {
 			$this->call->library('sms');
 			$this->sms->reservation((int) $payment['reservation_id'], 'deposit_paid');
 		}
