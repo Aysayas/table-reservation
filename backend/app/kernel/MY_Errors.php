@@ -23,7 +23,20 @@ class MY_Errors extends Errors {
 		if (!$this->is_development()) {
 			$this->json_500();
 		}
+		if (!headers_sent()) {
+			http_response_code(500);
+		}
 		parent::show_exception($exception);
+	}
+
+	public function show_404($heading = '', $message = '', $template = '')
+	{
+		if (preg_match('#^/api(/|$)#', (string) parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH))) {
+			$lava = lava_instance();
+			$lava->call->library('api');
+			$lava->api->respond_error('Not found', 404);
+		}
+		parent::show_404($heading, $message, $template);
 	}
 
 	protected function is_development()
