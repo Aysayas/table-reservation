@@ -246,7 +246,7 @@ class Orders extends Controller {
 		$table_id = (int) $order['table_id'];
 		try {
 			$checkout = $this->paymongo->start('order_id', (int) $order['order_id'], $due, "Order #{$order['order_id']}", "ORDER-{$order['order_id']}",
-				$this->paymongo->frontend_url("/table/{$table_id}/orders"), $this->paymongo->frontend_url("/table/{$table_id}/checkout"));
+				$this->paymongo->frontend_url("/table/{$table_id}/orders?order={$order['order_id']}"), $this->paymongo->frontend_url("/table/{$table_id}/orders?order={$order['order_id']}"));
 		} catch (RuntimeException $e) {
 			$this->api->respond_error('The payment service is not available, please try again', 502);
 		}

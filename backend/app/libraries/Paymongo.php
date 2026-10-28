@@ -44,6 +44,16 @@ class Paymongo {
 		];
 	}
 
+	public function cancel_pending($target, $id)
+	{
+		$payments = $this->_lava->Payment_model;
+		foreach ($payments->query()->where([$target => $id, 'method' => 'online', 'status' => 'pending'])->get_all() as $old) {
+			if ($payments->update_where(['payment_id' => $old['payment_id'], 'status' => 'pending'], ['status' => 'failed']) && $this->secret_key !== '') {
+				$this->expire_session($old['provider_reference']);
+			}
+		}
+	}
+
 	public function start($target, $id, $due, $name, $reference, $success_url, $cancel_url)
 	{
 		$payments = $this->_lava->Payment_model;
