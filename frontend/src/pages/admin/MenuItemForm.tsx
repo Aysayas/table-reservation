@@ -79,6 +79,7 @@ export default function MenuItemForm() {
   const queryClient = useQueryClient()
   const fileInput = useRef<HTMLInputElement>(null)
   const [photo, setPhoto] = useState<File | null>(null)
+  const [createdId, setCreatedId] = useState<number | null>(null)
   const [preview, setPreview] = useState<string | null>(null)
   const [dragging, setDragging] = useState(false)
   const { data: categories = [] } = useQuery({ queryKey: ['categories'], queryFn: getCategories })
@@ -143,7 +144,9 @@ export default function MenuItemForm() {
   const onSubmit = async (values: FormValues) => {
     try {
       const body = { ...values, description: values.description || null }
-      const saved = editing ? await updateMenuItem(Number(id), body) : await createMenuItem(body)
+      const targetId = editing ? Number(id) : createdId
+      const saved = targetId ? await updateMenuItem(targetId, body) : await createMenuItem(body)
+      if (!editing) setCreatedId(saved.item_id)
       if (photo) await uploadMenuImage(saved.item_id, photo)
       await queryClient.invalidateQueries({ queryKey: ['menu-items'] })
       await queryClient.invalidateQueries({ queryKey: ['menu-item', saved.item_id] })
