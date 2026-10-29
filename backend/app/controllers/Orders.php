@@ -200,6 +200,7 @@ class Orders extends Controller {
 			$this->api->respond_error('Could not save the order', 500);
 		}
 
+		$this->Table_model->occupy($table_id);
 		$this->pusher->order_changed($id, 'order.created');
 		$this->api->respond(['data' => $this->format($this->Order_model->find($id))], 201);
 	}
@@ -223,6 +224,9 @@ class Orders extends Controller {
 		}
 
 		$this->Order_model->update($id, ['status' => $status]);
+		if ($status === 'served') {
+			$this->Table_model->free_if_idle($order['table_id']);
+		}
 		$this->pusher->order_changed($id, 'order.status');
 		$this->api->respond(['data' => $this->format($this->Order_model->find($id))]);
 	}
