@@ -18,6 +18,12 @@ Claude adds an entry here when the frontend developer asks for something outside
 
 ## Entries
 
+### 2026-10-29: Install pusher-js for live updates on screens 12, 17 and 18
+- Level: ℹ️ request, nothing off plan (at the top so it doesn't conflict with the entries #131 adds at the end)
+- Notes: screens 12, 17 and 18 have no live updates yet, only the 15-second refresh. `docs/packages.md` says the lead installs `pusher-js` when these screens need it, and `frontend/package.json` is lead-owned. Please (1) install `pusher-js`, and (2) add `VITE_PUSHER_KEY` and `VITE_PUSHER_CLUSTER` to `frontend/.env.example` (the public key and cluster; the secret stays in the backend). Then she subscribes 17 and 18 to `private-orders` (through `/realtime/auth` with the bearer token) and 12 to the order's `channel`, refetches on `order.created`, `order.status` and `order.paid`, and keeps the 15-second refresh as a fallback, as `docs/api.md` says. Also, `docs/progress.md` says "screens 12, 17, 18 subscribe with `pusher-js`", but no screen does yet
+- Status: Waiting for lead
+- Lead note:
+
 ### 2026-10-22: Real contact details on screen 07 About Us
 - Level: 🟡 off plan
 - Asked for: use Vencio's Garden's real contact details from the official menu: address `#08 Nautical Highway, Tawiran, Calapan City, Oriental Mindoro`, phone `0918 957 2855`, email `venciosgarden@yahoo.com`, Facebook `https://www.facebook.com/venciosgardenhotel`
@@ -208,8 +214,24 @@ Claude adds an entry here when the frontend developer asks for something outside
 - Status: Approved
 - Lead note: (2026-10-25) Both. Add the "Free table" button on occupied tables, shown only when the table has no order that is unserved or unpaid; it calls `PATCH /tables/{id}/status` with `available` (in the sample data until the API is live). Add a test for it. The lead will also make the backend free the table when its order is served and paid.
 
-### 2026-10-26: Two pull requests waiting for review
-- Level: ℹ️ for your information, nothing off plan
-- Notes: two of her pull requests are open, both made from `main`: #106 (Reschedule mode on 03, your decision on #75) and #109 (the screen 02 extras you approved). Both have your fixes: the `\s` space cleanup on #106, and the price slider reaching the top price on #109. Next is the fixed +63 mobile field in its own pull request. Screen 23 waits for your OK.
+### 2026-10-26: Two questions about screen 24 Reservations
+- Level: ℹ️ question, nothing off plan
+- Notes:
+  1. The wireframe's Reservation Settings card has "Opening Time for Booking", but `docs/api.md` has no such setting. Booking times come from the opening hours (`PUT /opening-hours`, edited on screen 29). For now the field shows today's opening time, can't be changed, and links to Settings ("Set the hours in Settings"). Is that right, or should the API get its own booking opening time?
+  2. `docs/api.md` lists `PUT /reservations/{id}` (admin edit of date, time, guests and table) for screen 24, but the wireframe has no Edit button or row action. Should screen 24 get an Edit for each booking, or is the edit for later?
+- Status: Waiting for lead
+- Lead note:
+
+### 2026-10-29: Guests above the biggest table on screen 03
+- Level: ℹ️ question, nothing off plan
+- Notes: `max_pax` is 10, so screen 03 lets customers pick up to 10 guests, but the biggest table seats 4. From 5 guests up, every time is greyed out. Screen 03 now explains this ("No table is free for N guests on this day. For bigger groups, call us at …"). Customers can't read `/tables`, so the screen can't cap the guests itself. Should `max_pax` be set to 4 in Settings (screen 29) and `seed.sql`, should the restaurant add a bigger table, or should availability join tables for big groups? (PR for screen 03)
+- Status: Waiting for lead
+- Lead note:
+
+### 2026-10-29: Screen 17 loads every order ever made
+- Level: 🟡 off plan
+- Asked for: fix screen 17 Orders and Payments being slow, found in a code audit
+- Rule it bumps into: CLAUDE.md, changing what a screen shows (its data) needs the lead's OK
+- What Claude did instead: nothing changed yet. Screen 17 calls `GET /orders` with no date and no `page`, every 15 seconds. The backend then returns every order in the database, with about 4 queries per order. After 3 months at 100 orders a day that's about 9,000 orders and 36,000 queries every 15 seconds for each open screen. Suggested fix: for All and Paid send `date_from` = today (the API already supports it); keep Unpaid without a date so older unpaid orders still show. The wireframe only has a Time column, and screen 25 Order History already covers past orders. The screen 17 test would change (it expects 10 orders under All and 8 under Paid, including past days)
 - Status: Waiting for lead
 - Lead note:

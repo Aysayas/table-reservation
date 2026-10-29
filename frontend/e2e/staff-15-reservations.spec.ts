@@ -54,6 +54,6 @@ test('status filter, search across days and an empty view', async ({ page }) => 
   await page.getByRole('searchbox', { name: 'Search' }).fill('RSV-000001')
   await expect(page.getByRole('row', { name: /RSV-000001/ })).toBeVisible()
   await page.getByRole('searchbox', { name: 'Search' }).fill('')
-  await page.getByLabel('Day').selectOption('upcoming')
+  await page.getByLabel('Day').selectOption('cancelled')
   await expect(page.getByText('No reservations found.')).toBeVisible()
 })

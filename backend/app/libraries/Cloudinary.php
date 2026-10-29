@@ -29,17 +29,40 @@ class Cloudinary {
 		return $body['secure_url'];
 	}
 
+	public function check()
+	{
+		if ($this->cloud === '' || $this->key === '' || $this->secret === '') {
+			return ['status' => 'fake', 'detail' => ['message' => 'Cloudinary keys are empty, so photos are saved in public/uploads']];
+		}
+		$curl = curl_init("https://api.cloudinary.com/v1_1/{$this->cloud}/usage");
+		curl_setopt_array($curl, [CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 15, CURLOPT_USERPWD => "{$this->key}:{$this->secret}"]);
+		$raw = curl_exec($curl);
+		$code = (int) curl_getinfo($curl, CURLINFO_HTTP_CODE);
+		curl_close($curl);
+		$body = json_decode((string) $raw, true) ?: [];
+		if ($code !== 200) {
+			throw new RuntimeException("Cloudinary answered HTTP {$code}: " . ($body['error']['message'] ?? 'no details'));
+		}
+		return ['status' => 'ok', 'detail' => [
+			'cloud' => $this->cloud,
+			'plan' => $body['plan'] ?? null,
+			'resources' => $body['resources'] ?? null,
+			'storage_mb' => isset($body['storage']['usage']) ? round($body['storage']['usage'] / 1048576, 2) : null,
+		]];
+	}
+
 	public function delete($url)
 	{
 		$prefix = "https://res.cloudinary.com/{$this->cloud}/image/upload/";
 		if ($this->secret === '' || !is_string($url) || !str_starts_with($url, $prefix)) {
-			return;
+			return false;
 		}
 		$public_id = preg_replace(['#^v\d+/#', '#\.[a-z0-9]+$#i'], '', substr($url, strlen($prefix)));
 		try {
-			$this->post('destroy', ['public_id' => $public_id]);
+			return ($this->post('destroy', ['public_id' => $public_id])['result'] ?? '') === 'ok';
 		} catch (RuntimeException $e) {
 			error_log("Cloudinary could not delete {$public_id}");
+			return false;
 		}
 	}
 

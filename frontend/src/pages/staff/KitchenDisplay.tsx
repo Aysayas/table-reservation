@@ -2,8 +2,9 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { differenceInMinutes, format, parseISO } from 'date-fns'
 import { LogOut } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
+import { logout } from '@/services/auth'
 import { listOrders, updateOrderStatus, type StaffOrder } from '@/services/orders'
 import type { OrderStatus } from '@/types/db'
 
@@ -57,6 +58,12 @@ const waited = (minutes: number) =>
 
 export default function KitchenDisplay() {
   const queryClient = useQueryClient()
+  const navigate = useNavigate()
+  const signOut = async (e: React.MouseEvent) => {
+    e.preventDefault()
+    await logout().catch(() => undefined)
+    navigate('/staff/login')
+  }
   const [now, setNow] = useState(() => new Date())
   useEffect(() => {
     const id = setInterval(() => setNow(new Date()), 30000)
@@ -99,6 +106,7 @@ export default function KitchenDisplay() {
         <p className="font-serif text-xl tabular-nums md:ml-auto">{format(now, 'h:mm a')}</p>
         <Link
           to="/staff/login"
+          onClick={signOut}
           className="ml-auto flex items-center gap-2 text-sm text-white/70 transition-colors duration-200 hover:text-white md:ml-0"
         >
           <LogOut className="size-4" />

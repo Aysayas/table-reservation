@@ -47,22 +47,23 @@ export default function Payments() {
   const [today] = useState(() => new Date())
   const date_from = range ? format(subDays(today, Number(range)), 'yyyy-MM-dd') : undefined
   const { data } = useQuery({
-    queryKey: ['payments', { search, date_from, method, status }],
+    queryKey: ['payments', { search, date_from, method, status, page }],
     queryFn: () =>
       listPayments({
         search,
         date_from,
         method: method || undefined,
         status: status || undefined,
+        page,
       }),
   })
-  const payments = data?.data ?? []
+  const rows = data?.data ?? []
   const totals = data?.totals
+  const total = data?.meta.total ?? 0
 
-  const pages = Math.max(1, Math.ceil(payments.length / perPage))
+  const pages = Math.max(1, Math.ceil(total / perPage))
   const current = Math.min(page, pages)
-  const rows = payments.slice((current - 1) * perPage, current * perPage)
-  const first = payments.length ? (current - 1) * perPage + 1 : 0
+  const first = total ? (current - 1) * perPage + 1 : 0
   const filtered = !!(search || range || method || status)
   const reset =
     <T,>(set: (v: T) => void) =>
@@ -249,7 +250,7 @@ export default function Payments() {
 
       <div className="mt-4 flex items-center justify-between">
         <p className="text-brand-ink/70 text-sm">
-          Showing {first}–{Math.min(current * perPage, payments.length)} of {payments.length}
+          Showing {first}–{Math.min(current * perPage, total)} of {total}
         </p>
         <nav aria-label="Pages" className="flex gap-2">
           <button

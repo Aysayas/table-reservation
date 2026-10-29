@@ -41,6 +41,27 @@ class Pusher {
 		$this->trigger([self::STAFF_CHANNEL, $this->table_channel($table['qr_token'])], $event, $data);
 	}
 
+	public function check()
+	{
+		if (!$this->enabled()) {
+			return ['status' => 'fake', 'detail' => ['message' => 'Pusher keys are empty, so events are only logged']];
+		}
+		$path = "/apps/{$this->app_id}/channels";
+		$query = 'auth_key=' . $this->key . '&auth_timestamp=' . time() . '&auth_version=1.0';
+		$query .= '&auth_signature=' . hash_hmac('sha256', "GET\n{$path}\n{$query}", $this->secret);
+
+		$curl = curl_init("https://api-{$this->cluster}.pusher.com{$path}?{$query}");
+		curl_setopt_array($curl, [CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 10]);
+		$raw = curl_exec($curl);
+		$code = (int) curl_getinfo($curl, CURLINFO_HTTP_CODE);
+		curl_close($curl);
+		if ($code !== 200) {
+			throw new RuntimeException("Pusher answered HTTP {$code}: " . substr((string) $raw, 0, 200));
+		}
+		$channels = json_decode((string) $raw, true)['channels'] ?? [];
+		return ['status' => 'ok', 'detail' => ['cluster' => $this->cluster, 'channels_in_use' => count($channels)]];
+	}
+
 	public function authorize($socket_id, $channel)
 	{
 		return ['auth' => $this->key . ':' . hash_hmac('sha256', "{$socket_id}:{$channel}", $this->secret)];

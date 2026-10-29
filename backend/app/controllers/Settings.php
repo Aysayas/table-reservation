@@ -79,6 +79,14 @@ class Settings extends Controller {
 				$data['deposit_per_guest'] = number_format($value, 2, '.', '');
 			}
 		}
+		if (array_key_exists('booking_open_time', $input)) {
+			$value = $input['booking_open_time'] === null ? null : $this->valid_time($input['booking_open_time']);
+			if ($input['booking_open_time'] !== null && $value === null) {
+				$errors[] = '"booking_open_time" must be a time like 10:00, or null.';
+			} else {
+				$data['booking_open_time'] = $value;
+			}
+		}
 		if (!$data && !$errors) {
 			$errors[] = 'Give at least one setting to change.';
 		}

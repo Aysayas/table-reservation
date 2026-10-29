@@ -53,3 +53,13 @@ test('filters narrow the list, and a date range changes the totals', async ({ pa
   await expect(page.getByRole('definition').filter({ hasText: '₱775.00' }).first()).toBeVisible()
   await expect(page.getByRole('row', { name: /PAY-0010/ })).toHaveCount(0)
 })
+
+test('the pages show 8 payments at a time', async ({ page }) => {
+  await page.goto(url)
+  await expect(page.getByText('Showing 1–8 of 10')).toBeVisible()
+  await expect(page.getByRole('row')).toHaveCount(9)
+  await page.getByRole('button', { name: 'Next page' }).click()
+  await expect(page.getByText('Showing 9–10 of 10')).toBeVisible()
+  await expect(page.getByRole('row')).toHaveCount(3)
+  await expect(page.getByRole('button', { name: 'Next page' })).toBeDisabled()
+})

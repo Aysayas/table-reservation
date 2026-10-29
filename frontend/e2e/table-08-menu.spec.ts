@@ -54,3 +54,11 @@ test('recommended for you slides gently and stands still with reduced motion', a
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await expect(row).toHaveCSS('animation-name', 'none')
 })
+
+test('a missing table does not warn about undefined query data', async ({ page }) => {
+  const warnings: string[] = []
+  page.on('console', (msg) => warnings.push(msg.text()))
+  await page.goto('/table/99')
+  await expect(page.getByRole('heading', { name: 'Table not found' })).toBeVisible()
+  expect(warnings.filter((w) => w.includes('Query data cannot be undefined'))).toEqual([])
+})

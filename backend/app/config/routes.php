@@ -106,6 +106,13 @@ $router->group(['prefix' => 'api'], function ($router) {
     $router->post('/payments/webhook', 'Payments::webhook');
     $router->post('/realtime/auth', 'Realtime::auth');
     $router->post('/notifications/reminders', 'Notifications::reminders');
+    $router->get('/diagnostics/{service}', 'Diagnostics::check')->where('service', '[a-z]+');
+    $router->post('/diagnostics/paymongo/payment', 'Diagnostics::start_payment');
+    $router->get('/diagnostics/paymongo/payment/{id}', 'Diagnostics::payment_status')->where_number('id');
+    $router->post('/diagnostics/cloudinary/photo', 'Diagnostics::upload_photo');
+    $router->delete('/diagnostics/cloudinary/photo', 'Diagnostics::delete_photo');
+    $router->post('/diagnostics/sms', 'Diagnostics::send_sms');
+    $router->get('/diagnostics/sms/latest', 'Diagnostics::latest_sms');
 
     $router->get('/users', 'Users::index');
     $router->post('/users', 'Users::store');

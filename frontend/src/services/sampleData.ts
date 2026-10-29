@@ -410,6 +410,26 @@ export const sampleReservations: Reservation[] = [
     reminder_sent_at: null,
     created_at: '2026-01-01T00:00:00',
   })),
+  ...(
+    [
+      [8, 1, '18:00:00', 2, 'pending'],
+      [9, 3, '19:00:00', 4, 'confirmed'],
+      [10, 7, '12:00:00', 2, 'confirmed'],
+    ] as const
+  ).map(([n, days, reservation_time, pax, status]): Reservation => ({
+    reservation_id: n,
+    customer_id: 2,
+    table_id: null,
+    reference_code: `RSV-${String(n).padStart(6, '0')}`,
+    reservation_date: daysAgo(-days),
+    reservation_time,
+    pax,
+    special_request: null,
+    deposit_amount: 0,
+    status,
+    reminder_sent_at: null,
+    created_at: '2026-01-01T00:00:00',
+  })),
 ]
 
 export const sampleOrders: Order[] = [
@@ -598,7 +618,7 @@ export const sampleSettings: RestaurantSettings = {
   email: 'venciosgarden@yahoo.com',
   facebook_url: 'https://www.facebook.com/venciosgardenhotel',
   logo_url: null,
-  deposit_per_guest: 0,
+  deposit_per_guest: 100,
   service_charge_percent: 0,
   slot_minutes: 60,
   max_pax: 10,

@@ -6,6 +6,8 @@ import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { z } from 'zod'
+import { apiError } from '@/lib/api'
+import { login, roleHome } from '@/services/auth'
 import { getSettings } from '@/services/settings'
 
 const schema = z.object({
@@ -27,13 +29,20 @@ export default function StaffLogin() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<LoginForm>({
     resolver: zodResolver(schema),
     defaultValues: { email: '', password: '', remember: false },
   })
 
-  const onSubmit = () => navigate('/staff')
+  const onSubmit = async ({ email, password }: LoginForm) => {
+    try {
+      const user = await login(email, password)
+      navigate(roleHome(user.role))
+    } catch (e) {
+      toast.error(apiError(e))
+    }
+  }
 
   return (
     <div className="bg-brand-cream flex min-h-screen items-center justify-center px-4 py-16">
@@ -122,7 +131,8 @@ export default function StaffLogin() {
 
           <button
             type="submit"
-            className="bg-brand-red hover:bg-brand-red/90 focus-visible:outline-brand-red w-full rounded-lg py-4 text-sm font-bold tracking-[0.15em] text-white uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2"
+            disabled={isSubmitting}
+            className="bg-brand-red hover:bg-brand-red/90 focus-visible:outline-brand-red w-full rounded-lg py-4 text-sm font-bold tracking-[0.15em] text-white uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-60"
           >
             Log In
           </button>

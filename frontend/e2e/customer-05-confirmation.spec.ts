@@ -82,3 +82,36 @@ test('the footer has the quick links, hours and directions', async ({ page }) =>
     /google\.com\/maps\/dir\//,
   )
 })
+
+const openInApp = (page: import('@playwright/test').Page, path: string) =>
+  page.evaluate(
+    `history.pushState({}, '', '${path}'); dispatchEvent(new PopStateEvent('popstate'))`,
+  )
+
+test('a cancelled reservation says it was cancelled', async ({ page }) => {
+  await page.goto('/reservation')
+  await page.getByLabel('Reference Code').fill('RSV-000001')
+  await page.getByLabel('Mobile Number').fill('09000000000')
+  await page.getByRole('button', { name: 'Find Reservation' }).click()
+  page.once('dialog', (dialog) => dialog.accept())
+  await page.getByRole('button', { name: 'Cancel', exact: true }).click()
+  await expect(page.getByText('Reservation cancelled')).toBeVisible()
+  await openInApp(page, url)
+  await expect(page.getByRole('heading', { name: 'This reservation was cancelled' })).toBeVisible()
+  await expect(page.getByText('Cancelled', { exact: true })).toBeVisible()
+})
+
+test('an unpaid deposit shows as due', async ({ page }) => {
+  await page.goto('/reserve')
+  await page.getByLabel('Date').fill(`${new Date().getFullYear() + 1}-12-01`)
+  await page.getByRole('button', { name: '7:00 PM' }).click()
+  await page.getByLabel('Full Name').fill('Juan Dela Cruz')
+  await page.getByLabel('Mobile Number').fill('9123456789')
+  await page.getByRole('button', { name: 'Continue to Deposit' }).click()
+  await expect(page).toHaveURL(/\/reserve\/payment\?code=RSV-/)
+  const code = new URL(page.url()).searchParams.get('code')
+  await openInApp(page, `/reserve/confirmation/${code}`)
+  await expect(page.getByText('Deposit Due')).toBeVisible()
+  await expect(page.getByText('₱200.00')).toBeVisible()
+  await expect(page.getByText('Deposit Paid')).toHaveCount(0)
+})

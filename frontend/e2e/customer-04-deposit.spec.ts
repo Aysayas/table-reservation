@@ -48,3 +48,28 @@ test('booking on screen 03 opens this page with the new reservation', async ({ p
   await expect(page.getByText('Juan Dela Cruz')).toBeVisible()
   await expect(page.getByText('7:00 PM')).toBeVisible()
 })
+
+test('a cancelled booking has no pay button', async ({ page }) => {
+  await page.goto('/reservation')
+  await page.getByLabel('Reference Code').fill('RSV-000004')
+  await page.getByLabel('Mobile Number').fill('09000000000')
+  await page.getByRole('button', { name: 'Find Reservation' }).click()
+  page.once('dialog', (dialog) => dialog.accept())
+  await page.getByRole('button', { name: 'Cancel', exact: true }).click()
+  await expect(page.getByText('Reservation cancelled')).toBeVisible()
+  await page.evaluate(
+    `history.pushState({}, '', '/reserve/payment?code=RSV-000004'); dispatchEvent(new PopStateEvent('popstate'))`,
+  )
+  await expect(
+    page.getByText("This reservation is no longer active, so there's nothing to pay."),
+  ).toBeVisible()
+  await expect(page.getByRole('button', { name: /^Pay / })).toHaveCount(0)
+  await page.getByRole('link', { name: 'View Reservation' }).click()
+  await expect(page).toHaveURL('/reserve/confirmation/RSV-000004')
+})
+
+test('a paid deposit has no pay button', async ({ page }) => {
+  await page.goto('/reserve/payment?code=RSV-000001')
+  await expect(page.getByText('This deposit is already paid.')).toBeVisible()
+  await expect(page.getByRole('button', { name: /^Pay / })).toHaveCount(0)
+})
