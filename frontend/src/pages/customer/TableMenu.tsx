@@ -3,7 +3,7 @@ import { Plus, Search, ShoppingBag, UtensilsCrossed } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
-import { getCategories, getMenuItems } from '@/services/menu'
+import { getCategories, getMenuItems, getRecommendations } from '@/services/menu'
 import { getTable } from '@/services/tables'
 import { cartCount, cartTotal, useCart } from '@/stores/cart'
 import type { MenuItem } from '@/types/db'
@@ -41,6 +41,11 @@ export default function TableMenu() {
   const cartTable = useCart((s) => s.tableId)
   const allLines = useCart((s) => s.lines)
   const lines = cartTable === id ? allLines : []
+  const cartIds = lines.map((l) => l.item_id)
+  const { data: recs = [] } = useQuery({
+    queryKey: ['recommendations', cartIds],
+    queryFn: () => getRecommendations(cartIds),
+  })
   const token = params.get('t')
 
   useEffect(() => {
@@ -67,7 +72,7 @@ export default function TableMenu() {
 
   const term = search.trim().toLowerCase()
   const matching = items.filter((item) => item.name.toLowerCase().includes(term))
-  const recommended = matching.filter((i) => i.is_recommended && i.is_available)
+  const recommended = recs.filter((i) => i.name.toLowerCase().includes(term))
   const sections = categories
     .filter((c) => category === null || c.category_id === category)
     .map((c) => ({ ...c, items: matching.filter((i) => i.category_id === c.category_id) }))
