@@ -15,6 +15,7 @@ What each installed library is for. Check here before adding a new one, so we do
 | `date-fns` | Formatting and comparing dates and times | [date-fns.org](https://date-fns.org) |
 | `qrcode.react` | Table QR codes on screen 23 | [npm](https://www.npmjs.com/package/qrcode.react) |
 | `recharts` | Charts on screens 19 and 27 | [recharts.org](https://recharts.org) |
+| `pusher-js` | Live order updates on screens 12, 17 and 18. Polling stays as a fallback | [pusher.com/docs](https://pusher.com/docs/channels/using_channels/client-api-overview/) |
 | `lucide-react` | Icons | [lucide.dev](https://lucide.dev/icons) |
 | `sonner` | Pop-up messages ("Order sent") | [sonner.emilkowal.ski](https://sonner.emilkowal.ski) |
 | `motion` | Animations: page transitions, scroll reveals, hover effects. Respect `prefers-reduced-motion` | [motion.dev](https://motion.dev) |
@@ -98,12 +99,6 @@ import { toast } from 'sonner'
 
 toast.success('Order sent to the kitchen')
 ```
-
-## Not installed yet
-
-| Integration | Package | When |
-|---|---|---|
-| Real-Time Messaging | `pusher-js` (Pusher was chosen on 2026-10-25) | The lead installs it when screens 12, 17 or 18 need live updates |
 
 Payments, SMS, cloud storage and recommendations need no frontend package. The backend handles them and React calls the API.
 
