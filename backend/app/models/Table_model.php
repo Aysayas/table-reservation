@@ -28,7 +28,7 @@ class Table_model extends Model {
 			[
 				(int) $table_id, date('Y-m-d', $now), date('H:i:s', $now),
 				(int) $table_id, (int) $table_id,
-				(int) $table_id, date('Y-m-d', $now), date('Y-m-d H:i:s', $now - $this->arrived_hours * 3600), date('H:i:s', $now),
+				(int) $table_id, date('Y-m-d', $now), date('Y-m-d H:i:s', $now - $this->arrived_hours * 3600),
 			]
 		);
 	}
