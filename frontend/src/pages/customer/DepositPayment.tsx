@@ -158,13 +158,30 @@ export default function DepositPayment() {
             </fieldset>
 
             <div className="bg-brand-cream/95 border-brand-line sticky bottom-0 -mx-4 mt-8 border-t px-4 py-4 md:static md:mx-0 md:border-0 md:bg-transparent md:p-0">
-              <button
-                type="submit"
-                disabled={paying}
-                className={`${redButton} disabled:opacity-60`}
-              >
-                Pay {amount}
-              </button>
+              {reservation.deposit_status === 'paid' ||
+              (reservation.status !== 'pending' && reservation.status !== 'confirmed') ? (
+                <>
+                  <p className="text-brand-ink/75 mb-3 text-center text-sm">
+                    {reservation.deposit_status === 'paid'
+                      ? 'This deposit is already paid.'
+                      : "This reservation is no longer active, so there's nothing to pay."}
+                  </p>
+                  <Link
+                    to={`/reserve/confirmation/${reservation.reference_code}`}
+                    className={redButton}
+                  >
+                    View Reservation
+                  </Link>
+                </>
+              ) : (
+                <button
+                  type="submit"
+                  disabled={paying}
+                  className={`${redButton} disabled:opacity-60`}
+                >
+                  Pay {amount}
+                </button>
+              )}
             </div>
           </form>
         </div>
