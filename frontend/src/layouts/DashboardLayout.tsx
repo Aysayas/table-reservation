@@ -1,8 +1,16 @@
 import { useQuery } from '@tanstack/react-query'
 import { ChevronDown, LogOut } from 'lucide-react'
 import { useState } from 'react'
-import { Link, NavLink, Outlet, useLocation, useMatches, useNavigate } from 'react-router-dom'
-import { getMe, logout } from '@/services/auth'
+import {
+  Link,
+  Navigate,
+  NavLink,
+  Outlet,
+  useLocation,
+  useMatches,
+  useNavigate,
+} from 'react-router-dom'
+import { getMe, logout, roleHome } from '@/services/auth'
 import { getSettings } from '@/services/settings'
 import type { UserRole } from '@/types/db'
 
@@ -46,6 +54,9 @@ export default function DashboardLayout({ title, items }: Props) {
     .map((w) => w[0])
     .join('')
     .slice(0, 2)
+  const allowed = role === 'admin' ? ['admin'] : ['staff', 'admin']
+
+  if (me && !allowed.includes(me.role)) return <Navigate to={roleHome(me.role)} replace />
 
   return (
     <div className="bg-brand-cream flex min-h-screen print:bg-white">
