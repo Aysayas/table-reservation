@@ -24,7 +24,7 @@ class Table_model extends Model {
 			AND NOT EXISTS (SELECT 1 FROM orders WHERE table_id = ? AND NOT (status = 'served' AND payment_status = 'paid'))
 			AND NOT EXISTS (SELECT 1 FROM reservations
 				WHERE table_id = ? AND status = 'arrived' AND reservation_date = ?
-				AND TIMESTAMP(reservation_date, reservation_time) > ? AND reservation_time <= ?)",
+				AND TIMESTAMP(reservation_date, reservation_time) > ?)",
 			[
 				(int) $table_id, date('Y-m-d', $now), date('H:i:s', $now),
 				(int) $table_id, (int) $table_id,
