@@ -41,3 +41,9 @@ test('each button moves the order one step until it is served', async ({ page })
   await expect(page.getByText('Order #3 is now served')).toBeVisible()
   await expect(page.getByRole('listitem', { name: 'Order #3' })).toHaveCount(0)
 })
+
+test('log out goes to the staff login', async ({ page }) => {
+  await page.goto(url)
+  await page.getByRole('link', { name: 'Log Out' }).click()
+  await expect(page).toHaveURL('/staff/login')
+})
