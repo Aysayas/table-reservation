@@ -493,7 +493,8 @@ class Reservations extends Controller {
 		$slots = [];
 		$now = time();
 		$step = $this->settings()['slot_minutes'] * 60;
-		for ($t = strtotime("{$date} {$day['open_time']}"); $t + $step <= strtotime("{$date} {$day['close_time']}"); $t += $step) {
+		$start = max($day['open_time'], $this->settings()['booking_open_time'] ?? '');
+		for ($t = strtotime("{$date} {$start}"); $t + $step <= strtotime("{$date} {$day['close_time']}"); $t += $step) {
 			if ($t <= $now) {
 				continue;
 			}
@@ -530,6 +531,7 @@ class Reservations extends Controller {
 			$this->settings = [
 				'slot_minutes' => (int) ($row['slot_minutes'] ?? 60),
 				'max_pax' => (int) ($row['max_pax'] ?? 10),
+				'booking_open_time' => $row['booking_open_time'] ?? null,
 				'deposit_required' => (bool) ($row['deposit_required'] ?? true),
 				'deposit_per_guest' => (float) ($row['deposit_per_guest'] ?? 0),
 			];
