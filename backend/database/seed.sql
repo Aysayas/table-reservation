@@ -127,7 +127,8 @@ INSERT INTO restaurant_tables (table_id, table_number, capacity, qr_token, statu
     (5, 'T5', 4, 'sample-qr-token-5', 'available'),
     (6, 'T6', 4, 'sample-qr-token-6', 'available'),
     (7, 'T7', 4, 'sample-qr-token-7', 'available'),
-    (8, 'T8', 4, 'sample-qr-token-8', 'available');
+    (8, 'T8', 4, 'sample-qr-token-8', 'available'),
+    (9, 'T9', 8, 'sample-qr-token-9', 'available');
 
 INSERT INTO customers (customer_id, full_name, mobile_number, email, created_at) VALUES
     (1, 'Customer Name', '09000000000', 'customer@placeholder-domain.com', '2026-01-01 00:00:00'),
