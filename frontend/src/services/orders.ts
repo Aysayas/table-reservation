@@ -89,20 +89,17 @@ const toPublic = (order: Order): PublicOrder => {
   }
 }
 
-export async function getOrder(
-  order_id: number,
-  qr_token: string,
-): Promise<PublicOrder | undefined> {
+export async function getOrder(order_id: number, qr_token: string): Promise<PublicOrder | null> {
   if (USE_SAMPLE) {
     const order = sampleOrders.find((o) => o.order_id === order_id)
     const table = sampleTables.find((t) => t.table_id === order?.table_id)
-    return order && table?.qr_token === qr_token ? toPublic(order) : undefined
+    return order && table?.qr_token === qr_token ? toPublic(order) : null
   }
   try {
     const res = await api.get(`/orders/${order_id}`, { params: { qr_token } })
     return res.data.data
   } catch (error) {
-    if (axios.isAxiosError(error) && error.response?.status === 404) return undefined
+    if (axios.isAxiosError(error) && error.response?.status === 404) return null
     throw error
   }
 }

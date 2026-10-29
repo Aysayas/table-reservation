@@ -24,10 +24,10 @@ export type StaffTable = PublicTable & {
   } | null
 }
 
-export async function getTable(tableId: number): Promise<PublicTable | undefined> {
+export async function getTable(tableId: number): Promise<PublicTable | null> {
   if (USE_SAMPLE) {
     const table = sampleTables.find((t) => t.table_id === tableId)
-    if (!table) return undefined
+    if (!table) return null
     return {
       table_id: table.table_id,
       table_number: table.table_number,
@@ -39,7 +39,7 @@ export async function getTable(tableId: number): Promise<PublicTable | undefined
     const res = await api.get(`/tables/${tableId}`)
     return res.data.data
   } catch (error) {
-    if (axios.isAxiosError(error) && error.response?.status === 404) return undefined
+    if (axios.isAxiosError(error) && error.response?.status === 404) return null
     throw error
   }
 }

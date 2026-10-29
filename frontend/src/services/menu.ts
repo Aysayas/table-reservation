@@ -87,15 +87,15 @@ export async function getMenuItems(categoryId?: number): Promise<MenuItem[]> {
   return res.data.data.map(withPhoto)
 }
 
-export async function getMenuItem(itemId: number): Promise<MenuItem | undefined> {
+export async function getMenuItem(itemId: number): Promise<MenuItem | null> {
   if (USE_SAMPLE) {
-    return sampleMenuItems.find((item) => item.item_id === itemId)
+    return sampleMenuItems.find((item) => item.item_id === itemId) ?? null
   }
   try {
     const res = await api.get(`/menu-items/${itemId}`)
     return withPhoto(res.data.data)
   } catch (error) {
-    if (axios.isAxiosError(error) && error.response?.status === 404) return undefined
+    if (axios.isAxiosError(error) && error.response?.status === 404) return null
     throw error
   }
 }

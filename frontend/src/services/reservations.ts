@@ -95,18 +95,18 @@ export async function createReservation(body: NewReservation): Promise<Reservati
   return reservation
 }
 
-export async function getReservationByCode(code: string): Promise<PublicReservation | undefined> {
+export async function getReservationByCode(code: string): Promise<PublicReservation | null> {
   if (!USE_SAMPLE) {
     try {
       const res = await api.get(`/reservations/code/${encodeURIComponent(code)}`)
       return res.data.data
     } catch (e) {
-      if (isAxiosError(e) && e.response?.status === 404) return undefined
+      if (isAxiosError(e) && e.response?.status === 404) return null
       throw e
     }
   }
   const reservation = sampleReservations.find((r) => r.reference_code === code)
-  if (!reservation) return undefined
+  if (!reservation) return null
   const customer = sampleCustomers.find((c) => c.customer_id === reservation.customer_id)
   const table = sampleTables.find((t) => t.table_id === reservation.table_id)
   const paid = samplePayments.some(
@@ -134,24 +134,24 @@ const ownedBy = (code: string, mobile: string) => {
 export async function findReservation(
   reference_code: string,
   mobile_number: string,
-): Promise<PublicReservation | undefined> {
+): Promise<PublicReservation | null> {
   if (!USE_SAMPLE) {
     try {
       const res = await api.post('/reservations/find', { reference_code, mobile_number })
       return res.data.data
     } catch (e) {
-      if (isAxiosError(e) && e.response?.status === 404) return undefined
+      if (isAxiosError(e) && e.response?.status === 404) return null
       throw e
     }
   }
   const reservation = ownedBy(reference_code, mobile_number)
-  return reservation && getReservationByCode(reservation.reference_code)
+  return reservation ? getReservationByCode(reservation.reference_code) : null
 }
 
 export async function cancelReservation(
   code: string,
   mobile_number: string,
-): Promise<PublicReservation | undefined> {
+): Promise<PublicReservation | null> {
   if (!USE_SAMPLE) {
     const res = await api.post(`/reservations/code/${encodeURIComponent(code)}/cancel`, {
       mobile_number,
@@ -170,7 +170,7 @@ export async function cancelReservation(
 export async function rescheduleReservation(
   code: string,
   body: { mobile_number: string; reservation_date: string; reservation_time: string },
-): Promise<PublicReservation | undefined> {
+): Promise<PublicReservation | null> {
   if (!USE_SAMPLE) {
     const res = await api.post(`/reservations/code/${encodeURIComponent(code)}/reschedule`, body)
     return res.data.data

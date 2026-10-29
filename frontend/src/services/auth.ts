@@ -25,8 +25,8 @@ export async function logout(): Promise<void> {
   }
 }
 
-export async function getMe(role: UserRole): Promise<User | undefined> {
-  if (USE_SAMPLE) return sampleUsers.find((u) => u.role === role && u.is_active)
+export async function getMe(role: UserRole): Promise<User | null> {
+  if (USE_SAMPLE) return sampleUsers.find((u) => u.role === role && u.is_active) ?? null
   const res = await api.get('/auth/me')
   return res.data.data
 }
