@@ -215,3 +215,9 @@ Claude adds an entry here when the frontend developer asks for something outside
   2. `docs/api.md` lists `PUT /reservations/{id}` (admin edit of date, time, guests and table) for screen 24, but the wireframe has no Edit button or row action. Should screen 24 get an Edit for each booking, or is the edit for later?
 - Status: Waiting for lead
 - Lead note:
+
+### 2026-10-29: Guests above the biggest table on screen 03
+- Level: ℹ️ question, nothing off plan
+- Notes: `max_pax` is 10, so screen 03 lets customers pick up to 10 guests, but the biggest table seats 4. From 5 guests up, every time is greyed out. Screen 03 now explains this ("No table is free for N guests on this day. For bigger groups, call us at …"). Customers can't read `/tables`, so the screen can't cap the guests itself. Should `max_pax` be set to 4 in Settings (screen 29) and `seed.sql`, should the restaurant add a bigger table, or should availability join tables for big groups? (PR for screen 03)
+- Status: Waiting for lead
+- Lead note:
