@@ -5,6 +5,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import { apiError } from '@/lib/api'
 import { readTableToken } from '@/lib/tableToken'
+import { getMenuItems } from '@/services/menu'
 import { createOrder, payOrder } from '@/services/orders'
 import { getSettings } from '@/services/settings'
 import { cartTotal, useCart } from '@/stores/cart'
@@ -30,6 +31,10 @@ export default function Checkout() {
   const [placing, setPlacing] = useState(false)
   const [orderId, setOrderId] = useState<number | null>(null)
   const { data: settings } = useQuery({ queryKey: ['settings'], queryFn: getSettings })
+  const { data: items = [] } = useQuery({ queryKey: ['menu-items'], queryFn: () => getMenuItems() })
+  const unavailable = lines.filter(
+    (l) => items.find((i) => i.item_id === l.item_id)?.is_available === false,
+  )
   const token = readTableToken(table)
   const subtotal = cartTotal(lines)
   const total = subtotal + Math.round(subtotal * (settings?.service_charge_percent ?? 0)) / 100
@@ -166,10 +171,22 @@ export default function Checkout() {
             </p>
           )}
 
+          {unavailable.length > 0 && (
+            <p role="alert" className="text-brand-red mt-6 text-sm">
+              {unavailable.map((l) => l.name).join(', ')}{' '}
+              {unavailable.length === 1 ? "isn't" : "aren't"} available right now. Please remove{' '}
+              {unavailable.length === 1 ? 'it' : 'them'} from your{' '}
+              <Link to={`/table/${table}/cart`} className="underline">
+                cart
+              </Link>
+              .
+            </p>
+          )}
+
           <div className="fixed inset-x-0 bottom-0 z-20 mx-auto max-w-[390px] px-4 pb-4">
             <button
               type="button"
-              disabled={!token || placing}
+              disabled={!token || placing || unavailable.length > 0}
               onClick={placeOrder}
               className="bg-brand-red hover:bg-brand-red/90 block w-full rounded-lg py-4 text-sm font-bold tracking-[0.1em] text-white uppercase shadow-lg transition-colors duration-200 disabled:opacity-60"
             >
