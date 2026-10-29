@@ -1,7 +1,9 @@
 import axios from 'axios'
-import { api, USE_SAMPLE } from '@/lib/api'
+import { api, fileUrl, USE_SAMPLE } from '@/lib/api'
 import { sampleCategories, sampleMenuItems, sampleOrderItems } from '@/services/sampleData'
 import type { Category, MenuItem } from '@/types/db'
+
+const withPhoto = (item: MenuItem) => ({ ...item, image_url: fileUrl(item.image_url) })
 
 export type CategoryWithCount = Category & { item_count: number }
 
@@ -82,7 +84,7 @@ export async function getMenuItems(categoryId?: number): Promise<MenuItem[]> {
       : sampleMenuItems
   }
   const res = await api.get('/menu-items', { params: { category_id: categoryId } })
-  return res.data.data
+  return res.data.data.map(withPhoto)
 }
 
 export async function getMenuItem(itemId: number): Promise<MenuItem | undefined> {
@@ -91,7 +93,7 @@ export async function getMenuItem(itemId: number): Promise<MenuItem | undefined>
   }
   try {
     const res = await api.get(`/menu-items/${itemId}`)
-    return res.data.data
+    return withPhoto(res.data.data)
   } catch (error) {
     if (axios.isAxiosError(error) && error.response?.status === 404) return undefined
     throw error
@@ -193,5 +195,5 @@ export async function getRecommendations(item_ids: number[] = [], limit = 4): Pr
   const res = await api.get('/recommendations', {
     params: { item_ids: item_ids.length ? item_ids.join(',') : undefined, limit },
   })
-  return res.data.data
+  return res.data.data.map(withPhoto)
 }

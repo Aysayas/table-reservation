@@ -23,7 +23,7 @@ Start with simple screens to learn, then the forms, then the bigger flows:
 
 | # | Screen | Status | Notes |
 |---|---|---|---|
-| 01 | Home | 🟦 | Her mockup with all approved extras, phone and laptop. Real dining-room photo in; dish photos still placeholders. Footer is now the shared `SiteFooter` |
+| 01 | Home | 🟦 | Her mockup with all approved extras, phone and laptop. Real dining-room photo in; dish photos still placeholders. Footer is now the shared `SiteFooter`. Photos and the logo saved locally by the API (`/uploads/...`) now load on every screen through `fileUrl()` in the services |
 | 02 | Menu | 🟦 | Phone and laptop. Popular plus one section per category, search, category buttons (sticky on phones), QR note. Popular shows the recommended dishes. Lead-approved extras: Home / Menu breadcrumb, "Our Menu" with "Kain na!", Max price slider and Best Seller tag with Clear filters |
 | 03 | Reserve a Table | 🟦 | Phone and laptop. Pre-fills date, time and guests from Home. Booking pretends to succeed and opens `/reserve/payment?code=RSV-…` for screen 04. Reschedule mode (`/reserve?reschedule=RSV-…`, the lead's decision on #75): guests fixed from the booking, new date and time, moves the booking and opens 05. Mobile Number is the fixed +63 field (10 digits, pasted 0/63/+63 numbers cleaned, sent as 09…) |
 | 04 | Deposit Payment | 🟦 | Phone and laptop. Loads the booking from `?code=` with `getReservationByCode`; Pay pretends to succeed and opens screen 05. Sample `deposit_per_guest` is ₱100 (lead's note on #104); new bookings pay ₱100 per guest |
