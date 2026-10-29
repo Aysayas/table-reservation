@@ -28,6 +28,7 @@ export default function Checkout() {
   const [method, setMethod] = useState('now')
   const [name, setName] = useState('')
   const [placing, setPlacing] = useState(false)
+  const [orderId, setOrderId] = useState<number | null>(null)
   const { data: settings } = useQuery({ queryKey: ['settings'], queryFn: getSettings })
   const token = readTableToken(table)
   const subtotal = cartTotal(lines)
@@ -37,24 +38,29 @@ export default function Checkout() {
     if (!token) return
     setPlacing(true)
     try {
-      const order = await createOrder({
-        table_id: table,
-        qr_token: token,
-        customer_name: name.trim() || null,
-        items: lines.map((l) => ({
-          item_id: l.item_id,
-          quantity: l.quantity,
-          notes: l.notes || null,
-        })),
-      })
-      const pay = method === 'now' ? await payOrder(order.order_id, token) : null
+      const id =
+        orderId ??
+        (
+          await createOrder({
+            table_id: table,
+            qr_token: token,
+            customer_name: name.trim() || null,
+            items: lines.map((l) => ({
+              item_id: l.item_id,
+              quantity: l.quantity,
+              notes: l.notes || null,
+            })),
+          })
+        ).order_id
+      setOrderId(id)
+      const pay = method === 'now' ? await payOrder(id, token) : null
       clear()
       if (pay) {
         window.location.assign(pay.checkout_url)
         return
       }
       toast.success(method === 'now' ? 'Order placed and paid' : 'Order placed')
-      navigate(`/table/${table}/orders?order=${order.order_id}`)
+      navigate(`/table/${table}/orders?order=${id}`)
     } catch (e) {
       toast.error(apiError(e, "Couldn't place your order. Please try again."))
       setPlacing(false)
