@@ -35,11 +35,14 @@ const filters: (Status | 'all')[] = ['all', 'available', 'occupied', 'reserved']
 export default function TableStatus() {
   const queryClient = useQueryClient()
   const [filter, setFilter] = useState<Status | 'all'>('all')
-  const { data: tables = [] } = useQuery({
+  const { data = [] } = useQuery({
     queryKey: ['tables'],
     queryFn: () => getTables(),
     refetchInterval: 30000,
   })
+  const tables = data.map((t) =>
+    t.status === 'available' && t.current_order ? { ...t, status: 'occupied' as const } : t,
+  )
   const arrive = useMutation({
     mutationFn: (reservation_id: number) =>
       updateReservationStatus(reservation_id, { status: 'arrived' }),
