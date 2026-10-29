@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import MobileInput from '@/components/MobileInput'
+import { apiError } from '@/lib/api'
 import { mobileSchema, toLocalMobile } from '@/lib/mobile'
 import { cancelReservation, findReservation } from '@/services/reservations'
 import type { PublicReservation, ReservationStatus } from '@/types/db'
@@ -48,9 +49,13 @@ export default function FindReservation() {
 
   const onSubmit = async ({ reference_code, mobile_number }: FormValues) => {
     const local = toLocalMobile(mobile_number)
-    const found = await findReservation(reference_code.toUpperCase(), local)
-    setMobile(local)
-    setResult(found ?? null)
+    try {
+      const found = await findReservation(reference_code.toUpperCase(), local)
+      setMobile(local)
+      setResult(found ?? null)
+    } catch (e) {
+      toast.error(apiError(e, "Couldn't look up the reservation. Please try again."))
+    }
   }
 
   const cancel = async () => {
