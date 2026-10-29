@@ -9,7 +9,7 @@ class Payments extends Controller {
 		parent::__construct();
 		$this->call->library('api');
 		$this->call->database();
-		$this->call->model(['Payment_model', 'Order_model', 'Reservation_model', 'User_model']);
+		$this->call->model(['Payment_model', 'Order_model', 'Reservation_model', 'User_model', 'Table_model']);
 	}
 
 	public function index()
@@ -210,6 +210,7 @@ class Payments extends Controller {
 		$this->call->library('paymongo');
 		$this->paymongo->cancel_pending($order_id !== null ? 'order_id' : 'reservation_id', $order_id ?? $reservation_id);
 		if ($order_id !== null) {
+			$this->Table_model->free_if_idle($target['table_id']);
 			$this->call->library('pusher');
 			$this->pusher->order_changed($order_id, 'order.paid');
 		} else {
@@ -267,6 +268,7 @@ class Payments extends Controller {
 		}
 		if ($payment['order_id'] !== null) {
 			$this->Order_model->update_where(['order_id' => $payment['order_id'], 'payment_status' => 'unpaid'], ['payment_status' => 'paid']);
+			$this->Table_model->free_if_idle($this->Order_model->find($payment['order_id'])['table_id']);
 			$this->call->library('pusher');
 			$this->pusher->order_changed($payment['order_id'], 'order.paid');
 		} else {
