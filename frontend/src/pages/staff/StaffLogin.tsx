@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import { apiError } from '@/lib/api'
-import { login } from '@/services/auth'
+import { login, roleHome } from '@/services/auth'
 import { getSettings } from '@/services/settings'
 
 const schema = z.object({
@@ -38,7 +38,7 @@ export default function StaffLogin() {
   const onSubmit = async ({ email, password }: LoginForm) => {
     try {
       const user = await login(email, password)
-      navigate(user.role === 'admin' ? '/admin' : user.role === 'kitchen' ? '/kitchen' : '/staff')
+      navigate(roleHome(user.role))
     } catch (e) {
       toast.error(apiError(e))
     }
