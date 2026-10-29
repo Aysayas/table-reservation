@@ -276,6 +276,12 @@ export default function ReserveTable() {
                     })}
                   </div>
                 )}
+                {isFetched && slots.length > 0 && !slots.some((s) => s.available) && (
+                  <p className="text-brand-ink/60 mt-2 text-sm">
+                    No table is free for {pax} guests on this day. For bigger groups, call us at{' '}
+                    {settings?.contact_number}.
+                  </p>
+                )}
                 {errors.reservation_time && (
                   <p className={error}>{errors.reservation_time.message}</p>
                 )}

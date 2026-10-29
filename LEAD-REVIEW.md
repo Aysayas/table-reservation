@@ -215,3 +215,17 @@ Claude adds an entry here when the frontend developer asks for something outside
   2. `docs/api.md` lists `PUT /reservations/{id}` (admin edit of date, time, guests and table) for screen 24, but the wireframe has no Edit button or row action. Should screen 24 get an Edit for each booking, or is the edit for later?
 - Status: Waiting for lead
 - Lead note:
+
+### 2026-10-29: Guests above the biggest table on screen 03
+- Level: ℹ️ question, nothing off plan
+- Notes: `max_pax` is 10, so screen 03 lets customers pick up to 10 guests, but the biggest table seats 4. From 5 guests up, every time is greyed out. Screen 03 now explains this ("No table is free for N guests on this day. For bigger groups, call us at …"). Customers can't read `/tables`, so the screen can't cap the guests itself. Should `max_pax` be set to 4 in Settings (screen 29) and `seed.sql`, should the restaurant add a bigger table, or should availability join tables for big groups? (PR for screen 03)
+- Status: Waiting for lead
+- Lead note:
+
+### 2026-10-29: Screen 17 loads every order ever made
+- Level: 🟡 off plan
+- Asked for: fix screen 17 Orders and Payments being slow, found in a code audit
+- Rule it bumps into: CLAUDE.md, changing what a screen shows (its data) needs the lead's OK
+- What Claude did instead: nothing changed yet. Screen 17 calls `GET /orders` with no date and no `page`, every 15 seconds. The backend then returns every order in the database, with about 4 queries per order. After 3 months at 100 orders a day that's about 9,000 orders and 36,000 queries every 15 seconds for each open screen. Suggested fix: for All and Paid send `date_from` = today (the API already supports it); keep Unpaid without a date so older unpaid orders still show. The wireframe only has a Time column, and screen 25 Order History already covers past orders. The screen 17 test would change (it expects 10 orders under All and 8 under Paid, including past days)
+- Status: Waiting for lead
+- Lead note:
