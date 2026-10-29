@@ -1,4 +1,4 @@
-import { api, USE_SAMPLE } from '@/lib/api'
+import { api, fileUrl, USE_SAMPLE } from '@/lib/api'
 import { sampleOpeningHours, sampleSettings } from '@/services/sampleData'
 import type { OpeningHours, RestaurantSettings } from '@/types/db'
 
@@ -7,7 +7,7 @@ export async function getSettings(): Promise<RestaurantSettings> {
     return sampleSettings
   }
   const res = await api.get('/settings')
-  return res.data.data
+  return { ...res.data.data, logo_url: fileUrl(res.data.data.logo_url) }
 }
 
 export async function getOpeningHours(): Promise<OpeningHours[]> {

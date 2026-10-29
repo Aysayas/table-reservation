@@ -18,6 +18,12 @@ Claude adds an entry here when the frontend developer asks for something outside
 
 ## Entries
 
+### 2026-10-29: Install pusher-js for live updates on screens 12, 17 and 18
+- Level: ℹ️ request, nothing off plan (at the top so it doesn't conflict with the entries #131 adds at the end)
+- Notes: screens 12, 17 and 18 have no live updates yet, only the 15-second refresh. `docs/packages.md` says the lead installs `pusher-js` when these screens need it, and `frontend/package.json` is lead-owned. Please (1) install `pusher-js`, and (2) add `VITE_PUSHER_KEY` and `VITE_PUSHER_CLUSTER` to `frontend/.env.example` (the public key and cluster; the secret stays in the backend). Then she subscribes 17 and 18 to `private-orders` (through `/realtime/auth` with the bearer token) and 12 to the order's `channel`, refetches on `order.created`, `order.status` and `order.paid`, and keeps the 15-second refresh as a fallback, as `docs/api.md` says. Also, `docs/progress.md` says "screens 12, 17, 18 subscribe with `pusher-js`", but no screen does yet
+- Status: Waiting for lead
+- Lead note:
+
 ### 2026-10-22: Real contact details on screen 07 About Us
 - Level: 🟡 off plan
 - Asked for: use Vencio's Garden's real contact details from the official menu: address `#08 Nautical Highway, Tawiran, Calapan City, Oriental Mindoro`, phone `0918 957 2855`, email `venciosgarden@yahoo.com`, Facebook `https://www.facebook.com/venciosgardenhotel`

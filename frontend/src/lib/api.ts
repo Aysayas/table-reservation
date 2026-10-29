@@ -56,6 +56,11 @@ api.interceptors.response.use(undefined, async (error: AxiosError) => {
   return api(config)
 })
 
+export const fileUrl = (url: string | null) =>
+  url?.startsWith('/uploads')
+    ? `${import.meta.env.VITE_API_URL.replace(/\/api\/?$/, '')}${url}`
+    : url
+
 export function setTokens(token: string | null, refresh?: string) {
   if (token) localStorage.setItem(TOKEN_KEY, token)
   else localStorage.removeItem(TOKEN_KEY)

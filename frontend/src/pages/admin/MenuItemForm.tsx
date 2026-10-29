@@ -168,10 +168,7 @@ export default function MenuItemForm() {
     )
   }
 
-  const photoUrl = item?.image_url?.startsWith('/uploads')
-    ? `${import.meta.env.VITE_API_URL.replace(/\/api\/?$/, '')}${item.image_url}`
-    : item?.image_url
-  const shown = preview ?? photoUrl ?? null
+  const shown = preview ?? item?.image_url ?? null
 
   return (
     <div>
