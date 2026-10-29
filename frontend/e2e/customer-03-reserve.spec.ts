@@ -139,7 +139,13 @@ test('a booking with a pasted 0912 number goes through', async ({ page }) => {
 })
 
 test('a group bigger than every table gets an explanation', async ({ page }) => {
-  await page.goto(`/reserve?date=${date}&pax=6`)
-  await expect(page.getByText('No table is free for 6 guests on this day')).toBeVisible()
+  await page.goto(`/reserve?date=${date}&pax=9`)
+  await expect(page.getByText('No table is free for 9 guests on this day')).toBeVisible()
   await expect(page.getByText('call us at 0918 957 2855')).toBeVisible()
+})
+
+test('6 guests can book, because T9 seats 8', async ({ page }) => {
+  await page.goto(`/reserve?date=${date}&pax=6`)
+  await expect(page.getByRole('button', { name: '7:00 PM' })).toBeEnabled()
+  await expect(page.getByText(/No table is free/)).toHaveCount(0)
 })

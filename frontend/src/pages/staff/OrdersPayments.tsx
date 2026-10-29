@@ -36,7 +36,11 @@ export default function OrdersPayments() {
   const [cash, setCash] = useState('')
   const { data: orders = [] } = useQuery({
     queryKey: ['orders', filter],
-    queryFn: () => listOrders({ payment_status: filter || undefined }),
+    queryFn: () =>
+      listOrders({
+        payment_status: filter || undefined,
+        date_from: filter === 'unpaid' ? undefined : format(new Date(), 'yyyy-MM-dd'),
+      }),
     refetchInterval: 15000,
   })
   const { data: settings } = useQuery({ queryKey: ['settings'], queryFn: getSettings })
