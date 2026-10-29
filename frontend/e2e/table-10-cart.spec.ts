@@ -54,3 +54,27 @@ test('you might also like adds a dish', async ({ page }) => {
     .click()
   await expect(page.getByRole('link', { name: 'Cart, 4 items' })).toBeVisible()
 })
+
+test('a dish that became unavailable is flagged and blocks checkout', async ({ page }) => {
+  await page.goto('/table/5?t=sample-qr-token-5')
+  await page.getByRole('button', { name: 'Add Bulalo' }).click()
+  await page.evaluate(
+    `history.pushState({}, '', '/admin/menu'); dispatchEvent(new PopStateEvent('popstate'))`,
+  )
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await expect(page.getByRole('heading', { name: 'Menu Management' })).toBeVisible()
+  await page.getByPlaceholder('Search').fill('Bulalo')
+  await page.getByRole('switch', { name: 'Bulalo available' }).click()
+  await expect(page.getByText('Bulalo is now unavailable')).toBeVisible()
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.evaluate(
+    `history.pushState({}, '', '/table/5/cart'); dispatchEvent(new PopStateEvent('popstate'))`,
+  )
+  await expect(page.getByText('Not available right now. Please remove it.')).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Proceed to Checkout' })).toBeDisabled()
+  await page.evaluate(
+    `history.pushState({}, '', '/table/5/checkout'); dispatchEvent(new PopStateEvent('popstate'))`,
+  )
+  await expect(page.getByText("Bulalo isn't available right now.")).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Place Order' })).toBeDisabled()
+})
