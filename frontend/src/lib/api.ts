@@ -36,7 +36,7 @@ function refreshToken(): Promise<string | null> {
 
 api.interceptors.response.use(undefined, async (error: AxiosError) => {
   const config = error.config as (InternalAxiosRequestConfig & { _retried?: boolean }) | undefined
-  const isAuthCall = config?.url?.startsWith('/auth/')
+  const isAuthCall = config?.url?.startsWith('/auth/') && config.url !== '/auth/me'
   if (error.response?.status !== 401 || !config || config._retried || isAuthCall) {
     throw readable(error)
   }
