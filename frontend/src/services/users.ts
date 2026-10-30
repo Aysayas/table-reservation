@@ -34,9 +34,7 @@ export async function listUsers(filter: UserFilter): Promise<User[]> {
   const term = search?.toLowerCase() ?? ''
   return sampleUsers
     .filter((u) => !filter.role || u.role === filter.role)
-    .filter(
-      (u) => !term || u.full_name.toLowerCase().includes(term) || u.email.includes(term),
-    )
+    .filter((u) => !term || u.full_name.toLowerCase().includes(term) || u.email.includes(term))
     .sort((a, b) => a.full_name.localeCompare(b.full_name))
     .map((u) => ({ ...u }))
 }

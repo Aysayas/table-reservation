@@ -50,7 +50,7 @@ Start with simple screens to learn, then the forms, then the bigger flows:
 | 25 | Order History | 🟦 | 1440 × 900. Search (order # or table), Date Range, All Status, All Payments, Clear filters, Export (CSV made in the browser); table with Order #, Date and time, Table, Items, Total, Payment, Method, Status, View (order details window); 8 a page |
 | 26 | Payments | 🟦 | 1440 × 900. Total Collected, Online, Cash and Deposits cards (paid only, in the date range); Search (PAY-ID, order #, ref code, reference), Date Range, All Methods, All Status, Clear filters; table with Payment ID, Date, For (order or deposit), Method, Reference, Amount, Status; 8 a page |
 | 27 | Reports | ⬜ | |
-| 28 | Staff Accounts | 🟨 | |
+| 28 | Staff Accounts | 🟦 | 1440 × 900. Search (name or email), All Roles, + Add Staff; table with Name, Email, Role, Status (Active / Disabled), Last Login, Actions (Edit, plus Disable or Enable; your own row has only Edit). Add / Edit window: Full Name, Email, Role (locked on your own account), Password (optional on Edit). No Delete button (not in the wireframe) |
 | 29 | Settings | ⬜ | |
 
 ## Backend progress
