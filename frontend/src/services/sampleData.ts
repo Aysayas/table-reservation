@@ -249,10 +249,10 @@ export const sampleMenuItems: MenuItem[] = menu.map(
   }),
 )
 
-export const sampleTables: RestaurantTable[] = Array.from({ length: 8 }, (_, i) => ({
+export const sampleTables: RestaurantTable[] = Array.from({ length: 9 }, (_, i) => ({
   table_id: i + 1,
   table_number: `T${i + 1}`,
-  capacity: i < 4 ? 2 : 4,
+  capacity: i < 4 ? 2 : i < 8 ? 4 : 8,
   qr_token: `sample-qr-token-${i + 1}`,
   status: (
     [
@@ -264,6 +264,7 @@ export const sampleTables: RestaurantTable[] = Array.from({ length: 8 }, (_, i) 
       'reserved',
       'occupied',
       'occupied',
+      'available',
     ] as const
   )[i],
 }))
@@ -410,6 +411,26 @@ export const sampleReservations: Reservation[] = [
     reminder_sent_at: null,
     created_at: '2026-01-01T00:00:00',
   })),
+  ...(
+    [
+      [8, 1, '18:00:00', 2, 'pending'],
+      [9, 3, '19:00:00', 4, 'confirmed'],
+      [10, 7, '12:00:00', 2, 'confirmed'],
+    ] as const
+  ).map(([n, days, reservation_time, pax, status]): Reservation => ({
+    reservation_id: n,
+    customer_id: 2,
+    table_id: null,
+    reference_code: `RSV-${String(n).padStart(6, '0')}`,
+    reservation_date: daysAgo(-days),
+    reservation_time,
+    pax,
+    special_request: null,
+    deposit_amount: 0,
+    status,
+    reminder_sent_at: null,
+    created_at: '2026-01-01T00:00:00',
+  })),
 ]
 
 export const sampleOrders: Order[] = [
@@ -527,6 +548,28 @@ export const samplePayments: Payment[] = [
     status: 'paid',
     paid_at: `${daysAgo(o.day)}T13:30:00`,
   })),
+  {
+    payment_id: 9,
+    order_id: null,
+    reservation_id: 1,
+    received_by: null,
+    method: 'online',
+    provider_reference: 'pay_sample_rsv01',
+    amount: 400,
+    status: 'paid',
+    paid_at: `${daysAgo(2)}T09:15:00`,
+  },
+  {
+    payment_id: 10,
+    order_id: 3,
+    reservation_id: null,
+    received_by: null,
+    method: 'online',
+    provider_reference: 'pay_sample_0003',
+    amount: 500,
+    status: 'failed',
+    paid_at: null,
+  },
 ]
 
 export const sampleUsers: User[] = [
@@ -576,7 +619,7 @@ export const sampleSettings: RestaurantSettings = {
   email: 'venciosgarden@yahoo.com',
   facebook_url: 'https://www.facebook.com/venciosgardenhotel',
   logo_url: null,
-  deposit_per_guest: 0,
+  deposit_per_guest: 100,
   service_charge_percent: 0,
   slot_minutes: 60,
   max_pax: 10,

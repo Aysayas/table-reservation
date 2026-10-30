@@ -1,3 +1,5 @@
+import axios from 'axios'
+import { api, USE_SAMPLE } from '@/lib/api'
 import {
   sampleCustomers,
   sampleOrders,
@@ -22,73 +24,91 @@ export type StaffTable = PublicTable & {
   } | null
 }
 
-export async function getTable(tableId: number): Promise<PublicTable | undefined> {
-  const table = sampleTables.find((t) => t.table_id === tableId)
-  if (!table) return undefined
-  return {
-    table_id: table.table_id,
-    table_number: table.table_number,
-    capacity: table.capacity,
-    status: table.status,
+export async function getTable(tableId: number): Promise<PublicTable | null> {
+  if (USE_SAMPLE) {
+    const table = sampleTables.find((t) => t.table_id === tableId)
+    if (!table) return null
+    return {
+      table_id: table.table_id,
+      table_number: table.table_number,
+      capacity: table.capacity,
+      status: table.status,
+    }
+  }
+  try {
+    const res = await api.get(`/tables/${tableId}`)
+    return res.data.data
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response?.status === 404) return null
+    throw error
   }
 }
 
 export async function getTables(status?: TableStatus): Promise<StaffTable[]> {
-  const today = new Date().toLocaleDateString('en-CA')
-  return sampleTables
-    .filter((t) => !status || t.status === status)
-    .map(({ table_id, table_number, capacity, status }) => {
-      const order = sampleOrders
-        .filter(
-          (o) => o.table_id === table_id && (o.status !== 'served' || o.payment_status !== 'paid'),
-        )
-        .sort((a, b) => b.created_at.localeCompare(a.created_at))[0]
-      const booking = sampleReservations
-        .filter(
-          (r) =>
-            r.table_id === table_id &&
-            r.reservation_date === today &&
-            (r.status === 'pending' || r.status === 'confirmed'),
-        )
-        .sort((a, b) => a.reservation_time.localeCompare(b.reservation_time))[0]
-      return {
-        table_id,
-        table_number,
-        capacity,
-        status,
-        current_order: order
-          ? {
-              order_id: order.order_id,
-              status: order.status,
-              payment_status: order.payment_status,
-              total_amount: order.total_amount,
-              created_at: order.created_at,
-            }
-          : null,
-        next_reservation:
-          booking && (booking.status === 'pending' || booking.status === 'confirmed')
+  if (USE_SAMPLE) {
+    const today = new Date().toLocaleDateString('en-CA')
+    return sampleTables
+      .filter((t) => !status || t.status === status)
+      .map(({ table_id, table_number, capacity, status }) => {
+        const order = sampleOrders
+          .filter(
+            (o) =>
+              o.table_id === table_id && (o.status !== 'served' || o.payment_status !== 'paid'),
+          )
+          .sort((a, b) => b.created_at.localeCompare(a.created_at))[0]
+        const booking = sampleReservations
+          .filter(
+            (r) =>
+              r.table_id === table_id &&
+              r.reservation_date === today &&
+              (r.status === 'pending' || r.status === 'confirmed'),
+          )
+          .sort((a, b) => a.reservation_time.localeCompare(b.reservation_time))[0]
+        return {
+          table_id,
+          table_number,
+          capacity,
+          status,
+          current_order: order
             ? {
-                reservation_id: booking.reservation_id,
-                reference_code: booking.reference_code,
-                full_name:
-                  sampleCustomers.find((c) => c.customer_id === booking.customer_id)?.full_name ??
-                  '',
-                reservation_time: booking.reservation_time,
-                status: booking.status,
+                order_id: order.order_id,
+                status: order.status,
+                payment_status: order.payment_status,
+                total_amount: order.total_amount,
+                created_at: order.created_at,
               }
             : null,
-      }
-    })
+          next_reservation:
+            booking && (booking.status === 'pending' || booking.status === 'confirmed')
+              ? {
+                  reservation_id: booking.reservation_id,
+                  reference_code: booking.reference_code,
+                  full_name:
+                    sampleCustomers.find((c) => c.customer_id === booking.customer_id)?.full_name ??
+                    '',
+                  reservation_time: booking.reservation_time,
+                  status: booking.status,
+                }
+              : null,
+        }
+      })
+  }
+  const res = await api.get('/tables', { params: { status } })
+  return res.data.data
 }
 
 export type AdminTable = StaffTable & { qr_token: string }
 
 export async function getAdminTables(): Promise<AdminTable[]> {
-  const tables = await getTables()
-  return tables.map((t) => ({
-    ...t,
-    qr_token: sampleTables.find((s) => s.table_id === t.table_id)?.qr_token ?? '',
-  }))
+  if (USE_SAMPLE) {
+    const tables = await getTables()
+    return tables.map((t) => ({
+      ...t,
+      qr_token: sampleTables.find((s) => s.table_id === t.table_id)?.qr_token ?? '',
+    }))
+  }
+  const res = await api.get('/tables')
+  return res.data.data
 }
 
 export type TableInput = { table_number: string; capacity: number }
@@ -117,37 +137,60 @@ const upcoming = (table_id: number) => {
 }
 
 export async function createTable(body: TableInput): Promise<RestaurantTable> {
-  checkNumber(body.table_number)
-  const bytes = crypto.getRandomValues(new Uint8Array(32))
-  const table: RestaurantTable = {
-    table_id: Math.max(0, ...sampleTables.map((t) => t.table_id)) + 1,
-    table_number: body.table_number.trim(),
-    capacity: body.capacity,
-    qr_token: Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join(''),
-    status: 'available',
+  if (USE_SAMPLE) {
+    checkNumber(body.table_number)
+    const bytes = crypto.getRandomValues(new Uint8Array(32))
+    const table: RestaurantTable = {
+      table_id: Math.max(0, ...sampleTables.map((t) => t.table_id)) + 1,
+      table_number: body.table_number.trim(),
+      capacity: body.capacity,
+      qr_token: Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join(''),
+      status: 'available',
+    }
+    sampleTables.push(table)
+    return { ...table }
   }
-  sampleTables.push(table)
-  return { ...table }
+  const res = await api.post('/tables', body)
+  return res.data.data
 }
 
 export async function updateTable(table_id: number, body: TableInput): Promise<RestaurantTable> {
-  const table = findTable(table_id)
-  checkNumber(body.table_number, table_id)
-  if (upcoming(table_id).some((r) => r.pax > body.capacity)) {
-    throw new Error('A booking from today on has more guests than this table seats')
+  if (USE_SAMPLE) {
+    const table = findTable(table_id)
+    checkNumber(body.table_number, table_id)
+    if (upcoming(table_id).some((r) => r.pax > body.capacity)) {
+      throw new Error('A booking from today on has more guests than this table seats')
+    }
+    table.table_number = body.table_number.trim()
+    table.capacity = body.capacity
+    return { ...table }
   }
-  table.table_number = body.table_number.trim()
-  table.capacity = body.capacity
-  return { ...table }
+  const res = await api.put(`/tables/${table_id}`, body)
+  return res.data.data
 }
 
 export async function deleteTable(table_id: number): Promise<void> {
-  findTable(table_id)
-  if (sampleOrders.some((o) => o.table_id === table_id) || upcoming(table_id).length) {
-    throw new Error("This table has orders or upcoming bookings. It can't be deleted.")
+  if (USE_SAMPLE) {
+    findTable(table_id)
+    if (sampleOrders.some((o) => o.table_id === table_id) || upcoming(table_id).length) {
+      throw new Error("This table has orders or upcoming bookings. It can't be deleted.")
+    }
+    sampleTables.splice(
+      sampleTables.findIndex((t) => t.table_id === table_id),
+      1,
+    )
+    return
   }
-  sampleTables.splice(
-    sampleTables.findIndex((t) => t.table_id === table_id),
-    1,
-  )
+  await api.delete(`/tables/${table_id}`)
+}
+
+export async function setTableStatus(table_id: number, status: TableStatus): Promise<PublicTable> {
+  if (USE_SAMPLE) {
+    const table = sampleTables.find((t) => t.table_id === table_id)
+    if (!table) throw new Error('Table not found')
+    table.status = status
+    return { ...table }
+  }
+  const res = await api.patch(`/tables/${table_id}/status`, { status })
+  return res.data.data
 }

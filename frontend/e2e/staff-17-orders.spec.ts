@@ -7,7 +7,7 @@ test('orders and payments lists the orders and shows the chosen one', async ({ p
   for (const column of ['Order #', 'Table', 'Time', 'Total', 'Status', 'Payment']) {
     await expect(page.getByRole('columnheader', { name: column })).toBeVisible()
   }
-  await expect(page.getByRole('row')).toHaveCount(11)
+  await expect(page.getByRole('row')).toHaveCount(4)
   const detail = page.getByRole('region', { name: 'Order #1' })
   await expect(detail).toContainText('Table T2 · 12:00 PM')
   await expect(detail).toContainText('2x Hungarian Sausage with Bread and Egg')
@@ -20,7 +20,7 @@ test('the payment filter shows only unpaid or paid orders', async ({ page }) => 
   await page.getByRole('button', { name: 'Unpaid' }).click()
   await expect(page.getByRole('row')).toHaveCount(3)
   await page.getByRole('button', { name: 'Paid', exact: true }).click()
-  await expect(page.getByRole('row')).toHaveCount(9)
+  await expect(page.getByRole('row')).toHaveCount(2)
 })
 
 test('cash received works out the change and marks the order paid', async ({ page }) => {
@@ -60,4 +60,12 @@ test('the printed receipt shows the order, payment and change', async ({ page })
     await expect(receipt).toContainText(text)
   }
   await expect(page.getByRole('navigation', { name: 'Staff menu' })).toBeHidden()
+})
+
+test('all and paid show only today, unpaid also shows older orders', async ({ page }) => {
+  await page.goto(url)
+  await expect(page.getByRole('row', { name: /#2\b/ })).toHaveCount(0)
+  await page.getByRole('button', { name: 'Paid', exact: true }).click()
+  await expect(page.getByRole('row', { name: /#4\b/ })).toBeVisible()
+  await expect(page.getByRole('row', { name: /#2\b/ })).toHaveCount(0)
 })

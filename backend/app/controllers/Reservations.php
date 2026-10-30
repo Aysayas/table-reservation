@@ -24,7 +24,8 @@ class Reservations extends Controller {
 		$date = $this->valid_date($query['reservation_date'] ?? date('Y-m-d'), true);
 		$status = $query['status'] ?? '';
 		$search = is_string($query['search'] ?? null) ? trim($query['search']) : '';
-		$page = ctype_digit((string) ($query['page'] ?? '1')) ? (int) ($query['page'] ?? 1) : 0;
+		$raw_page = $query['page'] ?? '1';
+		$page = is_string($raw_page) && ctype_digit($raw_page) ? (int) $raw_page : 0;
 
 		if (($view !== '' && !in_array($view, $this->views, true)) || !$date || ($status !== '' && !in_array($status, $this->statuses, true)) || $page < 1) {
 			$this->api->respond_error('Give a view (' . implode(', ', $this->views) . ') or reservation_date as YYYY-MM-DD, a valid status and a page of 1 or more', 422);
@@ -33,7 +34,8 @@ class Reservations extends Controller {
 		$customer_ids = $search !== ''
 			? array_column($this->Customer_model->query()->like('full_name', "%{$search}%")->get_all(), 'customer_id')
 			: [];
-		$build = function () use ($view, $date, $status, $search, $customer_ids) {
+		$all_days = $search !== '' && $view === '' && !isset($query['reservation_date']);
+		$build = function () use ($view, $date, $status, $search, $customer_ids, $all_days) {
 			$today = date('Y-m-d');
 			$query = $this->Reservation_model->query();
 			if ($view === 'upcoming') {
@@ -42,7 +44,7 @@ class Reservations extends Controller {
 				$query->where('reservation_date', '<', $today)->where('status', '<>', 'cancelled');
 			} elseif ($view === 'cancelled') {
 				$query->where('status', 'cancelled');
-			} else {
+			} elseif (!$all_days) {
 				$query->where('reservation_date', $view === 'today' ? $today : $date);
 			}
 			if ($status !== '') {
@@ -123,6 +125,11 @@ class Reservations extends Controller {
 		}
 
 		$moved = $input['reservation_date'] !== $reservation['reservation_date'] || $input['reservation_time'] !== $reservation['reservation_time'];
+		$deposit = [];
+		if (!$this->Payment_model->exists(['reservation_id' => (int) $id, 'status' => 'paid'])) {
+			$settings = $this->settings();
+			$deposit = ['deposit_amount' => number_format($input['pax'] * ($settings['deposit_required'] ? $settings['deposit_per_guest'] : 0.0), 2, '.', '')];
+		}
 		$this->Reservation_model->transaction();
 		try {
 			$this->Reservation_model->update($id, [
@@ -131,7 +138,7 @@ class Reservations extends Controller {
 				'pax' => $input['pax'],
 				'table_id' => $new_table,
 				'special_request' => array_key_exists('special_request', $body) ? $input['special_request'] : $reservation['special_request'],
-			] + ($moved ? ['reminder_sent_at' => null] : []));
+			] + $deposit + ($moved ? ['reminder_sent_at' => null] : []));
 			if ($old_table !== null && $old_table !== $new_table) {
 				$this->release_table($old_table);
 			}
@@ -248,7 +255,7 @@ class Reservations extends Controller {
 	{
 		$query = $this->api->get_query_params();
 		$date = $this->valid_date($query['date'] ?? '');
-		$pax = ctype_digit((string) ($query['pax'] ?? '')) ? (int) $query['pax'] : 0;
+		$pax = is_string($query['pax'] ?? null) && ctype_digit($query['pax']) ? (int) $query['pax'] : 0;
 
 		if (!$date || $pax < 1) {
 			$this->api->respond_error('Give a date (YYYY-MM-DD, today or later) and pax (1 or more)', 422);
@@ -264,8 +271,8 @@ class Reservations extends Controller {
 		$this->Reservation_model->transaction();
 		try {
 			$customer = $this->Customer_model->first_or_create(
-				['mobile_number' => $input['mobile_number']],
-				['full_name' => $input['full_name'], 'email' => $input['email']]
+				['mobile_number' => $input['mobile_number'], 'full_name' => $input['full_name']],
+				['email' => $input['email']]
 			)['record'];
 
 			if (!$this->is_open($input['reservation_date'], $input['reservation_time'], $input['pax'])) {
@@ -273,11 +280,8 @@ class Reservations extends Controller {
 				$this->api->respond_error('That time is no longer available', 409);
 			}
 
-			if ($customer['full_name'] !== $input['full_name'] || ($input['email'] !== null && $customer['email'] !== $input['email'])) {
-				$this->Customer_model->update($customer['customer_id'], array_filter([
-					'full_name' => $input['full_name'],
-					'email' => $input['email'],
-				], fn($value) => $value !== null));
+			if ($input['email'] !== null && $customer['email'] === null) {
+				$this->Customer_model->update($customer['customer_id'], ['email' => $input['email']]);
 			}
 
 			$settings = $this->settings();
@@ -412,14 +416,21 @@ class Reservations extends Controller {
 			$rules['special_request'] = 'max_length[255]';
 		}
 
-		$this->form_validation->validate($rules);
-		$errors = $this->form_validation->get_errors() ?? [];
-
+		$type_errors = [];
 		foreach (['full_name', 'mobile_number', 'email', 'reservation_date', 'reservation_time', 'special_request'] as $field) {
 			if (isset($input[$field]) && !is_string($input[$field])) {
-				$errors[] = "\"{$field}\" must be text.";
+				$type_errors[] = "\"{$field}\" must be text.";
 			}
 		}
+		if (isset($input['pax']) && !is_int($input['pax']) && !is_string($input['pax'])) {
+			$type_errors[] = '"pax" must be a number.';
+		}
+		if ($type_errors) {
+			$this->api->respond(['error' => 'Invalid input', 'status' => 422, 'errors' => $type_errors], 422);
+		}
+
+		$this->form_validation->validate($rules);
+		$errors = $this->form_validation->get_errors() ?? [];
 
 		$date = $this->valid_date($input['reservation_date'] ?? '');
 		if (!empty($input['reservation_date']) && !$date) {
@@ -482,7 +493,8 @@ class Reservations extends Controller {
 		$slots = [];
 		$now = time();
 		$step = $this->settings()['slot_minutes'] * 60;
-		for ($t = strtotime("{$date} {$day['open_time']}"); $t + $step <= strtotime("{$date} {$day['close_time']}"); $t += $step) {
+		$start = max($day['open_time'], $this->settings()['booking_open_time'] ?? '');
+		for ($t = strtotime("{$date} {$start}"); $t + $step <= strtotime("{$date} {$day['close_time']}"); $t += $step) {
 			if ($t <= $now) {
 				continue;
 			}
@@ -519,6 +531,7 @@ class Reservations extends Controller {
 			$this->settings = [
 				'slot_minutes' => (int) ($row['slot_minutes'] ?? 60),
 				'max_pax' => (int) ($row['max_pax'] ?? 10),
+				'booking_open_time' => $row['booking_open_time'] ?? null,
 				'deposit_required' => (bool) ($row['deposit_required'] ?? true),
 				'deposit_per_guest' => (float) ($row['deposit_per_guest'] ?? 0),
 			];

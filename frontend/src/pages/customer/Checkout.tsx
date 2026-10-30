@@ -3,7 +3,9 @@ import { ArrowLeft } from 'lucide-react'
 import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
+import { apiError } from '@/lib/api'
 import { readTableToken } from '@/lib/tableToken'
+import { getMenuItems } from '@/services/menu'
 import { createOrder, payOrder } from '@/services/orders'
 import { getSettings } from '@/services/settings'
 import { cartTotal, useCart } from '@/stores/cart'
@@ -27,7 +29,12 @@ export default function Checkout() {
   const [method, setMethod] = useState('now')
   const [name, setName] = useState('')
   const [placing, setPlacing] = useState(false)
+  const [orderId, setOrderId] = useState<number | null>(null)
   const { data: settings } = useQuery({ queryKey: ['settings'], queryFn: getSettings })
+  const { data: items = [] } = useQuery({ queryKey: ['menu-items'], queryFn: () => getMenuItems() })
+  const unavailable = lines.filter(
+    (l) => items.find((i) => i.item_id === l.item_id)?.is_available === false,
+  )
   const token = readTableToken(table)
   const subtotal = cartTotal(lines)
   const total = subtotal + Math.round(subtotal * (settings?.service_charge_percent ?? 0)) / 100
@@ -36,22 +43,31 @@ export default function Checkout() {
     if (!token) return
     setPlacing(true)
     try {
-      const order = await createOrder({
-        table_id: table,
-        qr_token: token,
-        customer_name: name.trim() || null,
-        items: lines.map((l) => ({
-          item_id: l.item_id,
-          quantity: l.quantity,
-          notes: l.notes || null,
-        })),
-      })
-      if (method === 'now') await payOrder(order.order_id, token)
+      const id =
+        orderId ??
+        (
+          await createOrder({
+            table_id: table,
+            qr_token: token,
+            customer_name: name.trim() || null,
+            items: lines.map((l) => ({
+              item_id: l.item_id,
+              quantity: l.quantity,
+              notes: l.notes || null,
+            })),
+          })
+        ).order_id
+      setOrderId(id)
+      const pay = method === 'now' ? await payOrder(id, token) : null
       clear()
+      if (pay) {
+        window.location.assign(pay.checkout_url)
+        return
+      }
       toast.success(method === 'now' ? 'Order placed and paid' : 'Order placed')
-      navigate(`/table/${table}/orders?order=${order.order_id}`)
+      navigate(`/table/${table}/orders?order=${id}`)
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Couldn't place your order. Please try again.")
+      toast.error(apiError(e, "Couldn't place your order. Please try again."))
       setPlacing(false)
     }
   }
@@ -155,10 +171,22 @@ export default function Checkout() {
             </p>
           )}
 
+          {unavailable.length > 0 && (
+            <p role="alert" className="text-brand-red mt-6 text-sm">
+              {unavailable.map((l) => l.name).join(', ')}{' '}
+              {unavailable.length === 1 ? "isn't" : "aren't"} available right now. Please remove{' '}
+              {unavailable.length === 1 ? 'it' : 'them'} from your{' '}
+              <Link to={`/table/${table}/cart`} className="underline">
+                cart
+              </Link>
+              .
+            </p>
+          )}
+
           <div className="fixed inset-x-0 bottom-0 z-20 mx-auto max-w-[390px] px-4 pb-4">
             <button
               type="button"
-              disabled={!token || placing}
+              disabled={!token || placing || unavailable.length > 0}
               onClick={placeOrder}
               className="bg-brand-red hover:bg-brand-red/90 block w-full rounded-lg py-4 text-sm font-bold tracking-[0.1em] text-white uppercase shadow-lg transition-colors duration-200 disabled:opacity-60"
             >

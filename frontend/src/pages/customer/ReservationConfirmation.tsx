@@ -102,7 +102,15 @@ export default function ReservationConfirmation() {
       label: 'Guests',
       value: `${reservation.pax} ${reservation.pax === 1 ? 'person' : 'people'}`,
     },
-    { label: 'Deposit Paid', value: `₱${reservation.deposit_amount.toFixed(2)}` },
+    {
+      label:
+        reservation.deposit_status === 'paid'
+          ? 'Deposit Paid'
+          : reservation.deposit_amount > 0
+            ? 'Deposit Due'
+            : 'Deposit',
+      value: `₱${reservation.deposit_amount.toFixed(2)}`,
+    },
   ]
 
   return (
@@ -115,7 +123,19 @@ export default function ReservationConfirmation() {
             </div>
             <p className="font-display text-brand-red mt-6 text-5xl">Salamat!</p>
             <h1 className="text-brand-charcoal mt-1 font-serif text-4xl leading-tight md:text-5xl">
-              Your table is <span className="text-brand-red">reserved.</span>
+              {reservation.status === 'cancelled' ? (
+                <>
+                  This reservation was <span className="text-brand-red">cancelled.</span>
+                </>
+              ) : reservation.status === 'no_show' ? (
+                <>
+                  This reservation was <span className="text-brand-red">missed.</span>
+                </>
+              ) : (
+                <>
+                  Your table is <span className="text-brand-red">reserved.</span>
+                </>
+              )}
             </h1>
             <span aria-hidden="true" className="bg-brand-gold mx-auto mt-4 block h-px w-16" />
             <p className="text-brand-ink/75 mt-6 text-sm">

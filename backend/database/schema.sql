@@ -144,6 +144,7 @@ CREATE TABLE IF NOT EXISTS restaurant_settings (
     service_charge_percent DECIMAL(5,2) NOT NULL DEFAULT 0.00,
     slot_minutes SMALLINT UNSIGNED NOT NULL DEFAULT 60,
     max_pax TINYINT UNSIGNED NOT NULL DEFAULT 10,
+    booking_open_time TIME NULL,
     deposit_required TINYINT(1) NOT NULL DEFAULT 1,
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT restaurant_settings_service_charge_chk CHECK (service_charge_percent BETWEEN 0 AND 100),

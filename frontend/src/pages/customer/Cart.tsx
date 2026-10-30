@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { ArrowLeft, Minus, Plus, UtensilsCrossed } from 'lucide-react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
-import { getMenuItems } from '@/services/menu'
+import { getMenuItems, getRecommendations } from '@/services/menu'
 import { getSettings } from '@/services/settings'
 import { cartTotal, useCart } from '@/stores/cart'
 import type { MenuItem } from '@/types/db'
@@ -38,12 +38,13 @@ export default function Cart() {
 
   const subtotal = cartTotal(lines)
   const serviceCharge = Math.round(subtotal * (settings?.service_charge_percent ?? 0)) / 100
-  const suggestions = items
-    .filter(
-      (i) => i.is_recommended && i.is_available && !lines.some((l) => l.item_id === i.item_id),
-    )
-    .slice(0, 2)
+  const cartIds = lines.map((l) => l.item_id)
+  const { data: suggestions = [] } = useQuery({
+    queryKey: ['recommendations', cartIds],
+    queryFn: () => getRecommendations(cartIds, 2),
+  })
   const itemFor = (id: number) => items.find((i) => i.item_id === id)
+  const hasUnavailable = lines.some((l) => itemFor(l.item_id)?.is_available === false)
 
   return (
     <div
@@ -94,6 +95,11 @@ export default function Cart() {
                   </div>
                   {line.notes && (
                     <p className="text-brand-ink/70 mt-0.5 text-xs">Note: {line.notes}</p>
+                  )}
+                  {itemFor(line.item_id)?.is_available === false && (
+                    <p className="text-brand-red mt-0.5 text-xs font-semibold">
+                      Not available right now. Please remove it.
+                    </p>
                   )}
                   <div className="mt-2 flex items-center justify-between">
                     <div
@@ -198,12 +204,22 @@ export default function Cart() {
           </dl>
 
           <div className="fixed inset-x-0 bottom-0 z-20 mx-auto max-w-[390px] px-4 pb-4">
-            <Link
-              to={`/table/${table}/checkout`}
-              className="bg-brand-red hover:bg-brand-red/90 block w-full rounded-lg py-4 text-center text-sm font-bold tracking-[0.1em] text-white uppercase shadow-lg transition-colors duration-200"
-            >
-              Proceed to Checkout
-            </Link>
+            {hasUnavailable ? (
+              <button
+                type="button"
+                disabled
+                className="bg-brand-red block w-full rounded-lg py-4 text-center text-sm font-bold tracking-[0.1em] text-white uppercase opacity-60 shadow-lg"
+              >
+                Proceed to Checkout
+              </button>
+            ) : (
+              <Link
+                to={`/table/${table}/checkout`}
+                className="bg-brand-red hover:bg-brand-red/90 block w-full rounded-lg py-4 text-center text-sm font-bold tracking-[0.1em] text-white uppercase shadow-lg transition-colors duration-200"
+              >
+                Proceed to Checkout
+              </Link>
+            )}
           </div>
         </>
       )}

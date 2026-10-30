@@ -21,7 +21,7 @@ class Menu extends Controller {
 			if (!isset($query[$field]) || $query[$field] === '') {
 				continue;
 			}
-			if (!ctype_digit((string) $query[$field])) {
+			if (!is_string($query[$field]) || !ctype_digit($query[$field])) {
 				$this->api->respond_error("Invalid {$field}", 422);
 			}
 			$conditions[$field] = (int) $query[$field];

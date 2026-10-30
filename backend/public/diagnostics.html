@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Integration Tests · Vencio's Garden API</title>
+<style>
+:root {
+  --bg: #f6f5f2; --surface: #ffffff; --text: #1d1b18; --muted: #6b665e; --border: #e3dfd8;
+  --ok: #1f7a43; --ok-bg: #e6f4ea; --warn: #8a5a00; --warn-bg: #fdf1d8;
+  --fail: #b3261e; --fail-bg: #fbe9e7; --fake: #4b5563; --fake-bg: #eceff3; --accent: #7a1f1f;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #141311; --surface: #1d1c19; --text: #f1eee8; --muted: #a39d93; --border: #33302b;
+    --ok: #7fd49c; --ok-bg: #173323; --warn: #f2c66d; --warn-bg: #3a2c10;
+    --fail: #f2948c; --fail-bg: #3d1a17; --fake: #c4c9d2; --fake-bg: #2a2d33; --accent: #e8a0a0;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+main { max-width: 960px; margin: 0 auto; padding: 32px 16px 48px; }
+h1 { margin: 0 0 4px; font-size: 24px; }
+.sub { margin: 0 0 24px; color: var(--muted); }
+form, .bar { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 20px; }
+label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--muted); flex: 1 1 200px; }
+input { font: inherit; padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text); }
+button { font: inherit; font-weight: 600; padding: 8px 14px; border-radius: 8px; border: 1px solid var(--accent); background: var(--accent); color: var(--surface); cursor: pointer; }
+button.ghost { background: transparent; color: var(--accent); }
+button:disabled { opacity: .5; cursor: progress; }
+.error { color: var(--fail); margin: 0; flex-basis: 100%; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.head h2 { margin: 0; font-size: 17px; }
+.what { margin: 0; color: var(--muted); font-size: 13px; }
+.pill { font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 999px; text-transform: uppercase; letter-spacing: .03em; white-space: nowrap; }
+.pill.ok { color: var(--ok); background: var(--ok-bg); }
+.pill.warning { color: var(--warn); background: var(--warn-bg); }
+.pill.failed { color: var(--fail); background: var(--fail-bg); }
+.pill.fake, .pill.idle, .pill.running { color: var(--fake); background: var(--fake-bg); }
+dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; font-size: 13px; }
+dt { color: var(--muted); }
+dd { margin: 0; overflow-wrap: anywhere; font-family: ui-monospace, "SF Mono", Consolas, monospace; }
+.foot { display: flex; justify-content: space-between; align-items: center; margin-top: auto; font-size: 13px; color: var(--muted); }
+.sim { border-top: 1px dashed var(--border); padding-top: 12px; display: flex; flex-direction: column; gap: 10px; }
+.sim h3 { margin: 0; font-size: 14px; }
+.sim .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.sim a.pay { font-weight: 600; color: var(--accent); }
+.sim img { max-width: 100%; max-height: 220px; border-radius: 8px; border: 1px solid var(--border); align-self: flex-start; }
+.sim input[type=file] { font-size: 13px; max-width: 100%; }
+.texts { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: 13px; }
+.texts li { border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; overflow-wrap: anywhere; }
+.texts .meta { color: var(--muted); }
+.note { margin: 0; font-size: 13px; color: var(--muted); }
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Integration tests</h1>
+  <p class="sub">Read-only checks of each outside service the API uses, plus a simulated payment, photo upload and test SMS.</p>
+
+  <form id="login">
+    <label>Admin email <input id="email" type="email" autocomplete="username" required></label>
+    <label>Password <input id="password" type="password" autocomplete="current-password" required></label>
+    <button type="submit">Sign in and run</button>
+    <p class="error" id="login-error" role="alert" hidden></p>
+  </form>
+
+  <div class="bar" id="bar" hidden>
+    <span id="who"></span>
+    <button type="button" id="run-all">Run all again</button>
+    <button type="button" class="ghost" id="sign-out">Sign out</button>
+  </div>
+
+  <section class="grid" id="cards" aria-live="polite"></section>
+</main>
+
+<script>
+const services = [
+  { id: 'paymongo', name: 'PayMongo', what: 'Lists your webhooks: the secret key works and a webhook points at this API.' },
+  { id: 'recommender', name: 'Recommender', what: 'Wakes the Python service, then asks it for 3 dishes with the shared secret.' },
+  { id: 'cloudinary', name: 'Cloudinary', what: 'Reads your account usage: the cloud name, key and secret work.' },
+  { id: 'pusher', name: 'Pusher', what: 'Lists the channels in use: the app ID, key, secret and cluster work.' },
+]
+const labels = { ok: 'OK', warning: 'Check', failed: 'Failed', fake: 'Fake mode', idle: 'Not run', running: 'Running' }
+let token = null
+
+function fill(dl, detail) {
+  dl.replaceChildren()
+  for (const [key, value] of Object.entries(detail || {})) {
+    const dt = document.createElement('dt')
+    dt.textContent = key.replaceAll('_', ' ')
+    const dd = document.createElement('dd')
+    dd.textContent = value === null ? 'null' : typeof value === 'string' ? value : JSON.stringify(value)
+    dl.append(dt, dd)
+  }
+}
+
+async function call(method, path, body) {
+  const options = { method, headers: { Authorization: `Bearer ${token}` } }
+  if (body instanceof FormData) {
+    options.body = body
+  } else if (body) {
+    options.headers['Content-Type'] = 'application/json'
+    options.body = JSON.stringify(body)
+  }
+  const res = await fetch(path, options)
+  const data = await res.json().catch(() => ({}))
+  if (res.status === 401) {
+    signOut('Your sign-in expired. Sign in again.')
+    throw new Error('Signed out')
+  }
+  if (!res.ok) throw new Error(data.error === 'Invalid input' && data.errors ? data.errors.join(' ') : data.error || `HTTP ${res.status}`)
+  return data.data
+}
+
+const cards = document.getElementById('cards')
+for (const s of services) {
+  const card = document.createElement('article')
+  card.className = 'card'
+  card.innerHTML = `<div class="head"><h2></h2><span class="pill idle">Not run</span></div><p class="what"></p><dl></dl><div class="foot"><span class="ms"></span><button type="button" class="ghost again" disabled>Run again</button></div>`
+  card.querySelector('h2').textContent = s.name
+  card.querySelector('.what').textContent = s.what
+  card.querySelector('.again').setAttribute('aria-label', `Run the ${s.name} test again`)
+  card.querySelector('.again').addEventListener('click', () => run(s))
+  s.card = card
+  cards.append(card)
+}
+
+function show(s, status, ms, detail) {
+  const pill = s.card.querySelector('.pill')
+  pill.className = `pill ${status}`
+  pill.textContent = labels[status] || status
+  s.card.querySelector('.ms').textContent = ms == null ? '' : `${ms} ms`
+  fill(s.card.querySelector('dl'), detail)
+}
+
+async function run(s) {
+  const button = s.card.querySelector('.again')
+  button.disabled = true
+  show(s, 'running', null, {})
+  try {
+    const r = await call('GET', `api/diagnostics/${s.id}`)
+    show(s, r.status, r.ms, r.detail)
+  } catch (e) {
+    show(s, 'failed', null, { message: e.message })
+  } finally {
+    button.disabled = !token
+  }
+}
+
+function runAll() {
+  services.forEach(run)
+  loadTexts()
+}
+
+function addPaymentTest(card) {
+  const sim = document.createElement('div')
+  sim.className = 'sim'
+  sim.innerHTML = `<h3>Simulated payment</h3><p class="note">Creates a 1-guest test booking, starts its deposit, then reads the database every 3 seconds until the webhook marks it paid. The test booking is cancelled once paid.</p><div class="row"><button type="button" class="start" disabled>Start test payment</button><a class="pay" target="_blank" rel="noopener" hidden>Pay on PayMongo ↗</a></div><p class="note state" aria-live="polite"></p><dl></dl>`
+  const start = sim.querySelector('.start')
+  const pay = sim.querySelector('.pay')
+  const state = sim.querySelector('.state')
+  const dl = sim.querySelector('dl')
+  let timer = null
+  start.addEventListener('click', async () => {
+    clearInterval(timer)
+    start.disabled = true
+    pay.hidden = true
+    fill(dl, {})
+    state.textContent = 'Creating the test booking…'
+    try {
+      const t = await call('POST', 'api/diagnostics/paymongo/payment')
+      if (t.fake) {
+        state.textContent = `Fake mode: no PayMongo key, so there is nothing to pay. Booking ${t.reference_code}, payment #${t.payment_id} stays pending.`
+      } else {
+        pay.href = t.checkout_url
+        pay.hidden = false
+        state.textContent = `Booking ${t.reference_code}, deposit PHP ${Number(t.amount).toFixed(2)}. Pay with card 4343 4343 4343 4345 or GCash (Authorize). Waiting for the webhook…`
+      }
+      const started = Date.now()
+      const poll = async () => {
+        try {
+          const row = await call('GET', `api/diagnostics/paymongo/payment/${t.payment_id}`)
+          const db = {}
+          for (const [k, v] of Object.entries(row.payments_row)) db[`payments.${k}`] = v
+          db['reservation status'] = row.reservation.status
+          db['deposit status'] = row.reservation.deposit_status
+          fill(dl, db)
+          if (row.payments_row.status === 'paid') {
+            clearInterval(timer)
+            pay.hidden = true
+            start.disabled = false
+            state.textContent = `Paid. The database shows payment #${t.payment_id} as paid, and test booking ${t.reference_code} is ${row.reservation.status}.`
+          } else if (Date.now() - started > 600000) {
+            clearInterval(timer)
+            start.disabled = false
+            state.textContent = 'Stopped checking after 10 minutes. Start again to retry.'
+          }
+        } catch (e) {
+          clearInterval(timer)
+          start.disabled = false
+          state.textContent = e.message
+        }
+      }
+      await poll()
+      if (t.fake) {
+        start.disabled = false
+      } else {
+        timer = setInterval(poll, 3000)
+      }
+    } catch (e) {
+      start.disabled = false
+      state.textContent = e.message
+    }
+  })
+  card.querySelector('.foot').before(sim)
+}
+
+function addPhotoTest(card) {
+  const sim = document.createElement('div')
+  sim.className = 'sim'
+  sim.innerHTML = `<h3>Simulated upload</h3><p class="note">Uploads a JPG or PNG (up to 2 MB) to vencios-garden/diagnostics, then loads it back from Cloudinary. Menu photos are not touched.</p><label>Photo <input type="file" accept="image/jpeg,image/png"></label><div class="row"><button type="button" class="upload" disabled>Upload test photo</button><button type="button" class="ghost remove" hidden>Delete test photo</button></div><p class="note state" aria-live="polite"></p><img alt="Test photo loaded back from Cloudinary" hidden><dl></dl>`
+  const file = sim.querySelector('input')
+  const upload = sim.querySelector('.upload')
+  const remove = sim.querySelector('.remove')
+  const state = sim.querySelector('.state')
+  const img = sim.querySelector('img')
+  const dl = sim.querySelector('dl')
+  let url = null
+  upload.addEventListener('click', async () => {
+    if (!file.files[0]) {
+      state.textContent = 'Choose a photo first.'
+      return
+    }
+    upload.disabled = true
+    state.textContent = 'Uploading…'
+    try {
+      const form = new FormData()
+      form.append('photo', file.files[0])
+      const r = await call('POST', 'api/diagnostics/cloudinary/photo', form)
+      if (r.fake) {
+        state.textContent = r.message
+        fill(dl, { bytes_sent: r.bytes_sent })
+        return
+      }
+      url = r.url
+      fill(dl, { url: r.url, bytes_sent: r.bytes_sent })
+      state.textContent = 'Uploaded. Loading it back from Cloudinary…'
+      img.onload = () => { state.textContent = `Loaded back from Cloudinary (${img.naturalWidth} × ${img.naturalHeight}).` }
+      img.onerror = () => { state.textContent = 'Uploaded, but the image could not be loaded back.' }
+      img.src = r.url
+      img.hidden = false
+      remove.hidden = false
+    } catch (e) {
+      state.textContent = e.message
+    } finally {
+      upload.disabled = !token
+    }
+  })
+  remove.addEventListener('click', async () => {
+    remove.disabled = true
+    try {
+      const r = await call('DELETE', 'api/diagnostics/cloudinary/photo', { url })
+      state.textContent = r.deleted ? 'Deleted from Cloudinary.' : 'Cloudinary did not confirm the delete.'
+      if (r.deleted) {
+        img.hidden = true
+        img.removeAttribute('src')
+        remove.hidden = true
+        fill(dl, {})
+        url = null
+      }
+    } catch (e) {
+      state.textContent = e.message
+    } finally {
+      remove.disabled = false
+    }
+  })
+  card.querySelector('.foot').before(sim)
+}
+
+addPaymentTest(services[0].card)
+addPhotoTest(services[2].card)
+
+const sms = document.createElement('article')
+sms.className = 'card'
+sms.innerHTML = `<div class="head"><h2>SMS</h2><span class="pill fake">Fake mode</span></div><p class="what">No SMS provider yet: texts are only logged and saved.</p><div class="sim"><h3>Test SMS</h3><p class="note">Sends one test text to the customer "Diagnostics Test" (09000000000) and saves it in notifications.</p><div class="row"><button type="button" class="send" disabled>Send test SMS</button></div><p class="note state" aria-live="polite"></p><dl></dl></div><div class="sim"><div class="row"><h3>Latest texts</h3><button type="button" class="ghost refresh" disabled>Refresh</button></div><ol class="texts"></ol></div>`
+cards.append(sms)
+const smsState = sms.querySelector('.state')
+
+async function loadTexts() {
+  const list = sms.querySelector('.texts')
+  try {
+    const rows = await call('GET', 'api/diagnostics/sms/latest')
+    list.replaceChildren(...rows.map((r) => {
+      const li = document.createElement('li')
+      const meta = document.createElement('div')
+      meta.className = 'meta'
+      meta.textContent = `#${r.notification_id} · ${r.sent_at} · ${r.customer} (${r.mobile}) · ${r.status}`
+      li.append(meta, r.message)
+      return li
+    }))
+    if (!rows.length) list.textContent = 'No texts yet.'
+  } catch (e) {
+    list.textContent = e.message
+  }
+}
+
+sms.querySelector('.send').addEventListener('click', async (event) => {
+  const button = event.target
+  button.disabled = true
+  smsState.textContent = 'Sending…'
+  try {
+    const r = await call('POST', 'api/diagnostics/sms')
+    smsState.textContent = r.status === 'sent' ? 'Sent in fake mode: logged and saved, no text was delivered.' : 'Sending failed.'
+    fill(sms.querySelector('dl'), { message: r.message, length: `${r.length} / 160`, status: r.status })
+    await loadTexts()
+  } catch (e) {
+    smsState.textContent = e.message
+  } finally {
+    button.disabled = !token
+  }
+})
+sms.querySelector('.refresh').addEventListener('click', loadTexts)
+
+function setButtons(enabled) {
+  document.querySelectorAll('.again, .start, .upload, .send, .refresh').forEach((b) => { b.disabled = !enabled })
+}
+
+function signOut(message) {
+  token = null
+  document.getElementById('bar').hidden = true
+  document.getElementById('login').hidden = false
+  const error = document.getElementById('login-error')
+  error.textContent = message || ''
+  error.hidden = !message
+  setButtons(false)
+}
+
+document.getElementById('login').addEventListener('submit', async (event) => {
+  event.preventDefault()
+  const error = document.getElementById('login-error')
+  const submit = event.target.querySelector('button')
+  error.hidden = true
+  submit.disabled = true
+  try {
+    const res = await fetch('api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: document.getElementById('email').value, password: document.getElementById('password').value }),
+    })
+    const body = await res.json().catch(() => ({}))
+    if (!res.ok) throw new Error(body.error || `HTTP ${res.status}`)
+    if (body.data.user.role !== 'admin') throw new Error('Only an admin can run these tests.')
+    token = body.data.access_token
+    document.getElementById('password').value = ''
+    document.getElementById('who').textContent = `Signed in as ${body.data.user.email}`
+    document.getElementById('login').hidden = true
+    document.getElementById('bar').hidden = false
+    setButtons(true)
+    runAll()
+  } catch (e) {
+    error.textContent = e.message
+    error.hidden = false
+  } finally {
+    submit.disabled = false
+  }
+})
+
+document.getElementById('run-all').addEventListener('click', runAll)
+document.getElementById('sign-out').addEventListener('click', () => signOut())
+</script>
+</body>
+</html>

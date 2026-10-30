@@ -3,7 +3,7 @@ import { ArrowLeft, Minus, Plus, UtensilsCrossed } from 'lucide-react'
 import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
-import { getMenuItem, getMenuItems } from '@/services/menu'
+import { getMenuItem, getRecommendations } from '@/services/menu'
 import { useCart } from '@/stores/cart'
 import type { MenuItem } from '@/types/db'
 
@@ -35,7 +35,10 @@ export default function ItemDetails() {
     queryKey: ['menu-item', Number(itemId)],
     queryFn: () => getMenuItem(Number(itemId)),
   })
-  const { data: items = [] } = useQuery({ queryKey: ['menu-items'], queryFn: () => getMenuItems() })
+  const { data: often = [] } = useQuery({
+    queryKey: ['recommendations', [Number(itemId)]],
+    queryFn: () => getRecommendations([Number(itemId)], 2),
+  })
   const menuLink = `/table/${table}/menu`
 
   if (isLoading) return null
@@ -54,11 +57,6 @@ export default function ItemDetails() {
     )
   }
 
-  const often = items
-    .filter(
-      (i) => i.category_id === item.category_id && i.item_id !== item.item_id && i.is_available,
-    )
-    .slice(0, 2)
   const line = (dish: MenuItem, qty: number, note: string) => ({
     item_id: dish.item_id,
     name: dish.name,
