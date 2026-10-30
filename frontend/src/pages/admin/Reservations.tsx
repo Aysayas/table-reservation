@@ -49,9 +49,15 @@ const schema = z.object({
     .int('Use a whole number')
     .min(1, 'At least 1 guest')
     .max(100, 'At most 100 guests'),
+  booking_open_time: z.string(),
   deposit_required: z.boolean(),
   deposit_per_guest: z.number({ error: 'Enter a deposit amount' }).min(0, 'Use 0 or more'),
 })
+
+const halfHours = Array.from(
+  { length: 33 },
+  (_, i) => `${String(6 + Math.floor(i / 2)).padStart(2, '0')}:${i % 2 ? '30' : '00'}`,
+)
 
 type FormValues = z.infer<typeof schema>
 
@@ -68,6 +74,7 @@ export default function Reservations() {
   const { data: hours = [] } = useQuery({ queryKey: ['opening-hours'], queryFn: getOpeningHours })
   const [weekday] = useState(() => new Date().getDay())
   const today = hours.find((h) => h.day_of_week === weekday)
+  const openTime = settings?.booking_open_time?.slice(0, 5)
 
   const {
     register,
@@ -80,6 +87,7 @@ export default function Reservations() {
     values: settings && {
       slot_minutes: settings.slot_minutes,
       max_pax: settings.max_pax,
+      booking_open_time: settings.booking_open_time?.slice(0, 5) ?? '',
       deposit_required: settings.deposit_required,
       deposit_per_guest: settings.deposit_per_guest,
     },
@@ -88,7 +96,7 @@ export default function Reservations() {
 
   const onSubmit = async (values: FormValues) => {
     try {
-      await updateSettings(values)
+      await updateSettings({ ...values, booking_open_time: values.booking_open_time || null })
       toast.success('Settings saved')
       for (const key of ['settings', 'availability']) {
         queryClient.invalidateQueries({ queryKey: [key] })
@@ -229,13 +237,21 @@ export default function Reservations() {
             <label htmlFor="opening_time" className={label}>
               Opening Time for Booking
             </label>
-            <select id="opening_time" disabled className={field}>
-              <option>
-                {today?.is_open && today.open_time ? formatTime(today.open_time) : 'Closed today'}
+            <select id="opening_time" {...register('booking_open_time')} className={field}>
+              <option value="">
+                Same as opening hours
+                {today?.is_open && today.open_time
+                  ? ` (${formatTime(today.open_time)} today)`
+                  : ' (closed today)'}
               </option>
+              {[...new Set([...halfHours, ...(openTime ? [openTime] : [])])].sort().map((t) => (
+                <option key={t} value={t}>
+                  {formatTime(t)}
+                </option>
+              ))}
             </select>
             <p className="text-brand-ink/60 mt-1.5 text-xs">
-              Bookings follow the opening hours.{' '}
+              The first booking time each day. Times before opening still start at opening.{' '}
               <Link to="/admin/settings" className="text-brand-red font-bold hover:underline">
                 Set the hours in Settings
               </Link>

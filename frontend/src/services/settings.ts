@@ -19,7 +19,10 @@ export async function getOpeningHours(): Promise<OpeningHours[]> {
 }
 
 export type SettingsInput = Partial<
-  Pick<RestaurantSettings, 'slot_minutes' | 'max_pax' | 'deposit_required' | 'deposit_per_guest'>
+  Pick<
+    RestaurantSettings,
+    'slot_minutes' | 'max_pax' | 'booking_open_time' | 'deposit_required' | 'deposit_per_guest'
+  >
 >
 
 export async function updateSettings(body: SettingsInput): Promise<RestaurantSettings> {

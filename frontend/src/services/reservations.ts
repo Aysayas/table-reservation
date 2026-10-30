@@ -44,7 +44,10 @@ export async function getAvailability(date: string, pax: number): Promise<TimeSl
   const tables = sampleTables.filter((t) => t.capacity >= pax).length
   const slots: TimeSlot[] = []
   for (
-    let m = toMinutes(day.open_time);
+    let m = Math.max(
+      toMinutes(day.open_time),
+      sampleSettings.booking_open_time ? toMinutes(sampleSettings.booking_open_time) : 0,
+    );
     m + sampleSettings.slot_minutes <= toMinutes(day.close_time);
     m += sampleSettings.slot_minutes
   ) {
