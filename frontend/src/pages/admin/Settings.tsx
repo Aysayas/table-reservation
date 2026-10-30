@@ -233,7 +233,9 @@ export default function Settings() {
                   Upload Logo
                 </button>
                 <p className="text-brand-ink/60 mt-2 text-xs">
-                  {logo ? `${logo.name}, saved when you click Save Changes` : 'PNG or JPG, up to 2 MB'}
+                  {logo
+                    ? `${logo.name}, saved when you click Save Changes`
+                    : 'PNG or JPG, up to 2 MB'}
                 </p>
               </div>
               <input
