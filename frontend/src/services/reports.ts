@@ -11,6 +11,7 @@ import {
   subMonths,
   subWeeks,
 } from 'date-fns'
+import { api, USE_SAMPLE } from '@/lib/api'
 import {
   sampleMenuItems,
   sampleOrderItems,
@@ -61,6 +62,10 @@ export async function getReport(query: {
   from?: string
   to?: string
 }): Promise<Report> {
+  if (!USE_SAMPLE) {
+    const res = await api.get('/reports', { params: query })
+    return res.data.data
+  }
   const { period } = query
   const range = query.from && query.to ? { from: query.from, to: query.to } : defaultRange(period)
   const start = parseISO(range.from)
