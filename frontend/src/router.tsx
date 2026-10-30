@@ -8,6 +8,7 @@ import MenuManagement from '@/pages/admin/MenuManagement'
 import OrderHistory from '@/pages/admin/OrderHistory'
 import Payments from '@/pages/admin/Payments'
 import Reservations from '@/pages/admin/Reservations'
+import StaffAccounts from '@/pages/admin/StaffAccounts'
 import TablesQr from '@/pages/admin/TablesQr'
 import Placeholder from '@/pages/Placeholder'
 import About from '@/pages/customer/About'
@@ -104,7 +105,7 @@ export const router = createBrowserRouter([
       { path: 'orders', element: <OrderHistory /> },
       { path: 'payments', element: <Payments /> },
       { path: 'reports', element: <Placeholder screen="27" title="Reports" /> },
-      { path: 'users', element: <Placeholder screen="28" title="Staff Accounts" /> },
+      { path: 'users', element: <StaffAccounts /> },
       { path: 'settings', element: <Placeholder screen="29" title="Settings" /> },
     ],
   },
