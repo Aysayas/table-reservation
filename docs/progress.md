@@ -49,7 +49,7 @@ Start with simple screens to learn, then the forms, then the bigger flows:
 | 24 | Reservations | 🟦 | 1440 × 900. Upcoming / Today / Past / Cancelled tabs, table with Ref Code, Date, Time, Name, Guests, Status, 8 a page. Reservation Settings: Opening Time (read-only from the opening hours, links to 29), Time Slot Length, Max Guests, Require Deposit, Deposit Amount per guest, Save Settings. Edit on pending and confirmed bookings (Date, Time, Guests, Table, like `PUT /reservations/{id}`). Opening Time stays read-only until the lead's `booking_open_time` backend change |
 | 25 | Order History | 🟦 | 1440 × 900. Search (order # or table), Date Range, All Status, All Payments, Clear filters, Export (CSV made in the browser); table with Order #, Date and time, Table, Items, Total, Payment, Method, Status, View (order details window); 8 a page |
 | 26 | Payments | 🟦 | 1440 × 900. Total Collected, Online, Cash and Deposits cards (paid only, in the date range); Search (PAY-ID, order #, ref code, reference), Date Range, All Methods, All Status, Clear filters; table with Payment ID, Date, For (order or deposit), Method, Reference, Amount, Status; 8 a page |
-| 27 | Reports | ⬜ | |
+| 27 | Reports | 🟦 | 1440 × 900. Daily / Weekly / Monthly with From – To (defaults: 7 days, 8 weeks, 6 months), Export PDF (print, report only); Sales Over Time line chart, Best-Selling Items top 10, Reservations per Day, Summary (Total Sales, Total Orders, Average Order Value, Reservations, No-shows, Busiest Hour) |
 | 28 | Staff Accounts | ⬜ | |
 | 29 | Settings | ⬜ | |
 
