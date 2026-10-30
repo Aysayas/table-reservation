@@ -548,6 +548,28 @@ export const samplePayments: Payment[] = [
     status: 'paid',
     paid_at: `${daysAgo(o.day)}T13:30:00`,
   })),
+  {
+    payment_id: 9,
+    order_id: null,
+    reservation_id: 1,
+    received_by: null,
+    method: 'online',
+    provider_reference: 'pay_sample_rsv01',
+    amount: 400,
+    status: 'paid',
+    paid_at: `${daysAgo(2)}T09:15:00`,
+  },
+  {
+    payment_id: 10,
+    order_id: 3,
+    reservation_id: null,
+    received_by: null,
+    method: 'online',
+    provider_reference: 'pay_sample_0003',
+    amount: 500,
+    status: 'failed',
+    paid_at: null,
+  },
 ]
 
 export const sampleUsers: User[] = [
