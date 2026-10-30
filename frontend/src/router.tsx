@@ -7,7 +7,9 @@ import MenuItemForm from '@/pages/admin/MenuItemForm'
 import MenuManagement from '@/pages/admin/MenuManagement'
 import OrderHistory from '@/pages/admin/OrderHistory'
 import Payments from '@/pages/admin/Payments'
+import Reports from '@/pages/admin/Reports'
 import Reservations from '@/pages/admin/Reservations'
+import Settings from '@/pages/admin/Settings'
 import TablesQr from '@/pages/admin/TablesQr'
 import Placeholder from '@/pages/Placeholder'
 import About from '@/pages/customer/About'
@@ -103,9 +105,9 @@ export const router = createBrowserRouter([
       { path: 'reservations', element: <Reservations /> },
       { path: 'orders', element: <OrderHistory /> },
       { path: 'payments', element: <Payments /> },
-      { path: 'reports', element: <Placeholder screen="27" title="Reports" /> },
+      { path: 'reports', element: <Reports /> },
       { path: 'users', element: <Placeholder screen="28" title="Staff Accounts" /> },
-      { path: 'settings', element: <Placeholder screen="29" title="Settings" /> },
+      { path: 'settings', element: <Settings /> },
     ],
   },
   { path: '*', element: <Placeholder screen="—" title="Page Not Found" /> },

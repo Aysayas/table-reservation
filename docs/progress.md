@@ -49,9 +49,9 @@ Start with simple screens to learn, then the forms, then the bigger flows:
 | 24 | Reservations | 🟦 | 1440 × 900. Upcoming / Today / Past / Cancelled tabs, table with Ref Code, Date, Time, Name, Guests, Status, 8 a page. Reservation Settings: Opening Time for Booking (Same as opening hours, or a time from 6:00 AM to 10:00 PM, saved as `booking_open_time`; links to 29), Time Slot Length, Max Guests, Require Deposit, Deposit Amount per guest, Save Settings. Edit on pending and confirmed bookings (Date, Time, Guests, Table, like `PUT /reservations/{id}`). |
 | 25 | Order History | 🟦 | 1440 × 900. Search (order # or table), Date Range, All Status, All Payments, Clear filters, Export (CSV made in the browser); table with Order #, Date and time, Table, Items, Total, Payment, Method, Status, View (order details window); 8 a page |
 | 26 | Payments | 🟦 | 1440 × 900. Total Collected, Online, Cash and Deposits cards (paid only, in the date range); Search (PAY-ID, order #, ref code, reference), Date Range, All Methods, All Status, Clear filters; table with Payment ID, Date, For (order or deposit), Method, Reference, Amount, Status; 8 a page |
-| 27 | Reports | ⬜ | |
+| 27 | Reports | 🟦 | 1440 × 900. Daily / Weekly / Monthly with From – To (defaults: 7 days, 8 weeks, 6 months), Export PDF (print, report only); Sales Over Time line chart, Best-Selling Items top 10, Reservations per Day, Summary (Total Sales, Total Orders, Average Order Value, Reservations, No-shows, Busiest Hour) |
 | 28 | Staff Accounts | ⬜ | |
-| 29 | Settings | ⬜ | |
+| 29 | Settings | 🟦 | 1440 × 900. Restaurant Information: Restaurant Name, Address, Contact Number (MobileInput, +63, saved as `0918 957 2855`), Email, Facebook Page, Logo preview with Upload Logo (PNG or JPG up to 2 MB, sent on save). Opening Hours: Monday to Sunday with open and close times and an open switch, note "Toggle off to mark a day as closed." One Save Changes saves both cards (`PUT /settings`, `PUT /opening-hours`, `POST /settings/logo`) |
 
 ## Backend progress
 
