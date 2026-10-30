@@ -249,10 +249,10 @@ export const sampleMenuItems: MenuItem[] = menu.map(
   }),
 )
 
-export const sampleTables: RestaurantTable[] = Array.from({ length: 8 }, (_, i) => ({
+export const sampleTables: RestaurantTable[] = Array.from({ length: 9 }, (_, i) => ({
   table_id: i + 1,
   table_number: `T${i + 1}`,
-  capacity: i < 4 ? 2 : 4,
+  capacity: i < 4 ? 2 : i < 8 ? 4 : 8,
   qr_token: `sample-qr-token-${i + 1}`,
   status: (
     [
@@ -264,6 +264,7 @@ export const sampleTables: RestaurantTable[] = Array.from({ length: 8 }, (_, i) 
       'reserved',
       'occupied',
       'occupied',
+      'available',
     ] as const
   )[i],
 }))

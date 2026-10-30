@@ -12,7 +12,7 @@ test('dashboard shows the sidebar, staff name and the four numbers', async ({ pa
     ['Reservations Today', '5'],
     ['Guests Arrived', '2'],
     ['Active Orders', '3'],
-    ['Available Tables', '1 / 8'],
+    ['Available Tables', '2 / 9'],
   ]) {
     await expect(page.locator('dl > div', { hasText: label })).toContainText(value)
   }
