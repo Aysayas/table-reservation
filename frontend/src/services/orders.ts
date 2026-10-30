@@ -23,6 +23,7 @@ export type PublicOrder = Order & {
   subtotal: number
   service_charge: number
   items: (OrderItem & { name: string })[]
+  channel: string | null
 }
 
 const toCents = (amount: number) => Math.round(amount * 100) / 100
@@ -86,6 +87,7 @@ const toPublic = (order: Order): PublicOrder => {
     subtotal,
     service_charge: toCents(order.total_amount - subtotal),
     items,
+    channel: null,
   }
 }
 

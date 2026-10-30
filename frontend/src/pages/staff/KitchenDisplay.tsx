@@ -4,6 +4,7 @@ import { LogOut } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
+import useOrderEvents, { STAFF_CHANNEL } from '@/hooks/useOrderEvents'
 import { logout } from '@/services/auth'
 import { listOrders, updateOrderStatus, type StaffOrder } from '@/services/orders'
 import type { OrderStatus } from '@/types/db'
@@ -74,6 +75,7 @@ export default function KitchenDisplay() {
     queryFn: () => listOrders({ status: ['received', 'preparing', 'ready'] }),
     refetchInterval: 15000,
   })
+  useOrderEvents(STAFF_CHANNEL, ['orders'])
   const move = useMutation({
     mutationFn: ({ order, next }: { order: StaffOrder; next: OrderStatus }) =>
       updateOrderStatus(order.order_id, next),

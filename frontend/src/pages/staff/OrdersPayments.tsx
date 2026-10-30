@@ -6,6 +6,7 @@ import { flushSync } from 'react-dom'
 import { useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import Receipt from '@/components/Receipt'
+import useOrderEvents, { STAFF_CHANNEL } from '@/hooks/useOrderEvents'
 import { listOrders, recordPayment } from '@/services/orders'
 import { getMe } from '@/services/auth'
 import { getSettings } from '@/services/settings'
@@ -43,6 +44,7 @@ export default function OrdersPayments() {
       }),
     refetchInterval: 15000,
   })
+  useOrderEvents(STAFF_CHANNEL, ['orders'])
   const { data: settings } = useQuery({ queryKey: ['settings'], queryFn: getSettings })
   const { data: me } = useQuery({ queryKey: ['me', 'staff'], queryFn: () => getMe('staff') })
   const [paidCash, setPaidCash] = useState<Record<number, number>>({})

@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { format, parseISO } from 'date-fns'
 import { Check } from 'lucide-react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
+import useOrderEvents from '@/hooks/useOrderEvents'
 import { readTableToken } from '@/lib/tableToken'
 import { getOrder } from '@/services/orders'
 import type { OrderStatus as Status } from '@/types/db'
@@ -28,6 +29,7 @@ export default function OrderStatus() {
     enabled: orderId > 0,
     refetchInterval: 15000,
   })
+  useOrderEvents(order?.channel, ['order', orderId])
   const menuLink = `/table/${table}/menu`
   const orderMore = (
     <Link
