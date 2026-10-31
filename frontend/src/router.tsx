@@ -10,6 +10,7 @@ import Payments from '@/pages/admin/Payments'
 import Reports from '@/pages/admin/Reports'
 import Reservations from '@/pages/admin/Reservations'
 import Settings from '@/pages/admin/Settings'
+import StaffAccounts from '@/pages/admin/StaffAccounts'
 import TablesQr from '@/pages/admin/TablesQr'
 import Placeholder from '@/pages/Placeholder'
 import About from '@/pages/customer/About'
@@ -106,7 +107,7 @@ export const router = createBrowserRouter([
       { path: 'orders', element: <OrderHistory /> },
       { path: 'payments', element: <Payments /> },
       { path: 'reports', element: <Reports /> },
-      { path: 'users', element: <Placeholder screen="28" title="Staff Accounts" /> },
+      { path: 'users', element: <StaffAccounts /> },
       { path: 'settings', element: <Settings /> },
     ],
   },
