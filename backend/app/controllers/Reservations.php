@@ -96,7 +96,7 @@ class Reservations extends Controller {
 		}
 
 		$body = $this->api->body();
-		$input = $this->validate_booking([], null, false);
+		$input = $this->validate_booking([], null, false, $reservation);
 		$old_table = $reservation['table_id'] !== null ? (int) $reservation['table_id'] : null;
 		$new_table = array_key_exists('table_id', $body) ? $body['table_id'] : $old_table;
 		if ($new_table !== null && !is_int($new_table)) {
@@ -392,7 +392,7 @@ class Reservations extends Controller {
 		$this->api->respond(['data' => $checkout]);
 	}
 
-	private function validate_booking($rules, $pax = null, $customer = true)
+	private function validate_booking($rules, $pax = null, $customer = true, $current = null)
 	{
 		$input = $this->api->body();
 		if ($pax !== null) {
@@ -449,7 +449,8 @@ class Reservations extends Controller {
 		if (strlen($time) === 5) {
 			$time .= ':00';
 		}
-		if ($date && $time !== '' && !in_array($time, array_column($this->slots($date, max(1, (int) ($input['pax'] ?? 1))), 'time'), true)) {
+		$unchanged = $current && $date === $current['reservation_date'] && $time === $current['reservation_time'];
+		if (!$unchanged && $date && $time !== '' && !in_array($time, array_column($this->slots($date, max(1, (int) ($input['pax'] ?? 1))), 'time'), true)) {
 			$errors[] = '"reservation_time" is not an open time slot for that date.';
 		}
 
