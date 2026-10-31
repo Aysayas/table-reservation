@@ -7,13 +7,14 @@ class Reservations extends Controller {
 	private $per_page = 8;
 	private $views = ['upcoming', 'today', 'past', 'cancelled'];
 	private $settings;
+	private $account = null;
 
 	public function __construct()
 	{
 		parent::__construct();
 		$this->call->library('api');
 		$this->call->database();
-		$this->call->model(['Reservation_model', 'Customer_model', 'Table_model', 'Setting_model', 'Opening_hour_model', 'Payment_model']);
+		$this->call->model(['Reservation_model', 'Customer_model', 'Table_model', 'Setting_model', 'User_model', 'Opening_hour_model', 'Payment_model']);
 	}
 
 	public function index()
@@ -264,16 +265,37 @@ class Reservations extends Controller {
 		$this->api->respond(['data' => $this->slots($date, $pax)]);
 	}
 
+	public function mine()
+	{
+		$payload = $this->api->require_role('customer');
+		$customer = $this->Customer_model->find_by('user_id', $payload['sub']);
+		$reservations = $customer
+			? $this->Reservation_model
+				->filter(['customer_id' => $customer['customer_id']])
+				->order_by('reservation_date', 'DESC')
+				->order_by('reservation_time', 'DESC')
+				->get_all()
+			: [];
+
+		$this->api->respond(['data' => array_map(fn($reservation) => $this->format($reservation, true), $reservations)]);
+	}
+
 	public function store()
 	{
+		$this->account = $this->customer_account();
 		$input = $this->validate_booking(['full_name' => 'required|max_length[100]']);
 
 		$this->Reservation_model->transaction();
 		try {
-			$customer = $this->Customer_model->first_or_create(
-				['mobile_number' => $input['mobile_number'], 'full_name' => $input['full_name']],
-				['email' => $input['email']]
-			)['record'];
+			$customer = $this->account
+				? $this->Customer_model->first_or_create(
+					['user_id' => $this->account['user_id']],
+					['full_name' => $input['full_name'], 'mobile_number' => $input['mobile_number'], 'email' => $input['email']]
+				)['record']
+				: $this->Customer_model->first_or_create(
+					['mobile_number' => $input['mobile_number'], 'full_name' => $input['full_name']],
+					['email' => $input['email']]
+				)['record'];
 
 			if (!$this->is_open($input['reservation_date'], $input['reservation_time'], $input['pax'])) {
 				$this->Reservation_model->rollback();
@@ -397,6 +419,11 @@ class Reservations extends Controller {
 		$input = $this->api->body();
 		if ($pax !== null) {
 			$input['pax'] = $pax;
+		}
+		if ($this->account) {
+			$input['full_name'] = $this->account['full_name'];
+			$input['mobile_number'] = $this->account['mobile_number'];
+			$input['email'] = $this->account['email'];
 		}
 		$_POST = $input;
 		$this->call->library('form_validation');
@@ -538,6 +565,23 @@ class Reservations extends Controller {
 			];
 		}
 		return $this->settings;
+	}
+
+	private function customer_account()
+	{
+		$token = $this->api->get_bearer_token();
+		if (!$token) {
+			return null;
+		}
+		$payload = $this->api->require_jwt();
+		if (($payload['role'] ?? '') !== 'customer') {
+			return null;
+		}
+		$user = $this->User_model->find($payload['sub']);
+		if (!$user || !$user['is_active']) {
+			$this->api->respond_error('Unauthorized', 401);
+		}
+		return $user;
 	}
 
 	private function owned($code, $mobile)
