@@ -17,6 +17,14 @@ export type User = {
   created_at: string
 }
 
+export type CustomerAccount = {
+  user_id: number
+  full_name: string
+  email: string
+  mobile_number: string
+  role: 'customer'
+}
+
 export type Customer = {
   customer_id: number
   full_name: string

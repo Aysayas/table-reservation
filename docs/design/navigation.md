@@ -40,6 +40,21 @@ The customer starts here by scanning the table's QR code, so `:tableId` comes fr
 | 11 Checkout | Place Order | 12 Order Status `/table/:tableId/orders` |
 | 12 Order Status | Order More | 08 Table Menu |
 
+## Customer accounts
+
+| From | Button or link | Goes to |
+|---|---|---|
+| Customer menu (logged out) | Log In | `/login` |
+| Customer menu (logged in) | My Reservations | `/my-reservations` |
+| Customer menu (logged in) | Log Out | 01 Home `/` |
+| Log In | Log In | `?next=` page, or `/my-reservations` |
+| Log In | Forgot password? | `/forgot-password` |
+| Log In | Create an account | `/register` |
+| Create an Account | Create Account | `?next=` page, or `/my-reservations` |
+| Reset Password | Save New Password | `/login` |
+| My Reservations | Pay Deposit | 04 Deposit Payment `/reserve/payment?code=` |
+| My Reservations | Reschedule | 03 Reserve a Table `/reserve?reschedule=` |
+
 ## Staff and kitchen (13–18)
 
 | From | Button or link | Goes to |

@@ -57,6 +57,18 @@ Layout: Admin sidebar. Sidebar order matches the wireframes.
 | 28 | Staff Accounts | `/admin/users` |
 | 29 | Settings | `/admin/settings` |
 
+## Customer accounts
+
+Added by the lead after the 29 wireframes, so reservations can require a login. Customer layout, responsive like 01–07.
+
+| Screen | URL |
+|---|---|
+| Log In | `/login` (optional `?next=`) |
+| Create an Account | `/register` (optional `?next=`) |
+| Forgot Password | `/forgot-password` |
+| Reset Password | `/reset-password?token=` |
+| My Reservations | `/my-reservations` |
+
 ## URL parameters
 
 Parts that start with `:` change per visit. Read them with `useParams`:
