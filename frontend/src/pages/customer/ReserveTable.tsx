@@ -1,10 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useQuery } from '@tanstack/react-query'
-import { format } from 'date-fns'
+import { format, parseISO } from 'date-fns'
 import { ArrowLeft, Minus, Plus } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import MobileInput from '@/components/MobileInput'
@@ -46,12 +46,39 @@ const schema = z.object({
 
 type FormValues = z.infer<typeof schema>
 
+const draftKey = 'reserve-draft'
+type Draft = Partial<Pick<FormValues, 'full_name' | 'mobile_number' | 'email' | 'special_request'>>
+
+function readDraft(): Draft {
+  try {
+    return JSON.parse(sessionStorage.getItem(draftKey) ?? '{}')
+  } catch {
+    return {}
+  }
+}
+
+function writeDraft(draft: Draft | null) {
+  try {
+    if (draft) sessionStorage.setItem(draftKey, JSON.stringify(draft))
+    else sessionStorage.removeItem(draftKey)
+  } catch {
+    return
+  }
+}
+
+const telHref = (number: string) => `tel:${number.replace(/\s/g, '')}`
+
 export default function ReserveTable() {
   const navigate = useNavigate()
-  const [params] = useSearchParams()
+  const [params, setParams] = useSearchParams()
   const { state } = useLocation()
   const code = params.get('reschedule')
-  const { data: booking } = useQuery({
+  const [draft] = useState(() => (code ? {} : readDraft()))
+  const {
+    data: booking,
+    isLoading: bookingLoading,
+    isError: bookingFailed,
+  } = useQuery({
     queryKey: ['reservation', code],
     queryFn: () => getReservationByCode(code ?? ''),
     enabled: !!code,
@@ -73,10 +100,12 @@ export default function ReserveTable() {
       reservation_date: params.get('date') ?? '',
       pax: Math.max(1, Math.floor(Number(params.get('pax'))) || 2),
       reservation_time: timeParam.length === 5 ? `${timeParam}:00` : timeParam,
-      full_name: '',
-      mobile_number: cleanMobile((state as { mobile_number?: string } | null)?.mobile_number ?? ''),
-      email: '',
-      special_request: '',
+      full_name: draft.full_name ?? '',
+      mobile_number: cleanMobile(
+        (state as { mobile_number?: string } | null)?.mobile_number ?? draft.mobile_number ?? '',
+      ),
+      email: draft.email ?? '',
+      special_request: draft.special_request ?? '',
     },
   })
 
@@ -84,17 +113,46 @@ export default function ReserveTable() {
     control,
     name: ['reservation_date', 'pax', 'reservation_time'],
   })
-  const { data: slots = [], isFetched } = useQuery({
+  const [full_name, mobile_number, email, special_request] = useWatch({
+    control,
+    name: ['full_name', 'mobile_number', 'email', 'special_request'],
+  })
+  const {
+    data: slots = [],
+    isFetched,
+    isLoading: slotsLoading,
+    isError: slotsFailed,
+    refetch: refetchSlots,
+  } = useQuery({
     queryKey: ['availability', date, pax],
     queryFn: () => getAvailability(date, pax),
     enabled: date >= today,
   })
 
   useEffect(() => {
-    if (time && isFetched && !slots.some((s) => s.time === time && s.available)) {
+    if (time && isFetched && !slotsFailed && !slots.some((s) => s.time === time && s.available)) {
       setValue('reservation_time', '')
     }
-  }, [slots, isFetched, time, setValue])
+  }, [slots, isFetched, slotsFailed, time, setValue])
+
+  useEffect(() => {
+    if (code) return
+    const next = new URLSearchParams(params)
+    const choices = {
+      date,
+      pax: pax === 2 && !params.has('pax') ? '' : String(pax),
+      time: time === `${timeParam}:00` ? timeParam : time,
+    }
+    for (const [key, value] of Object.entries(choices)) {
+      if (value) next.set(key, value)
+      else next.delete(key)
+    }
+    if (next.toString() !== params.toString()) setParams(next, { replace: true })
+  }, [code, date, pax, time, timeParam, params, setParams])
+
+  useEffect(() => {
+    if (!code) writeDraft({ full_name, mobile_number, email, special_request })
+  }, [code, full_name, mobile_number, email, special_request])
 
   useEffect(() => {
     if (pax > maxPax) setValue('pax', maxPax)
@@ -131,10 +189,50 @@ export default function ReserveTable() {
         email: values.email || null,
         special_request: values.special_request || null,
       })
+      writeDraft(null)
       navigate(`/reserve/payment?code=${reservation.reference_code}`)
     } catch (e) {
       toast.error((e as Error).message)
     }
+  }
+
+  const phone = settings?.contact_number
+  const callUs = phone ? (
+    <a href={telHref(phone)} className="text-brand-red font-bold whitespace-nowrap underline">
+      {phone}
+    </a>
+  ) : (
+    'the restaurant'
+  )
+
+  if (code && bookingLoading) return null
+
+  if (code && !booking) {
+    return (
+      <div className="bg-brand-cream min-h-[calc(100vh-4rem)] px-4 pt-6 md:py-12">
+        <div className="border-brand-line rounded-lg border bg-white p-5 text-center md:mx-auto md:max-w-md md:p-6">
+          <h1 className="text-brand-charcoal font-serif text-2xl">
+            {bookingFailed ? "We couldn't load your reservation" : 'Reservation not found'}
+          </h1>
+          <p className="text-brand-ink/75 mt-3 text-sm">
+            {bookingFailed ? (
+              <>Please try again in a moment, or call {callUs}.</>
+            ) : (
+              <>
+                We couldn't find <span className="whitespace-nowrap">{code}</span>. Check your code
+                and try again.
+              </>
+            )}
+          </p>
+          <Link
+            to="/reservation"
+            className="bg-brand-red hover:bg-brand-red/90 focus-visible:outline-brand-gold mt-6 block w-full rounded-sm py-4 text-center text-sm font-bold tracking-[0.15em] text-white uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2"
+          >
+            Find My Reservation
+          </Link>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -163,6 +261,13 @@ export default function ReserveTable() {
         {code && (
           <p className="text-brand-ink/70 mt-4 text-sm">
             Pick a new date and time. Your guests and deposit stay the same.
+          </p>
+        )}
+        {booking && (
+          <p className="text-brand-charcoal mt-2 text-sm font-semibold">
+            Currently: {format(parseISO(booking.reservation_date), 'EEE, MMM d')},{' '}
+            {formatTime(booking.reservation_time)}, {booking.pax}{' '}
+            {booking.pax === 1 ? 'guest' : 'guests'}
           </p>
         )}
 
@@ -253,6 +358,21 @@ export default function ReserveTable() {
                 </p>
                 {!date ? (
                   <p className="text-brand-ink/60 mt-2 text-sm">Choose a date to see the times.</p>
+                ) : slotsFailed ? (
+                  <div role="alert" className="text-brand-ink/75 mt-2 text-sm">
+                    <p>We couldn't load the times. Try again, or call {callUs}.</p>
+                    <button
+                      type="button"
+                      onClick={() => refetchSlots()}
+                      className="border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal mt-3 rounded-sm border px-5 py-2.5 text-sm font-bold transition-colors duration-200 hover:text-white"
+                    >
+                      Try Again
+                    </button>
+                  </div>
+                ) : slotsLoading ? (
+                  <p role="status" className="text-brand-ink/75 mt-2 text-sm">
+                    Loading times…
+                  </p>
                 ) : isFetched && slots.length === 0 ? (
                   <p className="text-brand-ink/60 mt-2 text-sm">No times left on this day.</p>
                 ) : (
@@ -277,9 +397,9 @@ export default function ReserveTable() {
                   </div>
                 )}
                 {isFetched && slots.length > 0 && !slots.some((s) => s.available) && (
-                  <p className="text-brand-ink/60 mt-2 text-sm">
-                    No table is free for {pax} guests on this day. For bigger groups, call us at{' '}
-                    {settings?.contact_number}.
+                  <p className="text-brand-ink/75 mt-2 text-sm">
+                    We can't seat {pax} {pax === 1 ? 'guest' : 'guests'} online on this day. Please
+                    call us and we'll help you arrange it: {callUs}
                   </p>
                 )}
                 {errors.reservation_time && (
