@@ -107,9 +107,11 @@ export async function forgotPassword(email: string): Promise<void> {
 export async function resetPassword(token: string, password: string): Promise<void> {
   if (USE_SAMPLE) {
     if (token === 'expired') throw new Error('This reset link is invalid or has expired')
+    sampleSession(null)
     return
   }
   await api.post('/auth/reset-password', { token, password })
+  setTokens(null)
 }
 
 export async function listMyReservations(account: CustomerAccount): Promise<PublicReservation[]> {

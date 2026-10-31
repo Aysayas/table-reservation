@@ -12,8 +12,14 @@ export async function login(email: string, password: string): Promise<User> {
   return res.data.data.user
 }
 
-export const roleHome = (role: UserRole) =>
-  role === 'admin' ? '/admin' : role === 'kitchen' ? '/kitchen' : '/staff'
+export const roleHome = (role: UserRole | 'customer') =>
+  role === 'customer'
+    ? '/'
+    : role === 'admin'
+      ? '/admin'
+      : role === 'kitchen'
+        ? '/kitchen'
+        : '/staff'
 
 export async function logout(): Promise<void> {
   if (USE_SAMPLE) return
