@@ -16,6 +16,12 @@ test('deposit page shows the summary, amount and payment methods', async ({ page
   await expect(page.getByRole('button', { name: 'Pay ₱0.00' })).toBeVisible()
 })
 
+test('deposit page shows the reference code to save', async ({ page }) => {
+  await page.goto('/reserve/payment?code=RSV-000001')
+  await expect(page.getByRole('definition').filter({ hasText: 'RSV-000001' })).toBeVisible()
+  await expect(page.getByText(/^Save this code/)).toBeVisible()
+})
+
 test('choosing a payment method selects it', async ({ page }) => {
   await page.goto(url)
   await page.getByText('Maya').click()
