@@ -1,4 +1,7 @@
 import { expect, test } from '@playwright/test'
+import { logIn } from './logged-in.js'
+
+test.beforeEach(({ page }) => logIn(page))
 
 test('home page loads', async ({ page }) => {
   await page.goto('/')

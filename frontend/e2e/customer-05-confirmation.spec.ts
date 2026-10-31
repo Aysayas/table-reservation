@@ -1,4 +1,7 @@
 import { expect, test } from '@playwright/test'
+import { logIn } from './logged-in.js'
+
+test.beforeEach(({ page }) => logIn(page))
 
 const url = '/reserve/confirmation/RSV-000001'
 
@@ -105,8 +108,6 @@ test('an unpaid deposit shows as due', async ({ page }) => {
   await page.goto('/reserve')
   await page.getByLabel('Date').fill(`${new Date().getFullYear() + 1}-12-01`)
   await page.getByRole('button', { name: '7:00 PM' }).click()
-  await page.getByLabel('Full Name').fill('Juan Dela Cruz')
-  await page.getByLabel('Mobile Number').fill('9123456789')
   await page.getByRole('button', { name: 'Continue to Deposit' }).click()
   await expect(page).toHaveURL(/\/reserve\/payment\?code=RSV-/)
   const code = new URL(page.url()).searchParams.get('code')

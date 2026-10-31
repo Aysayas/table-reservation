@@ -4,10 +4,11 @@ import { format, parseISO } from 'date-fns'
 import { ArrowLeft, Minus, Plus } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link, Navigate, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import MobileInput from '@/components/MobileInput'
+import useAccount from '@/hooks/useAccount'
 import { formatTime } from '@/lib/hours'
 import { cleanMobile, mobileSchema, toLocalMobile } from '@/lib/mobile'
 import {
@@ -47,7 +48,7 @@ const schema = z.object({
 type FormValues = z.infer<typeof schema>
 
 const draftKey = 'reserve-draft'
-type Draft = Partial<Pick<FormValues, 'full_name' | 'mobile_number' | 'email' | 'special_request'>>
+type Draft = { special_request?: string }
 
 function readDraft(): Draft {
   try {
@@ -71,7 +72,9 @@ const telHref = (number: string) => `tel:${number.replace(/\s/g, '')}`
 export default function ReserveTable() {
   const navigate = useNavigate()
   const [params, setParams] = useSearchParams()
-  const { state } = useLocation()
+  const location = useLocation()
+  const stateMobile = (location.state as { mobile_number?: string } | null)?.mobile_number
+  const { data: account, isLoading: accountLoading } = useAccount()
   const code = params.get('reschedule')
   const [draft] = useState(() => (code ? {} : readDraft()))
   const {
@@ -100,11 +103,9 @@ export default function ReserveTable() {
       reservation_date: params.get('date') ?? '',
       pax: Math.max(1, Math.floor(Number(params.get('pax'))) || 2),
       reservation_time: timeParam.length === 5 ? `${timeParam}:00` : timeParam,
-      full_name: draft.full_name ?? '',
-      mobile_number: cleanMobile(
-        (state as { mobile_number?: string } | null)?.mobile_number ?? draft.mobile_number ?? '',
-      ),
-      email: draft.email ?? '',
+      full_name: '',
+      mobile_number: cleanMobile(stateMobile ?? ''),
+      email: '',
       special_request: draft.special_request ?? '',
     },
   })
@@ -113,10 +114,7 @@ export default function ReserveTable() {
     control,
     name: ['reservation_date', 'pax', 'reservation_time'],
   })
-  const [full_name, mobile_number, email, special_request] = useWatch({
-    control,
-    name: ['full_name', 'mobile_number', 'email', 'special_request'],
-  })
+  const special_request = useWatch({ control, name: 'special_request' })
   const {
     data: slots = [],
     isFetched,
@@ -151,8 +149,15 @@ export default function ReserveTable() {
   }, [code, date, pax, time, timeParam, params, setParams])
 
   useEffect(() => {
-    if (!code) writeDraft({ full_name, mobile_number, email, special_request })
-  }, [code, full_name, mobile_number, email, special_request])
+    if (!code) writeDraft({ special_request })
+  }, [code, special_request])
+
+  useEffect(() => {
+    if (!account) return
+    setValue('full_name', account.full_name)
+    setValue('email', account.email)
+    if (!stateMobile) setValue('mobile_number', cleanMobile(account.mobile_number))
+  }, [account, stateMobile, setValue])
 
   useEffect(() => {
     if (pax > maxPax) setValue('pax', maxPax)
@@ -205,7 +210,13 @@ export default function ReserveTable() {
     'the restaurant'
   )
 
-  if (code && bookingLoading) return null
+  if (code ? bookingLoading : accountLoading) return null
+
+  if (!code && !account) {
+    return (
+      <Navigate to={`/login?next=${encodeURIComponent(`/reserve${location.search}`)}`} replace />
+    )
+  }
 
   if (code && !booking) {
     return (
@@ -409,7 +420,13 @@ export default function ReserveTable() {
             </div>
 
             <div className="space-y-6">
-              <div className={code ? 'hidden' : ''}>
+              {!code && account && (
+                <p className="text-brand-charcoal text-sm">
+                  Booking as <span className="font-bold">{account.full_name}</span>,{' '}
+                  <span className="whitespace-nowrap">{account.mobile_number}</span>
+                </p>
+              )}
+              <div className="hidden">
                 <label htmlFor="full_name" className={label}>
                   Full Name
                 </label>
@@ -423,7 +440,7 @@ export default function ReserveTable() {
                 />
                 {errors.full_name && <p className={error}>{errors.full_name.message}</p>}
               </div>
-              <div>
+              <div className={code ? '' : 'hidden'}>
                 <label htmlFor="mobile_number" className={label}>
                   Mobile Number
                 </label>
@@ -434,7 +451,7 @@ export default function ReserveTable() {
                 />
                 {errors.mobile_number && <p className={error}>{errors.mobile_number.message}</p>}
               </div>
-              <div className={code ? 'hidden' : ''}>
+              <div className="hidden">
                 <label htmlFor="email" className={label}>
                   Email (optional)
                 </label>
