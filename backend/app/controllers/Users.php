@@ -24,7 +24,7 @@ class Users extends Controller {
 			$this->api->respond_error('"role" must be one of ' . implode(', ', $this->roles) . ', and "status" active or disabled', 422);
 		}
 
-		$users = $this->User_model->query();
+		$users = $this->User_model->query()->in('role', $this->roles);
 		if ($role !== '') {
 			$users->where('role', $role);
 		}
@@ -59,7 +59,7 @@ class Users extends Controller {
 	{
 		$me = $this->api->require_role('admin');
 		$user = $this->User_model->find($id);
-		if (!$user) {
+		if (!$user || $user['role'] === 'customer') {
 			$this->api->respond_error('User not found', 404);
 		}
 
@@ -98,7 +98,7 @@ class Users extends Controller {
 	{
 		$me = $this->api->require_role('admin');
 		$user = $this->User_model->find($id);
-		if (!$user) {
+		if (!$user || $user['role'] === 'customer') {
 			$this->api->respond_error('User not found', 404);
 		}
 		if ((int) $id === (int) $me['sub']) {

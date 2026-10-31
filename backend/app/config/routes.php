@@ -57,6 +57,10 @@ $router->group(['prefix' => 'api'], function ($router) {
     $router->get('/health/db', 'Health::database');
 
     $router->post('/auth/login', 'Auth::login');
+    $router->post('/auth/register', 'Auth::register');
+    $router->post('/auth/customer-login', 'Auth::customer_login');
+    $router->post('/auth/forgot-password', 'Auth::forgot_password');
+    $router->post('/auth/reset-password', 'Auth::reset_password');
     $router->post('/auth/refresh', 'Auth::refresh');
     $router->post('/auth/logout', 'Auth::logout');
     $router->get('/auth/me', 'Auth::me');
@@ -85,6 +89,7 @@ $router->group(['prefix' => 'api'], function ($router) {
     $router->get('/reservations/availability', 'Reservations::availability');
     $router->post('/reservations', 'Reservations::store');
     $router->post('/reservations/find', 'Reservations::find');
+    $router->get('/my/reservations', 'Reservations::mine');
     $router->get('/reservations/code/{code}', 'Reservations::by_code')->where('code', '[A-Za-z0-9-]+');
     $router->post('/reservations/code/{code}/cancel', 'Reservations::cancel')->where('code', '[A-Za-z0-9-]+');
     $router->post('/reservations/code/{code}/reschedule', 'Reservations::reschedule')->where('code', '[A-Za-z0-9-]+');
