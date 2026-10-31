@@ -623,6 +623,7 @@ export const sampleSettings: RestaurantSettings = {
   service_charge_percent: 0,
   slot_minutes: 60,
   max_pax: 10,
+  booking_open_time: null,
   deposit_required: true,
   updated_at: '2026-01-01T00:00:00',
 }

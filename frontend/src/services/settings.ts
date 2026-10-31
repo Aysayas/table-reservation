@@ -28,6 +28,7 @@ export type SettingsInput = Partial<
     | 'facebook_url'
     | 'slot_minutes'
     | 'max_pax'
+    | 'booking_open_time'
     | 'deposit_required'
     | 'deposit_per_guest'
   >

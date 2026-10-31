@@ -25,11 +25,32 @@ test('reservations shows upcoming bookings first, and the tabs switch the list',
   await expect(page.getByText('No reservations found.')).toBeVisible()
 })
 
-test('opening time follows the opening hours and links to settings', async ({ page }) => {
+test('opening time for booking can be changed and saved', async ({ page }) => {
   await page.goto(url)
-  await expect(page.getByLabel('Opening Time for Booking')).toBeDisabled()
+  const openingTime = page.getByLabel('Opening Time for Booking')
+  await expect(openingTime).toBeEnabled()
+  await expect(openingTime).toHaveValue('')
+  await expect(openingTime.locator('option:checked')).toHaveText(/Same as opening hours/)
+  await openingTime.selectOption('18:00')
+  await page.getByRole('button', { name: 'Save Settings' }).click()
+  await expect(page.getByText('Settings saved')).toBeVisible()
+
   await page.getByRole('link', { name: 'Set the hours in Settings' }).click()
   await expect(page).toHaveURL('/admin/settings')
+  await page.getByRole('link', { name: 'Reservations' }).click()
+  await expect(page.getByLabel('Opening Time for Booking')).toHaveValue('18:00')
+  await expect(page.getByLabel('Opening Time for Booking').locator('option:checked')).toHaveText(
+    '6:00 PM',
+  )
+
+  await page.getByRole('button', { name: 'Edit RSV-000009' }).click()
+  const time = page.getByRole('dialog', { name: 'Edit RSV-000009' }).getByLabel('Time')
+  await expect(time).toHaveValue('19:00:00')
+  const times = await time
+    .locator('option')
+    .evaluateAll((options) => options.map((o) => (o as { value: string }).value).filter(Boolean))
+  expect(times.length).toBeGreaterThan(0)
+  expect(times.every((t) => t >= '18:00:00')).toBe(true)
 })
 
 test('reservation settings are saved and kept', async ({ page }) => {

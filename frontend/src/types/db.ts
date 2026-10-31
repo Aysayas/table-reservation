@@ -124,6 +124,7 @@ export type RestaurantSettings = {
   service_charge_percent: number
   slot_minutes: number
   max_pax: number
+  booking_open_time: string | null
   deposit_required: boolean
   updated_at: string
 }
