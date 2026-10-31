@@ -61,6 +61,8 @@ export const fileUrl = (url: string | null) =>
     ? `${import.meta.env.VITE_API_URL.replace(/\/api\/?$/, '')}${url}`
     : url
 
+export const getToken = () => localStorage.getItem(TOKEN_KEY)
+
 export function setTokens(token: string | null, refresh?: string) {
   if (token) localStorage.setItem(TOKEN_KEY, token)
   else localStorage.removeItem(TOKEN_KEY)
