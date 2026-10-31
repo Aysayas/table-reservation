@@ -86,6 +86,36 @@ test('reschedule mode shows the code and keeps the booking guests', async ({ pag
   await expect(page.getByRole('button', { name: 'Confirm New Time' })).toBeVisible()
 })
 
+test('reschedule mode shows the current booking', async ({ page }) => {
+  await page.goto('/reserve?reschedule=RSV-000001')
+  await expect(page.getByText(/^Currently: /)).toBeVisible()
+})
+
+test('a reschedule link with an unknown code shows not found', async ({ page }) => {
+  await page.goto('/reserve?reschedule=RSV-XXXXXX')
+  await expect(page.getByRole('heading', { name: 'Reservation not found' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Confirm New Time' })).toHaveCount(0)
+  await page.getByRole('link', { name: 'Find My Reservation' }).last().click()
+  await expect(page).toHaveURL('/reservation')
+})
+
+test('refreshing keeps what the guest filled in', async ({ page }) => {
+  await page.goto(`/reserve?date=${date}`)
+  await page.getByRole('button', { name: 'More guests' }).click()
+  await page.getByRole('button', { name: '7:00 PM' }).click()
+  await page.getByLabel('Full Name').fill('Juan Dela Cruz')
+  await page.getByLabel('Mobile Number').fill('9123456789')
+  await page.reload()
+  await expect(page.getByLabel('Date')).toHaveValue(date)
+  await expect(page.locator('output')).toHaveText('3')
+  await expect(page.getByRole('button', { name: '7:00 PM' })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  )
+  await expect(page.getByLabel('Full Name')).toHaveValue('Juan Dela Cruz')
+  await expect(page.getByLabel('Mobile Number')).toHaveValue('9123456789')
+})
+
 test('rescheduling moves the booking and opens its confirmation', async ({ page }) => {
   await page.goto('/reserve?reschedule=RSV-000001')
   await page.getByLabel('Date').fill(date)
@@ -140,12 +170,15 @@ test('a booking with a pasted 0912 number goes through', async ({ page }) => {
 
 test('a group bigger than every table gets an explanation', async ({ page }) => {
   await page.goto(`/reserve?date=${date}&pax=9`)
-  await expect(page.getByText('No table is free for 9 guests on this day')).toBeVisible()
-  await expect(page.getByText('call us at 0918 957 2855')).toBeVisible()
+  await expect(page.getByText("We can't seat 9 guests online on this day")).toBeVisible()
+  await expect(page.getByRole('link', { name: '0918 957 2855' })).toHaveAttribute(
+    'href',
+    'tel:09189572855',
+  )
 })
 
 test('6 guests can book, because T9 seats 8', async ({ page }) => {
   await page.goto(`/reserve?date=${date}&pax=6`)
   await expect(page.getByRole('button', { name: '7:00 PM' })).toBeEnabled()
-  await expect(page.getByText(/No table is free/)).toHaveCount(0)
+  await expect(page.getByText(/We can't seat/)).toHaveCount(0)
 })

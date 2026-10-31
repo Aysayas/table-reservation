@@ -70,6 +70,7 @@ export default function DepositPayment() {
 
   const amount = peso(reservation.deposit_amount)
   const summary = [
+    { label: 'Reference Code', value: reservation.reference_code },
     { label: 'Date', value: format(parseISO(reservation.reservation_date), 'MMMM d, yyyy') },
     {
       label: 'Time',
@@ -99,6 +100,9 @@ export default function DepositPayment() {
                   </div>
                 ))}
               </dl>
+              <p className="text-brand-ink/75 mt-4 text-sm">
+                Save this code. You'll need it with your mobile number to find your booking.
+              </p>
             </section>
 
             <section className="bg-brand-charcoal rounded-lg px-5 py-6 text-white md:px-6">
