@@ -168,7 +168,7 @@ Both services run in Render's **Singapore** region, next to the Aiven database (
 
 `render.yaml` sets `DB_SSL_CA=/etc/secrets/ca.pem`: add the host's CA certificate as a Secret File named `ca.pem` in the Render dashboard. The production image turns PHP `display_errors` off. Menu photos uploaded in production are lost on each deploy until cloud storage is added.
 
-Frontend: Netlify reads `netlify.toml` at the repo root (base `frontend`, publish `dist`, all routes to `index.html`). Set `VITE_API_URL` to `https://<your-service>.onrender.com/api` in Netlify, then add that Netlify URL to `CORS_ORIGINS` on Render.
+Frontend: on Vercel, set the Root Directory to `frontend`; `frontend/vercel.json` sends all routes to `index.html`. Set `VITE_API_URL` to `https://<your-service>.onrender.com/api` and `VITE_USE_SAMPLE` to `false` in Vercel, then add the production Vercel URL to `CORS_ORIGINS` and set it as `FRONTEND_URL` on Render.
 
 Only changes inside `backend/` trigger a redeploy. The free plan sleeps after about 15 minutes idle, and the first request after that takes up to a minute.
 
