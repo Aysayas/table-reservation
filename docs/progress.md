@@ -53,6 +53,16 @@ Start with simple screens to learn, then the forms, then the bigger flows:
 | 28 | Staff Accounts | 🟦 | 1440 × 900. Search (name or email), All Roles, + Add Staff; table with Name, Email, Role, Status (Active / Disabled), Last Login, Actions (Edit, plus Disable or Enable; your own row has only Edit). Add / Edit window: Full Name, Email, Role (locked on your own account), Password (optional on Edit). No Delete button (not in the wireframe) |
 | 29 | Settings | 🟦 | 1440 × 900. Restaurant Information: Restaurant Name, Address, Contact Number (MobileInput, +63, saved as `0918 957 2855`), Email, Facebook Page, Logo preview with Upload Logo (PNG or JPG up to 2 MB, sent on save). Opening Hours: Monday to Sunday with open and close times and an open switch, note "Toggle off to mark a day as closed." One Save Changes saves both cards (`PUT /settings`, `PUT /opening-hours`, `POST /settings/logo`) |
 
+## Customer accounts (lead, not in the wireframes)
+
+| Screen | Status |
+|---|---|
+| Log In `/login` | 🟦 |
+| Create an Account `/register` | 🟦 |
+| Forgot Password `/forgot-password` | 🟦 |
+| Reset Password `/reset-password` | 🟦 |
+| My Reservations `/my-reservations` | 🟦 |
+
 ## Backend progress
 
 Updated 2026-10-25. Full endpoint details are in [api.md](api.md). Every screen keeps using `sampleData.ts` until the lead deploys the backend and says the API is live. ✅ means the endpoint is ready for that switch.

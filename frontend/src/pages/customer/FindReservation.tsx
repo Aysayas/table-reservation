@@ -9,8 +9,9 @@ import { z } from 'zod'
 import MobileInput from '@/components/MobileInput'
 import { apiError } from '@/lib/api'
 import { mobileSchema, toLocalMobile } from '@/lib/mobile'
+import { reservationStatuses } from '@/lib/reservationStatus'
 import { cancelReservation, findReservation } from '@/services/reservations'
-import type { PublicReservation, ReservationStatus } from '@/types/db'
+import type { PublicReservation } from '@/types/db'
 
 const label = 'text-brand-charcoal text-xs font-bold tracking-[0.15em] uppercase'
 const field =
@@ -18,14 +19,6 @@ const field =
 const error = 'text-brand-red mt-1.5 text-xs'
 const outlineButton =
   'border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal rounded-sm border py-3 text-sm font-bold tracking-[0.1em] uppercase transition-colors duration-200 hover:text-white disabled:pointer-events-none disabled:opacity-40'
-
-const statuses: Record<ReservationStatus, { text: string; className: string }> = {
-  pending: { text: 'Pending', className: 'bg-brand-gold/20 text-brand-gold-deep' },
-  confirmed: { text: 'Confirmed', className: 'bg-brand-green text-white' },
-  arrived: { text: 'Arrived', className: 'bg-brand-charcoal text-white' },
-  no_show: { text: 'No-show', className: 'bg-brand-ink/10 text-brand-ink' },
-  cancelled: { text: 'Cancelled', className: 'bg-brand-red/10 text-brand-red' },
-}
 
 const schema = z.object({
   reference_code: z.string().trim().min(1, 'Enter your reference code'),
@@ -69,7 +62,7 @@ export default function FindReservation() {
   }
 
   const canChange = result?.status === 'pending' || result?.status === 'confirmed'
-  const status = result ? statuses[result.status] : undefined
+  const status = result ? reservationStatuses[result.status] : undefined
 
   return (
     <div className="bg-brand-cream min-h-[calc(100vh-4rem)] px-4 pt-6 pb-12 md:py-12">
