@@ -1,6 +1,7 @@
 import type {
   Category,
   Customer,
+  CustomerAccount,
   MenuItem,
   OpeningHours,
   Order,
@@ -569,6 +570,16 @@ export const samplePayments: Payment[] = [
     amount: 500,
     status: 'failed',
     paid_at: null,
+  },
+]
+
+export const sampleAccounts: CustomerAccount[] = [
+  {
+    user_id: 100,
+    full_name: 'Customer Name',
+    email: 'customer@placeholder-domain.com',
+    mobile_number: '09000000000',
+    role: 'customer',
   },
 ]
 

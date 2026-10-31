@@ -125,6 +125,11 @@ Gentle and slow, so it never makes anyone dizzy. Made with Tailwind only (no mot
 
 - Every field people type a mobile number into uses the shared `MobileInput`: a fixed cream `+63` box joined to the input, the placeholder `912 345 6789`, and the short error "Check your mobile number". Numbers that are only shown stay as `09…`.
 
+## Customer accounts
+
+- Log In, Create an Account, Forgot Password and Reset Password share `AccountCard`: a serif title on cream, then one white card. They use the same fields as screen 03, `MobileInput` and `PasswordInput`.
+- My Reservations uses the same booking card and status chips as screen 06.
+
 ## Kitchen display
 
 Screen 18 is read from across the kitchen, so it uses bigger text and buttons than the other staff screens.

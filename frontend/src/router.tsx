@@ -27,6 +27,11 @@ import ReserveTable from '@/pages/customer/ReserveTable'
 import TableMenu from '@/pages/customer/TableMenu'
 import OrdersPayments from '@/pages/staff/OrdersPayments'
 import StaffDashboard from '@/pages/staff/StaffDashboard'
+import ForgotPassword from '@/pages/customer/ForgotPassword'
+import Login from '@/pages/customer/Login'
+import MyReservations from '@/pages/customer/MyReservations'
+import Register from '@/pages/customer/Register'
+import ResetPassword from '@/pages/customer/ResetPassword'
 import KitchenDisplay from '@/pages/staff/KitchenDisplay'
 import StaffLogin from '@/pages/staff/StaffLogin'
 import TableStatus from '@/pages/staff/TableStatus'
@@ -65,6 +70,11 @@ export const router = createBrowserRouter([
         element: <ReservationConfirmation />,
       },
       { path: '/reservation', element: <FindReservation /> },
+      { path: '/login', element: <Login /> },
+      { path: '/register', element: <Register /> },
+      { path: '/forgot-password', element: <ForgotPassword /> },
+      { path: '/reset-password', element: <ResetPassword /> },
+      { path: '/my-reservations', element: <MyReservations /> },
       { path: '/about', element: <About /> },
       { path: '/table/:tableId', element: <TableMenu /> },
       { path: '/table/:tableId/menu', element: <TableMenu /> },
