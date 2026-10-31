@@ -53,9 +53,9 @@ services:
         sync: false
       - key: PUSHER_APP_ID
         sync: false
-      - key: BREVO_API_KEY
+      - key: MAIL_SCRIPT_URL
         sync: false
-      - key: MAIL_FROM
+      - key: MAIL_SCRIPT_SECRET
         sync: false
       - key: PUSHER_KEY
         sync: false
