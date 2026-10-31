@@ -1,4 +1,7 @@
 import { expect, test } from '@playwright/test'
+import { logIn } from './logged-in.js'
+
+test.beforeEach(({ page }) => logIn(page))
 
 const url = '/reserve/payment?code=RSV-000002'
 
@@ -47,11 +50,9 @@ test('booking on screen 03 opens this page with the new reservation', async ({ p
   await page.goto('/reserve')
   await page.getByLabel('Date').fill(date)
   await page.getByRole('button', { name: '7:00 PM' }).click()
-  await page.getByLabel('Full Name').fill('Juan Dela Cruz')
-  await page.getByLabel('Mobile Number').fill('0912 345 6789')
   await page.getByRole('button', { name: 'Continue to Deposit' }).click()
   await expect(page.getByRole('heading', { name: 'Deposit Payment' })).toBeVisible()
-  await expect(page.getByText('Juan Dela Cruz')).toBeVisible()
+  await expect(page.getByText('Customer Name')).toBeVisible()
   await expect(page.getByText('7:00 PM')).toBeVisible()
 })
 

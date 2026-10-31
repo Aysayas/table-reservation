@@ -283,19 +283,17 @@ class Reservations extends Controller {
 	public function store()
 	{
 		$this->account = $this->customer_account();
+		if (!$this->account) {
+			$this->api->respond_error('Please log in to reserve a table', 401);
+		}
 		$input = $this->validate_booking(['full_name' => 'required|max_length[100]']);
 
 		$this->Reservation_model->transaction();
 		try {
-			$customer = $this->account
-				? $this->Customer_model->first_or_create(
-					['user_id' => $this->account['user_id']],
-					['full_name' => $input['full_name'], 'mobile_number' => $input['mobile_number'], 'email' => $input['email']]
-				)['record']
-				: $this->Customer_model->first_or_create(
-					['mobile_number' => $input['mobile_number'], 'full_name' => $input['full_name']],
-					['email' => $input['email']]
-				)['record'];
+			$customer = $this->Customer_model->first_or_create(
+				['user_id' => $this->account['user_id']],
+				['full_name' => $input['full_name'], 'mobile_number' => $input['mobile_number'], 'email' => $input['email']]
+			)['record'];
 
 			if (!$this->is_open($input['reservation_date'], $input['reservation_time'], $input['pax'])) {
 				$this->Reservation_model->rollback();

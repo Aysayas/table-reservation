@@ -142,6 +142,36 @@ test('the menu shows log in, then my reservations and log out', async ({ page })
   await expect(page.getByRole('link', { name: 'Log In' })).toBeVisible()
 })
 
+test('reserving needs a login and comes back with what was picked', async ({ page }) => {
+  await page.goto('/reserve?date=2030-12-01&pax=4')
+  await expect(page).toHaveURL(/^.*\/login\?next=/)
+  await page.getByLabel('Mobile Number').fill('9000000000')
+  await page.getByLabel('Password', { exact: true }).fill('password123')
+  await page.getByRole('button', { name: 'Log In' }).click()
+  await expect(page).toHaveURL('/reserve?date=2030-12-01&pax=4')
+  await expect(page.getByLabel('Date')).toHaveValue('2030-12-01')
+  await expect(page.getByText(/^Booking as Customer Name/)).toBeVisible()
+})
+
+test('a new booking shows up in my reservations', async ({ page }) => {
+  await logIn(page)
+  await page.goto('/reserve?date=2030-12-01')
+  await page.getByRole('button', { name: '7:00 PM' }).click()
+  await page.getByRole('button', { name: 'Continue to Deposit' }).click()
+  await expect(page).toHaveURL(/\/reserve\/payment\?code=RSV-/)
+  const code = new URL(page.url()).searchParams.get('code')
+  await page.getByRole('button', { name: 'Open menu' }).click()
+  await page.getByRole('link', { name: 'My Reservations' }).click()
+  await expect(page.getByRole('listitem', { name: `Reservation ${code}` })).toBeVisible()
+})
+
+test('rescheduling by link and finding a booking need no login', async ({ page }) => {
+  await page.goto('/reserve?reschedule=RSV-000001')
+  await expect(page.getByRole('button', { name: 'Confirm New Time' })).toBeVisible()
+  await page.goto('/reservation')
+  await expect(page.getByLabel('Reference Code')).toBeVisible()
+})
+
 test('table ordering does not show account links', async ({ page }) => {
   await page.goto('/table/1/menu')
   await page.getByRole('button', { name: 'Open menu' }).click()

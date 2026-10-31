@@ -1,4 +1,7 @@
 import { expect, test } from '@playwright/test'
+import { logIn } from './logged-in.js'
+
+test.beforeEach(({ page }) => logIn(page))
 
 const nextYear = new Date().getFullYear() + 1
 const date = `${nextYear}-12-01`
@@ -9,15 +12,12 @@ test('reserve page shows the steps and the form', async ({ page }) => {
   for (const step of ['Details', 'Deposit', 'Confirm']) {
     await expect(page.getByText(step, { exact: true })).toBeVisible()
   }
-  for (const name of [
-    'Date',
-    'Full Name',
-    'Mobile Number',
-    'Email (optional)',
-    'Special Request (optional)',
-  ]) {
+  for (const name of ['Date', 'Special Request (optional)']) {
     await expect(page.getByLabel(name)).toBeVisible()
   }
+  await expect(page.getByText(/^Booking as Customer Name/)).toBeVisible()
+  await expect(page.getByLabel('Full Name')).toBeHidden()
+  await expect(page.getByLabel('Mobile Number')).toBeHidden()
   await expect(page.getByRole('group', { name: 'Number of Guests' })).toBeVisible()
   await expect(page.getByRole('button', { name: 'Continue to Deposit' })).toBeVisible()
 })
@@ -61,8 +61,6 @@ test('an empty form shows errors and stays on the page', async ({ page }) => {
   await page.getByRole('button', { name: 'Continue to Deposit' }).click()
   await expect(page.getByText('Choose a date', { exact: true })).toBeVisible()
   await expect(page.getByText('Choose a time')).toBeVisible()
-  await expect(page.getByText('Enter your full name')).toBeVisible()
-  await expect(page.getByText('Check your mobile number')).toBeVisible()
   await expect(page).toHaveURL('/reserve')
 })
 
@@ -70,8 +68,6 @@ test('a full form continues to the deposit page', async ({ page }) => {
   await page.goto('/reserve')
   await page.getByLabel('Date').fill(date)
   await page.getByRole('button', { name: '7:00 PM' }).click()
-  await page.getByLabel('Full Name').fill('Juan Dela Cruz')
-  await page.getByLabel('Mobile Number').fill('0912 345 6789')
   await page.getByRole('button', { name: 'Continue to Deposit' }).click()
   await expect(page).toHaveURL(/\/reserve\/payment\?code=RSV-[A-Z0-9]{6}$/)
 })
@@ -103,8 +99,7 @@ test('refreshing keeps what the guest filled in', async ({ page }) => {
   await page.goto(`/reserve?date=${date}`)
   await page.getByRole('button', { name: 'More guests' }).click()
   await page.getByRole('button', { name: '7:00 PM' }).click()
-  await page.getByLabel('Full Name').fill('Juan Dela Cruz')
-  await page.getByLabel('Mobile Number').fill('9123456789')
+  await page.getByLabel('Special Request (optional)').fill('Window seat')
   await page.reload()
   await expect(page.getByLabel('Date')).toHaveValue(date)
   await expect(page.locator('output')).toHaveText('3')
@@ -112,8 +107,7 @@ test('refreshing keeps what the guest filled in', async ({ page }) => {
     'aria-pressed',
     'true',
   )
-  await expect(page.getByLabel('Full Name')).toHaveValue('Juan Dela Cruz')
-  await expect(page.getByLabel('Mobile Number')).toHaveValue('9123456789')
+  await expect(page.getByLabel('Special Request (optional)')).toHaveValue('Window seat')
 })
 
 test('rescheduling moves the booking and opens its confirmation', async ({ page }) => {
@@ -139,7 +133,7 @@ test('rescheduling with the wrong mobile number shows an error', async ({ page }
 })
 
 test('the mobile field has a fixed +63 and cleans typed or pasted numbers', async ({ page }) => {
-  await page.goto('/reserve')
+  await page.goto('/reserve?reschedule=RSV-000001')
   const mobile = page.getByLabel('Mobile Number')
   await expect(page.getByText('+63', { exact: true })).toBeVisible()
   await expect(mobile).toHaveAttribute('placeholder', '912 345 6789')
@@ -152,20 +146,10 @@ test('the mobile field has a fixed +63 and cleans typed or pasted numbers', asyn
 })
 
 test('a short mobile number shows a friendly error', async ({ page }) => {
-  await page.goto('/reserve')
+  await page.goto('/reserve?reschedule=RSV-000001')
   await page.getByLabel('Mobile Number').fill('12345')
-  await page.getByRole('button', { name: 'Continue to Deposit' }).click()
+  await page.getByRole('button', { name: 'Confirm New Time' }).click()
   await expect(page.getByText('Check your mobile number')).toBeVisible()
-})
-
-test('a booking with a pasted 0912 number goes through', async ({ page }) => {
-  await page.goto('/reserve')
-  await page.getByLabel('Date').fill(date)
-  await page.getByRole('button', { name: '7:00 PM' }).click()
-  await page.getByLabel('Full Name').fill('Juan Dela Cruz')
-  await page.getByLabel('Mobile Number').fill('0912 345 6789')
-  await page.getByRole('button', { name: 'Continue to Deposit' }).click()
-  await expect(page).toHaveURL(/\/reserve\/payment\?code=RSV-/)
 })
 
 test('a group bigger than every table gets an explanation', async ({ page }) => {

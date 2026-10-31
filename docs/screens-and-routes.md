@@ -59,7 +59,7 @@ Layout: Admin sidebar. Sidebar order matches the wireframes.
 
 ## Customer accounts
 
-Added by the lead after the 29 wireframes, so reservations can require a login. Customer layout, responsive like 01–07.
+Added by the lead after the 29 wireframes: `/reserve` needs a login. Rescheduling by link, Find My Reservation, QR ordering and the public pages don't. Customer layout, responsive like 01–07.
 
 | Screen | URL |
 |---|---|
