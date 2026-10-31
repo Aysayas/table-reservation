@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
@@ -16,6 +17,7 @@ type FormValues = z.infer<typeof schema>
 
 export default function ResetPassword() {
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const [params] = useSearchParams()
   const token = params.get('token') ?? ''
   const [failed, setFailed] = useState('')
@@ -28,6 +30,7 @@ export default function ResetPassword() {
   const onSubmit = async ({ password }: FormValues) => {
     try {
       await resetPassword(token, password)
+      queryClient.setQueryData(['account'], null)
       toast.success('Your password was changed. Please log in.')
       navigate('/login', { replace: true })
     } catch (e) {
