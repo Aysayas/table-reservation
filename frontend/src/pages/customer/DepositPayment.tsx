@@ -142,7 +142,7 @@ export default function DepositPayment() {
                 : 'No deposit is needed for this booking.'}
             </p>
 
-            <div className="bg-brand-cream/95 border-brand-line sticky bottom-0 -mx-4 mt-8 border-t px-4 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] md:static md:mx-0 md:border-0 md:bg-transparent md:p-0">
+            <div className="bg-brand-cream/95 border-brand-line short:static short:mx-0 short:border-0 short:bg-transparent short:p-0 sticky bottom-0 -mx-4 mt-8 border-t px-4 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] md:static md:mx-0 md:border-0 md:bg-transparent md:p-0">
               {reservation.deposit_status === 'paid' ||
               (reservation.status !== 'pending' && reservation.status !== 'confirmed') ? (
                 <>
