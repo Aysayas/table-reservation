@@ -78,10 +78,12 @@ export default function CustomerLayout() {
         <Link
           to="/"
           aria-label={settings?.restaurant_name}
-          className="flex shrink-0 items-center gap-2"
+          className="flex min-w-0 items-center gap-2"
           onClick={() => setOpen(false)}
         >
-          <span className={`size-8 overflow-hidden rounded-full ${wide ? 'md:size-10' : ''}`}>
+          <span
+            className={`size-8 shrink-0 overflow-hidden rounded-full ${wide ? 'md:size-10' : ''}`}
+          >
             <img
               src={settings?.logo_url ?? '/logo.png'}
               alt=""
@@ -89,7 +91,7 @@ export default function CustomerLayout() {
             />
           </span>
           <span
-            className={`flex items-baseline gap-1.5 whitespace-nowrap ${account ? (wide ? 'max-[379px]:hidden' : 'hidden') : ''}`}
+            className={`flex min-w-0 items-baseline gap-1.5 overflow-x-clip whitespace-nowrap ${account ? (wide ? 'max-[379px]:hidden' : 'hidden') : ''}`}
           >
             <span className={`font-serif text-lg font-bold text-white ${wide ? 'md:text-xl' : ''}`}>
               {words.join(' ')}
@@ -100,7 +102,7 @@ export default function CustomerLayout() {
           </span>
         </Link>
         <div
-          className={`flex shrink-0 items-center gap-2 max-[379px]:gap-0.5 ${wide ? 'xl:gap-8' : ''}`}
+          className={`flex shrink-0 items-center gap-2 ${account ? 'max-[419px]:gap-0' : 'max-[379px]:gap-0.5'} ${wide ? 'xl:gap-8' : ''}`}
         >
           {wide && (
             <nav aria-label="Main" className="text-brand-cream hidden items-center gap-8 xl:flex">
@@ -140,7 +142,7 @@ export default function CustomerLayout() {
             <Link
               to="/reserve"
               onClick={() => setOpen(false)}
-              className={`bg-brand-red hover:bg-brand-red/90 flex min-h-11 items-center rounded-md px-3 text-xs font-bold tracking-[0.12em] text-white uppercase transition-colors duration-200 ${wide ? 'md:px-5' : ''}`}
+              className={`bg-brand-red hover:bg-brand-red/90 flex min-h-11 items-center rounded-md px-3 text-xs font-bold tracking-[0.12em] text-white uppercase transition-colors duration-200 ${account ? 'max-[419px]:px-2' : ''} ${wide ? 'md:px-5' : ''}`}
             >
               Reserve
               {wide && <span className="hidden xl:inline"> a Table</span>}
@@ -166,7 +168,7 @@ export default function CustomerLayout() {
         </div>
         {open && (
           <nav
-            className={`bg-brand-charcoal text-brand-cream absolute inset-x-0 top-full z-10 border-t border-white/10 shadow-lg ${wide ? 'xl:hidden' : ''}`}
+            className={`bg-brand-charcoal text-brand-cream absolute inset-x-0 top-full z-20 border-t border-white/10 shadow-lg ${wide ? 'xl:hidden' : ''}`}
           >
             {panelLinks.map((link) => (
               <Link key={link.to} to={link.to} className={navLink} onClick={() => setOpen(false)}>

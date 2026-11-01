@@ -43,7 +43,7 @@ export default function AccountMenu({ account, showName, onOpen, onLogOut }: Pro
           if (!open) onOpen()
           setOpen(!open)
         }}
-        className="text-brand-cream hover:text-brand-gold flex items-center gap-2 transition-colors duration-200"
+        className="text-brand-cream hover:text-brand-gold flex items-center justify-center gap-2 transition-colors duration-200"
       >
         <span className="bg-brand-gold text-brand-charcoal flex size-9 items-center justify-center rounded-full text-sm font-bold">
           {firstName.charAt(0).toUpperCase()}

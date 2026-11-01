@@ -294,10 +294,10 @@ export default function Settings() {
             const closeError = errors.hours?.[i]?.close_time?.message
             return (
               <li key={d.day_of_week}>
-                <div className="grid grid-cols-[6rem_1fr_auto] items-center gap-3">
+                <div className="grid grid-cols-[1fr_auto] items-center gap-3 sm:grid-cols-[6rem_1fr_auto]">
                   <span className="text-brand-charcoal text-sm font-semibold">{name}</span>
                   <div
-                    className={`flex min-w-0 items-center gap-2 transition-opacity duration-200 ${d.is_open ? '' : 'opacity-40'}`}
+                    className={`col-span-2 row-start-2 flex min-w-0 items-center gap-2 transition-opacity duration-200 sm:col-span-1 sm:row-start-auto ${d.is_open ? '' : 'opacity-40'}`}
                   >
                     <input
                       type="time"
