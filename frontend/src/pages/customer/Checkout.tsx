@@ -76,7 +76,7 @@ export default function Checkout() {
   }
 
   return (
-    <div className="bg-brand-cream min-h-[calc(100dvh-4rem)] px-4 pt-5 pb-28">
+    <div className="bg-brand-cream short:pb-6 min-h-[calc(100dvh-4rem)] px-4 pt-5 pb-28">
       <div className="flex items-center gap-4">
         <button
           type="button"
@@ -186,7 +186,7 @@ export default function Checkout() {
             </p>
           )}
 
-          <div className="fixed inset-x-0 bottom-0 z-20 mx-auto max-w-[390px] px-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+          <div className="short:static short:mt-4 short:pb-0 short:px-0 fixed inset-x-0 bottom-0 z-20 mx-auto max-w-[390px] px-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
             <button
               type="button"
               disabled={!token || placing || unavailable.length > 0}

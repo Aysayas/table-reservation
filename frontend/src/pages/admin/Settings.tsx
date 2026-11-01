@@ -431,7 +431,7 @@ export default function Settings() {
         </div>
       </section>
 
-      <div className="sticky bottom-4 z-10 flex justify-end xl:col-span-2">
+      <div className="bg-brand-cream border-brand-line short:static short:mx-0 short:border-0 short:px-0 sticky bottom-0 z-10 -mx-4 flex justify-end border-t px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 xl:col-span-2">
         <button
           type="submit"
           disabled={isSubmitting || !settings}

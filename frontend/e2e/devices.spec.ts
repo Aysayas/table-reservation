@@ -97,3 +97,35 @@ test('the staff menu slides in, reaches every link and closes', async ({ page, v
   await expect(page).toHaveURL('/admin/menu')
   await expect(menu).toBeHidden()
 })
+
+test('a tall dialog scrolls so its buttons can be reached sideways', async ({ page, viewport }) => {
+  const { width, height } = viewport!
+  await page.setViewportSize({ width: height, height: width })
+  await page.goto('/admin/users')
+  await page.getByRole('button', { name: /Add Staff/ }).click()
+  const dialog = page.getByRole('dialog')
+  const box = await dialog.boundingBox()
+  expect(box?.y).toBeGreaterThanOrEqual(0)
+  expect((box?.y ?? 0) + (box?.height ?? 0)).toBeLessThanOrEqual(width)
+  const save = dialog.getByRole('button', { name: 'Save Staff' })
+  await save.scrollIntoViewIfNeeded()
+  await expect(save).toBeInViewport()
+})
+
+test('the bottom button joins the page on short screens', async ({ page, viewport }) => {
+  const { width, height } = viewport!
+  await page.goto('/table/5?t=sample-qr-token-5')
+  await page.getByRole('button', { name: 'Add Bulalo' }).click()
+  await page.goto('/table/5/cart')
+  const bar = page.getByRole('link', { name: /Checkout/ }).locator('..')
+  await expect(bar).toHaveCSS('position', 'fixed')
+  await page.setViewportSize({ width: height, height: width })
+  await expect(bar).toHaveCSS('position', 'static')
+})
+
+test('the Settings save bar is solid and reachable', async ({ page }) => {
+  await page.goto('/admin/settings')
+  const save = page.getByRole('button', { name: 'Save Changes' })
+  await expect(save).toBeInViewport()
+  await expect(save.locator('..')).not.toHaveCSS('background-color', 'rgba(0, 0, 0, 0)')
+})

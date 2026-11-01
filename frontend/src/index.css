@@ -7,6 +7,8 @@
 @import '@fontsource/playfair-display/700.css';
 @import '@fontsource/great-vibes/400.css';
 
+@custom-variant short (@media (max-height: 500px));
+
 @theme {
   --color-brand-charcoal: #1c1917;
   --color-brand-gold: #c5a059;
@@ -45,6 +47,11 @@ body {
   font-feature-settings: 'lnum';
   padding-left: env(safe-area-inset-left);
   padding-right: env(safe-area-inset-right);
+}
+
+[role='dialog'] {
+  max-height: 100%;
+  overflow-y: auto;
 }
 
 input[type='date'],
