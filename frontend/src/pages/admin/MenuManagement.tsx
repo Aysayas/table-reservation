@@ -108,7 +108,7 @@ export default function MenuManagement() {
         </Link>
       </div>
 
-      <div className="border-brand-line mt-6 overflow-hidden rounded-lg border bg-white">
+      <div className="border-brand-line mt-6 overflow-x-auto rounded-lg border bg-white">
         <table className="w-full">
           <thead className="bg-brand-cream/60">
             <tr>

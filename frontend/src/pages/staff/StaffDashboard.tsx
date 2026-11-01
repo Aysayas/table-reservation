@@ -41,7 +41,7 @@ function Panel({ title, to, children }: { title: string; to: string; children: R
           View all
         </Link>
       </div>
-      <div className="border-brand-line mt-3 overflow-hidden rounded-lg border bg-white">
+      <div className="border-brand-line mt-3 overflow-x-auto rounded-lg border bg-white">
         {children}
       </div>
     </section>

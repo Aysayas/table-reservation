@@ -68,7 +68,7 @@ export default function Reports() {
   return (
     <div>
       <div className="flex flex-wrap items-center gap-3 print:hidden">
-        <div role="group" aria-label="Report period" className="flex gap-2">
+        <div role="group" aria-label="Report period" className="flex flex-wrap gap-2">
           {periods.map((p) => (
             <button
               key={p.value}
@@ -81,7 +81,7 @@ export default function Reports() {
             </button>
           ))}
         </div>
-        <div className="border-brand-line flex items-center gap-2 rounded-lg border bg-white px-3 py-1.5 text-sm">
+        <div className="border-brand-line flex flex-wrap items-center gap-2 rounded-lg border bg-white px-3 py-1.5 text-sm">
           <label className="flex items-center gap-2">
             <span className="text-brand-ink/60 text-xs font-bold uppercase">From</span>
             <input

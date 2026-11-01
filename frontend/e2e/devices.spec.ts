@@ -41,3 +41,59 @@ test('a guest can book on a touch phone by tapping', async ({ page }) => {
   await page.getByRole('button', { name: 'Continue to Deposit' }).tap()
   await expect(page.getByRole('heading', { name: 'Deposit Payment' })).toBeVisible()
 })
+
+const dashboardPages = [
+  '/staff',
+  '/staff/reservations',
+  '/staff/tables',
+  '/staff/orders?order=1',
+  '/admin',
+  '/admin/menu',
+  '/admin/reservations',
+  '/admin/orders',
+  '/admin/payments',
+  '/admin/reports',
+  '/admin/users',
+]
+
+for (const path of dashboardPages) {
+  for (const [shape, flip] of [
+    ['upright', false],
+    ['sideways', true],
+  ] as const) {
+    test(`${path} fits the screen held ${shape}`, async ({ page, viewport }) => {
+      const { width, height } = viewport!
+      await page.setViewportSize(flip ? { width: height, height: width } : { width, height })
+      await page.goto(path)
+      await expect(page.getByRole('main')).toBeVisible()
+      await expect(page.getByRole('main').locator('h2, table, ul, dl').first()).toBeVisible()
+      const main = await page.getByRole('main').boundingBox()
+      expect(main?.width).toBeGreaterThanOrEqual(flip ? 700 : 380)
+      const pageWidth = await page.evaluate<number>('document.documentElement.scrollWidth')
+      expect(pageWidth).toBeLessThanOrEqual(flip ? height : width)
+    })
+  }
+}
+
+test('the staff menu slides in, reaches every link and closes', async ({ page, viewport }) => {
+  const { width, height } = viewport!
+  await page.setViewportSize({ width: height, height: width })
+  await page.goto('/admin')
+  const menu = page.getByRole('navigation', { name: 'Admin menu' })
+  await expect(menu).toBeHidden()
+
+  await page.getByRole('button', { name: 'Open menu' }).tap()
+  await expect(page.getByRole('button', { name: 'Close menu' })).toBeFocused()
+  const logOut = page.getByRole('link', { name: 'Log Out' })
+  await logOut.scrollIntoViewIfNeeded()
+  await expect(logOut).toBeInViewport()
+
+  await page.keyboard.press('Escape')
+  await expect(menu).toBeHidden()
+  await expect(page.getByRole('button', { name: 'Open menu' })).toBeFocused()
+
+  await page.getByRole('button', { name: 'Open menu' }).tap()
+  await menu.getByRole('link', { name: 'Menu' }).first().tap()
+  await expect(page).toHaveURL('/admin/menu')
+  await expect(menu).toBeHidden()
+})

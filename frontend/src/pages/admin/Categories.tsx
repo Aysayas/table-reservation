@@ -81,7 +81,7 @@ export default function Categories() {
 
   return (
     <div className="grid items-start gap-6 xl:grid-cols-[1fr_24rem]">
-      <div className="border-brand-line overflow-hidden rounded-lg border bg-white">
+      <div className="border-brand-line overflow-x-auto rounded-lg border bg-white">
         <table className="w-full">
           <thead className="bg-brand-cream/60">
             <tr>

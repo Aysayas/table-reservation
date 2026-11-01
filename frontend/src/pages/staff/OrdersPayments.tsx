@@ -74,9 +74,9 @@ export default function OrdersPayments() {
   }
 
   return (
-    <div className="grid items-start gap-6 xl:grid-cols-[1fr_24rem]">
+    <div className="grid grid-cols-[minmax(0,1fr)] items-start gap-6 xl:grid-cols-[minmax(0,1fr)_24rem]">
       <div className="print:hidden">
-        <div role="group" aria-label="Filter orders" className="flex gap-2">
+        <div role="group" aria-label="Filter orders" className="flex flex-wrap gap-2">
           {filters.map((f) => (
             <button
               key={f.value}
@@ -90,7 +90,7 @@ export default function OrdersPayments() {
           ))}
         </div>
 
-        <div className="border-brand-line mt-6 overflow-hidden rounded-lg border bg-white">
+        <div className="border-brand-line mt-6 overflow-x-auto rounded-lg border bg-white">
           <table className="w-full">
             <thead className="bg-brand-cream/60">
               <tr>

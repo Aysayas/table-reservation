@@ -86,7 +86,7 @@ export default function StaffAccounts() {
 
       {error && <p className="text-brand-red mt-4 text-sm">{error.message}</p>}
 
-      <div className="border-brand-line mt-5 overflow-hidden rounded-xl border bg-white shadow-sm">
+      <div className="border-brand-line mt-5 overflow-x-auto rounded-xl border bg-white shadow-sm">
         <table className="w-full">
           <thead className="bg-brand-charcoal">
             <tr>

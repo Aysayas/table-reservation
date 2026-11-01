@@ -200,7 +200,7 @@ export default function OrderHistory() {
         </button>
       </div>
 
-      <div className="border-brand-line mt-5 overflow-hidden rounded-xl border bg-white shadow-sm">
+      <div className="border-brand-line relative mt-5 overflow-x-auto rounded-xl border bg-white shadow-sm">
         <table className="w-full">
           <thead className="bg-brand-charcoal">
             <tr>
