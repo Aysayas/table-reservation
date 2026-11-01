@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test'
+import { logIn } from './logged-in.js'
 
 const fieldSizes = (page: import('@playwright/test').Page) =>
   page.evaluate<number[]>(
@@ -172,4 +173,21 @@ test('header and page buttons are big enough to tap', async ({ page }) => {
   }
   const cart = await page.getByRole('link', { name: /^Cart,/ }).boundingBox()
   expect(cart?.height).toBeGreaterThanOrEqual(44)
+})
+
+test('the open menu is not covered by the category chips', async ({ page }) => {
+  await page.goto('/table/5?t=sample-qr-token-5')
+  await page.getByRole('button', { name: 'Open menu' }).click()
+  await page.getByRole('link', { name: 'About', exact: true }).click()
+  await expect(page).toHaveURL(/\/about$/)
+})
+
+test('the logged-in header keeps its right gutter from 380 wide', async ({ page }) => {
+  await logIn(page)
+  for (const width of [380, 390, 412]) {
+    await page.setViewportSize({ width, height: 800 })
+    await page.goto('/')
+    const box = await page.getByRole('button', { name: 'Open menu' }).boundingBox()
+    expect((box?.x ?? 0) + (box?.width ?? 0)).toBeLessThanOrEqual(width - 12)
+  }
 })
