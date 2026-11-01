@@ -5,18 +5,18 @@ test.beforeEach(({ page }) => logIn(page))
 
 const url = '/reserve/payment?code=RSV-000002'
 
-test('deposit page shows the summary, amount and payment methods', async ({ page }) => {
+test('deposit page shows the summary and amount, and leaves the method to the next screen', async ({
+  page,
+}) => {
   await page.goto(url)
   await expect(page.getByRole('heading', { name: 'Deposit Payment' })).toBeVisible()
   await expect(page.getByRole('heading', { name: 'Reservation Summary' })).toBeVisible()
   await expect(page.getByText('January 1, 2026')).toBeVisible()
   await expect(page.getByText('7:30 PM')).toBeVisible()
   await expect(page.getByRole('heading', { name: 'Deposit Amount' })).toBeVisible()
-  for (const name of ['GCash', 'Maya', 'Credit / Debit Card']) {
-    await expect(page.getByRole('radio', { name })).toBeVisible()
-  }
-  await expect(page.getByRole('radio', { name: 'GCash' })).toBeChecked()
-  await expect(page.getByRole('button', { name: 'Pay ₱0.00' })).toBeVisible()
+  await expect(page.getByRole('radio')).toHaveCount(0)
+  await expect(page.getByText('No deposit is needed for this booking.')).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Continue' })).toBeVisible()
 })
 
 test('deposit page shows the reference code to save', async ({ page }) => {
@@ -25,16 +25,9 @@ test('deposit page shows the reference code to save', async ({ page }) => {
   await expect(page.getByText(/^Save this code/)).toBeVisible()
 })
 
-test('choosing a payment method selects it', async ({ page }) => {
+test('continue goes to the confirmation page', async ({ page }) => {
   await page.goto(url)
-  await page.getByText('Maya').click()
-  await expect(page.getByRole('radio', { name: 'Maya' })).toBeChecked()
-  await expect(page.getByRole('radio', { name: 'GCash' })).not.toBeChecked()
-})
-
-test('pay goes to the confirmation page', async ({ page }) => {
-  await page.goto(url)
-  await page.getByRole('button', { name: 'Pay ₱0.00' }).click()
+  await page.getByRole('button', { name: 'Continue' }).click()
   await expect(page).toHaveURL('/reserve/confirmation/RSV-000002')
 })
 
@@ -54,6 +47,21 @@ test('booking on screen 03 opens this page with the new reservation', async ({ p
   await expect(page.getByRole('heading', { name: 'Deposit Payment' })).toBeVisible()
   await expect(page.getByText('Customer Name')).toBeVisible()
   await expect(page.getByText('7:00 PM')).toBeVisible()
+  await expect(
+    page.getByText("You'll choose GCash, Maya or card on the next screen."),
+  ).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Pay ₱200.00' })).toBeVisible()
+})
+
+test('going back from the deposit page does not return to the booking form', async ({ page }) => {
+  await page.goto('/')
+  await page.goto('/reserve')
+  await page.getByLabel('Date').fill(`${new Date().getFullYear() + 1}-12-01`)
+  await page.getByRole('button', { name: '7:00 PM' }).click()
+  await page.getByRole('button', { name: 'Continue to Deposit' }).click()
+  await expect(page.getByRole('heading', { name: 'Deposit Payment' })).toBeVisible()
+  await page.getByRole('button', { name: 'Back' }).click()
+  await expect(page).toHaveURL('/')
 })
 
 test('a cancelled booking has no pay button', async ({ page }) => {

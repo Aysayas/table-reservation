@@ -3,6 +3,7 @@ import { ArrowLeft } from 'lucide-react'
 import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
+import { markPaying } from '@/hooks/usePaymentReturn'
 import { apiError } from '@/lib/api'
 import { readTableToken } from '@/lib/tableToken'
 import { getMenuItems } from '@/services/menu'
@@ -61,6 +62,7 @@ export default function Checkout() {
       const pay = method === 'now' ? await payOrder(id, token) : null
       clear()
       if (pay) {
+        markPaying(`order:${id}`)
         window.location.assign(pay.checkout_url)
         return
       }

@@ -1,10 +1,14 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { format, parseISO } from 'date-fns'
 import { Check } from 'lucide-react'
+import { useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
+import { toast } from 'sonner'
 import useOrderEvents from '@/hooks/useOrderEvents'
+import usePaymentReturn, { markPaying } from '@/hooks/usePaymentReturn'
+import { apiError } from '@/lib/api'
 import { readTableToken } from '@/lib/tableToken'
-import { getOrder } from '@/services/orders'
+import { getOrder, payOrder } from '@/services/orders'
 import type { OrderStatus as Status } from '@/types/db'
 
 const peso = (amount: number) =>
@@ -23,13 +27,31 @@ export default function OrderStatus() {
   const [params] = useSearchParams()
   const orderId = Number(params.get('order'))
   const token = readTableToken(table) ?? ''
+  const queryClient = useQueryClient()
+  const [paying, setPaying] = useState(false)
   const { data: order, isLoading } = useQuery({
     queryKey: ['order', orderId, token],
     queryFn: () => getOrder(orderId, token),
     enabled: orderId > 0,
-    refetchInterval: 15000,
+    refetchInterval: (query) => (query.state.data?.payment_status === 'unpaid' ? 5000 : 15000),
   })
   useOrderEvents(order?.channel, ['order', orderId])
+  const { confirming } = usePaymentReturn(`order:${orderId}`, order?.payment_status === 'paid')
+  const payNow = async () => {
+    setPaying(true)
+    try {
+      const pay = await payOrder(orderId, token)
+      if (pay) {
+        markPaying(`order:${orderId}`)
+        window.location.assign(pay.checkout_url)
+        return
+      }
+      await queryClient.invalidateQueries({ queryKey: ['order', orderId] })
+    } catch (e) {
+      toast.error(apiError(e, "Couldn't start the payment. Please try again."))
+    }
+    setPaying(false)
+  }
   const menuLink = `/table/${table}/menu`
   const orderMore = (
     <Link
@@ -136,8 +158,22 @@ export default function OrderStatus() {
       <div className="bg-brand-charcoal mt-4 rounded-lg px-5 py-4 text-white">
         <p className="text-brand-gold text-xs font-bold tracking-[0.15em] uppercase">Payment</p>
         <p className="mt-1 text-sm font-semibold">
-          {order.payment_status === 'paid' ? 'Paid' : 'Unpaid · Pay at the counter'}
+          {order.payment_status === 'paid'
+            ? 'Paid'
+            : confirming
+              ? 'Checking your payment…'
+              : 'Unpaid · Pay at the counter'}
         </p>
+        {order.payment_status === 'unpaid' && !confirming && token && (
+          <button
+            type="button"
+            disabled={paying}
+            onClick={payNow}
+            className="bg-brand-red hover:bg-brand-red/90 focus-visible:outline-brand-gold mt-3 block w-full rounded-lg py-3 text-sm font-bold tracking-[0.1em] uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-60"
+          >
+            Pay Now
+          </button>
+        )}
       </div>
 
       <div className="fixed inset-x-0 bottom-0 z-20 mx-auto max-w-[390px] px-4 pb-4">

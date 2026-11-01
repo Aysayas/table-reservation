@@ -1,10 +1,12 @@
 import { useQuery } from '@tanstack/react-query'
 import { addHours, format, parseISO } from 'date-fns'
-import { CalendarDays, Check, Copy, MapPin } from 'lucide-react'
+import { CalendarDays, Check, Copy, LoaderCircle, MapPin } from 'lucide-react'
 import { Link, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import SiteFooter from '@/components/SiteFooter'
+import usePaymentReturn from '@/hooks/usePaymentReturn'
 import { directionsUrl } from '@/lib/maps'
+import { reservationStatuses } from '@/lib/reservationStatus'
 import { getReservationByCode } from '@/services/reservations'
 import { getSettings } from '@/services/settings'
 
@@ -23,8 +25,21 @@ export default function ReservationConfirmation() {
   const { data: reservation, isLoading } = useQuery({
     queryKey: ['reservation', code],
     queryFn: () => getReservationByCode(code),
+    refetchInterval: (query) => {
+      const current = query.state.data
+      return current && current.deposit_status === 'unpaid' && current.deposit_amount > 0
+        ? 5000
+        : false
+    },
   })
   const { data: settings } = useQuery({ queryKey: ['settings'], queryFn: getSettings })
+  const inactive = reservation?.status === 'cancelled' || reservation?.status === 'no_show'
+  const needsDeposit =
+    !!reservation &&
+    !inactive &&
+    reservation.deposit_amount > 0 &&
+    reservation.deposit_status === 'unpaid'
+  const { confirming, timedOut } = usePaymentReturn(code, !!reservation && !needsDeposit)
 
   if (isLoading) return null
 
@@ -81,7 +96,9 @@ export default function ReservationConfirmation() {
   }
 
   const nextSteps = [
-    { title: 'Check your SMS', text: 'Your booking details are in the text we just sent.' },
+    ...(needsDeposit
+      ? [{ title: 'Pay your deposit', text: 'Your table is held once the deposit is paid.' }]
+      : []),
     {
       title: 'Arrive and show your code',
       text: `Give ${reservation.reference_code} to our staff when you arrive.`,
@@ -106,7 +123,7 @@ export default function ReservationConfirmation() {
       label:
         reservation.deposit_status === 'paid'
           ? 'Deposit Paid'
-          : reservation.deposit_amount > 0
+          : needsDeposit
             ? 'Deposit Due'
             : 'Deposit',
       value: `₱${reservation.deposit_amount.toFixed(2)}`,
@@ -118,12 +135,38 @@ export default function ReservationConfirmation() {
       <div className="bg-brand-cream px-4 pt-12 pb-16 md:px-10 md:pt-16 md:pb-24">
         <div className="md:mx-auto md:max-w-5xl">
           <div className="text-center">
-            <div className="bg-brand-red mx-auto flex size-24 items-center justify-center rounded-full text-white">
-              <Check className="size-11" strokeWidth={2} />
-            </div>
-            <p className="font-display text-brand-red mt-6 text-5xl">Salamat!</p>
-            <h1 className="text-brand-charcoal mt-1 font-serif text-4xl leading-tight md:text-5xl">
-              {reservation.status === 'cancelled' ? (
+            {confirming ? (
+              <div className="border-brand-gold text-brand-red mx-auto flex size-24 items-center justify-center rounded-full border bg-white">
+                <LoaderCircle
+                  aria-hidden="true"
+                  className="size-11 motion-safe:animate-spin"
+                  strokeWidth={1.5}
+                />
+              </div>
+            ) : (
+              !inactive &&
+              !needsDeposit && (
+                <div className="bg-brand-red mx-auto flex size-24 items-center justify-center rounded-full text-white">
+                  <Check className="size-11" strokeWidth={2} />
+                </div>
+              )
+            )}
+            {!inactive && !confirming && (
+              <p className="font-display text-brand-red mt-6 text-5xl">
+                {needsDeposit ? 'Almost done' : 'Salamat!'}
+              </p>
+            )}
+            <h1
+              aria-live="polite"
+              className={`text-brand-charcoal font-serif text-4xl leading-tight md:text-5xl ${confirming ? 'mt-6' : 'mt-1'}`}
+            >
+              {confirming ? (
+                'Confirming your payment…'
+              ) : needsDeposit ? (
+                <>
+                  Pay your deposit to <span className="text-brand-red">hold your table.</span>
+                </>
+              ) : reservation.status === 'cancelled' ? (
                 <>
                   This reservation was <span className="text-brand-red">cancelled.</span>
                 </>
@@ -138,10 +181,25 @@ export default function ReservationConfirmation() {
               )}
             </h1>
             <span aria-hidden="true" className="bg-brand-gold mx-auto mt-4 block h-px w-16" />
-            <p className="text-brand-ink/75 mt-6 text-sm">
-              A confirmation SMS was sent to{' '}
-              <strong className="text-brand-charcoal">{reservation.customer.mobile_number}</strong>
-            </p>
+            {confirming && (
+              <p className="text-brand-ink/75 mt-6 text-sm">This usually takes a few seconds.</p>
+            )}
+            {needsDeposit && !confirming && (
+              <div className="mt-6 md:mx-auto md:max-w-sm">
+                {timedOut && (
+                  <p className="text-brand-ink/75 mb-4 text-sm">
+                    If you just paid, it can take a minute to show here. Refresh this page before
+                    paying again.
+                  </p>
+                )}
+                <Link
+                  to={`/reserve/payment?code=${reservation.reference_code}`}
+                  className={primaryButton}
+                >
+                  Pay Deposit
+                </Link>
+              </div>
+            )}
           </div>
 
           <div className="md:mt-12 md:grid md:grid-cols-2 md:items-start md:gap-16">
@@ -184,63 +242,67 @@ export default function ReservationConfirmation() {
                   </dl>
                   <div className="mt-5 flex items-center justify-between border-t border-white/10 pt-4">
                     <p className={smallLabel}>Status</p>
-                    <p className="bg-brand-green flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold tracking-[0.15em] text-white uppercase">
+                    <p
+                      className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold tracking-[0.15em] uppercase ${inactive ? 'bg-white/15 text-white' : reservation.status === 'pending' ? 'bg-brand-gold text-brand-charcoal' : 'bg-brand-green text-white'}`}
+                    >
                       <span aria-hidden="true">●</span>
-                      <span>
-                        {reservation.status.charAt(0).toUpperCase() + reservation.status.slice(1)}
-                      </span>
+                      <span>{reservationStatuses[reservation.status].text}</span>
                     </p>
                   </div>
                 </div>
               </section>
 
-              <div className="mt-4 grid grid-cols-2 gap-3">
-                <button type="button" onClick={downloadCalendar} className={actionCard}>
-                  <CalendarDays className="text-brand-red size-6" strokeWidth={1.5} />
-                  Calendar
-                </button>
-                <a
-                  href={directionsUrl(settings?.restaurant_name)}
-                  target="_blank"
-                  rel="noreferrer"
-                  className={actionCard}
-                >
-                  <MapPin className="text-brand-red size-6" strokeWidth={1.5} />
-                  Directions
-                </a>
-              </div>
+              {!inactive && (
+                <div className="mt-4 grid grid-cols-2 gap-3">
+                  <button type="button" onClick={downloadCalendar} className={actionCard}>
+                    <CalendarDays className="text-brand-red size-6" strokeWidth={1.5} />
+                    Calendar
+                  </button>
+                  <a
+                    href={directionsUrl(settings?.restaurant_name)}
+                    target="_blank"
+                    rel="noreferrer"
+                    className={actionCard}
+                  >
+                    <MapPin className="text-brand-red size-6" strokeWidth={1.5} />
+                    Directions
+                  </a>
+                </div>
+              )}
             </div>
 
             <div>
-              <section className="mt-12 md:mt-2">
-                <h2 className="text-brand-red text-xs font-bold tracking-[0.3em] uppercase">
-                  What happens next
-                </h2>
-                <ol className="mt-6">
-                  {nextSteps.map((step, index) => (
-                    <li key={step.title} className="relative flex gap-4 pb-8 last:pb-0">
-                      {index < nextSteps.length - 1 && (
+              {!inactive && (
+                <section className="mt-12 md:mt-2">
+                  <h2 className="text-brand-red text-xs font-bold tracking-[0.3em] uppercase">
+                    What happens next
+                  </h2>
+                  <ol className="mt-6">
+                    {nextSteps.map((step, index) => (
+                      <li key={step.title} className="relative flex gap-4 pb-8 last:pb-0">
+                        {index < nextSteps.length - 1 && (
+                          <span
+                            aria-hidden="true"
+                            className="bg-brand-gold/60 absolute top-9 left-[17px] h-[calc(100%-2.25rem)] w-px"
+                          />
+                        )}
                         <span
-                          aria-hidden="true"
-                          className="bg-brand-gold/60 absolute top-9 left-[17px] h-[calc(100%-2.25rem)] w-px"
-                        />
-                      )}
-                      <span
-                        className={`flex size-9 shrink-0 items-center justify-center rounded-full text-sm font-bold ${index === 0 ? 'bg-brand-red text-white' : 'border-brand-gold text-brand-gold-deep border bg-white'}`}
-                      >
-                        {index + 1}
-                      </span>
-                      <div className="pt-1">
-                        <p className="text-brand-charcoal font-semibold">{step.title}</p>
-                        <p className="text-brand-ink/75 mt-1 text-sm leading-6">{step.text}</p>
-                      </div>
-                    </li>
-                  ))}
-                </ol>
-              </section>
+                          className={`flex size-9 shrink-0 items-center justify-center rounded-full text-sm font-bold ${index === 0 ? 'bg-brand-red text-white' : 'border-brand-gold text-brand-gold-deep border bg-white'}`}
+                        >
+                          {index + 1}
+                        </span>
+                        <div className="pt-1">
+                          <p className="text-brand-charcoal font-semibold">{step.title}</p>
+                          <p className="text-brand-ink/75 mt-1 text-sm leading-6">{step.text}</p>
+                        </div>
+                      </li>
+                    ))}
+                  </ol>
+                </section>
+              )}
 
-              <div className="mt-12 space-y-3">
-                <Link to="/" className={primaryButton}>
+              <div className={`space-y-3 ${inactive ? 'mt-8 md:mt-0' : 'mt-12'}`}>
+                <Link to="/" className={needsDeposit ? darkButton : primaryButton}>
                   Back to Home
                 </Link>
                 <Link to="/reservation" className={darkButton}>
