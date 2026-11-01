@@ -7,7 +7,7 @@ import { toast } from 'sonner'
 import { z } from 'zod'
 import { formatTime } from '@/lib/hours'
 import { getAvailability, updateReservation } from '@/services/reservations'
-import { getTables } from '@/services/tables'
+import { getTables, getTakenTables } from '@/services/tables'
 import type { PublicReservation } from '@/types/db'
 
 const label = 'text-brand-charcoal block text-sm font-bold'
@@ -56,6 +56,11 @@ export default function EditReservationDialog({ reservation, onClose }: Props) {
     enabled: date >= today,
   })
   const { data: tables = [] } = useQuery({ queryKey: ['tables'], queryFn: () => getTables() })
+  const { data: taken = [] } = useQuery({
+    queryKey: ['tables', 'taken', date, time, reservation.reservation_id],
+    queryFn: () => getTakenTables(date, time, reservation.reservation_id),
+    enabled: !!date && !!time,
+  })
   const times =
     slots.some((s) => s.time === time) || !time ? slots : [...slots, { time, available: true }]
 
@@ -155,8 +160,13 @@ export default function EditReservationDialog({ reservation, onClose }: Props) {
               >
                 <option value={0}>No table yet</option>
                 {tables.map((t) => (
-                  <option key={t.table_id} value={t.table_id} disabled={t.capacity < (pax || 1)}>
-                    {t.table_number} · {t.capacity} seats
+                  <option
+                    key={t.table_id}
+                    value={t.table_id}
+                    disabled={t.capacity < (pax || 1) || taken.includes(t.table_id)}
+                  >
+                    {t.table_number} ·{' '}
+                    {taken.includes(t.table_id) ? 'booked' : `${t.capacity} seats`}
                   </option>
                 ))}
               </select>

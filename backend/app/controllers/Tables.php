@@ -27,6 +27,28 @@ class Tables extends Controller {
 		$this->api->respond(['data' => $this->with_activity($tables, $user['role'] === 'admin')]);
 	}
 
+	public function taken()
+	{
+		$this->api->require_role('staff', 'admin');
+		$query = $this->api->get_query_params();
+		$date = $query['date'] ?? null;
+		$time = $query['time'] ?? null;
+		$except = $query['except_id'] ?? '0';
+		$valid_date = is_string($date) ? DateTime::createFromFormat('!Y-m-d', $date) : false;
+		$valid_time = is_string($time) ? DateTime::createFromFormat('!H:i:s', $time) : false;
+		if (!$valid_date || $valid_date->format('Y-m-d') !== $date || !$valid_time || $valid_time->format('H:i:s') !== $time || !is_string($except) || !ctype_digit($except)) {
+			$this->api->respond_error('Give a date (YYYY-MM-DD), a time (HH:MM:SS) and, if needed, a numeric except_id', 422);
+		}
+
+		$rows = $this->Reservation_model
+			->filter(['reservation_date' => $date, 'reservation_time' => $time])
+			->in('status', ['pending', 'confirmed', 'arrived'])
+			->where_not_null('table_id')
+			->not_where('reservation_id', (int) $except)
+			->get_all();
+		$this->api->respond(['data' => array_map('intval', array_column($rows, 'table_id'))]);
+	}
+
 	public function show($id)
 	{
 		$table = $this->Table_model->find($id);

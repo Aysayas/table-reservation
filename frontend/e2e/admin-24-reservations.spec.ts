@@ -71,7 +71,7 @@ test('editing a booking saves the new guests and table', async ({ page }) => {
   await expect(page.getByRole('row', { name: /RSV-000009/ })).toContainText('3')
 })
 
-test('a small table cannot be picked, and a booked table is refused', async ({ page }) => {
+test('a small table and a table booked at that time cannot be picked', async ({ page }) => {
   await page.goto(url)
   await page.getByRole('button', { name: 'Edit RSV-000009' }).click()
   const dialog = page.getByRole('dialog', { name: 'Edit RSV-000009' })
@@ -90,9 +90,7 @@ test('a small table cannot be picked, and a booked table is refused', async ({ p
   const iso = new Date(`${date} 12:00`).toLocaleDateString('en-CA')
   await second.getByLabel('Date').fill(iso)
   await second.getByLabel('Time').selectOption('19:00:00')
-  await second.getByLabel('Table').selectOption({ label: 'T6 · 4 seats' })
-  await second.getByRole('button', { name: 'Save Changes' }).click()
-  await expect(page.getByText('That table is already booked at this time')).toBeVisible()
+  await expect(second.getByRole('option', { name: 'T6 · booked' })).toBeDisabled()
 })
 
 test('guests above the limit are refused', async ({ page }) => {
