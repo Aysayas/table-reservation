@@ -49,7 +49,7 @@ export default function StaffAccounts() {
     <div>
       <div className="flex flex-wrap items-center gap-3">
         <label className="border-brand-line focus-within:border-brand-gold flex h-11 w-full max-w-xs items-center gap-2 rounded-lg border bg-white px-3">
-          <Search className="text-brand-ink/50 size-4" />
+          <Search className="text-brand-ink/70 size-4" />
           <span className="sr-only">Search</span>
           <input
             type="search"
@@ -107,7 +107,7 @@ export default function StaffAccounts() {
                 >
                   <td className={`${td} font-semibold`}>
                     {u.full_name}
-                    {isSelf && <span className="text-brand-ink/50 ml-2 text-xs">(you)</span>}
+                    {isSelf && <span className="text-brand-ink/70 ml-2 text-xs">(you)</span>}
                   </td>
                   <td className={td}>{u.email}</td>
                   <td className={td}>{roleNames[u.role]}</td>
@@ -149,7 +149,7 @@ export default function StaffAccounts() {
             })}
             {users.length === 0 && (
               <tr>
-                <td colSpan={6} className="text-brand-ink/60 px-5 py-10 text-center text-sm">
+                <td colSpan={6} className="text-brand-ink/70 px-5 py-10 text-center text-sm">
                   No staff accounts match.
                 </td>
               </tr>

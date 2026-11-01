@@ -20,7 +20,7 @@ const perPage = 8
 const peso = (amount: number) =>
   `₱${amount.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
 const th =
-  'text-brand-ink/60 px-5 py-3.5 text-left text-[11px] font-bold tracking-[0.14em] uppercase'
+  'text-brand-ink/70 px-5 py-3.5 text-left text-[11px] font-bold tracking-[0.14em] uppercase'
 const td = 'text-brand-charcoal px-5 py-4 text-sm'
 const select =
   'border-brand-line focus:border-brand-gold h-11 rounded-lg border bg-white px-3 text-sm outline-none'
@@ -52,11 +52,11 @@ function PaymentBadge({ order }: { order: StaffOrder }) {
 }
 
 function Method({ method }: { method: StaffOrder['payment_method'] }) {
-  if (!method) return <span className="text-brand-ink/40">—</span>
+  if (!method) return <span className="text-brand-ink/70">—</span>
   const Icon = method === 'cash' ? Banknote : Smartphone
   return (
     <span className="inline-flex items-center gap-1.5">
-      <Icon className="text-brand-ink/50 size-4" />
+      <Icon className="text-brand-ink/70 size-4" />
       {cap(method)}
     </span>
   )
@@ -129,7 +129,7 @@ export default function OrderHistory() {
     <div>
       <div className="border-brand-line flex flex-wrap items-center gap-3 rounded-xl border bg-white p-4">
         <label className="border-brand-line focus-within:border-brand-gold bg-brand-cream/40 flex h-11 w-full max-w-xs items-center gap-2 rounded-lg border px-3">
-          <Search className="text-brand-ink/50 size-4" />
+          <Search className="text-brand-ink/70 size-4" />
           <span className="sr-only">Search</span>
           <input
             type="search"
@@ -228,7 +228,7 @@ export default function OrderHistory() {
                 <td className={`${td} text-base font-bold`}>#{o.order_id}</td>
                 <td className={`${td} whitespace-nowrap`}>
                   <span className="block">{format(parseISO(o.created_at), 'MMMM d, yyyy')}</span>
-                  <span className="text-brand-ink/50 text-xs">
+                  <span className="text-brand-ink/70 text-xs">
                     {format(parseISO(o.created_at), 'h:mm a')}
                   </span>
                 </td>
@@ -271,7 +271,7 @@ export default function OrderHistory() {
               <tr>
                 <td colSpan={9} className="px-5 py-14 text-center">
                   <ReceiptText className="text-brand-gold-deep/60 mx-auto size-8" />
-                  <p className="text-brand-ink/60 mt-3 text-sm">No orders found.</p>
+                  <p className="text-brand-ink/70 mt-3 text-sm">No orders found.</p>
                 </td>
               </tr>
             )}

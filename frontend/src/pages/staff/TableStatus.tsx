@@ -105,7 +105,7 @@ export default function TableStatus() {
                 <h2 className="text-brand-charcoal font-serif text-2xl font-bold">
                   Table {t.table_number}
                 </h2>
-                <p className="text-brand-ink/60 text-sm">{t.capacity} seats</p>
+                <p className="text-brand-ink/70 text-sm">{t.capacity} seats</p>
               </div>
               <span className={`rounded-full px-3 py-1 text-xs font-bold ${look[t.status].badge}`}>
                 {look[t.status].text}
@@ -115,7 +115,7 @@ export default function TableStatus() {
             <div className="mt-5 flex flex-1 flex-col justify-end text-sm">
               {t.status === 'available' && (
                 <>
-                  <p className="text-brand-ink/60 mb-auto">Ready for guests</p>
+                  <p className="text-brand-ink/70 mb-auto">Ready for guests</p>
                   <button
                     type="button"
                     disabled={setStatus.isPending}
@@ -133,7 +133,7 @@ export default function TableStatus() {
                     <p className="text-brand-charcoal font-semibold">
                       Order #{t.current_order.order_id} · {peso(t.current_order.total_amount)}
                     </p>
-                    <p className="text-brand-ink/60 mt-1">
+                    <p className="text-brand-ink/70 mt-1">
                       Ordered{' '}
                       {formatDistanceToNowStrict(parseISO(t.current_order.created_at), {
                         addSuffix: true,
@@ -148,7 +148,7 @@ export default function TableStatus() {
                   </>
                 ) : (
                   <>
-                    <p className="text-brand-ink/60 mb-auto">No unpaid or unserved order</p>
+                    <p className="text-brand-ink/70 mb-auto">No unpaid or unserved order</p>
                     <button
                       type="button"
                       disabled={setStatus.isPending}
@@ -169,7 +169,7 @@ export default function TableStatus() {
                       {t.next_reservation.full_name} ·{' '}
                       {formatTime(t.next_reservation.reservation_time)}
                     </p>
-                    <p className="text-brand-ink/60 mt-1">{t.next_reservation.reference_code}</p>
+                    <p className="text-brand-ink/70 mt-1">{t.next_reservation.reference_code}</p>
                     <button
                       type="button"
                       disabled={arrive.isPending}
@@ -181,7 +181,7 @@ export default function TableStatus() {
                   </>
                 ) : (
                   <>
-                    <p className="text-brand-ink/60 mb-auto">No booking left today</p>
+                    <p className="text-brand-ink/70 mb-auto">No booking left today</p>
                     <button
                       type="button"
                       disabled={setStatus.isPending}

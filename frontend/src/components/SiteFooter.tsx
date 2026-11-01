@@ -8,7 +8,8 @@ import { getOpeningHours, getSettings } from '@/services/settings'
 
 const wrap = 'md:mx-auto md:max-w-6xl md:px-10'
 const goldEyebrow = 'text-brand-gold text-xs font-bold tracking-[0.25em] uppercase'
-const footerLink = 'hover:text-brand-gold transition-colors duration-200'
+const footerLink =
+  'hover:text-brand-gold inline-flex min-h-11 items-center transition-colors duration-200'
 
 export default function SiteFooter({ children }: { children?: ReactNode }) {
   const [year] = useState(() => new Date().getFullYear())
@@ -34,7 +35,7 @@ export default function SiteFooter({ children }: { children?: ReactNode }) {
         </div>
         <nav aria-label="Footer">
           <p className={goldEyebrow}>Quick links</p>
-          <div className="mt-4 flex flex-col gap-3 text-sm">
+          <div className="mt-2 flex flex-col items-start text-sm">
             <Link to="/about" className={footerLink}>
               About Us
             </Link>

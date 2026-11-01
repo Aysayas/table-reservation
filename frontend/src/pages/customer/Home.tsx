@@ -95,11 +95,11 @@ export default function Home() {
       </section>
 
       <Reveal className={`relative -mt-16 px-4 ${wrap}`}>
-        <ul className="bg-brand-charcoal grid grid-cols-2 overflow-hidden rounded-lg border border-white/10 text-white md:grid-cols-4">
+        <ul className="bg-brand-charcoal grid grid-cols-2 overflow-hidden rounded-lg border border-white/10 text-white lg:grid-cols-4">
           {features.map((feature, index) => (
             <li
               key={feature.title}
-              className="group flex gap-3 border-white/10 px-4 py-5 odd:border-r md:border-r md:border-b-0 md:px-6 md:last:border-r-0 [&:nth-child(-n+2)]:border-b"
+              className="group flex gap-3 border-white/10 px-4 py-5 odd:border-r max-[400px]:flex-col md:px-6 lg:border-r lg:last:border-r-0 [&:nth-child(-n+2)]:border-b lg:[&:nth-child(-n+2)]:border-b-0"
             >
               <span className="border-brand-gold text-brand-gold group-hover:bg-brand-gold group-hover:text-brand-charcoal flex size-9 shrink-0 items-center justify-center rounded-full border font-serif text-sm transition-colors duration-300">
                 {index + 1}
@@ -191,7 +191,7 @@ export default function Home() {
                         <Link
                           to="/menu"
                           aria-label={`See ${item.name} on the menu`}
-                          className="bg-brand-red hover:bg-brand-red/90 flex size-8 shrink-0 items-center justify-center rounded-full transition-colors duration-200"
+                          className="bg-brand-red hover:bg-brand-red/90 flex size-11 shrink-0 items-center justify-center rounded-full transition-colors duration-200"
                         >
                           <ArrowRight className="size-4" />
                         </Link>

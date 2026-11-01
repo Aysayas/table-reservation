@@ -86,7 +86,7 @@ export default function EditReservationDialog({ reservation, onClose }: Props) {
         <h2 id="edit-title" className="text-brand-charcoal font-serif text-2xl font-bold">
           Edit {reservation.reference_code}
         </h2>
-        <p className="text-brand-ink/60 mt-1 text-sm">{reservation.customer.full_name}</p>
+        <p className="text-brand-ink/70 mt-1 text-sm">{reservation.customer.full_name}</p>
         <form noValidate onSubmit={handleSubmit(onSubmit)} className="mt-5 space-y-5">
           <div className="grid grid-cols-2 gap-4">
             <div>

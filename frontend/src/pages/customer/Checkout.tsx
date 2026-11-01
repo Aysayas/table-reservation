@@ -114,7 +114,7 @@ export default function Checkout() {
                   <span className="text-brand-charcoal">
                     {line.quantity}x {line.name}
                     {line.notes && (
-                      <span className="text-brand-ink/60 block text-xs">Note: {line.notes}</span>
+                      <span className="text-brand-ink/70 block text-xs">Note: {line.notes}</span>
                     )}
                   </span>
                   <span className="text-brand-charcoal shrink-0">

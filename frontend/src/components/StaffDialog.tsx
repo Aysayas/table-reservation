@@ -97,7 +97,7 @@ export default function StaffDialog({ user, isSelf, onClose }: Props) {
             {isSelf && user ? (
               <>
                 <input id="role" readOnly value={roleNames[user.role]} className={field} />
-                <p className="text-brand-ink/60 mt-1.5 text-xs">You can't change your own role.</p>
+                <p className="text-brand-ink/70 mt-1.5 text-xs">You can't change your own role.</p>
               </>
             ) : (
               <select id="role" {...register('role')} className={field}>

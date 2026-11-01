@@ -105,7 +105,7 @@ export default function StaffDashboard() {
               ))}
               {data.upcoming_reservations.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="text-brand-ink/60 px-4 py-8 text-center text-sm">
+                  <td colSpan={5} className="text-brand-ink/70 px-4 py-8 text-center text-sm">
                     No more reservations today.
                   </td>
                 </tr>
@@ -143,7 +143,7 @@ export default function StaffDashboard() {
               ))}
               {data.active_orders_list.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="text-brand-ink/60 px-4 py-8 text-center text-sm">
+                  <td colSpan={5} className="text-brand-ink/70 px-4 py-8 text-center text-sm">
                     No active orders.
                   </td>
                 </tr>

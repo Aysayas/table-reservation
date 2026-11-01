@@ -99,7 +99,9 @@ export default function CustomerLayout() {
             </span>
           </span>
         </Link>
-        <div className={`flex shrink-0 items-center gap-2 ${wide ? 'xl:gap-8' : ''}`}>
+        <div
+          className={`flex shrink-0 items-center gap-2 max-[379px]:gap-0.5 ${wide ? 'xl:gap-8' : ''}`}
+        >
           {wide && (
             <nav aria-label="Main" className="text-brand-cream hidden items-center gap-8 xl:flex">
               {siteLinks.map((link) => (
@@ -124,7 +126,7 @@ export default function CustomerLayout() {
               <Link
                 to={`/table/${tableId}/cart`}
                 aria-label={`Cart, ${count} ${count === 1 ? 'item' : 'items'}`}
-                className="text-brand-cream hover:text-brand-gold relative flex size-9 items-center justify-center transition-colors duration-200"
+                className="text-brand-cream hover:text-brand-gold relative flex size-11 items-center justify-center transition-colors duration-200"
               >
                 <ShoppingCart className="size-5" />
                 {count > 0 && (
@@ -138,7 +140,7 @@ export default function CustomerLayout() {
             <Link
               to="/reserve"
               onClick={() => setOpen(false)}
-              className={`bg-brand-red hover:bg-brand-red/90 rounded-md px-3 py-2 text-xs font-bold tracking-[0.12em] text-white uppercase transition-colors duration-200 ${wide ? 'md:px-5 md:py-2.5' : ''}`}
+              className={`bg-brand-red hover:bg-brand-red/90 flex min-h-11 items-center rounded-md px-3 text-xs font-bold tracking-[0.12em] text-white uppercase transition-colors duration-200 ${wide ? 'md:px-5' : ''}`}
             >
               Reserve
               {wide && <span className="hidden xl:inline"> a Table</span>}
@@ -157,7 +159,7 @@ export default function CustomerLayout() {
             aria-label={open ? 'Close menu' : 'Open menu'}
             aria-expanded={open}
             onClick={() => setOpen(!open)}
-            className={`text-brand-cream hover:text-brand-gold flex size-9 items-center justify-center rounded-md border border-white/20 transition-colors duration-200 ${wide ? 'xl:hidden' : ''}`}
+            className={`text-brand-cream hover:text-brand-gold flex size-11 items-center justify-center rounded-md border border-white/20 transition-colors duration-200 ${wide ? 'xl:hidden' : ''}`}
           >
             {open ? <X className="size-5" /> : <MenuIcon className="size-5" />}
           </button>

@@ -342,7 +342,7 @@ export default function ReserveTable() {
                   Available Time
                 </p>
                 {!date ? (
-                  <p className="text-brand-ink/60 mt-2 text-sm">Choose a date to see the times.</p>
+                  <p className="text-brand-ink/70 mt-2 text-sm">Choose a date to see the times.</p>
                 ) : slotsFailed ? (
                   <div role="alert" className="text-brand-ink/75 mt-2 text-sm">
                     <p>We couldn't load the times. Try again, or call {callUs}.</p>
@@ -359,7 +359,7 @@ export default function ReserveTable() {
                     Loading times…
                   </p>
                 ) : isFetched && slots.length === 0 ? (
-                  <p className="text-brand-ink/60 mt-2 text-sm">No times left on this day.</p>
+                  <p className="text-brand-ink/70 mt-2 text-sm">No times left on this day.</p>
                 ) : (
                   <div className="mt-2 grid grid-cols-3 gap-2">
                     {slots.map((slot) => {

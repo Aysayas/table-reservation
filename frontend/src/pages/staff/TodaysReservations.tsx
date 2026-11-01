@@ -58,7 +58,7 @@ export default function TodaysReservations() {
     <div>
       <div className="flex flex-wrap gap-3">
         <label className="border-brand-line focus-within:border-brand-gold flex w-80 items-center gap-2 rounded-md border bg-white px-3">
-          <Search className="text-brand-ink/60 size-4 shrink-0" />
+          <Search className="text-brand-ink/70 size-4 shrink-0" />
           <span className="sr-only">Search</span>
           <input
             type="search"
@@ -149,7 +149,7 @@ export default function TodaysReservations() {
             ))}
             {rows.length === 0 && (
               <tr>
-                <td colSpan={9} className="text-brand-ink/60 px-4 py-10 text-center text-sm">
+                <td colSpan={9} className="text-brand-ink/70 px-4 py-10 text-center text-sm">
                   No reservations found.
                 </td>
               </tr>

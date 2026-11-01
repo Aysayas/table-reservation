@@ -83,7 +83,7 @@ export default function Reports() {
         </div>
         <div className="border-brand-line flex flex-wrap items-center gap-2 rounded-lg border bg-white px-3 py-1.5 text-sm">
           <label className="flex items-center gap-2">
-            <span className="text-brand-ink/60 text-xs font-bold uppercase">From</span>
+            <span className="text-brand-ink/70 text-xs font-bold uppercase">From</span>
             <input
               type="date"
               value={range.from}
@@ -92,9 +92,9 @@ export default function Reports() {
               className="outline-none"
             />
           </label>
-          <span className="text-brand-ink/40">–</span>
+          <span className="text-brand-ink/70">–</span>
           <label className="flex items-center gap-2">
-            <span className="text-brand-ink/60 text-xs font-bold uppercase">To</span>
+            <span className="text-brand-ink/70 text-xs font-bold uppercase">To</span>
             <input
               type="date"
               value={range.to}

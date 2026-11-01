@@ -100,7 +100,7 @@ export default function StaffLogin() {
                 type="button"
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
                 onClick={() => setShowPassword(!showPassword)}
-                className="text-brand-ink/60 hover:text-brand-charcoal absolute top-1/2 right-3 mt-1 flex size-8 -translate-y-1/2 items-center justify-center rounded-md transition-colors duration-200"
+                className="text-brand-ink/70 hover:text-brand-charcoal absolute top-1/2 right-3 mt-1 flex size-8 -translate-y-1/2 items-center justify-center rounded-md transition-colors duration-200"
               >
                 {showPassword ? <EyeOff className="size-5" /> : <Eye className="size-5" />}
               </button>

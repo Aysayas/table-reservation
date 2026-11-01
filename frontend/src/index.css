@@ -12,7 +12,7 @@
 @theme {
   --color-brand-charcoal: #1c1917;
   --color-brand-gold: #c5a059;
-  --color-brand-gold-deep: #8a6a2b;
+  --color-brand-gold-deep: #7d5f24;
   --color-brand-red: #b3121b;
   --color-brand-red-light: #ef5b5b;
   --color-brand-cream: #f7f2e9;
@@ -76,6 +76,11 @@ input::-webkit-date-and-time-value {
 }
 
 @media (pointer: coarse) {
+  button:not([role='switch']) {
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+  }
+
   input:not([type='checkbox'], [type='radio'], [type='range']),
   select,
   textarea {
