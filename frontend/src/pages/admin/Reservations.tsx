@@ -51,7 +51,7 @@ export default function Reservations() {
     <div>
       <div className="min-w-0">
         <div className="flex flex-wrap items-center gap-3">
-          <label className="border-brand-line focus-within:border-brand-gold flex w-80 items-center gap-2 rounded-md border bg-white px-3">
+          <label className="border-brand-line focus-within:border-brand-gold flex w-full max-w-80 items-center gap-2 rounded-md border bg-white px-3">
             <Search className="text-brand-ink/60 size-4 shrink-0" />
             <span className="sr-only">Search</span>
             <input
@@ -83,7 +83,7 @@ export default function Reservations() {
           </div>
         </div>
 
-        <div className="border-brand-line mt-6 overflow-x-auto rounded-lg border bg-white">
+        <div className="border-brand-line relative mt-6 overflow-x-auto rounded-lg border bg-white">
           <table className="w-full">
             <thead className="bg-brand-cream/60">
               <tr>

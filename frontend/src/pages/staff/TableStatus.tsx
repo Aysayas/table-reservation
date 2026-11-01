@@ -93,7 +93,7 @@ export default function TableStatus() {
         ))}
       </div>
 
-      <ul className="mt-6 grid grid-cols-2 gap-5 lg:grid-cols-3 xl:grid-cols-4">
+      <ul className="mt-6 grid grid-cols-1 gap-5 min-[380px]:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {shown.map((t) => (
           <li
             key={t.table_id}

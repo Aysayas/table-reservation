@@ -145,7 +145,7 @@ export default function AdminDashboard() {
             View all
           </Link>
         </div>
-        <div className={`${card} mt-3 overflow-hidden`}>
+        <div className={`${card} mt-3 overflow-x-auto`}>
           <table className="w-full">
             <thead className="bg-brand-cream/60">
               <tr>
