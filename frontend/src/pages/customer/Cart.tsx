@@ -48,7 +48,7 @@ export default function Cart() {
 
   return (
     <div
-      className={`bg-brand-cream min-h-[calc(100vh-4rem)] px-4 pt-5 ${lines.length ? 'pb-28' : 'pb-10'}`}
+      className={`bg-brand-cream min-h-[calc(100dvh-4rem)] px-4 pt-5 ${lines.length ? 'pb-28' : 'pb-10'}`}
     >
       <div className="flex items-center gap-4">
         <button
@@ -208,7 +208,7 @@ export default function Cart() {
             </div>
           </dl>
 
-          <div className="fixed inset-x-0 bottom-0 z-20 mx-auto max-w-[390px] px-4 pb-4">
+          <div className="fixed inset-x-0 bottom-0 z-20 mx-auto max-w-[390px] px-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
             {hasUnavailable ? (
               <button
                 type="button"

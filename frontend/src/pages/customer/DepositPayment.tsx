@@ -48,7 +48,7 @@ export default function DepositPayment() {
 
   if (!reservation) {
     return (
-      <div className="bg-brand-cream min-h-[calc(100vh-4rem)] px-4 pt-6 md:py-12">
+      <div className="bg-brand-cream min-h-[calc(100dvh-4rem)] px-4 pt-6 md:py-12">
         <div className="md:mx-auto md:max-w-4xl">
           {header}
           <div className={`${card} mt-8 text-center md:mx-auto md:max-w-md`}>
@@ -81,7 +81,7 @@ export default function DepositPayment() {
   ]
 
   return (
-    <div className="bg-brand-cream min-h-[calc(100vh-4rem)] px-4 pt-6 md:py-12">
+    <div className="bg-brand-cream min-h-[calc(100dvh-4rem)] px-4 pt-6 md:py-12">
       <div className="md:mx-auto md:max-w-4xl">
         {header}
 
@@ -142,7 +142,7 @@ export default function DepositPayment() {
                 : 'No deposit is needed for this booking.'}
             </p>
 
-            <div className="bg-brand-cream/95 border-brand-line sticky bottom-0 -mx-4 mt-8 border-t px-4 py-4 md:static md:mx-0 md:border-0 md:bg-transparent md:p-0">
+            <div className="bg-brand-cream/95 border-brand-line sticky bottom-0 -mx-4 mt-8 border-t px-4 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] md:static md:mx-0 md:border-0 md:bg-transparent md:p-0">
               {reservation.deposit_status === 'paid' ||
               (reservation.status !== 'pending' && reservation.status !== 'confirmed') ? (
                 <>

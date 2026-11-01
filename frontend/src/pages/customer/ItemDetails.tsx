@@ -45,7 +45,7 @@ export default function ItemDetails() {
 
   if (!item) {
     return (
-      <div className="bg-brand-cream min-h-[calc(100vh-4rem)] px-4 py-16 text-center">
+      <div className="bg-brand-cream min-h-[calc(100dvh-4rem)] px-4 py-16 text-center">
         <h1 className="text-brand-charcoal font-serif text-3xl">Dish not found</h1>
         <Link
           to={menuLink}
@@ -66,7 +66,7 @@ export default function ItemDetails() {
   })
 
   return (
-    <div className="bg-brand-cream min-h-[calc(100vh-4rem)] pb-28">
+    <div className="bg-brand-cream min-h-[calc(100dvh-4rem)] pb-28">
       <div className="relative">
         <Photo item={item} className="h-60 w-full" icon="size-12" />
         <button
@@ -172,7 +172,7 @@ export default function ItemDetails() {
         )}
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 z-20 mx-auto max-w-[390px] px-4 pb-4">
+      <div className="fixed inset-x-0 bottom-0 z-20 mx-auto max-w-[390px] px-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
         <button
           type="button"
           disabled={!item.is_available}

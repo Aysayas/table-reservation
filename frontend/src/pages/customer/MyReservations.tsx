@@ -48,7 +48,7 @@ export default function MyReservations() {
   if (!account) return <Navigate to={`/login?next=${encodeURIComponent(pathname)}`} replace />
 
   return (
-    <div className="bg-brand-cream min-h-[calc(100vh-4rem)] px-4 pt-6 pb-12 md:py-12">
+    <div className="bg-brand-cream min-h-[calc(100dvh-4rem)] px-4 pt-6 pb-12 md:py-12">
       <div className="md:mx-auto md:max-w-2xl">
         <h1 className="text-brand-charcoal font-serif text-3xl md:text-4xl">My Reservations</h1>
         <p className="text-brand-ink/75 mt-3 text-sm">Hi, {account.full_name}.</p>

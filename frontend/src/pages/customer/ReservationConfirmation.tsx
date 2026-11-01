@@ -54,7 +54,7 @@ export default function ReservationConfirmation() {
 
   if (!reservation) {
     return (
-      <div className="bg-brand-cream min-h-[calc(100vh-4rem)] px-4 py-16 text-center md:py-24">
+      <div className="bg-brand-cream min-h-[calc(100dvh-4rem)] px-4 py-16 text-center md:py-24">
         <div className="md:mx-auto md:max-w-md">
           <h1 className="text-brand-charcoal font-serif text-4xl leading-tight">
             Reservation not found

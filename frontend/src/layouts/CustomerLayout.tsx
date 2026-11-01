@@ -70,7 +70,7 @@ export default function CustomerLayout() {
 
   return (
     <div
-      className={`mx-auto min-h-screen max-w-[390px] border-x border-neutral-200 ${wide ? 'md:max-w-none md:border-x-0' : ''}`}
+      className={`mx-auto min-h-dvh max-w-[390px] border-x border-neutral-200 ${wide ? 'md:max-w-none md:border-x-0' : ''}`}
     >
       <header
         className={`bg-brand-charcoal relative flex items-center justify-between gap-2 border-b border-white/10 px-3 py-3 min-[380px]:px-4 ${wide ? 'md:px-[max(2.5rem,calc((100%_-_72rem)/2_+_2.5rem))] md:py-4' : ''}`}
