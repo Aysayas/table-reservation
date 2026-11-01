@@ -23,9 +23,9 @@ const orderBadge: Record<OrderStatus, string> = {
   served: 'bg-brand-ink/10 text-brand-ink',
 }
 const filters = [
-  { value: '', label: 'All' },
+  { value: '', label: 'Today' },
   { value: 'unpaid', label: 'Unpaid' },
-  { value: 'paid', label: 'Paid' },
+  { value: 'paid', label: 'Paid Today' },
 ] as const
 const time = (iso: string) => format(parseISO(iso), 'h:mm a')
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
@@ -49,7 +49,7 @@ export default function OrdersPayments() {
   const { data: me } = useQuery({ queryKey: ['me', 'staff'], queryFn: () => getMe('staff') })
   const [paidCash, setPaidCash] = useState<Record<number, number>>({})
   const [printedAt, setPrintedAt] = useState(() => new Date())
-  const selectedId = Number(params.get('order')) || orders[0]?.order_id
+  const selectedId = Number(params.get('order')) || null
   const selected = orders.find((o) => o.order_id === selectedId)
   const received = Number(cash) || 0
   const pay = useMutation({
@@ -57,7 +57,10 @@ export default function OrdersPayments() {
       recordPayment({ order_id: selected!.order_id, amount: selected!.total_amount }),
     onSuccess: (payment) => {
       setPaidCash((cashes) => ({ ...cashes, [payment.order_id]: received }))
-      toast.success(`Order #${payment.order_id} paid in cash`)
+      toast.success(
+        `Order #${payment.order_id} paid in cash. Change: ${peso(Math.max(0, received - payment.amount))}`,
+      )
+      setCash('')
       for (const key of ['orders', 'tables', 'dashboard']) {
         queryClient.invalidateQueries({ queryKey: [key] })
       }
@@ -142,6 +145,14 @@ export default function OrdersPayments() {
           </table>
         </div>
       </div>
+
+      {!selected && (
+        <p className="border-brand-line text-brand-ink/70 rounded-lg border border-dashed p-6 text-center text-sm print:hidden">
+          {selectedId
+            ? `Order #${selectedId} isn't in this list. Older unpaid orders are under Unpaid.`
+            : 'Select an order to see its details and take payment.'}
+        </p>
+      )}
 
       {selected && (
         <div className="hidden print:block">
@@ -243,7 +254,7 @@ export default function OrdersPayments() {
                 onClick={() => pay.mutate()}
                 className="bg-brand-red hover:bg-brand-red/90 mt-5 block w-full rounded-md py-3.5 text-sm font-bold tracking-[0.08em] text-white uppercase transition-colors duration-200 disabled:opacity-50"
               >
-                Mark as Paid (Cash)
+                Mark Order #{selected.order_id} Paid (Cash)
               </button>
             </div>
           )}

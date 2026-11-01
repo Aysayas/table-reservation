@@ -68,6 +68,8 @@ The customer starts here by scanning the table's QR code, so `:tableId` comes fr
 | 14–17 staff sidebar | Orders and Payments | 17 Orders and Payments `/staff/orders` |
 | 14–17 staff sidebar | Log Out | 13 Staff Login |
 | 18 Kitchen Display `/kitchen` | Log Out | 13 Staff Login |
+| Staff and admin sidebars | Kitchen | 18 Kitchen Display `/kitchen` |
+| 18 Kitchen Display `/kitchen` | Back (when opened from a sidebar) | The page it came from |
 
 ## Admin (19–29)
 

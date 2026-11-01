@@ -43,6 +43,7 @@ const staffNav: NavItem[] = [
   { to: '/staff/reservations', label: 'Reservations', title: "Today's Reservations" },
   { to: '/staff/tables', label: 'Table Status' },
   { to: '/staff/orders', label: 'Orders and Payments' },
+  { to: '/kitchen', label: 'Kitchen' },
 ]
 
 const adminNav: NavItem[] = [
@@ -51,6 +52,7 @@ const adminNav: NavItem[] = [
   { to: '/admin/categories', label: 'Categories' },
   { to: '/admin/tables', label: 'Tables and QR Codes' },
   { to: '/admin/reservations', label: 'Reservations' },
+  { to: '/kitchen', label: 'Kitchen' },
   { to: '/admin/orders', label: 'Order History' },
   { to: '/admin/payments', label: 'Payments' },
   { to: '/admin/reports', label: 'Reports' },

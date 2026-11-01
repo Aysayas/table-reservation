@@ -13,7 +13,7 @@ test('table status shows the filters with counts and a card per table', async ({
   const t2 = page.getByRole('listitem', { name: 'Table T2' })
   await expect(t2).toContainText('Occupied')
   await expect(t2).toContainText('Order #1 · ₱926.00')
-  await expect(t2).toContainText('Seated')
+  await expect(t2).toContainText('Ordered')
   const t5 = page.getByRole('listitem', { name: 'Table T5' })
   await expect(t5).toContainText('Customer Name · 6:00 PM')
   await expect(t5).toContainText('RSV-000005')
@@ -57,6 +57,14 @@ test('free table shows only when nothing is left to serve or pay, and frees the 
   await expect(page.getByText('T1 is now available')).toBeVisible()
   await expect(t1).toContainText('Ready for guests')
   await expect(page.getByRole('button', { name: 'Available (3)' })).toBeVisible()
+})
+
+test('seat guests marks an available table occupied for walk-ins', async ({ page }) => {
+  await page.goto(url)
+  const t3 = page.getByRole('listitem', { name: 'Table T3' })
+  await t3.getByRole('button', { name: 'Seat Guests' }).click()
+  await expect(page.getByText('T3 is now occupied')).toBeVisible()
+  await expect(t3.getByRole('button', { name: 'Free Table' })).toBeVisible()
 })
 
 test('an available table with a new order shows as occupied with the order', async ({ page }) => {

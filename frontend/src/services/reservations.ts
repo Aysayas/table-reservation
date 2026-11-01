@@ -269,6 +269,7 @@ export async function listReservations(filter: ReservationFilter) {
 const moves: Partial<Record<ReservationStatus, ReservationStatus[]>> = {
   pending: ['confirmed', 'no_show', 'cancelled'],
   confirmed: ['arrived', 'no_show', 'cancelled'],
+  no_show: ['pending', 'confirmed'],
 }
 
 export async function updateReservationStatus(
@@ -297,23 +298,33 @@ export async function updateReservationStatus(
     )
     if (taken) throw new Error('That table is already booked at this time')
     r.table_id = table.table_id
-    if (table.status === 'available') table.status = 'reserved'
+    if (
+      table.status === 'available' &&
+      r.reservation_date === new Date().toLocaleDateString('en-CA')
+    ) {
+      table.status = 'reserved'
+    }
     if (r.status === 'pending' && !change.status) r.status = 'confirmed'
   }
 
   if (change.status) {
     if (!moves[r.status]?.includes(change.status)) throw new Error("That change isn't allowed")
-    if (change.status === 'arrived' && r.table_id === null) {
+    const next = r.status === 'no_show' && r.table_id === null ? 'pending' : change.status
+    if (next === 'arrived' && r.table_id === null) {
       throw new Error('Assign a table before marking the guests as arrived')
     }
-    r.status = change.status
+    r.status = next
     const table = sampleTables.find((t) => t.table_id === r.table_id)
-    if (table && change.status === 'arrived') table.status = 'occupied'
+    if (table && next === 'arrived') table.status = 'occupied'
     if (
       table &&
-      (change.status === 'no_show' || change.status === 'cancelled') &&
-      table.status === 'reserved'
+      next === 'confirmed' &&
+      table.status === 'available' &&
+      r.reservation_date === new Date().toLocaleDateString('en-CA')
     ) {
+      table.status = 'reserved'
+    }
+    if (table && (next === 'no_show' || next === 'cancelled') && table.status === 'reserved') {
       table.status = 'available'
     }
   }

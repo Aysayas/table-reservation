@@ -219,6 +219,12 @@ class Orders extends Controller {
 		}
 
 		$next = $this->statuses[array_search($order['status'], $this->statuses, true) + 1] ?? null;
+		if ($order['status'] === 'served' && $status === 'ready') {
+			$this->Order_model->update($id, ['status' => $status]);
+			$this->Table_model->occupy($order['table_id']);
+			$this->pusher->order_changed($id, 'order.status');
+			$this->api->respond(['data' => $this->format($this->Order_model->find($id))]);
+		}
 		if ($status !== $next) {
 			$this->api->respond_error($next ? "A {$order['status']} order can only become {$next}" : 'This order is already served', 409);
 		}
