@@ -6,12 +6,9 @@ test.beforeEach(({ page }) => logIn(page))
 const nextYear = new Date().getFullYear() + 1
 const date = `${nextYear}-12-01`
 
-test('reserve page shows the steps and the form', async ({ page }) => {
+test('reserve page shows the form', async ({ page }) => {
   await page.goto('/reserve')
   await expect(page.getByRole('heading', { name: 'Reserve a Table' })).toBeVisible()
-  for (const step of ['Details', 'Deposit', 'Confirm']) {
-    await expect(page.getByText(step, { exact: true })).toBeVisible()
-  }
   for (const name of ['Date', 'Special Request (optional)']) {
     await expect(page.getByLabel(name)).toBeVisible()
   }

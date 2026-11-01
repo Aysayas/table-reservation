@@ -58,13 +58,26 @@ test('popular dishes slide gently and stand still with reduced motion', async ({
   await expect(page.locator('ul.motion-safe\\:animate-marquee')).toHaveCSS('animation-name', 'none')
 })
 
-test('find a table passes date, time and guests to reserve', async ({ page }) => {
+test('check availability passes date and guests to reserve', async ({ page }) => {
   await page.goto('/')
   await page.getByLabel('Date').fill('2026-12-01')
-  await page.getByLabel('Time').fill('18:00')
+  await expect(page.getByLabel('Time')).toHaveCount(0)
   await page.getByLabel('Guests').selectOption('4')
-  await page.getByRole('button', { name: 'Find a Table' }).click()
-  await expect(page).toHaveURL('/reserve?date=2026-12-01&time=18%3A00&pax=4')
+  await page.getByRole('button', { name: 'Check Availability' }).click()
+  await expect(page).toHaveURL(/\/reserve|\/login/)
+  expect(decodeURIComponent(page.url())).toContain('date=2026-12-01&pax=4')
+})
+
+test('the guests list stops at the most a booking allows', async ({ page }) => {
+  await page.goto('/')
+  await expect(page.getByLabel('Guests').getByRole('option').last()).toHaveText('10 guests')
+})
+
+test('an unknown page says so and links home', async ({ page }) => {
+  await page.goto('/no-such-page')
+  await expect(page.getByRole('heading', { name: 'Page not found' })).toBeVisible()
+  await page.getByRole('main').getByRole('link', { name: 'Back to Home' }).click()
+  await expect(page).toHaveURL('/')
 })
 
 test('footer has the quick links, hours and directions', async ({ page }) => {

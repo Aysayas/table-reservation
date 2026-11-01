@@ -24,10 +24,10 @@ test('back to home goes to the home page', async ({ page }) => {
   await expect(page).toHaveURL('/')
 })
 
-test('manage reservation goes to find reservation', async ({ page }) => {
+test('manage reservation goes to my reservations when logged in', async ({ page }) => {
   await page.goto(url)
   await page.getByRole('link', { name: 'Manage Reservation' }).click()
-  await expect(page).toHaveURL('/reservation')
+  await expect(page).toHaveURL('/my-reservations')
 })
 
 test('unknown code shows not found', async ({ page }) => {
@@ -97,8 +97,8 @@ test('a cancelled reservation says it was cancelled', async ({ page }) => {
   await page.getByLabel('Reference Code').fill('RSV-000001')
   await page.getByLabel('Mobile Number').fill('09000000000')
   await page.getByRole('button', { name: 'Find Reservation' }).click()
-  page.once('dialog', (dialog) => dialog.accept())
   await page.getByRole('button', { name: 'Cancel', exact: true }).click()
+  await page.getByRole('dialog').getByRole('button', { name: 'Cancel Reservation' }).click()
   await expect(page.getByText('Reservation cancelled')).toBeVisible()
   await openInApp(page, url)
   await expect(page.getByRole('heading', { name: 'This reservation was cancelled' })).toBeVisible()
@@ -142,4 +142,12 @@ test('an unpaid deposit shows as due, with a way to pay', async ({ page }) => {
   await expect(page.getByText('Deposit Due')).toBeVisible()
   await expect(page.getByText('₱200.00')).toBeVisible()
   await expect(page.getByText('Deposit Paid')).toHaveCount(0)
+})
+
+test('paying the deposit shows the table as reserved', async ({ page }) => {
+  await bookUnpaid(page)
+  await page.getByRole('button', { name: 'Pay ₱200.00' }).click()
+  await expect(page.getByRole('heading', { name: 'Your table is reserved' })).toBeVisible()
+  await expect(page.getByText('Deposit Paid')).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Pay Deposit' })).toHaveCount(0)
 })

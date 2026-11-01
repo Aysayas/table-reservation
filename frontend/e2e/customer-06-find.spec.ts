@@ -40,8 +40,8 @@ test('a matching code and mobile shows the reservation', async ({ page }) => {
 
 test('cancel asks first, then marks the reservation cancelled', async ({ page }) => {
   await find(page, 'RSV-000001', '09000000000')
-  page.once('dialog', (dialog) => dialog.accept())
   await page.getByRole('button', { name: 'Cancel', exact: true }).click()
+  await page.getByRole('dialog').getByRole('button', { name: 'Cancel Reservation' }).click()
   await expect(page.getByText('Cancelled', { exact: true })).toBeVisible()
   await expect(page.getByText('Reservation cancelled')).toBeVisible()
   await expect(page.getByRole('button', { name: 'Cancel', exact: true })).toBeDisabled()
@@ -61,4 +61,38 @@ test('a pasted +63 number finds the reservation', async ({ page }) => {
   await find(page, 'RSV-000001', '+63 900 000 0000')
   await expect(page.getByText('RSV-000001')).toBeVisible()
   await expect(page.getByRole('button', { name: 'Cancel' })).toBeVisible()
+})
+
+test('keep reservation closes the dialog and changes nothing', async ({ page }) => {
+  await find(page, 'RSV-000001', '09000000000')
+  await page.getByRole('button', { name: 'Cancel', exact: true }).click()
+  await page.getByRole('button', { name: 'Keep Reservation' }).click()
+  await expect(page.getByRole('dialog')).toHaveCount(0)
+  await expect(page.getByText('Confirmed', { exact: true })).toBeVisible()
+})
+
+test('the result shows the deposit', async ({ page }) => {
+  await find(page, 'RSV-000001', '09000000000')
+  await expect(page.getByText('Deposit', { exact: true })).toBeVisible()
+  await expect(page.getByText('None', { exact: true })).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Pay Deposit' })).toHaveCount(0)
+})
+
+test('going back from reschedule keeps the result, with no mobile in the link', async ({
+  page,
+}) => {
+  await find(page, 'RSV-000001', '09000000000')
+  await expect(page).toHaveURL('/reservation?code=RSV-000001')
+  await page.getByRole('button', { name: 'Reschedule' }).click()
+  await expect(page).toHaveURL('/reserve?reschedule=RSV-000001')
+  await page.goBack()
+  await expect(page.getByRole('heading', { name: 'Reservation RSV-000001' })).toBeVisible()
+  await expect(page.getByLabel('Reference Code')).toHaveValue('RSV-000001')
+})
+
+test('manage reservation fills in the code for a logged-out guest', async ({ page }) => {
+  await page.goto('/reserve/confirmation/RSV-000001')
+  await page.getByRole('link', { name: 'Manage Reservation' }).click()
+  await expect(page).toHaveURL('/reservation?code=RSV-000001')
+  await expect(page.getByLabel('Reference Code')).toHaveValue('RSV-000001')
 })

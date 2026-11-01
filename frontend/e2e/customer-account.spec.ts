@@ -126,9 +126,9 @@ test('my reservations lists bookings with their actions', async ({ page }) => {
 
 test('cancelling asks first and updates the booking', async ({ page }) => {
   await logIn(page)
-  page.on('dialog', (dialog) => dialog.accept())
   const booking = page.getByRole('listitem', { name: 'Reservation RSV-000001' })
   await booking.getByRole('button', { name: 'Cancel RSV-000001' }).click()
+  await page.getByRole('dialog').getByRole('button', { name: 'Cancel Reservation' }).click()
   await expect(booking.getByText('Cancelled', { exact: true })).toBeVisible()
   await expect(booking.getByRole('button', { name: 'Reschedule RSV-000001' })).toHaveCount(0)
 })
@@ -276,4 +276,17 @@ test('table ordering does not show account links', async ({ page }) => {
   await page.goto('/table/1/menu')
   await page.getByRole('button', { name: 'Open menu' }).click()
   await expect(page.getByRole('link', { name: 'Log In' })).toHaveCount(0)
+})
+
+test('cancelling a paid booking says the deposit is non-refundable', async ({ page }) => {
+  await logIn(page)
+  await page.goto('/reserve?date=2030-12-01')
+  await page.getByRole('button', { name: '7:00 PM' }).click()
+  await page.getByRole('button', { name: 'Continue to Deposit' }).click()
+  await page.getByRole('button', { name: 'Pay ₱200.00' }).click()
+  await expect(page).toHaveURL(/\/reserve\/confirmation\/RSV-/)
+  const code = page.url().split('/').pop()
+  await page.getByRole('link', { name: 'Manage Reservation' }).click()
+  await page.getByRole('button', { name: `Cancel ${code}` }).click()
+  await expect(page.getByRole('dialog')).toContainText('Your ₱200.00 deposit is non-refundable.')
 })

@@ -7,7 +7,7 @@ import Reveal from '@/components/Reveal'
 import SiteFooter from '@/components/SiteFooter'
 import { groupHours } from '@/lib/hours'
 import { getMenuItems } from '@/services/menu'
-import { getOpeningHours } from '@/services/settings'
+import { getOpeningHours, getSettings } from '@/services/settings'
 
 const wrap = 'md:mx-auto md:max-w-6xl md:px-10'
 const eyebrow = 'text-brand-red text-xs font-bold tracking-[0.25em] uppercase'
@@ -30,17 +30,18 @@ export default function Home() {
   const navigate = useNavigate()
   const [today] = useState(() => format(new Date(), 'yyyy-MM-dd'))
   const [date, setDate] = useState('')
-  const [time, setTime] = useState('')
   const [pax, setPax] = useState('2')
   const { data: hours = [] } = useQuery({ queryKey: ['opening-hours'], queryFn: getOpeningHours })
   const { data: items = [] } = useQuery({ queryKey: ['menu-items'], queryFn: () => getMenuItems() })
+  const { data: settings } = useQuery({ queryKey: ['settings'], queryFn: getSettings })
+  const maxPax = settings?.max_pax ?? 10
 
   const popular = items.filter((item) => item.is_recommended && item.is_available).slice(0, 4)
   const hourGroups = groupHours(hours)
   const badge = hourGroups[0]
 
   const findTable = () => {
-    const params = new URLSearchParams(Object.entries({ date, time, pax }).filter(([, v]) => v))
+    const params = new URLSearchParams(Object.entries({ date, pax }).filter(([, v]) => v))
     navigate(`/reserve?${params}`)
   }
 
@@ -217,7 +218,7 @@ export default function Home() {
               event.preventDefault()
               findTable()
             }}
-            className="mt-8 grid grid-cols-2 gap-3 md:grid-cols-[1fr_1fr_minmax(9rem,1fr)_auto] md:items-end lg:mt-0"
+            className="mt-8 grid grid-cols-2 gap-3 md:grid-cols-[1fr_minmax(9rem,1fr)_auto] md:items-end lg:mt-0"
           >
             <label className={fieldLabel}>
               Date
@@ -230,18 +231,9 @@ export default function Home() {
               />
             </label>
             <label className={fieldLabel}>
-              Time
-              <input
-                type="time"
-                value={time}
-                onChange={(e) => setTime(e.target.value)}
-                className={field}
-              />
-            </label>
-            <label className={fieldLabel}>
               Guests
               <select value={pax} onChange={(e) => setPax(e.target.value)} className={field}>
-                {Array.from({ length: 20 }, (_, i) => i + 1).map((n) => (
+                {Array.from({ length: maxPax }, (_, i) => i + 1).map((n) => (
                   <option key={n} value={n} className="text-brand-charcoal">
                     {n} {n === 1 ? 'guest' : 'guests'}
                   </option>
@@ -250,9 +242,9 @@ export default function Home() {
             </label>
             <button
               type="submit"
-              className={`${button} bg-brand-gold text-brand-charcoal hover:bg-brand-gold/90 self-end`}
+              className={`${button} bg-brand-gold text-brand-charcoal hover:bg-brand-gold/90 col-span-2 self-end md:col-span-1`}
             >
-              Find a Table
+              Check Availability
             </button>
           </form>
         </Reveal>

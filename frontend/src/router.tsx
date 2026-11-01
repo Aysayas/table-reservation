@@ -12,7 +12,6 @@ import Reservations from '@/pages/admin/Reservations'
 import Settings from '@/pages/admin/Settings'
 import StaffAccounts from '@/pages/admin/StaffAccounts'
 import TablesQr from '@/pages/admin/TablesQr'
-import Placeholder from '@/pages/Placeholder'
 import About from '@/pages/customer/About'
 import Cart from '@/pages/customer/Cart'
 import Checkout from '@/pages/customer/Checkout'
@@ -30,6 +29,7 @@ import StaffDashboard from '@/pages/staff/StaffDashboard'
 import ForgotPassword from '@/pages/customer/ForgotPassword'
 import Login from '@/pages/customer/Login'
 import MyReservations from '@/pages/customer/MyReservations'
+import NotFound from '@/pages/customer/NotFound'
 import Profile from '@/pages/customer/Profile'
 import Register from '@/pages/customer/Register'
 import ResetPassword from '@/pages/customer/ResetPassword'
@@ -78,6 +78,7 @@ export const router = createBrowserRouter([
       { path: '/my-reservations', element: <MyReservations /> },
       { path: '/profile', element: <Profile /> },
       { path: '/about', element: <About /> },
+      { path: '*', element: <NotFound /> },
       { path: '/table/:tableId', element: <TableMenu /> },
       { path: '/table/:tableId/menu', element: <TableMenu /> },
       {
@@ -123,5 +124,4 @@ export const router = createBrowserRouter([
       { path: 'settings', element: <Settings /> },
     ],
   },
-  { path: '*', element: <Placeholder screen="—" title="Page Not Found" /> },
 ])

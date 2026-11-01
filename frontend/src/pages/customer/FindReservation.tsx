@@ -1,18 +1,21 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { format, parseISO } from 'date-fns'
 import { ArrowLeft } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import { z } from 'zod'
+import CancelReservationDialog from '@/components/CancelReservationDialog'
 import MobileInput from '@/components/MobileInput'
 import { apiError } from '@/lib/api'
-import { mobileSchema, toLocalMobile } from '@/lib/mobile'
+import { cleanMobile, mobileSchema, toLocalMobile } from '@/lib/mobile'
 import { reservationStatuses } from '@/lib/reservationStatus'
 import { cancelReservation, findReservation } from '@/services/reservations'
 import type { PublicReservation } from '@/types/db'
 
+const peso = (amount: number) =>
+  `₱${amount.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
 const label = 'text-brand-charcoal text-xs font-bold tracking-[0.15em] uppercase'
 const field =
   'border-brand-line focus:border-brand-gold mt-2 w-full rounded-sm border bg-white px-4 py-3 text-sm outline-none placeholder:text-brand-ink/50'
@@ -29,39 +32,64 @@ type FormValues = z.infer<typeof schema>
 
 export default function FindReservation() {
   const navigate = useNavigate()
+  const [params, setParams] = useSearchParams()
+  const savedMobile = (useLocation().state as { mobile?: string } | null)?.mobile ?? ''
+  const savedCode = params.get('code') ?? ''
   const [result, setResult] = useState<PublicReservation | null>()
-  const [mobile, setMobile] = useState('')
+  const [mobile, setMobile] = useState(savedMobile)
+  const [cancelling, setCancelling] = useState(false)
+  const [busy, setBusy] = useState(false)
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
-    defaultValues: { reference_code: '', mobile_number: '' },
+    defaultValues: { reference_code: savedCode, mobile_number: cleanMobile(savedMobile) },
   })
 
-  const onSubmit = async ({ reference_code, mobile_number }: FormValues) => {
-    const local = toLocalMobile(mobile_number)
+  const lookUp = async (code: string, local: string) => {
     try {
-      const found = await findReservation(reference_code.toUpperCase(), local)
+      const found = await findReservation(code, local)
       setMobile(local)
       setResult(found ?? null)
+      setParams({ code }, { replace: true, state: { mobile: local } })
     } catch (e) {
       toast.error(apiError(e, "Couldn't look up the reservation. Please try again."))
     }
   }
 
+  const onSubmit = ({ reference_code, mobile_number }: FormValues) =>
+    lookUp(reference_code.toUpperCase(), toLocalMobile(mobile_number))
+
+  useEffect(() => {
+    if (!savedCode || !savedMobile) return
+    let current = true
+    findReservation(savedCode, savedMobile)
+      .then((found) => {
+        if (current) setResult(found ?? null)
+      })
+      .catch(() => undefined)
+    return () => {
+      current = false
+    }
+  }, [savedCode, savedMobile])
+
   const cancel = async () => {
-    if (!result || !window.confirm('Cancel this reservation?')) return
+    if (!result) return
+    setBusy(true)
     try {
       setResult(await cancelReservation(result.reference_code, mobile))
       toast.success('Reservation cancelled')
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Couldn't cancel the reservation")
     }
+    setBusy(false)
+    setCancelling(false)
   }
 
   const canChange = result?.status === 'pending' || result?.status === 'confirmed'
+  const canPay = canChange && result?.deposit_status === 'unpaid' && result.deposit_amount > 0
   const status = result ? reservationStatuses[result.status] : undefined
 
   return (
@@ -150,6 +178,12 @@ export default function FindReservation() {
                 ],
                 ['Guests', String(result.pax)],
                 ['Table', result.table_number ?? 'Not assigned yet'],
+                [
+                  'Deposit',
+                  result.deposit_amount > 0
+                    ? `${peso(result.deposit_amount)} (${result.deposit_status === 'paid' ? 'paid' : 'not paid yet'})`
+                    : 'None',
+                ],
               ].map(([term, value]) => (
                 <div key={term} className="flex justify-between gap-4">
                   <dt className="text-brand-ink/70">{term}</dt>
@@ -157,7 +191,15 @@ export default function FindReservation() {
                 </div>
               ))}
             </dl>
-            <div className="mt-6 grid grid-cols-2 gap-3">
+            {canPay && (
+              <Link
+                to={`/reserve/payment?code=${result.reference_code}`}
+                className="bg-brand-red hover:bg-brand-red/90 focus-visible:outline-brand-gold mt-6 block w-full rounded-sm py-4 text-center text-sm font-bold tracking-[0.15em] text-white uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2"
+              >
+                Pay Deposit
+              </Link>
+            )}
+            <div className={`${canPay ? 'mt-3' : 'mt-6'} grid grid-cols-2 gap-3`}>
               <button
                 type="button"
                 disabled={!canChange}
@@ -173,13 +215,21 @@ export default function FindReservation() {
               <button
                 type="button"
                 disabled={!canChange}
-                onClick={cancel}
+                onClick={() => setCancelling(true)}
                 className={outlineButton}
               >
                 Cancel
               </button>
             </div>
           </section>
+        )}
+        {result && cancelling && (
+          <CancelReservationDialog
+            reservation={result}
+            busy={busy}
+            onKeep={() => setCancelling(false)}
+            onCancel={cancel}
+          />
         )}
       </div>
     </div>
