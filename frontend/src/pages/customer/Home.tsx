@@ -14,7 +14,7 @@ const eyebrow = 'text-brand-red text-xs font-bold tracking-[0.25em] uppercase'
 const button =
   'focus-visible:outline-brand-gold block rounded-sm px-3 py-4 text-center whitespace-nowrap md:px-6 text-xs font-bold tracking-[0.12em] uppercase transition duration-200 motion-safe:hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 md:text-sm md:tracking-[0.15em]'
 const field =
-  'mt-2 w-full rounded-sm border border-white/40 bg-transparent px-3 py-3 text-sm font-normal tracking-normal text-white normal-case outline-none [color-scheme:dark] focus:border-brand-gold'
+  'mt-2 h-12 w-full rounded-sm border border-white/40 bg-transparent px-3 text-sm font-normal tracking-normal text-white normal-case outline-none [color-scheme:dark] focus:border-brand-gold'
 const fieldLabel = 'text-xs font-bold tracking-[0.2em] uppercase'
 const zoom =
   'motion-safe:transition-transform motion-safe:duration-700 motion-safe:group-hover:scale-105'
