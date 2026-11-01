@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ChevronLeft, ChevronRight, Plus, Search, UtensilsCrossed } from 'lucide-react'
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation, useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import { deleteMenuItem, getCategories, getMenuItems, setAvailability } from '@/services/menu'
 import type { MenuItem } from '@/types/db'
@@ -15,9 +15,21 @@ const smallButton = 'rounded-md border px-3 py-1.5 text-xs font-bold transition-
 
 export default function MenuManagement() {
   const queryClient = useQueryClient()
-  const [search, setSearch] = useState('')
-  const [categoryId, setCategoryId] = useState(0)
-  const [page, setPage] = useState(1)
+  const { pathname, search: linkSearch } = useLocation()
+  const [params, setParams] = useSearchParams()
+  const search = params.get('q') ?? ''
+  const categoryId = Number(params.get('category')) || 0
+  const page = Number(params.get('page')) || 1
+  const update = (changes: Record<string, string>) => {
+    const next = new URLSearchParams(params)
+    for (const [key, value] of Object.entries(changes)) {
+      if (value) next.set(key, value)
+      else next.delete(key)
+    }
+    setParams(next, { replace: true })
+  }
+  const setPage = (value: number) => update({ page: value > 1 ? String(value) : '' })
+  const from = { from: `${pathname}${linkSearch}` }
   const [deleting, setDeleting] = useState<MenuItem | null>(null)
   const { data: items = [] } = useQuery({
     queryKey: ['menu-items'],
@@ -64,10 +76,7 @@ export default function MenuManagement() {
           <input
             type="search"
             value={search}
-            onChange={(e) => {
-              setSearch(e.target.value)
-              setPage(1)
-            }}
+            onChange={(e) => update({ q: e.target.value, page: '' })}
             placeholder="Search"
             className="w-full py-2.5 text-sm outline-none"
           />
@@ -76,10 +85,9 @@ export default function MenuManagement() {
           <span className="sr-only">Category</span>
           <select
             value={categoryId}
-            onChange={(e) => {
-              setCategoryId(Number(e.target.value))
-              setPage(1)
-            }}
+            onChange={(e) =>
+              update({ category: e.target.value === '0' ? '' : e.target.value, page: '' })
+            }
             className="border-brand-line focus:border-brand-gold rounded-md border bg-white px-3 py-2.5 text-sm outline-none"
           >
             <option value={0}>All Categories</option>
@@ -92,6 +100,7 @@ export default function MenuManagement() {
         </label>
         <Link
           to="/admin/menu/new"
+          state={from}
           className="bg-brand-red hover:bg-brand-red/90 ml-auto flex items-center gap-2 rounded-md px-5 py-2.5 text-sm font-bold text-white transition-colors duration-200"
         >
           <Plus className="size-4" />
@@ -144,6 +153,7 @@ export default function MenuManagement() {
                   <div className="flex gap-2">
                     <Link
                       to={`/admin/menu/${item.item_id}/edit`}
+                      state={from}
                       aria-label={`Edit ${item.name}`}
                       className={`${smallButton} border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal hover:text-white`}
                     >

@@ -11,6 +11,7 @@ import {
   Wallet,
 } from 'lucide-react'
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { listPayments, type AdminPayment } from '@/services/payments'
 import type { PaymentMethod, PaymentStatus } from '@/types/db'
 
@@ -210,7 +211,16 @@ export default function Payments() {
                       ) : (
                         <CreditCard className="size-3.5" />
                       )}
-                      {forText(p)}
+                      {p.for.type === 'order' ? (
+                        <Link
+                          to={`/admin/orders?order=${p.for.order_id}`}
+                          className="hover:underline"
+                        >
+                          {forText(p)}
+                        </Link>
+                      ) : (
+                        forText(p)
+                      )}
                     </span>
                   </td>
                   <td className={td}>

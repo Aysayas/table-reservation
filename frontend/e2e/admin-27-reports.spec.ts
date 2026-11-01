@@ -59,13 +59,13 @@ test('monthly covers six months, and a custom from date changes the summary', as
   await expect(summary.getByRole('definition').nth(1)).toHaveText('3')
 })
 
-test('export PDF prints only the report', async ({ page }) => {
+test('print prints only the report', async ({ page }) => {
   await page.goto(url)
-  await page.getByRole('button', { name: 'Export PDF' }).click()
+  await page.getByRole('button', { name: 'Print' }).click()
   expect(await page.evaluate('window.__printed')).toBe(true)
   await page.emulateMedia({ media: 'print' })
   await expect(page.getByText(/^Report: /)).toBeVisible()
-  await expect(page.getByRole('button', { name: 'Export PDF' })).toBeHidden()
+  await expect(page.getByRole('button', { name: 'Print' })).toBeHidden()
   await expect(page.getByRole('navigation', { name: 'Admin menu' })).toBeHidden()
   await expect(page.getByRole('heading', { name: 'Summary' })).toBeVisible()
 })

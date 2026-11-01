@@ -38,3 +38,10 @@ test('view all opens order history', async ({ page }) => {
   await page.getByRole('link', { name: 'View all' }).click()
   await expect(page).toHaveURL('/admin/orders')
 })
+
+test('an order number on the dashboard opens that order in the history', async ({ page }) => {
+  await page.goto('/admin')
+  await page.getByRole('link', { name: '#1', exact: true }).first().click()
+  await expect(page).toHaveURL('/admin/orders?order=1')
+  await expect(page.getByRole('searchbox')).toHaveValue('1')
+})

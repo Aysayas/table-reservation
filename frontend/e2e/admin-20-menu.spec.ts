@@ -67,3 +67,14 @@ test('delete asks first, and an ordered dish cannot be deleted', async ({ page }
     page.getByRole('cell', { name: 'Hungarian Sausage with Bread and Egg', exact: true }),
   ).toBeVisible()
 })
+
+test('search, category and page are kept after editing a dish', async ({ page }) => {
+  await page.goto(url)
+  await page.getByLabel('Search').fill('bulalo')
+  await expect(page).toHaveURL('/admin/menu?q=bulalo')
+  await page.getByRole('link', { name: /^Edit/ }).first().click()
+  await page.getByRole('link', { name: /^Cancel/ }).click()
+  await expect(page).toHaveURL('/admin/menu?q=bulalo')
+  await expect(page.getByLabel('Search')).toHaveValue('bulalo')
+  await expect(page.getByText('Showing 1–1 of 1')).toBeVisible()
+})

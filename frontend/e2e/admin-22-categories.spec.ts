@@ -59,10 +59,9 @@ test('delete asks first and keeps a category that still has dishes', async ({ pa
   await page.getByRole('button', { name: 'Delete Prelude' }).click()
   const dialog = page.getByRole('dialog', { name: 'Delete Prelude?' })
   await expect(dialog).toContainText("It still has 6 dishes, so it can't be deleted yet.")
-  await dialog.getByRole('button', { name: 'Delete' }).click()
-  await expect(
-    page.getByText('This category still has dishes. Move or delete them first.'),
-  ).toBeVisible()
+  await expect(dialog.getByRole('button', { name: 'Delete' })).toHaveCount(0)
+  await dialog.getByRole('button', { name: 'Close' }).click()
+  await expect(dialog).toHaveCount(0)
   await expect(page.getByRole('cell', { name: 'Prelude', exact: true })).toBeVisible()
 
   await page.getByLabel('Category Name').fill('Grilled')

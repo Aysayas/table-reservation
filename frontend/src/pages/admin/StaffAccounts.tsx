@@ -3,6 +3,7 @@ import { format, parseISO } from 'date-fns'
 import { Plus, Search } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
+import ConfirmDialog from '@/components/ConfirmDialog'
 import StaffDialog from '@/components/StaffDialog'
 import { getMe } from '@/services/auth'
 import { listUsers, roleNames, updateUser } from '@/services/users'
@@ -17,6 +18,7 @@ export default function StaffAccounts() {
   const [search, setSearch] = useState('')
   const [role, setRole] = useState<UserRole | ''>('')
   const [dialog, setDialog] = useState<{ user: User | null } | null>(null)
+  const [disabling, setDisabling] = useState<User | null>(null)
   const { data: me } = useQuery({
     queryKey: ['me', 'admin'],
     queryFn: () => getMe('admin'),
@@ -37,6 +39,7 @@ export default function StaffAccounts() {
       }),
     onSuccess: (u) => {
       toast.success(`${u.full_name} ${u.is_active ? 'enabled' : 'disabled'}`)
+      setDisabling(null)
       queryClient.invalidateQueries({ queryKey: ['users'] })
     },
     onError: (e) => toast.error(e.message),
@@ -133,7 +136,7 @@ export default function StaffAccounts() {
                           type="button"
                           aria-label={`${u.is_active ? 'Disable' : 'Enable'} ${u.email}`}
                           disabled={toggle.isPending}
-                          onClick={() => toggle.mutate(u)}
+                          onClick={() => (u.is_active ? setDisabling(u) : toggle.mutate(u))}
                           className={`${smallButton} ${u.is_active ? 'border-brand-red text-brand-red hover:bg-brand-red' : 'border-brand-green text-brand-green hover:bg-brand-green'} hover:text-white disabled:opacity-50`}
                         >
                           {u.is_active ? 'Disable' : 'Enable'}
@@ -154,6 +157,18 @@ export default function StaffAccounts() {
           </tbody>
         </table>
       </div>
+
+      {disabling && (
+        <ConfirmDialog
+          title={`Disable ${disabling.full_name}?`}
+          body="They won't be able to log in until you enable the account again."
+          confirmLabel="Disable"
+          closeLabel="Cancel"
+          busy={toggle.isPending}
+          onConfirm={() => toggle.mutate(disabling)}
+          onClose={() => setDisabling(null)}
+        />
+      )}
 
       {dialog && (
         <StaffDialog

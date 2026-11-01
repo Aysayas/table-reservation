@@ -5,7 +5,7 @@ import { useForm, useWatch } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import MobileInput from '@/components/MobileInput'
-import { dayNames, weekOrder } from '@/lib/hours'
+import { dayNames, formatTime, weekOrder } from '@/lib/hours'
 import { cleanMobile, mobileSchema, toLocalMobile } from '@/lib/mobile'
 import {
   getOpeningHours,
@@ -47,7 +47,22 @@ const schema = z.object({
   email: z.union([z.literal(''), z.email('Enter a valid email')]),
   facebook_url: z.string().trim().max(255, 'Use 255 characters or less'),
   hours: z.array(day),
+  slot_minutes: z.number(),
+  max_pax: z
+    .number({ error: 'Enter the max guests' })
+    .int('Use a whole number')
+    .min(1, 'At least 1 guest')
+    .max(100, 'At most 100 guests'),
+  booking_open_time: z.string(),
+  deposit_required: z.boolean(),
+  deposit_per_guest: z.number({ error: 'Enter a deposit amount' }).min(0, 'Use 0 or more'),
 })
+
+const slotLengths = [15, 30, 45, 60, 90, 120, 180, 240]
+const halfHours = Array.from(
+  { length: 33 },
+  (_, i) => `${String(6 + Math.floor(i / 2)).padStart(2, '0')}:${i % 2 ? '30' : '00'}`,
+)
 
 type FormValues = z.infer<typeof schema>
 
@@ -78,6 +93,11 @@ export default function Settings() {
             contact_number: cleanMobile(settings.contact_number ?? ''),
             email: settings.email ?? '',
             facebook_url: settings.facebook_url ?? '',
+            slot_minutes: settings.slot_minutes,
+            max_pax: settings.max_pax,
+            booking_open_time: settings.booking_open_time?.slice(0, 5) ?? '',
+            deposit_required: settings.deposit_required,
+            deposit_per_guest: settings.deposit_per_guest,
             hours: weekOrder.map((d) => {
               const h = hours.find((x) => x.day_of_week === d)
               return {
@@ -91,6 +111,10 @@ export default function Settings() {
         : undefined,
   })
   const days = useWatch({ control, name: 'hours' }) ?? []
+  const depositOn = useWatch({ control, name: 'deposit_required' })
+  const [weekday] = useState(() => new Date().getDay())
+  const today = hours?.find((h) => h.day_of_week === weekday)
+  const openTime = settings?.booking_open_time?.slice(0, 5)
 
   useEffect(
     () => () => {
@@ -113,11 +137,17 @@ export default function Settings() {
     setPreview(URL.createObjectURL(file))
   }
 
-  const onSubmit = async ({ hours: week, contact_number, ...info }: FormValues) => {
+  const onSubmit = async ({
+    hours: week,
+    contact_number,
+    booking_open_time,
+    ...info
+  }: FormValues) => {
     try {
       await updateSettings({
         ...info,
         contact_number: contact_number ? phone(contact_number) : '',
+        booking_open_time: booking_open_time || null,
       })
       await updateOpeningHours(
         week.map((d) => ({
@@ -251,13 +281,6 @@ export default function Settings() {
               />
             </div>
           </div>
-          <button
-            type="submit"
-            disabled={isSubmitting || !settings}
-            className="bg-brand-red hover:bg-brand-red/90 rounded-md px-6 py-3 text-sm font-bold text-white transition-colors duration-200 disabled:opacity-60"
-          >
-            Save Changes
-          </button>
         </div>
       </section>
 
@@ -311,6 +334,112 @@ export default function Settings() {
         </ul>
         <p className="text-brand-ink/60 mt-5 text-xs">Toggle off to mark a day as closed.</p>
       </section>
+
+      <section aria-labelledby="settings-title" className={card}>
+        <h2 id="settings-title" className={heading}>
+          Reservation Settings
+        </h2>
+        <div className="mt-5 space-y-5">
+          <div>
+            <label htmlFor="opening_time" className={label}>
+              Opening Time for Booking
+            </label>
+            <select id="opening_time" {...register('booking_open_time')} className={field}>
+              <option value="">
+                Same as opening hours
+                {today?.is_open && today.open_time
+                  ? ` (${formatTime(today.open_time)} today)`
+                  : ' (closed today)'}
+              </option>
+              {[...new Set([...halfHours, ...(openTime ? [openTime] : [])])].sort().map((t) => (
+                <option key={t} value={t}>
+                  {formatTime(t)}
+                </option>
+              ))}
+            </select>
+            <p className="text-brand-ink/60 mt-1.5 text-xs">
+              The first booking time each day. Times before opening still start at opening.
+            </p>
+          </div>
+          <div>
+            <label htmlFor="slot_minutes" className={label}>
+              Time Slot Length
+            </label>
+            <select
+              id="slot_minutes"
+              {...register('slot_minutes', { valueAsNumber: true })}
+              className={field}
+            >
+              {slotLengths.map((m) => (
+                <option key={m} value={m}>
+                  {m} minutes
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label htmlFor="max_pax" className={label}>
+              Max Guests per Booking
+            </label>
+            <input
+              id="max_pax"
+              type="number"
+              min="1"
+              max="100"
+              step="1"
+              aria-invalid={!!errors.max_pax}
+              {...register('max_pax', { valueAsNumber: true })}
+              className={field}
+            />
+            {errors.max_pax && <p className={error}>{errors.max_pax.message}</p>}
+          </div>
+          <div className="flex items-center justify-between gap-3">
+            <p id="deposit-label" className={label}>
+              Require Deposit
+            </p>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={!!depositOn}
+              aria-labelledby="deposit-label"
+              onClick={() => setValue('deposit_required', !depositOn)}
+              className={`relative h-6 w-11 shrink-0 rounded-full transition-colors duration-200 ${depositOn ? 'bg-brand-green' : 'bg-brand-ink/20'}`}
+            >
+              <span
+                className={`absolute top-0.5 left-0.5 size-5 rounded-full bg-white shadow transition-transform duration-200 ${depositOn ? 'translate-x-5' : ''}`}
+              />
+            </button>
+          </div>
+          <div>
+            <label htmlFor="deposit_per_guest" className={label}>
+              Deposit Amount (₱) per guest
+            </label>
+            <input
+              id="deposit_per_guest"
+              type="number"
+              min="0"
+              step="0.01"
+              disabled={!depositOn}
+              aria-invalid={!!errors.deposit_per_guest}
+              {...register('deposit_per_guest', { valueAsNumber: true })}
+              className={`${field} disabled:bg-brand-cream/60 disabled:text-brand-ink/50`}
+            />
+            {errors.deposit_per_guest && (
+              <p className={error}>{errors.deposit_per_guest.message}</p>
+            )}
+          </div>
+        </div>
+      </section>
+
+      <div className="sticky bottom-4 z-10 flex justify-end xl:col-span-2">
+        <button
+          type="submit"
+          disabled={isSubmitting || !settings}
+          className="bg-brand-red hover:bg-brand-red/90 rounded-md px-6 py-3 text-sm font-bold text-white transition-colors duration-200 disabled:opacity-60"
+        >
+          Save Changes
+        </button>
+      </div>
     </form>
   )
 }

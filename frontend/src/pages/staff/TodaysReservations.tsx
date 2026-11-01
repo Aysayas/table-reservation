@@ -1,23 +1,15 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { ChevronLeft, ChevronRight, Search, X } from 'lucide-react'
+import { useQuery } from '@tanstack/react-query'
+import { ChevronLeft, ChevronRight, Search } from 'lucide-react'
 import { useState } from 'react'
-import { toast } from 'sonner'
-import ConfirmDialog from '@/components/ConfirmDialog'
+import ReservationActions from '@/components/ReservationActions'
 import { formatTime } from '@/lib/hours'
-import {
-  listReservations,
-  type ReservationView,
-  updateReservationStatus,
-} from '@/services/reservations'
-import { getTables } from '@/services/tables'
-import type { PublicReservation, ReservationStatus } from '@/types/db'
+import { listReservations, type ReservationView } from '@/services/reservations'
+import type { ReservationStatus } from '@/types/db'
 
 const th = 'text-brand-ink/70 px-4 py-3 text-left text-xs font-bold tracking-[0.1em] uppercase'
 const td = 'text-brand-charcoal px-4 py-3 text-sm'
 const control =
   'border-brand-line focus:border-brand-gold rounded-md border bg-white px-3 py-2.5 text-sm outline-none'
-const action =
-  'border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal rounded-md border px-3 py-1.5 text-xs font-bold whitespace-nowrap transition-colors duration-200 hover:text-white'
 
 const statusBadge: Record<ReservationStatus, string> = {
   pending: 'bg-brand-gold/20 text-brand-gold-deep',
@@ -41,34 +33,14 @@ const views: { value: ReservationView; label: string }[] = [
 ]
 
 export default function TodaysReservations() {
-  const queryClient = useQueryClient()
   const [search, setSearch] = useState('')
   const [view, setView] = useState<ReservationView>('today')
   const [status, setStatus] = useState<ReservationStatus | ''>('')
   const [page, setPage] = useState(1)
-  const [assigning, setAssigning] = useState<PublicReservation | null>(null)
-  const [confirming, setConfirming] = useState<{
-    reservation: PublicReservation
-    status: 'no_show' | 'cancelled'
-  } | null>(null)
   const { data } = useQuery({
     queryKey: ['reservations', { view, status, search, page }],
     queryFn: () => listReservations({ view, status, search, page }),
     refetchInterval: 30000,
-  })
-  const { data: tables = [] } = useQuery({ queryKey: ['tables'], queryFn: () => getTables() })
-  const change = useMutation({
-    mutationFn: (args: { id: number; status?: ReservationStatus; table_id?: number }) =>
-      updateReservationStatus(args.id, { status: args.status, table_id: args.table_id }),
-    onSuccess: (r) => {
-      toast.success(`${r.reference_code} is now ${statusText[r.status].toLowerCase()}`)
-      setAssigning(null)
-      setConfirming(null)
-      queryClient.invalidateQueries({ queryKey: ['reservations'] })
-      queryClient.invalidateQueries({ queryKey: ['tables'] })
-      queryClient.invalidateQueries({ queryKey: ['dashboard'] })
-    },
-    onError: (e) => toast.error(e.message),
   })
 
   const rows = data?.data ?? []
@@ -171,68 +143,7 @@ export default function TodaysReservations() {
                   </span>
                 </td>
                 <td className={td}>
-                  {r.status === 'confirmed' && (
-                    <div className="flex gap-2">
-                      <button
-                        type="button"
-                        aria-label={`Mark ${r.reference_code} arrived`}
-                        onClick={() => change.mutate({ id: r.reservation_id, status: 'arrived' })}
-                        className={action}
-                      >
-                        Arrived
-                      </button>
-                      <button
-                        type="button"
-                        aria-label={`Mark ${r.reference_code} no-show`}
-                        onClick={() => setConfirming({ reservation: r, status: 'no_show' })}
-                        className={action}
-                      >
-                        No-show
-                      </button>
-                      <button
-                        type="button"
-                        aria-label={`Cancel ${r.reference_code}`}
-                        onClick={() => setConfirming({ reservation: r, status: 'cancelled' })}
-                        className={action}
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  )}
-                  {r.status === 'pending' && (
-                    <div className="flex gap-2">
-                      <button
-                        type="button"
-                        aria-label={`Assign a table to ${r.reference_code}`}
-                        onClick={() => setAssigning(r)}
-                        className={action}
-                      >
-                        Assign Table
-                      </button>
-                      <button
-                        type="button"
-                        aria-label={`Cancel ${r.reference_code}`}
-                        onClick={() => setConfirming({ reservation: r, status: 'cancelled' })}
-                        className={action}
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  )}
-                  {r.status === 'no_show' && (
-                    <button
-                      type="button"
-                      aria-label={`Undo no-show for ${r.reference_code}`}
-                      disabled={change.isPending}
-                      onClick={() => change.mutate({ id: r.reservation_id, status: 'confirmed' })}
-                      className={action}
-                    >
-                      Undo No-show
-                    </button>
-                  )}
-                  {(r.status === 'arrived' || r.status === 'cancelled') && (
-                    <span className="text-brand-ink/50">—</span>
-                  )}
+                  <ReservationActions reservation={r} />
                 </td>
               </tr>
             ))}
@@ -283,82 +194,6 @@ export default function TodaysReservations() {
           </button>
         </nav>
       </div>
-
-      {confirming && (
-        <ConfirmDialog
-          title={
-            confirming.status === 'cancelled'
-              ? `Cancel ${confirming.reservation.reference_code}?`
-              : `Mark ${confirming.reservation.reference_code} as a no-show?`
-          }
-          body={
-            confirming.status === 'cancelled'
-              ? `${confirming.reservation.customer.full_name}'s booking will be cancelled and this can't be undone.${confirming.reservation.deposit_status === 'paid' ? ' The deposit is non-refundable.' : ''}`
-              : `This frees the table. If ${confirming.reservation.customer.full_name} comes later, use Undo No-show.`
-          }
-          confirmLabel={confirming.status === 'cancelled' ? 'Cancel Reservation' : 'Mark No-show'}
-          closeLabel={confirming.status === 'cancelled' ? 'Keep Reservation' : 'Go Back'}
-          busy={change.isPending}
-          onConfirm={() =>
-            change.mutate({ id: confirming.reservation.reservation_id, status: confirming.status })
-          }
-          onClose={() => setConfirming(null)}
-        />
-      )}
-
-      {assigning && (
-        <div className="fixed inset-0 z-30 flex items-center justify-center bg-black/40 p-4">
-          <div
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="assign-title"
-            className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl"
-          >
-            <div className="flex items-start justify-between gap-4">
-              <h2 id="assign-title" className="text-brand-charcoal font-serif text-2xl font-bold">
-                Assign a table
-              </h2>
-              <button
-                type="button"
-                aria-label="Close"
-                onClick={() => setAssigning(null)}
-                className="text-brand-ink/60 hover:text-brand-charcoal"
-              >
-                <X className="size-5" />
-              </button>
-            </div>
-            <p className="text-brand-ink/75 mt-2 text-sm">
-              {assigning.reference_code} · {assigning.customer.full_name} · {assigning.pax}{' '}
-              {assigning.pax === 1 ? 'guest' : 'guests'} at {formatTime(assigning.reservation_time)}
-            </p>
-            {tables.every((t) => t.capacity < assigning.pax) && (
-              <p className="text-brand-red mt-5 text-sm">
-                No table seats {assigning.pax} guests. Add one under Tables and QR Codes.
-              </p>
-            )}
-            <ul className="mt-5 grid grid-cols-4 gap-2">
-              {tables
-                .filter((t) => t.capacity >= assigning.pax)
-                .map((t) => (
-                  <li key={t.table_id}>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        change.mutate({ id: assigning.reservation_id, table_id: t.table_id })
-                      }
-                      className="border-brand-line hover:border-brand-red w-full rounded-md border px-2 py-3 text-center transition-colors duration-200"
-                    >
-                      <span className="text-brand-charcoal block text-sm font-bold">
-                        {t.table_number}
-                      </span>
-                      <span className="text-brand-ink/60 block text-xs">{t.capacity} seats</span>
-                    </button>
-                  </li>
-                ))}
-            </ul>
-          </div>
-        </div>
-      )}
     </div>
   )
 }
