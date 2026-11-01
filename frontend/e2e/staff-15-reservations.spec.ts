@@ -31,7 +31,22 @@ test('arrived and no-show change a confirmed booking', async ({ page }) => {
   await expect(page.getByText('RSV-000004 is now arrived')).toBeVisible()
   await expect(page.getByRole('row', { name: /RSV-000004/ })).toContainText('Arrived')
   await page.getByRole('button', { name: 'Mark RSV-000005 no-show' }).click()
+  const dialog = page.getByRole('dialog')
+  await dialog.getByRole('button', { name: 'Go Back' }).click()
+  await expect(page.getByRole('row', { name: /RSV-000005/ })).toContainText('Confirmed')
+  await page.getByRole('button', { name: 'Mark RSV-000005 no-show' }).click()
+  await dialog.getByRole('button', { name: 'Mark No-show' }).click()
   await expect(page.getByRole('row', { name: /RSV-000005/ })).toContainText('No-show')
+  await page.getByRole('button', { name: 'Undo no-show for RSV-000005' }).click()
+  await expect(page.getByRole('row', { name: /RSV-000005/ })).toContainText('Confirmed')
+})
+
+test('staff can cancel a booking after confirming', async ({ page }) => {
+  await page.goto(url)
+  await page.getByRole('button', { name: 'Cancel RSV-000004' }).click()
+  await page.getByRole('dialog').getByRole('button', { name: 'Cancel Reservation' }).click()
+  await expect(page.getByText('RSV-000004 is now cancelled')).toBeVisible()
+  await expect(page.getByRole('row', { name: /RSV-000004/ })).toContainText('Cancelled')
 })
 
 test('assign table lists tables that fit and confirms the booking', async ({ page }) => {

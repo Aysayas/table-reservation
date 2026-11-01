@@ -144,7 +144,7 @@ class Reservations extends Controller {
 				$this->release_table($old_table);
 			}
 			if ($new_table !== null) {
-				$this->hold_table($new_table);
+				$this->hold_table($new_table, $input['reservation_date']);
 			}
 			$this->Reservation_model->commit();
 		} catch (Throwable $e) {
@@ -187,7 +187,7 @@ class Reservations extends Controller {
 		}
 
 		$current = $reservation['status'];
-		if (!in_array($current, ['pending', 'confirmed'], true)) {
+		if (!in_array($current, ['pending', 'confirmed', 'no_show'], true)) {
 			$this->api->respond_error("This reservation is {$current} and can't be changed", 409);
 		}
 
@@ -213,6 +213,7 @@ class Reservations extends Controller {
 		$allowed = [
 			'pending' => ['pending', 'confirmed', 'no_show', 'cancelled'],
 			'confirmed' => ['confirmed', 'arrived', 'no_show', 'cancelled'],
+			'no_show' => ['pending', 'confirmed'],
 		];
 		if (!in_array($next, $allowed[$current], true)) {
 			$this->api->respond_error("A reservation can't go from {$current} to {$next}", 409);
@@ -220,6 +221,17 @@ class Reservations extends Controller {
 
 		$old_table = $reservation['table_id'] !== null ? (int) $reservation['table_id'] : null;
 		$new_table = $has_table ? $table_id : $old_table;
+		if ($current === 'no_show') {
+			$next = $new_table !== null ? 'confirmed' : 'pending';
+			$taken = $new_table !== null && $this->Reservation_model
+				->filter(['table_id' => $new_table, 'reservation_date' => $reservation['reservation_date'], 'reservation_time' => $reservation['reservation_time']])
+				->in('status', $this->active)
+				->not_where('reservation_id', $id)
+				->count();
+			if ($taken) {
+				$this->api->respond_error('That table was given to another booking. Assign a new table instead', 409);
+			}
+		}
 		if ($next === 'arrived' && $new_table === null) {
 			$this->api->respond_error('Assign a table before marking the guests arrived', 409);
 		}
@@ -236,7 +248,7 @@ class Reservations extends Controller {
 				} elseif (in_array($next, ['no_show', 'cancelled'], true)) {
 					$this->release_table($new_table);
 				} else {
-					$this->hold_table($new_table);
+					$this->hold_table($new_table, $reservation['reservation_date']);
 				}
 			}
 			$this->Reservation_model->commit();
@@ -624,8 +636,11 @@ class Reservations extends Controller {
 		$this->Table_model->update_where(['table_id' => $table_id, 'status' => 'reserved'], ['status' => 'available']);
 	}
 
-	private function hold_table($table_id)
+	private function hold_table($table_id, $date)
 	{
+		if ($date !== date('Y-m-d')) {
+			return;
+		}
 		$this->Table_model->update_where(['table_id' => $table_id, 'status' => 'available'], ['status' => 'reserved']);
 	}
 

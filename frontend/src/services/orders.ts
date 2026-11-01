@@ -202,7 +202,10 @@ export async function updateOrderStatus(
   if (USE_SAMPLE) {
     const order = sampleOrders.find((o) => o.order_id === order_id)
     if (!order) throw new Error('Order not found')
-    if (nextStatus[order.status] !== status) throw new Error('This order was already updated')
+    const undoServed = order.status === 'served' && status === 'ready'
+    if (nextStatus[order.status] !== status && !undoServed) {
+      throw new Error('This order was already updated')
+    }
     order.status = status
     return toPublic(order)
   }

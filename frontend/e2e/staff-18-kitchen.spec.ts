@@ -40,6 +40,16 @@ test('each button moves the order one step until it is served', async ({ page })
     .click()
   await expect(page.getByText('Order #3 is now served')).toBeVisible()
   await expect(page.getByRole('listitem', { name: 'Order #3' })).toHaveCount(0)
+  await page.getByRole('button', { name: 'Undo' }).click()
+  await expect(ready.getByRole('listitem', { name: 'Order #3' })).toBeVisible()
+})
+
+test('staff reach the kitchen from the sidebar and can go back', async ({ page }) => {
+  await page.goto('/staff/orders')
+  await page.getByRole('link', { name: 'Kitchen', exact: true }).click()
+  await expect(page).toHaveURL(url)
+  await page.getByRole('link', { name: 'Back' }).click()
+  await expect(page).toHaveURL('/staff/orders')
 })
 
 test('log out goes to the staff login', async ({ page }) => {

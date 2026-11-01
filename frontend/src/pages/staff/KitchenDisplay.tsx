@@ -1,8 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { differenceInMinutes, format, parseISO } from 'date-fns'
-import { LogOut } from 'lucide-react'
+import { ArrowLeft, LogOut } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import useOrderEvents, { STAFF_CHANNEL } from '@/hooks/useOrderEvents'
 import { logout } from '@/services/auth'
@@ -60,6 +60,7 @@ const waited = (minutes: number) =>
 export default function KitchenDisplay() {
   const queryClient = useQueryClient()
   const navigate = useNavigate()
+  const from = (useLocation().state as { from?: string } | null)?.from
   const signOut = async (e: React.MouseEvent) => {
     e.preventDefault()
     await logout().catch(() => undefined)
@@ -79,8 +80,13 @@ export default function KitchenDisplay() {
   const move = useMutation({
     mutationFn: ({ order, next }: { order: StaffOrder; next: OrderStatus }) =>
       updateOrderStatus(order.order_id, next),
-    onSuccess: (order) => {
-      toast.success(`Order #${order.order_id} is now ${order.status}`)
+    onSuccess: (updated, { order }) => {
+      toast.success(
+        `Order #${updated.order_id} is now ${updated.status}`,
+        updated.status === 'served'
+          ? { action: { label: 'Undo', onClick: () => move.mutate({ order, next: 'ready' }) } }
+          : undefined,
+      )
       for (const key of ['orders', 'tables', 'dashboard']) {
         queryClient.invalidateQueries({ queryKey: [key] })
       }
@@ -92,6 +98,15 @@ export default function KitchenDisplay() {
   return (
     <div className="bg-brand-cream flex min-h-screen flex-col">
       <header className="bg-brand-charcoal flex flex-wrap items-center gap-x-6 gap-y-3 px-6 py-4 text-white md:px-8">
+        {from && (
+          <Link
+            to={from}
+            className="flex items-center gap-2 text-sm text-white/70 transition-colors duration-200 hover:text-white"
+          >
+            <ArrowLeft className="size-4" />
+            Back
+          </Link>
+        )}
         <h1 className="font-serif text-2xl">Kitchen Display</h1>
         <ul aria-label="Waiting time" className="flex flex-wrap gap-2">
           {ages.map((age) => (

@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ChevronLeft, ChevronRight, Search, X } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
+import ConfirmDialog from '@/components/ConfirmDialog'
 import { formatTime } from '@/lib/hours'
 import {
   listReservations,
@@ -46,9 +47,14 @@ export default function TodaysReservations() {
   const [status, setStatus] = useState<ReservationStatus | ''>('')
   const [page, setPage] = useState(1)
   const [assigning, setAssigning] = useState<PublicReservation | null>(null)
+  const [confirming, setConfirming] = useState<{
+    reservation: PublicReservation
+    status: 'no_show' | 'cancelled'
+  } | null>(null)
   const { data } = useQuery({
     queryKey: ['reservations', { view, status, search, page }],
     queryFn: () => listReservations({ view, status, search, page }),
+    refetchInterval: 30000,
   })
   const { data: tables = [] } = useQuery({ queryKey: ['tables'], queryFn: () => getTables() })
   const change = useMutation({
@@ -57,6 +63,7 @@ export default function TodaysReservations() {
     onSuccess: (r) => {
       toast.success(`${r.reference_code} is now ${statusText[r.status].toLowerCase()}`)
       setAssigning(null)
+      setConfirming(null)
       queryClient.invalidateQueries({ queryKey: ['reservations'] })
       queryClient.invalidateQueries({ queryKey: ['tables'] })
       queryClient.invalidateQueries({ queryKey: ['dashboard'] })
@@ -177,24 +184,53 @@ export default function TodaysReservations() {
                       <button
                         type="button"
                         aria-label={`Mark ${r.reference_code} no-show`}
-                        onClick={() => change.mutate({ id: r.reservation_id, status: 'no_show' })}
+                        onClick={() => setConfirming({ reservation: r, status: 'no_show' })}
                         className={action}
                       >
                         No-show
                       </button>
+                      <button
+                        type="button"
+                        aria-label={`Cancel ${r.reference_code}`}
+                        onClick={() => setConfirming({ reservation: r, status: 'cancelled' })}
+                        className={action}
+                      >
+                        Cancel
+                      </button>
                     </div>
                   )}
                   {r.status === 'pending' && (
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        aria-label={`Assign a table to ${r.reference_code}`}
+                        onClick={() => setAssigning(r)}
+                        className={action}
+                      >
+                        Assign Table
+                      </button>
+                      <button
+                        type="button"
+                        aria-label={`Cancel ${r.reference_code}`}
+                        onClick={() => setConfirming({ reservation: r, status: 'cancelled' })}
+                        className={action}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  )}
+                  {r.status === 'no_show' && (
                     <button
                       type="button"
-                      aria-label={`Assign a table to ${r.reference_code}`}
-                      onClick={() => setAssigning(r)}
+                      aria-label={`Undo no-show for ${r.reference_code}`}
+                      disabled={change.isPending}
+                      onClick={() => change.mutate({ id: r.reservation_id, status: 'confirmed' })}
                       className={action}
                     >
-                      Assign Table
+                      Undo No-show
                     </button>
                   )}
-                  {r.status !== 'confirmed' && r.status !== 'pending' && (
+                  {(r.status === 'arrived' || r.status === 'cancelled') && (
                     <span className="text-brand-ink/50">—</span>
                   )}
                 </td>
@@ -248,6 +284,28 @@ export default function TodaysReservations() {
         </nav>
       </div>
 
+      {confirming && (
+        <ConfirmDialog
+          title={
+            confirming.status === 'cancelled'
+              ? `Cancel ${confirming.reservation.reference_code}?`
+              : `Mark ${confirming.reservation.reference_code} as a no-show?`
+          }
+          body={
+            confirming.status === 'cancelled'
+              ? `${confirming.reservation.customer.full_name}'s booking will be cancelled and this can't be undone.${confirming.reservation.deposit_status === 'paid' ? ' The deposit is non-refundable.' : ''}`
+              : `This frees the table. If ${confirming.reservation.customer.full_name} comes later, use Undo No-show.`
+          }
+          confirmLabel={confirming.status === 'cancelled' ? 'Cancel Reservation' : 'Mark No-show'}
+          closeLabel={confirming.status === 'cancelled' ? 'Keep Reservation' : 'Go Back'}
+          busy={change.isPending}
+          onConfirm={() =>
+            change.mutate({ id: confirming.reservation.reservation_id, status: confirming.status })
+          }
+          onClose={() => setConfirming(null)}
+        />
+      )}
+
       {assigning && (
         <div className="fixed inset-0 z-30 flex items-center justify-center bg-black/40 p-4">
           <div
@@ -273,6 +331,11 @@ export default function TodaysReservations() {
               {assigning.reference_code} · {assigning.customer.full_name} · {assigning.pax}{' '}
               {assigning.pax === 1 ? 'guest' : 'guests'} at {formatTime(assigning.reservation_time)}
             </p>
+            {tables.every((t) => t.capacity < assigning.pax) && (
+              <p className="text-brand-red mt-5 text-sm">
+                No table seats {assigning.pax} guests. Add one under Tables and QR Codes.
+              </p>
+            )}
             <ul className="mt-5 grid grid-cols-4 gap-2">
               {tables
                 .filter((t) => t.capacity >= assigning.pax)

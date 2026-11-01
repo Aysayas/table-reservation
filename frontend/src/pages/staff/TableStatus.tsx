@@ -41,7 +41,13 @@ export default function TableStatus() {
     refetchInterval: 30000,
   })
   const tables = data.map((t) =>
-    t.status === 'available' && t.current_order ? { ...t, status: 'occupied' as const } : t,
+    t.status !== 'available'
+      ? t
+      : t.current_order
+        ? { ...t, status: 'occupied' as const }
+        : t.next_reservation
+          ? { ...t, status: 'reserved' as const }
+          : t,
   )
   const arrive = useMutation({
     mutationFn: (reservation_id: number) =>
@@ -55,10 +61,11 @@ export default function TableStatus() {
     onError: (e) => toast.error(e.message),
   })
 
-  const free = useMutation({
-    mutationFn: (table_id: number) => setTableStatus(table_id, 'available'),
+  const setStatus = useMutation({
+    mutationFn: ({ table_id, status }: { table_id: number; status: Status }) =>
+      setTableStatus(table_id, status),
     onSuccess: (t) => {
-      toast.success(`${t.table_number} is now available`)
+      toast.success(`${t.table_number} is now ${look[t.status].text.toLowerCase()}`)
       for (const key of ['tables', 'dashboard']) {
         queryClient.invalidateQueries({ queryKey: [key] })
       }
@@ -107,7 +114,17 @@ export default function TableStatus() {
 
             <div className="mt-5 flex flex-1 flex-col justify-end text-sm">
               {t.status === 'available' && (
-                <p className="text-brand-ink/60 mb-auto">Ready for guests</p>
+                <>
+                  <p className="text-brand-ink/60 mb-auto">Ready for guests</p>
+                  <button
+                    type="button"
+                    disabled={setStatus.isPending}
+                    onClick={() => setStatus.mutate({ table_id: t.table_id, status: 'occupied' })}
+                    className={cardButton}
+                  >
+                    Seat Guests
+                  </button>
+                </>
               )}
 
               {t.status === 'occupied' &&
@@ -117,7 +134,7 @@ export default function TableStatus() {
                       Order #{t.current_order.order_id} · {peso(t.current_order.total_amount)}
                     </p>
                     <p className="text-brand-ink/60 mt-1">
-                      Seated{' '}
+                      Ordered{' '}
                       {formatDistanceToNowStrict(parseISO(t.current_order.created_at), {
                         addSuffix: true,
                       })}
@@ -134,8 +151,10 @@ export default function TableStatus() {
                     <p className="text-brand-ink/60 mb-auto">No unpaid or unserved order</p>
                     <button
                       type="button"
-                      disabled={free.isPending}
-                      onClick={() => free.mutate(t.table_id)}
+                      disabled={setStatus.isPending}
+                      onClick={() =>
+                        setStatus.mutate({ table_id: t.table_id, status: 'available' })
+                      }
                       className={cardButton}
                     >
                       Free Table
@@ -161,7 +180,19 @@ export default function TableStatus() {
                     </button>
                   </>
                 ) : (
-                  <p className="text-brand-ink/60 mb-auto">No booking left today</p>
+                  <>
+                    <p className="text-brand-ink/60 mb-auto">No booking left today</p>
+                    <button
+                      type="button"
+                      disabled={setStatus.isPending}
+                      onClick={() =>
+                        setStatus.mutate({ table_id: t.table_id, status: 'available' })
+                      }
+                      className={cardButton}
+                    >
+                      Free Table
+                    </button>
+                  </>
                 ))}
             </div>
           </li>

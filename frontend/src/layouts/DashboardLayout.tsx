@@ -82,6 +82,7 @@ export default function DashboardLayout({ title, items }: Props) {
               key={item.to}
               to={item.to}
               end={item.to.split('/').length === 2}
+              state={item.to === '/kitchen' ? { from: pathname } : undefined}
               className={({ isActive }) =>
                 `rounded-md px-3 py-2.5 text-sm font-semibold transition-colors duration-200 ${isActive ? 'bg-brand-red text-white' : 'text-white/75 hover:bg-white/10 hover:text-white'}`
               }
