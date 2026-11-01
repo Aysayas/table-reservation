@@ -112,6 +112,58 @@ class Auth extends Controller {
 		$this->respond_with_tokens($this->User_model->find($user['user_id']));
 	}
 
+	public function update_profile()
+	{
+		$payload = $this->api->require_role('customer');
+		$this->api->rate_limit('profile_' . $payload['sub'], 10, 60);
+		$user = $this->User_model->find($payload['sub']);
+		if (!$user || !$user['is_active']) {
+			$this->api->respond_error('Unauthorized', 401);
+		}
+
+		$input = $this->input();
+		$name = is_string($input['full_name'] ?? null) ? trim($input['full_name']) : '';
+		$mobile = is_string($input['mobile_number'] ?? null) ? $input['mobile_number'] : '';
+		$email = is_string($input['email'] ?? null) ? strtolower(trim($input['email'])) : '';
+		$password = $input['current_password'] ?? null;
+
+		$errors = [];
+		if ($name === '' || mb_strlen($name) > 100) {
+			$errors[] = '"full_name" is required, up to 100 characters.';
+		}
+		if (!preg_match('/^09\d{9}$/', $mobile)) {
+			$errors[] = '"mobile_number" must be 11 digits starting with 09.';
+		} elseif ($mobile !== $user['mobile_number'] && $this->User_model->find_by('mobile_number', $mobile)) {
+			$errors[] = 'An account with that mobile number already exists.';
+		}
+		if (!filter_var($email, FILTER_VALIDATE_EMAIL) || mb_strlen($email) > 100) {
+			$errors[] = '"email" must be a valid email, up to 100 characters.';
+		} elseif ($email !== $user['email'] && $this->User_model->find_by('email', $email)) {
+			$errors[] = 'An account with that email already exists.';
+		}
+		$contact_changed = $mobile !== $user['mobile_number'] || $email !== $user['email'];
+		if ($contact_changed && (!is_string($password) || !password_verify($password, $user['password_hash']))) {
+			$errors[] = 'Your current password is wrong.';
+		}
+		if ($errors) {
+			$this->api->respond(['error' => 'Invalid input', 'status' => 422, 'errors' => $errors], 422);
+		}
+
+		$changes = ['full_name' => $name, 'mobile_number' => $mobile, 'email' => $email];
+		try {
+			$this->User_model->update($user['user_id'], $changes);
+		} catch (Throwable $e) {
+			$this->api->respond(['error' => 'Invalid input', 'status' => 422, 'errors' => ['An account with those details already exists.']], 422);
+		}
+		$this->call->model('Customer_model');
+		$customer = $this->Customer_model->find_by('user_id', $user['user_id']);
+		if ($customer) {
+			$this->Customer_model->update($customer['customer_id'], $changes);
+		}
+
+		$this->api->respond(['data' => $this->public_user($this->User_model->find($user['user_id']))]);
+	}
+
 	public function forgot_password()
 	{
 		$this->api->rate_limit('forgot_' . $this->api->client_ip(), 5, 60);

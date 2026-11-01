@@ -7,7 +7,7 @@ test('dashboard shows the sidebar, staff name and the four numbers', async ({ pa
   for (const name of ['Dashboard', 'Reservations', 'Table Status', 'Orders and Payments']) {
     await expect(sidebar.getByRole('link', { name, exact: true })).toBeVisible()
   }
-  await expect(page.getByRole('button', { name: /Staff Name/ })).toBeVisible()
+  await expect(page.locator('header').getByText('Staff Name')).toBeVisible()
   for (const [label, value] of [
     ['Reservations Today', '5'],
     ['Guests Arrived', '2'],
@@ -47,9 +47,12 @@ test('view all opens the reservations and orders pages', async ({ page }) => {
   await expect(page).toHaveURL('/staff/orders')
 })
 
-test('the staff menu logs out', async ({ page }) => {
+test('the top bar shows who is logged in, and log out is in one place', async ({ page }) => {
   await page.goto('/staff')
-  await page.getByRole('button', { name: /Staff Name/ }).click()
-  await page.locator('header').getByRole('link', { name: 'Log Out' }).click()
+  const header = page.locator('header')
+  await expect(header.getByText('Staff Name')).toBeVisible()
+  await expect(header.getByText('Staff', { exact: true })).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Log Out' })).toHaveCount(1)
+  await page.getByRole('link', { name: 'Log Out' }).click()
   await expect(page).toHaveURL('/staff/login')
 })

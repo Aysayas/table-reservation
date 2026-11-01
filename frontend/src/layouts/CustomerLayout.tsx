@@ -1,7 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
 import { Menu as MenuIcon, ShoppingCart, X } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
+import { toast } from 'sonner'
+import AccountMenu from '@/components/AccountMenu'
 import useAccount from '@/hooks/useAccount'
 import { logoutAccount } from '@/services/account'
 import { getSettings } from '@/services/settings'
@@ -19,6 +21,7 @@ const customerLinks = [
   { to: '/reservation', label: 'Find My Reservation' },
 ]
 const tableLinks = customerLinks.slice(1, 3)
+const loggedOutKey = 'logged-out'
 
 export default function CustomerLayout() {
   const { data: settings } = useQuery({ queryKey: ['settings'], queryFn: getSettings })
@@ -29,11 +32,28 @@ export default function CustomerLayout() {
   const logOut = async () => {
     setOpen(false)
     await logoutAccount()
+    try {
+      sessionStorage.setItem(loggedOutKey, '1')
+    } catch {
+      window.location.assign('/')
+      return
+    }
     window.location.assign('/')
   }
+  useEffect(() => {
+    try {
+      if (sessionStorage.getItem(loggedOutKey)) {
+        sessionStorage.removeItem(loggedOutKey)
+        toast.success("You're logged out")
+      }
+    } catch {
+      return
+    }
+  }, [])
   const words = settings?.restaurant_name.split(' ') ?? []
   const lastWord = words.pop()
-  const panelLinks = wide ? customerLinks : tableLinks
+  const siteLinks = account ? customerLinks.slice(0, 3) : customerLinks
+  const panelLinks = wide ? siteLinks : tableLinks
   const tableId = Number(pathname.match(/^\/table\/(\d+)/)?.[1]) || null
   const { data: table } = useQuery({
     queryKey: ['table', tableId],
@@ -51,7 +71,12 @@ export default function CustomerLayout() {
       <header
         className={`bg-brand-charcoal relative flex items-center justify-between gap-2 border-b border-white/10 px-3 py-3 min-[380px]:px-4 ${wide ? 'md:px-[max(2.5rem,calc((100%_-_72rem)/2_+_2.5rem))] md:py-4' : ''}`}
       >
-        <Link to="/" className="flex shrink-0 items-center gap-2" onClick={() => setOpen(false)}>
+        <Link
+          to="/"
+          aria-label={settings?.restaurant_name}
+          className="flex shrink-0 items-center gap-2"
+          onClick={() => setOpen(false)}
+        >
           <span className={`size-8 overflow-hidden rounded-full ${wide ? 'md:size-10' : ''}`}>
             <img
               src={settings?.logo_url ?? '/logo.png'}
@@ -59,7 +84,9 @@ export default function CustomerLayout() {
               className="size-full scale-[2.2] object-cover object-top"
             />
           </span>
-          <span className="flex items-baseline gap-1.5 whitespace-nowrap">
+          <span
+            className={`flex items-baseline gap-1.5 whitespace-nowrap ${account ? (wide ? 'max-[379px]:hidden' : 'hidden') : ''}`}
+          >
             <span className={`font-serif text-lg font-bold text-white ${wide ? 'md:text-xl' : ''}`}>
               {words.join(' ')}
             </span>
@@ -71,25 +98,12 @@ export default function CustomerLayout() {
         <div className={`flex shrink-0 items-center gap-2 ${wide ? 'xl:gap-8' : ''}`}>
           {wide && (
             <nav aria-label="Main" className="text-brand-cream hidden items-center gap-8 xl:flex">
-              {customerLinks.map((link) => (
+              {siteLinks.map((link) => (
                 <NavLink key={link.to} to={link.to} end className={wideNavLink}>
                   {link.label}
                 </NavLink>
               ))}
-              {account ? (
-                <>
-                  <NavLink to="/my-reservations" className={wideNavLink}>
-                    My Reservations
-                  </NavLink>
-                  <button
-                    type="button"
-                    onClick={logOut}
-                    className="hover:text-brand-gold border-b border-transparent pb-1 text-xs font-semibold tracking-[0.15em] uppercase transition-colors duration-200"
-                  >
-                    Log Out
-                  </button>
-                </>
-              ) : (
+              {!account && (
                 <NavLink to="/login" className={wideNavLink}>
                   Log In
                 </NavLink>
@@ -126,6 +140,14 @@ export default function CustomerLayout() {
               {wide && <span className="hidden xl:inline"> a Table</span>}
             </Link>
           )}
+          {account && (
+            <AccountMenu
+              account={account}
+              showName={wide}
+              onOpen={() => setOpen(false)}
+              onLogOut={logOut}
+            />
+          )}
           <button
             type="button"
             aria-label={open ? 'Close menu' : 'Open menu'}
@@ -145,21 +167,11 @@ export default function CustomerLayout() {
                 {link.label}
               </Link>
             ))}
-            {wide &&
-              (account ? (
-                <>
-                  <Link to="/my-reservations" className={navLink} onClick={() => setOpen(false)}>
-                    My Reservations
-                  </Link>
-                  <button type="button" onClick={logOut} className={`${navLink} w-full text-left`}>
-                    Log Out
-                  </button>
-                </>
-              ) : (
-                <Link to="/login" className={navLink} onClick={() => setOpen(false)}>
-                  Log In
-                </Link>
-              ))}
+            {wide && !account && (
+              <Link to="/login" className={navLink} onClick={() => setOpen(false)}>
+                Log In
+              </Link>
+            )}
           </nav>
         )}
       </header>

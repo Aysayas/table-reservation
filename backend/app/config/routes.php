@@ -90,6 +90,7 @@ $router->group(['prefix' => 'api'], function ($router) {
     $router->post('/reservations', 'Reservations::store');
     $router->post('/reservations/find', 'Reservations::find');
     $router->get('/my/reservations', 'Reservations::mine');
+    $router->patch('/my/profile', 'Auth::update_profile');
     $router->get('/reservations/code/{code}', 'Reservations::by_code')->where('code', '[A-Za-z0-9-]+');
     $router->post('/reservations/code/{code}/cancel', 'Reservations::cancel')->where('code', '[A-Za-z0-9-]+');
     $router->post('/reservations/code/{code}/reschedule', 'Reservations::reschedule')->where('code', '[A-Za-z0-9-]+');

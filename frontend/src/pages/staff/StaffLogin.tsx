@@ -13,7 +13,6 @@ import { getSettings } from '@/services/settings'
 const schema = z.object({
   email: z.email('Enter a valid email'),
   password: z.string().min(1, 'Enter your password'),
-  remember: z.boolean(),
 })
 
 type LoginForm = z.infer<typeof schema>
@@ -32,7 +31,7 @@ export default function StaffLogin() {
     formState: { errors, isSubmitting },
   } = useForm<LoginForm>({
     resolver: zodResolver(schema),
-    defaultValues: { email: '', password: '', remember: false },
+    defaultValues: { email: '', password: '' },
   })
 
   const onSubmit = async ({ email, password }: LoginForm) => {
@@ -112,14 +111,6 @@ export default function StaffLogin() {
           </div>
 
           <div className="flex items-center justify-between gap-4 text-sm">
-            <label className="text-brand-ink flex items-center gap-2">
-              <input
-                type="checkbox"
-                className="accent-brand-red size-5"
-                {...register('remember')}
-              />
-              Remember me
-            </label>
             <button
               type="button"
               onClick={() => toast('Ask an admin to reset your password.')}
