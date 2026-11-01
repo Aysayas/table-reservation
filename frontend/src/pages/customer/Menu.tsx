@@ -50,7 +50,7 @@ function Dish({ item, category }: { item: MenuItem; category: string }) {
             {item.description}
           </p>
         )}
-        <div className="mt-auto flex items-end justify-between gap-2 pt-2">
+        <div className="mt-auto flex flex-wrap items-end justify-between gap-2 pt-2">
           {item.is_available ? (
             <span />
           ) : (

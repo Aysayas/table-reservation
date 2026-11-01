@@ -129,3 +129,28 @@ test('the Settings save bar is solid and reachable', async ({ page }) => {
   await expect(save).toBeInViewport()
   await expect(save.locator('..')).not.toHaveCSS('background-color', 'rgba(0, 0, 0, 0)')
 })
+
+test('guest pages fill a sideways phone', async ({ page, viewport }) => {
+  const { width, height } = viewport!
+  await page.setViewportSize({ width: height, height: width })
+  await page.goto('/about')
+  const main = await page.getByRole('main').boundingBox()
+  expect(main?.width).toBeGreaterThanOrEqual(height - 2)
+})
+
+test('table pages sit on cream at wide sizes', async ({ page, viewport }) => {
+  const { width, height } = viewport!
+  await page.setViewportSize({ width: height, height: width })
+  await page.goto('/table/5?t=sample-qr-token-5')
+  const backdrop = page.locator('div[aria-hidden="true"].fixed.inset-0')
+  await expect(backdrop).toHaveCount(1)
+  await expect(backdrop).toHaveClass(/bg-brand-cream/)
+})
+
+test('the About page fits a small phone', async ({ page }) => {
+  await page.setViewportSize({ width: 360, height: 640 })
+  await page.goto('/about')
+  await expect(page.getByRole('main')).toBeVisible()
+  const pageWidth = await page.evaluate<number>('document.documentElement.scrollWidth')
+  expect(pageWidth).toBeLessThanOrEqual(360)
+})

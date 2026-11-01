@@ -100,11 +100,11 @@ export default function About() {
 
       <section aria-label="Our values" className={`relative -mt-16 px-4 ${wrap}`}>
         <Reveal>
-          <ul className="bg-brand-charcoal grid grid-cols-2 overflow-hidden rounded-lg border border-white/10 text-white md:grid-cols-4">
+          <ul className="bg-brand-charcoal grid grid-cols-2 overflow-hidden rounded-lg border border-white/10 text-white lg:grid-cols-4">
             {values.map((value, index) => (
               <li
                 key={value.title}
-                className="group flex gap-3 border-white/10 px-4 py-5 odd:border-r md:border-r md:border-b-0 md:px-6 md:last:border-r-0 [&:nth-child(-n+2)]:border-b"
+                className="group flex gap-3 border-white/10 px-4 py-5 odd:border-r max-[400px]:flex-col md:px-6 lg:border-r lg:last:border-r-0 [&:nth-child(-n+2)]:border-b lg:[&:nth-child(-n+2)]:border-b-0"
               >
                 <span className="border-brand-gold text-brand-gold group-hover:bg-brand-gold group-hover:text-brand-charcoal flex size-9 shrink-0 items-center justify-center rounded-full border font-serif text-sm transition-colors duration-300">
                   {index + 1}
@@ -148,7 +148,7 @@ export default function About() {
         <Reveal className={wrap}>
           <p className={goldEyebrow}>Visit us</p>
           <h2 className="mt-3 font-serif text-4xl leading-tight md:text-5xl">Plan Your Visit</h2>
-          <div className="mt-10 grid gap-6 lg:grid-cols-[1.3fr_1fr_1fr]">
+          <div className="mt-10 grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[1.3fr_1fr_1fr]">
             <div className={card}>
               <h3 className={cardTitle}>Opening Hours</h3>
               <ul className="mt-6 overflow-hidden rounded-lg border border-white/10">
@@ -159,7 +159,7 @@ export default function About() {
                     <li
                       key={day}
                       aria-current={isToday ? 'date' : undefined}
-                      className={`flex items-center justify-between gap-3 border-b border-white/10 px-4 py-3 text-sm last:border-b-0 ${isToday ? 'bg-brand-red/20 border-l-brand-red border-l-2 font-bold' : ''}`}
+                      className={`flex flex-wrap items-center justify-between gap-x-3 border-b border-white/10 px-4 py-3 text-sm last:border-b-0 ${isToday ? 'bg-brand-red/20 border-l-brand-red border-l-2 font-bold' : ''}`}
                     >
                       <span className="flex items-center gap-2.5">
                         <span>{dayNames[day]}</span>
