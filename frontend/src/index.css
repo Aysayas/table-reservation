@@ -56,8 +56,21 @@ body {
 
 input[type='date'],
 input[type='time'] {
+  appearance: none;
+  display: block;
   min-width: 0;
+  max-width: 100%;
+}
+
+input[type='date'],
+input[type='time'],
+select {
   min-height: 2.75rem;
+}
+
+input::-webkit-date-and-time-value {
+  min-height: 1.5em;
+  text-align: left;
 }
 
 @media (pointer: coarse) {

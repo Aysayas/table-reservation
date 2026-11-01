@@ -154,3 +154,11 @@ test('the About page fits a small phone', async ({ page }) => {
   const pageWidth = await page.evaluate<number>('document.documentElement.scrollWidth')
   expect(pageWidth).toBeLessThanOrEqual(360)
 })
+
+test('the Home date field stays in its own column and matches Guests', async ({ page }) => {
+  await page.goto('/')
+  const date = await page.getByLabel('Date').boundingBox()
+  const guests = await page.getByLabel('Guests').boundingBox()
+  expect((date?.x ?? 0) + (date?.width ?? 0)).toBeLessThanOrEqual(guests?.x ?? 0)
+  expect(date?.height).toBe(guests?.height)
+})
