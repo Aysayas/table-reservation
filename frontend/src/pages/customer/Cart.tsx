@@ -132,7 +132,12 @@ export default function Cart() {
                     <button
                       type="button"
                       aria-label={`Remove ${line.name}`}
-                      onClick={() => remove(line)}
+                      onClick={() => {
+                        remove(line)
+                        toast(`${line.name} removed`, {
+                          action: { label: 'Undo', onClick: () => add(table, line) },
+                        })
+                      }}
                       className="text-brand-ink/70 hover:text-brand-red text-xs font-semibold underline-offset-2 hover:underline"
                     >
                       Remove

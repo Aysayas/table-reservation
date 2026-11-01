@@ -53,8 +53,12 @@ export default function CustomerLayout() {
   const words = settings?.restaurant_name.split(' ') ?? []
   const lastWord = words.pop()
   const siteLinks = account ? customerLinks.slice(0, 3) : customerLinks
-  const panelLinks = wide ? siteLinks : tableLinks
   const tableId = Number(pathname.match(/^\/table\/(\d+)/)?.[1]) || null
+  const panelLinks = wide
+    ? siteLinks
+    : tableLinks.map((link) =>
+        link.to === '/menu' && tableId ? { ...link, to: `/table/${tableId}/menu` } : link,
+      )
   const { data: table } = useQuery({
     queryKey: ['table', tableId],
     queryFn: () => getTable(tableId ?? 0),
