@@ -43,6 +43,9 @@ test('quantity buttons and remove update the totals', async ({ page }) => {
   await expect(page.getByText('Bulalo', { exact: true })).toHaveCount(0)
   await expect(page.getByText('₱250.00')).toHaveCount(3)
   await expect(page.getByRole('link', { name: 'Cart, 1 item' })).toBeVisible()
+  await page.getByRole('button', { name: 'Undo' }).click()
+  await expect(page.getByText('Bulalo', { exact: true })).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Cart, 3 items' })).toBeVisible()
 })
 
 test('you might also like adds a dish', async ({ page }) => {

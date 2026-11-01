@@ -178,7 +178,11 @@ export default function ItemDetails() {
           disabled={!item.is_available}
           onClick={() => {
             add(table, line(item, quantity, notes.trim()))
-            navigate(`/table/${table}/cart`)
+            setQuantity(1)
+            setNotes('')
+            toast.success(`${item.name} added to cart`, {
+              action: { label: 'View Cart', onClick: () => navigate(`/table/${table}/cart`) },
+            })
           }}
           className="bg-brand-red hover:bg-brand-red/90 block w-full rounded-lg py-4 text-sm font-bold tracking-[0.1em] text-white uppercase shadow-lg transition-colors duration-200 disabled:opacity-60"
         >

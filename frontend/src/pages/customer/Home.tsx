@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { format } from 'date-fns'
-import { ArrowRight, Plus, UtensilsCrossed } from 'lucide-react'
+import { ArrowRight, UtensilsCrossed } from 'lucide-react'
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import Reveal from '@/components/Reveal'
@@ -193,7 +193,7 @@ export default function Home() {
                           aria-label={`See ${item.name} on the menu`}
                           className="bg-brand-red hover:bg-brand-red/90 flex size-8 shrink-0 items-center justify-center rounded-full transition-colors duration-200"
                         >
-                          <Plus className="size-4" />
+                          <ArrowRight className="size-4" />
                         </Link>
                       </div>
                     </div>

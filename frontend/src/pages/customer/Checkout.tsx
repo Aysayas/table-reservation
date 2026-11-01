@@ -5,7 +5,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import { markPaying } from '@/hooks/usePaymentReturn'
 import { apiError } from '@/lib/api'
-import { readTableToken } from '@/lib/tableToken'
+import { readTableToken, rememberLastOrder } from '@/lib/tableToken'
 import { getMenuItems } from '@/services/menu'
 import { createOrder, payOrder } from '@/services/orders'
 import { getSettings } from '@/services/settings'
@@ -59,6 +59,7 @@ export default function Checkout() {
           })
         ).order_id
       setOrderId(id)
+      rememberLastOrder(table, id)
       const pay = method === 'now' ? await payOrder(id, token) : null
       clear()
       if (pay) {

@@ -1,8 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
-import { Plus, Search, ShoppingBag, UtensilsCrossed } from 'lucide-react'
+import { ArrowRight, Plus, Search, ShoppingBag, UtensilsCrossed } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
+import { readLastOrder, readTableToken } from '@/lib/tableToken'
 import { getCategories, getMenuItems, getRecommendations } from '@/services/menu'
 import { getTable } from '@/services/tables'
 import { cartCount, cartTotal, useCart } from '@/stores/cart'
@@ -78,6 +79,8 @@ export default function TableMenu() {
     .map((c) => ({ ...c, items: matching.filter((i) => i.category_id === c.category_id) }))
     .filter((c) => c.items.length > 0)
   const count = cartCount(lines)
+  const lastOrder = readLastOrder(id)
+  const canOrder = !!token || !!readTableToken(id)
   const itemLink = (item: MenuItem) => `/table/${id}/menu/${item.item_id}`
 
   const addOne = (item: MenuItem) => {
@@ -88,7 +91,24 @@ export default function TableMenu() {
   return (
     <div className={`bg-brand-cream min-h-[calc(100vh-4rem)] pt-4 ${count ? 'pb-28' : 'pb-10'}`}>
       <h1 className="sr-only">Table {table.table_number} menu</h1>
-      <div className="px-4">
+      <div className="space-y-3 px-4">
+        {!canOrder && (
+          <p
+            role="alert"
+            className="border-brand-red/30 bg-brand-red/5 text-brand-red rounded-lg border px-4 py-3 text-sm"
+          >
+            To order, please scan the QR code on your table again.
+          </p>
+        )}
+        {lastOrder && (
+          <Link
+            to={`/table/${id}/orders?order=${lastOrder}`}
+            className="bg-brand-charcoal hover:bg-brand-charcoal/90 flex items-center justify-between gap-3 rounded-lg px-4 py-3 text-sm font-bold text-white transition-colors duration-200"
+          >
+            View your order #{lastOrder}
+            <ArrowRight className="text-brand-gold size-4" />
+          </Link>
+        )}
         <label className="border-brand-line focus-within:border-brand-gold flex items-center gap-3 rounded-full border bg-white px-4 py-3">
           <Search className="text-brand-ink/60 size-5 shrink-0" />
           <span className="sr-only">Search menu</span>

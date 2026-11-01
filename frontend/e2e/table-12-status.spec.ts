@@ -60,3 +60,39 @@ test('an order from another table is not shown', async ({ page }) => {
     '/table/5/menu',
   )
 })
+
+test('the order can be found again from the menu after ordering more', async ({ page }) => {
+  await scan(page, 6)
+  await expect(page.getByRole('link', { name: /View your order/ })).toHaveCount(0)
+  await page.getByRole('button', { name: 'Add Bulalo' }).click()
+  await page.getByRole('link', { name: /View Cart/ }).click()
+  await page.getByRole('link', { name: 'Proceed to Checkout' }).click()
+  await page.getByRole('button', { name: 'Place Order' }).click()
+  const heading = page.getByRole('heading', { name: /^Order #\d+$/ })
+  await expect(heading).toBeVisible()
+  const title = await heading.textContent()
+  await page.getByRole('link', { name: 'Order More' }).click()
+  await page.getByRole('link', { name: /View your order/ }).click()
+  await expect(page.getByRole('heading', { name: title ?? '' })).toBeVisible()
+  await page.evaluate(
+    `history.pushState({}, '', '/table/6/orders'); dispatchEvent(new PopStateEvent('popstate'))`,
+  )
+  await expect(page.getByRole('heading', { name: title ?? '' })).toBeVisible()
+})
+
+test('the hamburger menu link stays on the table menu', async ({ page }) => {
+  await scan(page, 6)
+  await page.getByRole('button', { name: 'Open menu' }).click()
+  await expect(
+    page.locator('header').getByRole('link', { name: 'Menu', exact: true }),
+  ).toHaveAttribute('href', '/table/6/menu')
+})
+
+test('a missing QR code is explained on the menu, before building a cart', async ({ page }) => {
+  await page.goto('/table/6/menu')
+  await expect(page.getByRole('alert')).toHaveText(
+    'To order, please scan the QR code on your table again.',
+  )
+  await scan(page, 6)
+  await expect(page.getByRole('alert')).toHaveCount(0)
+})

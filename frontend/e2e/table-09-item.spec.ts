@@ -26,12 +26,17 @@ test('quantity changes the price on the button', async ({ page }) => {
   await expect(page.getByRole('button', { name: 'Add to Cart · ₱750.00' })).toBeVisible()
 })
 
-test('add to cart keeps the quantity and notes and opens the cart', async ({ page }) => {
+test('add to cart keeps the quantity and notes, stays on the dish and offers the cart', async ({
+  page,
+}) => {
   await page.goto(url)
   await page.getByRole('button', { name: 'More' }).click()
   await page.getByLabel('Notes (optional)').fill('Less salty')
   await page.getByRole('button', { name: /Add to Cart/ }).click()
-  await expect(page).toHaveURL('/table/5/cart')
+  await expect(page.getByText('Tapa with Dilis and Banana Garlic Oleo added to cart')).toBeVisible()
+  await expect(page).toHaveURL(url)
+  await expect(page.getByRole('button', { name: 'Add to Cart · ₱250.00' })).toBeVisible()
+  await expect(page.getByLabel('Notes (optional)')).toHaveValue('')
   const lines = await page.evaluate(() => JSON.parse(sessionStorage.getItem('cart') ?? '{}'))
   expect(lines.state.lines).toEqual([
     {
@@ -43,6 +48,8 @@ test('add to cart keeps the quantity and notes and opens the cart', async ({ pag
     },
   ])
   await expect(page.getByRole('link', { name: 'Cart, 2 items' })).toBeVisible()
+  await page.getByRole('button', { name: 'View Cart' }).click()
+  await expect(page).toHaveURL('/table/5/cart')
 })
 
 test('often ordered with adds one to the cart', async ({ page }) => {

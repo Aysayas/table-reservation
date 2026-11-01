@@ -7,7 +7,7 @@ import { toast } from 'sonner'
 import useOrderEvents from '@/hooks/useOrderEvents'
 import usePaymentReturn, { markPaying } from '@/hooks/usePaymentReturn'
 import { apiError } from '@/lib/api'
-import { readTableToken } from '@/lib/tableToken'
+import { readLastOrder, readTableToken } from '@/lib/tableToken'
 import { getOrder, payOrder } from '@/services/orders'
 import type { OrderStatus as Status } from '@/types/db'
 
@@ -25,7 +25,7 @@ export default function OrderStatus() {
   const { tableId = '' } = useParams()
   const table = Number(tableId)
   const [params] = useSearchParams()
-  const orderId = Number(params.get('order'))
+  const orderId = Number(params.get('order')) || readLastOrder(table) || 0
   const token = readTableToken(table) ?? ''
   const queryClient = useQueryClient()
   const [paying, setPaying] = useState(false)
