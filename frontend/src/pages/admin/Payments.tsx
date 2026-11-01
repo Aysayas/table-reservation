@@ -96,7 +96,7 @@ export default function Payments() {
             className={`rounded-xl border px-6 py-5 ${s.dark ? 'bg-brand-charcoal border-brand-charcoal text-white' : 'border-brand-line text-brand-charcoal bg-white'}`}
           >
             <dt
-              className={`flex items-center gap-2 text-xs font-bold tracking-[0.15em] uppercase ${s.dark ? 'text-brand-gold' : 'text-brand-ink/60'}`}
+              className={`flex items-center gap-2 text-xs font-bold tracking-[0.15em] uppercase ${s.dark ? 'text-brand-gold' : 'text-brand-ink/70'}`}
             >
               <s.icon className="size-4" />
               {s.label}
@@ -108,7 +108,7 @@ export default function Payments() {
 
       <div className="border-brand-line mt-5 flex flex-wrap items-center gap-3 rounded-xl border bg-white p-4">
         <label className="border-brand-line focus-within:border-brand-gold bg-brand-cream/40 flex h-11 w-full max-w-xs items-center gap-2 rounded-lg border px-3">
-          <Search className="text-brand-ink/50 size-4" />
+          <Search className="text-brand-ink/70 size-4" />
           <span className="sr-only">Search</span>
           <input
             type="search"
@@ -194,12 +194,12 @@ export default function Payments() {
                     {p.paid_at ? (
                       <>
                         <span className="block">{format(parseISO(p.paid_at), 'MMMM d, yyyy')}</span>
-                        <span className="text-brand-ink/50 text-xs">
+                        <span className="text-brand-ink/70 text-xs">
                           {format(parseISO(p.paid_at), 'h:mm a')}
                         </span>
                       </>
                     ) : (
-                      <span className="text-brand-ink/40">Not paid</span>
+                      <span className="text-brand-ink/70">Not paid</span>
                     )}
                   </td>
                   <td className={td}>
@@ -225,7 +225,7 @@ export default function Payments() {
                   </td>
                   <td className={td}>
                     <span className="inline-flex items-center gap-1.5">
-                      <Icon className="text-brand-ink/50 size-4" />
+                      <Icon className="text-brand-ink/70 size-4" />
                       {cap(p.method)}
                     </span>
                   </td>
@@ -250,7 +250,7 @@ export default function Payments() {
               <tr>
                 <td colSpan={7} className="px-5 py-14 text-center">
                   <Wallet className="text-brand-gold-deep/60 mx-auto size-8" />
-                  <p className="text-brand-ink/60 mt-3 text-sm">No payments found.</p>
+                  <p className="text-brand-ink/70 mt-3 text-sm">No payments found.</p>
                 </td>
               </tr>
             )}

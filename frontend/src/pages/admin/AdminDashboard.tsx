@@ -121,13 +121,13 @@ export default function AdminDashboard() {
                   <span className="text-brand-gold-deep mr-2 font-serif font-bold">{i + 1}.</span>
                   {item.name}
                 </span>
-                <span className="text-brand-ink/60 shrink-0 tabular-nums">
+                <span className="text-brand-ink/70 shrink-0 tabular-nums">
                   {item.quantity} sold
                 </span>
               </li>
             ))}
             {data.best_sellers.length === 0 && (
-              <li className="text-brand-ink/60 text-sm">No sales in the last 30 days.</li>
+              <li className="text-brand-ink/70 text-sm">No sales in the last 30 days.</li>
             )}
           </ol>
         </section>

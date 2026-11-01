@@ -173,7 +173,7 @@ export default function MenuItemForm() {
 
   return (
     <div>
-      <nav aria-label="Breadcrumb" className="text-brand-ink/60 text-sm">
+      <nav aria-label="Breadcrumb" className="text-brand-ink/70 text-sm">
         <Link to={backTo} className="hover:text-brand-red">
           Menu
         </Link>
@@ -313,7 +313,7 @@ export default function MenuItemForm() {
               <>
                 <ImagePlus className="text-brand-gold-deep size-8" strokeWidth={1.5} />
                 <p className="text-brand-charcoal mt-3 text-sm font-bold">Drag a photo here</p>
-                <p className="text-brand-ink/60 mt-1 text-xs">JPG or PNG</p>
+                <p className="text-brand-ink/70 mt-1 text-xs">JPG or PNG</p>
               </>
             )}
           </div>
@@ -332,7 +332,7 @@ export default function MenuItemForm() {
           >
             Upload Photo
           </button>
-          {photo && <p className="text-brand-ink/60 mt-2 text-xs">{photo.name}</p>}
+          {photo && <p className="text-brand-ink/70 mt-2 text-xs">{photo.name}</p>}
         </section>
       </form>
     </div>

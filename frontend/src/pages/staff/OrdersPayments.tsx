@@ -136,7 +136,7 @@ export default function OrdersPayments() {
               ))}
               {orders.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="text-brand-ink/60 px-4 py-10 text-center text-sm">
+                  <td colSpan={6} className="text-brand-ink/70 px-4 py-10 text-center text-sm">
                     No orders here.
                   </td>
                 </tr>
@@ -176,7 +176,7 @@ export default function OrdersPayments() {
               <h2 id="order-title" className="text-brand-charcoal font-serif text-2xl font-bold">
                 Order #{selected.order_id}
               </h2>
-              <p className="text-brand-ink/60 mt-1 text-sm">
+              <p className="text-brand-ink/70 mt-1 text-sm">
                 Table {selected.table_number} · {time(selected.created_at)}
               </p>
             </div>
@@ -195,7 +195,7 @@ export default function OrdersPayments() {
                 <span className="text-brand-charcoal">
                   {item.quantity}x {item.name}
                   {item.notes && (
-                    <span className="text-brand-ink/60 block text-xs">Note: {item.notes}</span>
+                    <span className="text-brand-ink/70 block text-xs">Note: {item.notes}</span>
                   )}
                 </span>
                 <span className="text-brand-charcoal shrink-0 tabular-nums">

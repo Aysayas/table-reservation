@@ -151,7 +151,7 @@ export default function TablesQr() {
               <p className="text-brand-charcoal font-serif text-xl font-bold">
                 Table {t.table_number}
               </p>
-              <p className="text-brand-ink/60 text-xs">{t.capacity} seats</p>
+              <p className="text-brand-ink/70 text-xs">{t.capacity} seats</p>
             </div>
             <div className="mt-4 grid grid-cols-2 gap-2">
               <button
@@ -184,7 +184,7 @@ export default function TablesQr() {
                 type="button"
                 aria-label={`Delete Table ${t.table_number}`}
                 onClick={() => setDeleting(t)}
-                className="text-brand-ink/50 hover:text-brand-red"
+                className="text-brand-ink/70 hover:text-brand-red"
               >
                 Delete
               </button>

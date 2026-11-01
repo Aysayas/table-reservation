@@ -125,7 +125,7 @@ export default function Categories() {
             ))}
             {categories.length === 0 && (
               <tr>
-                <td colSpan={4} className="text-brand-ink/60 px-4 py-10 text-center text-sm">
+                <td colSpan={4} className="text-brand-ink/70 px-4 py-10 text-center text-sm">
                   No categories yet.
                 </td>
               </tr>

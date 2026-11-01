@@ -152,7 +152,7 @@ export default function ReservationActions({
                 type="button"
                 aria-label="Close"
                 onClick={() => setAssigning(false)}
-                className="text-brand-ink/60 hover:text-brand-charcoal"
+                className="text-brand-ink/70 hover:text-brand-charcoal"
               >
                 <X className="size-5" />
               </button>
@@ -178,7 +178,7 @@ export default function ReservationActions({
                     <span className="text-brand-charcoal block text-sm font-bold">
                       {t.table_number}
                     </span>
-                    <span className="text-brand-ink/60 block text-xs">{t.capacity} seats</span>
+                    <span className="text-brand-ink/70 block text-xs">{t.capacity} seats</span>
                   </button>
                 </li>
               ))}

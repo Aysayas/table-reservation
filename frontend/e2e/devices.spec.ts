@@ -162,3 +162,14 @@ test('the Home date field stays in its own column and matches Guests', async ({ 
   expect((date?.x ?? 0) + (date?.width ?? 0)).toBeLessThanOrEqual(guests?.x ?? 0)
   expect(date?.height).toBe(guests?.height)
 })
+
+test('header and page buttons are big enough to tap', async ({ page }) => {
+  await page.goto('/table/5/cart')
+  for (const name of ['Open menu', 'Back']) {
+    const box = await page.getByRole('button', { name }).first().boundingBox()
+    expect(box?.height).toBeGreaterThanOrEqual(44)
+    expect(box?.width).toBeGreaterThanOrEqual(44)
+  }
+  const cart = await page.getByRole('link', { name: /^Cart,/ }).boundingBox()
+  expect(cart?.height).toBeGreaterThanOrEqual(44)
+})

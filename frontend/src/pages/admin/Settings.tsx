@@ -262,7 +262,7 @@ export default function Settings() {
                 >
                   Upload Logo
                 </button>
-                <p className="text-brand-ink/60 mt-2 text-xs">
+                <p className="text-brand-ink/70 mt-2 text-xs">
                   {logo
                     ? `${logo.name}, saved when you click Save Changes`
                     : 'PNG or JPG, up to 2 MB'}
@@ -305,7 +305,7 @@ export default function Settings() {
                       {...register(`hours.${i}.open_time`)}
                       className={timeField}
                     />
-                    <span className="text-brand-ink/50">–</span>
+                    <span className="text-brand-ink/70">–</span>
                     <input
                       type="time"
                       aria-label={`${name} closes`}
@@ -332,7 +332,7 @@ export default function Settings() {
             )
           })}
         </ul>
-        <p className="text-brand-ink/60 mt-5 text-xs">Toggle off to mark a day as closed.</p>
+        <p className="text-brand-ink/70 mt-5 text-xs">Toggle off to mark a day as closed.</p>
       </section>
 
       <section aria-labelledby="settings-title" className={card}>
@@ -357,7 +357,7 @@ export default function Settings() {
                 </option>
               ))}
             </select>
-            <p className="text-brand-ink/60 mt-1.5 text-xs">
+            <p className="text-brand-ink/70 mt-1.5 text-xs">
               The first booking time each day. Times before opening still start at opening.
             </p>
           </div>

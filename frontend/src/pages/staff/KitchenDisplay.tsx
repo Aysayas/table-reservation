@@ -166,7 +166,7 @@ export default function KitchenDisplay() {
                           <p className="text-brand-charcoal font-serif text-3xl font-bold">
                             Table {order.table_number}
                           </p>
-                          <p className="text-brand-ink/60 mt-1">Order #{order.order_id}</p>
+                          <p className="text-brand-ink/70 mt-1">Order #{order.order_id}</p>
                         </div>
                         <span
                           className={`shrink-0 rounded-full px-3 py-1 text-sm font-bold tabular-nums ${ageOf(minutes).chip}`}
@@ -201,7 +201,7 @@ export default function KitchenDisplay() {
                   )
                 })}
                 {list.length === 0 && (
-                  <li className="border-brand-line text-brand-ink/50 rounded-xl border border-dashed py-10 text-center italic">
+                  <li className="border-brand-line text-brand-ink/70 rounded-xl border border-dashed py-10 text-center italic">
                     No orders here. New orders appear automatically.
                   </li>
                 )}

@@ -111,11 +111,11 @@ export default function OrderStatus() {
                 ) : null}
               </span>
               <span
-                className={`flex-1 text-sm ${now ? 'text-brand-charcoal font-bold' : done ? 'text-brand-charcoal' : 'text-brand-ink/50'}`}
+                className={`flex-1 text-sm ${now ? 'text-brand-charcoal font-bold' : done ? 'text-brand-charcoal' : 'text-brand-ink/70'}`}
               >
                 {step.label}
               </span>
-              <span className="text-brand-ink/60 text-xs">
+              <span className="text-brand-ink/70 text-xs">
                 {index === 0
                   ? format(parseISO(order.created_at), 'h:mm a')
                   : now
@@ -140,7 +140,7 @@ export default function OrderStatus() {
               <span className="text-brand-charcoal">
                 {item.quantity}x {item.name}
                 {item.notes && (
-                  <span className="text-brand-ink/60 block text-xs">Note: {item.notes}</span>
+                  <span className="text-brand-ink/70 block text-xs">Note: {item.notes}</span>
                 )}
               </span>
               <span className="text-brand-charcoal shrink-0">

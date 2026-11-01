@@ -112,7 +112,7 @@ export default function TableMenu() {
           </Link>
         )}
         <label className="border-brand-line focus-within:border-brand-gold flex items-center gap-3 rounded-full border bg-white px-4 py-3">
-          <Search className="text-brand-ink/60 size-5 shrink-0" />
+          <Search className="text-brand-ink/70 size-5 shrink-0" />
           <span className="sr-only">Search menu</span>
           <input
             type="search"
