@@ -68,6 +68,7 @@ Added by the lead after the 29 wireframes: `/reserve` needs a login. Reschedulin
 | Forgot Password | `/forgot-password` |
 | Reset Password | `/reset-password?token=` |
 | My Reservations | `/my-reservations` |
+| Profile | `/profile` |
 
 ## URL parameters
 

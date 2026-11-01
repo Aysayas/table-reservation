@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { ChevronDown, LogOut } from 'lucide-react'
-import { useState } from 'react'
+import { LogOut } from 'lucide-react'
 import {
   Link,
   Navigate,
@@ -11,6 +10,7 @@ import {
   useNavigate,
 } from 'react-router-dom'
 import { getMe, logout, roleHome } from '@/services/auth'
+import { roleNames } from '@/services/users'
 import { getSettings } from '@/services/settings'
 import type { UserRole } from '@/types/db'
 
@@ -28,7 +28,6 @@ type Props = {
 export default function DashboardLayout({ title, items }: Props) {
   const { pathname } = useLocation()
   const navigate = useNavigate()
-  const [open, setOpen] = useState(false)
   const role = title.toLowerCase() as UserRole
   const { data: settings } = useQuery({ queryKey: ['settings'], queryFn: getSettings })
   const { data: me } = useQuery({
@@ -106,31 +105,14 @@ export default function DashboardLayout({ title, items }: Props) {
           <h1 className="text-brand-charcoal font-serif text-3xl font-bold">
             {pageTitle ?? current?.title ?? current?.label}
           </h1>
-          <div className="relative">
-            <button
-              type="button"
-              aria-expanded={open}
-              onClick={() => setOpen(!open)}
-              className="text-brand-charcoal hover:bg-brand-cream flex items-center gap-3 rounded-full py-1 pr-2 pl-1 transition-colors duration-200"
-            >
-              <span className="bg-brand-charcoal text-brand-gold flex size-9 items-center justify-center rounded-full text-xs font-bold">
-                {initials}
-              </span>
-              <span className="text-sm font-semibold">{me?.full_name}</span>
-              <ChevronDown className="size-4" />
-            </button>
-            {open && (
-              <div className="border-brand-line absolute right-0 z-10 mt-2 w-44 rounded-lg border bg-white py-1 shadow-lg">
-                <Link
-                  to="/staff/login"
-                  onClick={signOut}
-                  className="text-brand-charcoal hover:bg-brand-cream flex w-full items-center gap-2 px-4 py-2 text-sm"
-                >
-                  <LogOut className="size-4" />
-                  Log Out
-                </Link>
-              </div>
-            )}
+          <div className="text-brand-charcoal flex items-center gap-3">
+            <span className="bg-brand-charcoal text-brand-gold flex size-9 items-center justify-center rounded-full text-xs font-bold">
+              {initials}
+            </span>
+            <span className="text-sm">
+              <span className="block font-semibold">{me?.full_name}</span>
+              {me && <span className="text-brand-ink/70 block text-xs">{roleNames[me.role]}</span>}
+            </span>
           </div>
         </header>
         <main className="px-8 py-8">

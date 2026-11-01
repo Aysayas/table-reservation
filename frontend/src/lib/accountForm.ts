@@ -13,5 +13,32 @@ export const passwordSchema = z
   .min(8, 'Use at least 8 characters')
   .max(72, 'Use 72 characters or less')
 
+export const passwordsMatch = {
+  check: (values: { password: string; confirm_password: string }) =>
+    values.password === values.confirm_password,
+  error: { path: ['confirm_password'], message: "Passwords don't match" },
+}
+
+const resetNextKey = 'reset-next'
+
+export function saveResetNext(next: string | null) {
+  try {
+    if (next) localStorage.setItem(resetNextKey, next)
+    else localStorage.removeItem(resetNextKey)
+  } catch {
+    return
+  }
+}
+
+export function takeResetNext() {
+  try {
+    const next = localStorage.getItem(resetNextKey)
+    localStorage.removeItem(resetNextKey)
+    return next
+  } catch {
+    return null
+  }
+}
+
 export const safeNext = (next: string | null) =>
   next?.startsWith('/') && !next.startsWith('//') ? next : '/my-reservations'

@@ -7,11 +7,21 @@ import { toast } from 'sonner'
 import { z } from 'zod'
 import AccountCard from '@/components/AccountCard'
 import PasswordInput from '@/components/PasswordInput'
-import { fieldError, label, passwordSchema, submitButton, textLink } from '@/lib/accountForm'
+import {
+  fieldError,
+  label,
+  passwordSchema,
+  passwordsMatch,
+  submitButton,
+  takeResetNext,
+  textLink,
+} from '@/lib/accountForm'
 import { apiError } from '@/lib/api'
 import { resetPassword } from '@/services/account'
 
-const schema = z.object({ password: passwordSchema })
+const schema = z
+  .object({ password: passwordSchema, confirm_password: z.string() })
+  .refine(passwordsMatch.check, passwordsMatch.error)
 
 type FormValues = z.infer<typeof schema>
 
@@ -25,14 +35,18 @@ export default function ResetPassword() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<FormValues>({ resolver: zodResolver(schema), defaultValues: { password: '' } })
+  } = useForm<FormValues>({
+    resolver: zodResolver(schema),
+    defaultValues: { password: '', confirm_password: '' },
+  })
 
   const onSubmit = async ({ password }: FormValues) => {
     try {
       await resetPassword(token, password)
       queryClient.setQueryData(['account'], null)
       toast.success('Your password was changed. Please log in.')
-      navigate('/login', { replace: true })
+      const next = takeResetNext()
+      navigate(next ? `/login?next=${encodeURIComponent(next)}` : '/login', { replace: true })
     } catch (e) {
       setFailed(apiError(e, "Couldn't change your password. Please try again."))
     }
@@ -70,6 +84,22 @@ export default function ResetPassword() {
             </p>
           ) : (
             <p className="text-brand-ink/75 mt-1.5 text-xs">At least 8 characters.</p>
+          )}
+        </div>
+        <div>
+          <label htmlFor="confirm_password" className={label}>
+            Confirm New Password
+          </label>
+          <PasswordInput
+            id="confirm_password"
+            autoComplete="new-password"
+            invalid={!!errors.confirm_password}
+            {...register('confirm_password')}
+          />
+          {errors.confirm_password && (
+            <p role="alert" className={fieldError}>
+              {errors.confirm_password.message}
+            </p>
           )}
         </div>
         {failed && (

@@ -6,7 +6,7 @@ test('login page shows its parts', async ({ page }) => {
   await expect(page.getByText("Sign in to manage today's reservations.")).toBeVisible()
   await expect(page.getByLabel('Email')).toBeVisible()
   await expect(page.getByLabel('Password', { exact: true })).toBeVisible()
-  await expect(page.getByLabel('Remember me')).toBeVisible()
+  await expect(page.getByLabel('Remember me')).toHaveCount(0)
   await expect(page.getByRole('button', { name: 'Forgot password?' })).toBeVisible()
   await expect(page.getByRole('button', { name: 'Log In' })).toBeVisible()
 })

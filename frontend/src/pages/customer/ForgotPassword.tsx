@@ -1,11 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import AccountCard from '@/components/AccountCard'
-import { field, fieldError, label, submitButton, textLink } from '@/lib/accountForm'
+import { field, fieldError, label, saveResetNext, submitButton, textLink } from '@/lib/accountForm'
 import { apiError } from '@/lib/api'
 import { forgotPassword } from '@/services/account'
 
@@ -17,6 +17,8 @@ type FormValues = z.infer<typeof schema>
 
 export default function ForgotPassword() {
   const [sent, setSent] = useState(false)
+  const [params] = useSearchParams()
+  const nextParam = params.get('next')
   const {
     register,
     handleSubmit,
@@ -26,6 +28,7 @@ export default function ForgotPassword() {
   const onSubmit = async ({ email }: FormValues) => {
     try {
       await forgotPassword(email)
+      saveResetNext(nextParam)
       setSent(true)
     } catch (e) {
       toast.error(apiError(e, "Couldn't send the email. Please try again."))
@@ -69,7 +72,10 @@ export default function ForgotPassword() {
         </form>
       )}
       <p className="mt-5 text-sm">
-        <Link to="/login" className={textLink}>
+        <Link
+          to={nextParam ? `/login?next=${encodeURIComponent(nextParam)}` : '/login'}
+          className={textLink}
+        >
           Back to Log In
         </Link>
       </p>

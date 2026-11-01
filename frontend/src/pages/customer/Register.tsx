@@ -13,6 +13,7 @@ import {
   fieldError,
   label,
   passwordSchema,
+  passwordsMatch,
   safeNext,
   submitButton,
   textLink,
@@ -21,16 +22,19 @@ import { apiError } from '@/lib/api'
 import { mobileSchema, toLocalMobile } from '@/lib/mobile'
 import { registerAccount } from '@/services/account'
 
-const schema = z.object({
-  full_name: z
-    .string()
-    .trim()
-    .min(1, 'Enter your full name')
-    .max(100, 'Use 100 characters or less'),
-  mobile_number: mobileSchema,
-  email: z.string().trim().pipe(z.email('Enter a valid email')),
-  password: passwordSchema,
-})
+const schema = z
+  .object({
+    full_name: z
+      .string()
+      .trim()
+      .min(1, 'Enter your full name')
+      .max(100, 'Use 100 characters or less'),
+    mobile_number: mobileSchema,
+    email: z.string().trim().pipe(z.email('Enter a valid email')),
+    password: passwordSchema,
+    confirm_password: z.string(),
+  })
+  .refine(passwordsMatch.check, passwordsMatch.error)
 
 type FormValues = z.infer<typeof schema>
 
@@ -47,14 +51,22 @@ export default function Register() {
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
-    defaultValues: { full_name: '', mobile_number: '', email: '', password: '' },
+    defaultValues: {
+      full_name: '',
+      mobile_number: '',
+      email: '',
+      password: '',
+      confirm_password: '',
+    },
   })
 
   const onSubmit = async (values: FormValues) => {
     try {
       const user = await registerAccount({
-        ...values,
+        full_name: values.full_name,
         mobile_number: toLocalMobile(values.mobile_number),
+        email: values.email,
+        password: values.password,
       })
       queryClient.setQueryData(['account'], user)
       navigate(next, { replace: true })
@@ -142,6 +154,22 @@ export default function Register() {
             </p>
           ) : (
             <p className="text-brand-ink/75 mt-1.5 text-xs">At least 8 characters.</p>
+          )}
+        </div>
+        <div>
+          <label htmlFor="confirm_password" className={label}>
+            Confirm Password
+          </label>
+          <PasswordInput
+            id="confirm_password"
+            autoComplete="new-password"
+            invalid={!!errors.confirm_password}
+            {...register('confirm_password')}
+          />
+          {errors.confirm_password && (
+            <p role="alert" className={fieldError}>
+              {errors.confirm_password.message}
+            </p>
           )}
         </div>
         <button type="submit" disabled={isSubmitting} className={submitButton}>

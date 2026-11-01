@@ -30,6 +30,7 @@ import StaffDashboard from '@/pages/staff/StaffDashboard'
 import ForgotPassword from '@/pages/customer/ForgotPassword'
 import Login from '@/pages/customer/Login'
 import MyReservations from '@/pages/customer/MyReservations'
+import Profile from '@/pages/customer/Profile'
 import Register from '@/pages/customer/Register'
 import ResetPassword from '@/pages/customer/ResetPassword'
 import KitchenDisplay from '@/pages/staff/KitchenDisplay'
@@ -75,6 +76,7 @@ export const router = createBrowserRouter([
       { path: '/forgot-password', element: <ForgotPassword /> },
       { path: '/reset-password', element: <ResetPassword /> },
       { path: '/my-reservations', element: <MyReservations /> },
+      { path: '/profile', element: <Profile /> },
       { path: '/about', element: <About /> },
       { path: '/table/:tableId', element: <TableMenu /> },
       { path: '/table/:tableId/menu', element: <TableMenu /> },

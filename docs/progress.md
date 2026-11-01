@@ -62,6 +62,7 @@ Start with simple screens to learn, then the forms, then the bigger flows:
 | Forgot Password `/forgot-password` | 🟦 |
 | Reset Password `/reset-password` | 🟦 |
 | My Reservations `/my-reservations` | 🟦 |
+| Profile `/profile` | 🟦 |
 
 ## Backend progress
 
