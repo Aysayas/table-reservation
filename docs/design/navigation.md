@@ -19,7 +19,7 @@ Where each button and link goes. This comes from the clickable prototype in the 
 | 04 Deposit Payment | Back arrow | Back |
 | 04 Deposit Payment | Pay ₱000.00 | 05 Reservation Confirmation `/reserve/confirmation/:code` |
 | 05 Reservation Confirmation | Back to Home | 01 Home `/` |
-| 05 Reservation Confirmation | Manage Reservation | 06 Find Reservation `/reservation` |
+| 05 Reservation Confirmation | Manage Reservation | `/my-reservations` when logged in, otherwise 06 Find Reservation `/reservation?code=` |
 | 06 Find Reservation | Back arrow | Back |
 | 06 Find Reservation | Reschedule | 03 Reserve a Table `/reserve` |
 | 07 About Us | Back arrow | Back |

@@ -378,7 +378,23 @@ export async function updateReservation(
 }
 
 export async function startDeposit(code: string): Promise<{ checkout_url: string } | null> {
-  if (USE_SAMPLE) return null
+  if (USE_SAMPLE) {
+    const reservation = sampleReservations.find((r) => r.reference_code === code)
+    if (reservation) {
+      samplePayments.push({
+        payment_id: Math.max(0, ...samplePayments.map((p) => p.payment_id)) + 1,
+        order_id: null,
+        reservation_id: reservation.reservation_id,
+        received_by: null,
+        method: 'online',
+        provider_reference: `cs_sample_${code}`,
+        amount: reservation.deposit_amount,
+        status: 'paid',
+        paid_at: format(new Date(), "yyyy-MM-dd'T'HH:mm:ss"),
+      })
+    }
+    return null
+  }
   const res = await api.post(`/reservations/code/${encodeURIComponent(code)}/deposit`, {})
   return res.data.data
 }

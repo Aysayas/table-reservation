@@ -4,6 +4,7 @@ import { CalendarDays, Check, Copy, LoaderCircle, MapPin } from 'lucide-react'
 import { Link, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import SiteFooter from '@/components/SiteFooter'
+import useAccount from '@/hooks/useAccount'
 import usePaymentReturn from '@/hooks/usePaymentReturn'
 import { directionsUrl } from '@/lib/maps'
 import { reservationStatuses } from '@/lib/reservationStatus'
@@ -22,6 +23,7 @@ const notch = 'bg-brand-cream absolute top-1/2 size-6 -translate-y-1/2 rounded-f
 
 export default function ReservationConfirmation() {
   const { code = '' } = useParams()
+  const { data: account } = useAccount()
   const { data: reservation, isLoading } = useQuery({
     queryKey: ['reservation', code],
     queryFn: () => getReservationByCode(code),
@@ -305,7 +307,10 @@ export default function ReservationConfirmation() {
                 <Link to="/" className={needsDeposit ? darkButton : primaryButton}>
                   Back to Home
                 </Link>
-                <Link to="/reservation" className={darkButton}>
+                <Link
+                  to={account ? '/my-reservations' : `/reservation?code=${code}`}
+                  className={darkButton}
+                >
                   Manage Reservation
                 </Link>
               </div>

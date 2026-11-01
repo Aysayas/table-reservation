@@ -1,7 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { format, parseISO } from 'date-fns'
+import { useState } from 'react'
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
+import CancelReservationDialog from '@/components/CancelReservationDialog'
 import useAccount from '@/hooks/useAccount'
 import { submitButton } from '@/lib/accountForm'
 import { apiError } from '@/lib/api'
@@ -9,6 +11,7 @@ import { formatTime } from '@/lib/hours'
 import { reservationStatuses } from '@/lib/reservationStatus'
 import { listMyReservations } from '@/services/account'
 import { cancelReservation } from '@/services/reservations'
+import type { PublicReservation } from '@/types/db'
 
 const peso = (amount: number) =>
   `₱${amount.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
@@ -19,6 +22,7 @@ export default function MyReservations() {
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const queryClient = useQueryClient()
+  const [cancelling, setCancelling] = useState<PublicReservation | null>(null)
   const { data: account, isLoading: accountLoading } = useAccount()
   const {
     data: reservations = [],
@@ -34,6 +38,7 @@ export default function MyReservations() {
     mutationFn: (code: string) => cancelReservation(code, account?.mobile_number ?? ''),
     onSuccess: () => {
       toast.success('Reservation cancelled')
+      setCancelling(null)
       queryClient.invalidateQueries({ queryKey: ['my-reservations'] })
     },
     onError: (e) => toast.error(apiError(e, "Couldn't cancel the reservation")),
@@ -147,10 +152,7 @@ export default function MyReservations() {
                         type="button"
                         aria-label={`Cancel ${r.reference_code}`}
                         disabled={cancel.isPending}
-                        onClick={() => {
-                          if (window.confirm('Cancel this reservation?'))
-                            cancel.mutate(r.reference_code)
-                        }}
+                        onClick={() => setCancelling(r)}
                         className={outlineButton}
                       >
                         Cancel
@@ -162,6 +164,14 @@ export default function MyReservations() {
             )
           })}
         </ul>
+        {cancelling && (
+          <CancelReservationDialog
+            reservation={cancelling}
+            busy={cancel.isPending}
+            onKeep={() => setCancelling(null)}
+            onCancel={() => cancel.mutate(cancelling.reference_code)}
+          />
+        )}
       </div>
     </div>
   )

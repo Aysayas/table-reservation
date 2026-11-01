@@ -23,7 +23,6 @@ const label = 'text-brand-charcoal text-xs font-bold tracking-[0.15em] uppercase
 const field =
   'border-brand-line focus:border-brand-gold mt-2 w-full rounded-sm border bg-white px-4 py-3 text-sm font-normal tracking-normal normal-case outline-none placeholder:text-brand-ink/50'
 const error = 'text-brand-red mt-1.5 text-xs'
-const steps = ['Details', 'Deposit', 'Confirm']
 
 const schema = z.object({
   reservation_date: z
@@ -281,31 +280,6 @@ export default function ReserveTable() {
             {booking.pax === 1 ? 'guest' : 'guests'}
           </p>
         )}
-
-        <ol className={`mt-8 flex items-start ${code ? 'hidden' : ''}`}>
-          {steps.map((step, index) => (
-            <li
-              key={step}
-              aria-current={index === 0 ? 'step' : undefined}
-              className="relative flex flex-1 flex-col items-center gap-2 text-xs font-semibold"
-            >
-              {index > 0 && (
-                <span
-                  aria-hidden="true"
-                  className="bg-brand-line absolute top-4 right-[calc(50%+1.25rem)] left-[calc(-50%+1.25rem)] h-px"
-                />
-              )}
-              <span
-                className={`relative flex size-8 items-center justify-center rounded-full border text-xs font-bold ${index === 0 ? 'bg-brand-red border-brand-red text-white' : 'border-brand-line text-brand-ink/60 bg-white'}`}
-              >
-                {index + 1}
-              </span>
-              <span className={index === 0 ? 'text-brand-charcoal' : 'text-brand-ink/60'}>
-                {step}
-              </span>
-            </li>
-          ))}
-        </ol>
 
         <form
           noValidate

@@ -69,8 +69,8 @@ test('a cancelled booking has no pay button', async ({ page }) => {
   await page.getByLabel('Reference Code').fill('RSV-000004')
   await page.getByLabel('Mobile Number').fill('09000000000')
   await page.getByRole('button', { name: 'Find Reservation' }).click()
-  page.once('dialog', (dialog) => dialog.accept())
   await page.getByRole('button', { name: 'Cancel', exact: true }).click()
+  await page.getByRole('dialog').getByRole('button', { name: 'Cancel Reservation' }).click()
   await expect(page.getByText('Reservation cancelled')).toBeVisible()
   await page.evaluate(
     `history.pushState({}, '', '/reserve/payment?code=RSV-000004'); dispatchEvent(new PopStateEvent('popstate'))`,
