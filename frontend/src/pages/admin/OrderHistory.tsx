@@ -12,6 +12,7 @@ import {
   X,
 } from 'lucide-react'
 import { useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { listOrders, type StaffOrder } from '@/services/orders'
 import type { OrderStatus } from '@/types/db'
 
@@ -62,7 +63,8 @@ function Method({ method }: { method: StaffOrder['payment_method'] }) {
 }
 
 export default function OrderHistory() {
-  const [search, setSearch] = useState('')
+  const [params] = useSearchParams()
+  const [search, setSearch] = useState(() => params.get('order') ?? '')
   const [range, setRange] = useState('')
   const [status, setStatus] = useState<OrderStatus | ''>('')
   const [payment, setPayment] = useState<'paid' | 'unpaid' | ''>('')

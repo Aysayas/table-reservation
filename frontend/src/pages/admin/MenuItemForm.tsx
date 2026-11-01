@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { ImagePlus } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useForm, useWatch, type Control } from 'react-hook-form'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import {
@@ -76,6 +76,7 @@ export default function MenuItemForm() {
   const { id } = useParams()
   const editing = id !== undefined
   const navigate = useNavigate()
+  const backTo = (useLocation().state as { from?: string } | null)?.from ?? '/admin/menu'
   const queryClient = useQueryClient()
   const fileInput = useRef<HTMLInputElement>(null)
   const [photo, setPhoto] = useState<File | null>(null)
@@ -151,7 +152,7 @@ export default function MenuItemForm() {
       await queryClient.invalidateQueries({ queryKey: ['menu-items'] })
       await queryClient.invalidateQueries({ queryKey: ['menu-item', saved.item_id] })
       toast.success(`${saved.name} saved`)
-      navigate('/admin/menu')
+      navigate(backTo)
     } catch (e) {
       toast.error(apiError(e))
     }
@@ -161,7 +162,7 @@ export default function MenuItemForm() {
     return (
       <div className="py-16 text-center">
         <h2 className="text-brand-charcoal font-serif text-2xl font-bold">Menu item not found</h2>
-        <Link to="/admin/menu" className="text-brand-red mt-4 inline-block text-sm font-bold">
+        <Link to={backTo} className="text-brand-red mt-4 inline-block text-sm font-bold">
           Back to Menu
         </Link>
       </div>
@@ -173,7 +174,7 @@ export default function MenuItemForm() {
   return (
     <div>
       <nav aria-label="Breadcrumb" className="text-brand-ink/60 text-sm">
-        <Link to="/admin/menu" className="hover:text-brand-red">
+        <Link to={backTo} className="hover:text-brand-red">
           Menu
         </Link>
         <span className="mx-2">/</span>
@@ -278,7 +279,7 @@ export default function MenuItemForm() {
               Save Item
             </button>
             <Link
-              to="/admin/menu"
+              to={backTo}
               className="border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal rounded-md border px-8 py-3 text-sm font-bold transition-colors duration-200 hover:text-white"
             >
               Cancel

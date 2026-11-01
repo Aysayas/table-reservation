@@ -46,12 +46,12 @@ Start with simple screens to learn, then the forms, then the bigger flows:
 | 21 | Add / Edit Menu Item | 🟦 | 1440 × 900. `/admin/menu/new` and `/admin/menu/:id/edit`: Menu / Add (Edit) Menu Item breadcrumb, Item Name, Category, Price (₱), Description, Available and Show in Recommendations switches, Photo (drag or Upload Photo, JPG or PNG up to 2 MB, preview), Save Item and Cancel back to 20. Page title per route; Menu stays highlighted. Saving again after a failed photo upload updates the same item instead of adding a copy |
 | 22 | Categories | 🟦 | 1440 × 900. Table with Order, Category Name, Items (dish count) and Edit / Delete; Add Category card with Category Name, Display Order (next number filled in) and Save Category. Edit uses the same card (Edit Category, Cancel Edit). Names are unique; Delete asks first and keeps a category that still has dishes (the API's 409) |
 | 23 | Tables and QR Codes | 🟦 | 1440 × 900. "N tables", Print All QR, + Add Table; a card per table with its QR (`qrcode.react`, opens `/table/{id}?t={qr_token}`), seats, Download (PNG), Print (that table only), Edit, Delete. Add / Edit dialog with Table Number and Seats (unique number, 1–50, not below a booking); Delete asks first and keeps a table with orders or bookings |
-| 24 | Reservations | 🟦 | 1440 × 900. Upcoming / Today / Past / Cancelled tabs, table with Ref Code, Date, Time, Name, Guests, Status, 8 a page. Reservation Settings: Opening Time for Booking (Same as opening hours, or a time from 6:00 AM to 10:00 PM, saved as `booking_open_time`; links to 29), Time Slot Length, Max Guests, Require Deposit, Deposit Amount per guest, Save Settings. Edit on pending and confirmed bookings (Date, Time, Guests, Table, like `PUT /reservations/{id}`). |
+| 24 | Reservations | 🟦 | 1440 × 900. Search, Upcoming / Today / Past / Cancelled tabs, table with Ref Code, Date, Time, Name, Guests, Table, Status, 8 a page. Edit on pending and confirmed bookings (Date, Time, Guests, Table, like `PUT /reservations/{id}`), plus the same status actions as screen 15. Reservation Settings moved to screen 29 |
 | 25 | Order History | 🟦 | 1440 × 900. Search (order # or table), Date Range, All Status, All Payments, Clear filters, Export (CSV made in the browser); table with Order #, Date and time, Table, Items, Total, Payment, Method, Status, View (order details window); 8 a page |
 | 26 | Payments | 🟦 | 1440 × 900. Total Collected, Online, Cash and Deposits cards (paid only, in the date range); Search (PAY-ID, order #, ref code, reference), Date Range, All Methods, All Status, Clear filters; table with Payment ID, Date, For (order or deposit), Method, Reference, Amount, Status; 8 a page |
 | 27 | Reports | 🟦 | 1440 × 900. Daily / Weekly / Monthly with From – To (defaults: 7 days, 8 weeks, 6 months), Export PDF (print, report only); Sales Over Time line chart, Best-Selling Items top 10, Reservations per Day, Summary (Total Sales, Total Orders, Average Order Value, Reservations, No-shows, Busiest Hour) |
 | 28 | Staff Accounts | 🟦 | 1440 × 900. Search (name or email), All Roles, + Add Staff; table with Name, Email, Role, Status (Active / Disabled), Last Login, Actions (Edit, plus Disable or Enable; your own row has only Edit). Add / Edit window: Full Name, Email, Role (locked on your own account), Password (optional on Edit). No Delete button (not in the wireframe) |
-| 29 | Settings | 🟦 | 1440 × 900. Restaurant Information: Restaurant Name, Address, Contact Number (MobileInput, +63, saved as `0918 957 2855`), Email, Facebook Page, Logo preview with Upload Logo (PNG or JPG up to 2 MB, sent on save). Opening Hours: Monday to Sunday with open and close times and an open switch, note "Toggle off to mark a day as closed." One Save Changes saves both cards (`PUT /settings`, `PUT /opening-hours`, `POST /settings/logo`) |
+| 29 | Settings | 🟦 | 1440 × 900. Restaurant Information: Restaurant Name, Address, Contact Number (MobileInput, +63, saved as `0918 957 2855`), Email, Facebook Page, Logo preview with Upload Logo (PNG or JPG up to 2 MB, sent on save). Opening Hours: Monday to Sunday with open and close times and an open switch, note "Toggle off to mark a day as closed." Reservation Settings (moved from screen 24): Opening Time for Booking, Time Slot Length, Max Guests, Require Deposit, Deposit Amount per guest. One Save Changes saves all three cards (`PUT /settings`, `PUT /opening-hours`, `POST /settings/logo`) |
 
 ## Customer accounts (lead, not in the wireframes)
 
@@ -63,6 +63,19 @@ Start with simple screens to learn, then the forms, then the bigger flows:
 | Reset Password `/reset-password` | 🟦 |
 | My Reservations `/my-reservations` | 🟦 |
 | Profile `/profile` | 🟦 |
+
+## Changes from the wireframes (lead's decision, 2026-11-01)
+
+These differ from the 29 approved wireframes on purpose, to remove redundant steps and confusing flows:
+
+- **Deposit (04):** no payment method choice, because PayMongo asks for it on the next screen.
+- **Home (01):** no Time field in the booking form, and "Find a Table" is now "Check Availability".
+- **Reserve (03):** no step indicator.
+- **Confirmation (05):** no SMS claims, and the page changes with the booking and deposit status.
+- **Accounts:** an account menu in the header, plus Profile `/profile`.
+- **Staff login (13) and top bar:** no Remember me, and no top bar menu.
+- **Staff (15, 16, 17):** Cancel, Undo No-show, Change Table, Seat Guests and Free Table added. An order must be picked before taking payment.
+- **Admin (24, 29):** Reservation Settings moved from 24 to 29, and 24 gets search and status actions.
 
 ## Backend progress
 

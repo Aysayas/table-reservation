@@ -7,7 +7,7 @@ test('reservations shows upcoming bookings first, and the tabs switch the list',
 }) => {
   await page.goto(url)
   await expect(page.getByRole('heading', { name: 'Reservations', level: 1 })).toBeVisible()
-  for (const column of ['Ref Code', 'Date', 'Time', 'Name', 'Guests', 'Status']) {
+  for (const column of ['Ref Code', 'Date', 'Time', 'Name', 'Guests', 'Table', 'Status']) {
     await expect(page.getByRole('columnheader', { name: column })).toBeVisible()
   }
   await expect(page.getByRole('button', { name: 'Upcoming' })).toHaveAttribute(
@@ -25,64 +25,28 @@ test('reservations shows upcoming bookings first, and the tabs switch the list',
   await expect(page.getByText('No reservations found.')).toBeVisible()
 })
 
-test('opening time for booking can be changed and saved', async ({ page }) => {
+test('search finds a booking, and status actions work from this page', async ({ page }) => {
   await page.goto(url)
-  const openingTime = page.getByLabel('Opening Time for Booking')
-  await expect(openingTime).toBeEnabled()
-  await expect(openingTime).toHaveValue('')
-  await expect(openingTime.locator('option:checked')).toHaveText(/Same as opening hours/)
-  await openingTime.selectOption('18:00')
-  await page.getByRole('button', { name: 'Save Settings' }).click()
-  await expect(page.getByText('Settings saved')).toBeVisible()
-
-  await page.getByRole('link', { name: 'Set the hours in Settings' }).click()
-  await expect(page).toHaveURL('/admin/settings')
-  await page.getByRole('link', { name: 'Reservations' }).click()
-  await expect(page.getByLabel('Opening Time for Booking')).toHaveValue('18:00')
-  await expect(page.getByLabel('Opening Time for Booking').locator('option:checked')).toHaveText(
-    '6:00 PM',
-  )
-
-  await page.getByRole('button', { name: 'Edit RSV-000009' }).click()
-  const time = page.getByRole('dialog', { name: 'Edit RSV-000009' }).getByLabel('Time')
-  await expect(time).toHaveValue('19:00:00')
-  const times = await time
-    .locator('option')
-    .evaluateAll((options) => options.map((o) => (o as { value: string }).value).filter(Boolean))
-  expect(times.length).toBeGreaterThan(0)
-  expect(times.every((t) => t >= '18:00:00')).toBe(true)
+  await page.getByLabel('Search').fill('RSV-000008')
+  await expect(page.getByText('Showing 1–1 of 1')).toBeVisible()
+  await page.getByLabel('Search').fill('')
+  await page.getByRole('button', { name: 'Today' }).click()
+  await page.getByRole('button', { name: 'Mark RSV-000004 arrived' }).click()
+  await expect(page.getByRole('row', { name: /RSV-000004/ })).toContainText('Arrived')
+  await page.getByRole('button', { name: 'Cancel RSV-000005' }).click()
+  await page.getByRole('dialog').getByRole('button', { name: 'Keep Reservation' }).click()
+  await expect(page.getByRole('row', { name: /RSV-000005/ })).toContainText('Confirmed')
 })
 
-test('reservation settings are saved and kept', async ({ page }) => {
+test('a confirmed booking can move to another table', async ({ page }) => {
   await page.goto(url)
-  const settings = page.getByRole('region', { name: 'Reservation Settings' })
-  await settings.getByLabel('Time Slot Length').selectOption('30')
-  await settings.getByLabel('Max Guests per Booking').fill('8')
-  await expect(settings.getByRole('switch', { name: 'Require Deposit' })).toHaveAttribute(
-    'aria-checked',
-    'true',
-  )
-  await settings.getByLabel('Deposit Amount (₱) per guest').fill('100')
-  await settings.getByRole('button', { name: 'Save Settings' }).click()
-  await expect(page.getByText('Settings saved')).toBeVisible()
-
-  await page.getByRole('link', { name: 'Dashboard' }).click()
-  await page.getByRole('link', { name: 'Reservations' }).click()
-  await expect(settings.getByLabel('Time Slot Length')).toHaveValue('30')
-  await expect(settings.getByLabel('Max Guests per Booking')).toHaveValue('8')
-  await expect(settings.getByLabel('Deposit Amount (₱) per guest')).toHaveValue('100')
-})
-
-test('the deposit amount turns off with the switch, and max guests must be at least 1', async ({
-  page,
-}) => {
-  await page.goto(url)
-  const settings = page.getByRole('region', { name: 'Reservation Settings' })
-  await settings.getByRole('switch', { name: 'Require Deposit' }).click()
-  await expect(settings.getByLabel('Deposit Amount (₱) per guest')).toBeDisabled()
-  await settings.getByLabel('Max Guests per Booking').fill('0')
-  await settings.getByRole('button', { name: 'Save Settings' }).click()
-  await expect(page.getByText('At least 1 guest')).toBeVisible()
+  await page.getByRole('button', { name: 'Today' }).click()
+  await page.getByRole('button', { name: 'Change the table for RSV-000005' }).click()
+  const dialog = page.getByRole('dialog', { name: 'Assign a table' })
+  await expect(dialog.getByRole('button', { name: /^T5/ })).toHaveCount(0)
+  await dialog.getByRole('button', { name: /^T7/ }).click()
+  await expect(dialog).toHaveCount(0)
+  await expect(page.getByRole('row', { name: /RSV-000005/ })).toContainText('T7')
 })
 
 test('edit shows only for pending or confirmed bookings', async ({ page }) => {

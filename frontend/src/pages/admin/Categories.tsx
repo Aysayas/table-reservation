@@ -211,16 +211,18 @@ export default function Categories() {
                 onClick={() => setDeleting(null)}
                 className="border-brand-line text-brand-charcoal rounded-md border px-4 py-2 text-sm font-bold"
               >
-                Cancel
+                {deleting.item_count ? 'Close' : 'Cancel'}
               </button>
-              <button
-                type="button"
-                disabled={remove.isPending}
-                onClick={() => remove.mutate(deleting)}
-                className="bg-brand-red hover:bg-brand-red/90 rounded-md px-4 py-2 text-sm font-bold text-white disabled:opacity-50"
-              >
-                Delete
-              </button>
+              {!deleting.item_count && (
+                <button
+                  type="button"
+                  disabled={remove.isPending}
+                  onClick={() => remove.mutate(deleting)}
+                  className="bg-brand-red hover:bg-brand-red/90 rounded-md px-4 py-2 text-sm font-bold text-white disabled:opacity-50"
+                >
+                  Delete
+                </button>
+              )}
             </div>
           </div>
         </div>

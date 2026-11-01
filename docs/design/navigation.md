@@ -87,6 +87,8 @@ Every admin screen has the same sidebar. Each item goes to its screen, and Log O
 | 19–29 admin sidebar | Reports | 27 `/admin/reports` |
 | 19–29 admin sidebar | Staff Accounts | 28 `/admin/users` |
 | 19–29 admin sidebar | Settings | 29 `/admin/settings` |
+| 19 Admin Dashboard, 26 Payments | Order number | 25 Order History `/admin/orders?order=` |
+| 14 Staff Dashboard | Order number | 17 Orders and Payments `/staff/orders?order=` |
 | 19–29 admin sidebar | Log Out | 13 Staff Login |
 | 20 Menu Management | + Add Menu Item | 21 Add / Edit Menu Item `/admin/menu/new` |
 | 21 Add / Edit Menu Item | Save Item | 20 Menu Management |

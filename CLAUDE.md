@@ -38,7 +38,7 @@ Read these before building anything. They are the source of truth:
 | `docs/packages.md` | The only libraries we use |
 | `docs/building-a-screen.md` | The steps for building a screen |
 | `docs/testing.md` | How to write Playwright tests |
-| `docs/progress.md` | Which screens are done, in progress or free |
+| `docs/progress.md` | Which screens are done, in progress or free, and the deliberate changes from the wireframes |
 
 ## How to work
 

@@ -110,7 +110,7 @@ export default function Reports() {
           className="border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal ml-auto flex items-center gap-2 rounded-lg border px-5 py-2.5 text-sm font-bold transition-colors duration-200 hover:text-white"
         >
           <Printer className="size-4" />
-          Export PDF
+          Print
         </button>
       </div>
 

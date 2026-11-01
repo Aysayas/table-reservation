@@ -128,7 +128,11 @@ export default function StaffDashboard() {
             <tbody>
               {data.active_orders_list.map((o) => (
                 <tr key={o.order_id} className="border-brand-line border-t">
-                  <td className={`${td} font-semibold`}>#{o.order_id}</td>
+                  <td className={`${td} font-semibold`}>
+                    <Link to={`/staff/orders?order=${o.order_id}`} className="hover:text-brand-red">
+                      #{o.order_id}
+                    </Link>
+                  </td>
                   <td className={td}>{o.table_number}</td>
                   <td className={td}>{o.item_count}</td>
                   <td className={`${td} tabular-nums`}>{peso(o.total_amount)}</td>

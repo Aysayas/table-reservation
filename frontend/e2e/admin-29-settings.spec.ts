@@ -80,3 +80,57 @@ test('upload logo previews the file until it is saved', async ({ page }) => {
   await expect(page.getByText('Settings saved')).toBeVisible()
   await expect(page.getByText('PNG or JPG, up to 2 MB')).toBeVisible()
 })
+
+test('opening time for booking is saved and limits the times in the edit dialog', async ({
+  page,
+}) => {
+  await page.goto(url)
+  const openingTime = page.getByLabel('Opening Time for Booking')
+  await expect(openingTime).toHaveValue('')
+  await expect(openingTime.locator('option:checked')).toHaveText(/Same as opening hours/)
+  await openingTime.selectOption('18:00')
+  await page.getByRole('button', { name: 'Save Changes' }).click()
+  await expect(page.getByText('Settings saved')).toBeVisible()
+
+  await page.getByRole('link', { name: 'Reservations' }).click()
+  await page.getByRole('button', { name: 'Edit RSV-000009' }).click()
+  const time = page.getByRole('dialog', { name: 'Edit RSV-000009' }).getByLabel('Time')
+  await expect(time).toHaveValue('19:00:00')
+  const times = await time
+    .locator('option')
+    .evaluateAll((options) => options.map((o) => (o as { value: string }).value).filter(Boolean))
+  expect(times.length).toBeGreaterThan(0)
+  expect(times.every((t) => t >= '18:00:00')).toBe(true)
+})
+
+test('reservation settings are saved and kept', async ({ page }) => {
+  await page.goto(url)
+  const settings = page.getByRole('region', { name: 'Reservation Settings' })
+  await settings.getByLabel('Time Slot Length').selectOption('30')
+  await settings.getByLabel('Max Guests per Booking').fill('8')
+  await expect(settings.getByRole('switch', { name: 'Require Deposit' })).toHaveAttribute(
+    'aria-checked',
+    'true',
+  )
+  await settings.getByLabel('Deposit Amount (₱) per guest').fill('100')
+  await page.getByRole('button', { name: 'Save Changes' }).click()
+  await expect(page.getByText('Settings saved')).toBeVisible()
+
+  await page.getByRole('link', { name: 'Dashboard' }).click()
+  await page.getByRole('link', { name: 'Settings' }).click()
+  await expect(settings.getByLabel('Time Slot Length')).toHaveValue('30')
+  await expect(settings.getByLabel('Max Guests per Booking')).toHaveValue('8')
+  await expect(settings.getByLabel('Deposit Amount (₱) per guest')).toHaveValue('100')
+})
+
+test('the deposit amount turns off with the switch, and max guests must be at least 1', async ({
+  page,
+}) => {
+  await page.goto(url)
+  const settings = page.getByRole('region', { name: 'Reservation Settings' })
+  await settings.getByRole('switch', { name: 'Require Deposit' }).click()
+  await expect(settings.getByLabel('Deposit Amount (₱) per guest')).toBeDisabled()
+  await settings.getByLabel('Max Guests per Booking').fill('0')
+  await page.getByRole('button', { name: 'Save Changes' }).click()
+  await expect(page.getByText('At least 1 guest')).toBeVisible()
+})
