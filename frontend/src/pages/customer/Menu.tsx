@@ -119,7 +119,7 @@ export default function Menu() {
   ]
 
   return (
-    <div className="bg-brand-cream min-h-[calc(100vh-4rem)] pb-16">
+    <div className="bg-brand-cream min-h-[calc(100dvh-4rem)] pb-16">
       <section className="bg-brand-charcoal px-4 py-8 text-white md:py-14">
         <div className="md:mx-auto md:max-w-6xl md:px-10">
           <nav
@@ -144,7 +144,7 @@ export default function Menu() {
       </section>
 
       <div className="md:mx-auto md:max-w-6xl md:px-10 lg:mt-10 lg:grid lg:grid-cols-[17rem_1fr] lg:items-start lg:gap-8">
-        <aside className="max-lg:contents lg:sticky lg:top-6 lg:max-h-[calc(100vh-3rem)] lg:[scrollbar-width:thin] lg:space-y-6 lg:overflow-y-auto">
+        <aside className="max-lg:contents lg:sticky lg:top-6 lg:max-h-[calc(100dvh-3rem)] lg:[scrollbar-width:thin] lg:space-y-6 lg:overflow-y-auto">
           <div className={`px-4 pt-6 lg:px-6 ${panel}`}>
             <p className={panelTitle}>Search</p>
             <label className="border-brand-line focus-within:border-brand-gold flex items-center overflow-hidden rounded-md border bg-white lg:mt-4">

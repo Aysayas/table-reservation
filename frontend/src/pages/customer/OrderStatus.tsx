@@ -66,7 +66,7 @@ export default function OrderStatus() {
 
   if (!order) {
     return (
-      <div className="bg-brand-cream min-h-[calc(100vh-4rem)] px-4 py-16 text-center">
+      <div className="bg-brand-cream min-h-[calc(100dvh-4rem)] px-4 py-16 text-center">
         <h1 className="text-brand-charcoal font-serif text-3xl">Order not found</h1>
         <p className="text-brand-ink/75 mt-3 text-sm">
           We couldn't find this order for your table. Ask our staff if you need help.
@@ -79,7 +79,7 @@ export default function OrderStatus() {
   const current = steps.findIndex((s) => s.status === order.status)
 
   return (
-    <div className="bg-brand-cream min-h-[calc(100vh-4rem)] px-4 pt-6 pb-28">
+    <div className="bg-brand-cream min-h-[calc(100dvh-4rem)] px-4 pt-6 pb-28">
       <h1 className="text-brand-charcoal font-serif text-3xl">Order #{order.order_id}</h1>
       <p className="text-brand-ink/70 mt-1 text-sm">
         Placed at {format(parseISO(order.created_at), 'h:mm a')}
@@ -176,7 +176,7 @@ export default function OrderStatus() {
         )}
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 z-20 mx-auto max-w-[390px] px-4 pb-4">
+      <div className="fixed inset-x-0 bottom-0 z-20 mx-auto max-w-[390px] px-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
         {orderMore}
       </div>
     </div>

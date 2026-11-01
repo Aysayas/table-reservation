@@ -62,7 +62,7 @@ export default function TableMenu() {
 
   if (!table) {
     return (
-      <div className="bg-brand-cream min-h-[calc(100vh-4rem)] px-4 py-16 text-center">
+      <div className="bg-brand-cream min-h-[calc(100dvh-4rem)] px-4 py-16 text-center">
         <h1 className="text-brand-charcoal font-serif text-3xl">Table not found</h1>
         <p className="text-brand-ink/75 mt-3 text-sm">
           Please scan the QR code on your table again.
@@ -89,7 +89,7 @@ export default function TableMenu() {
   }
 
   return (
-    <div className={`bg-brand-cream min-h-[calc(100vh-4rem)] pt-4 ${count ? 'pb-28' : 'pb-10'}`}>
+    <div className={`bg-brand-cream min-h-[calc(100dvh-4rem)] pt-4 ${count ? 'pb-28' : 'pb-10'}`}>
       <h1 className="sr-only">Table {table.table_number} menu</h1>
       <div className="space-y-3 px-4">
         {!canOrder && (
@@ -236,7 +236,7 @@ export default function TableMenu() {
       ))}
 
       {count > 0 && (
-        <div className="fixed inset-x-0 bottom-0 z-20 mx-auto max-w-[390px] px-4 pb-4">
+        <div className="fixed inset-x-0 bottom-0 z-20 mx-auto max-w-[390px] px-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
           <Link
             to={`/table/${id}/cart`}
             className="bg-brand-charcoal hover:bg-brand-charcoal/90 flex items-center justify-between gap-3 rounded-lg px-5 py-4 text-sm font-bold text-white shadow-lg transition-colors duration-200"

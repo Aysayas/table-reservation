@@ -4,7 +4,7 @@ type Props = { title: string; intro?: ReactNode; children: ReactNode }
 
 export default function AccountCard({ title, intro, children }: Props) {
   return (
-    <div className="bg-brand-cream min-h-[calc(100vh-4rem)] px-4 pt-6 pb-12 md:py-12">
+    <div className="bg-brand-cream min-h-[calc(100dvh-4rem)] px-4 pt-6 pb-12 md:py-12">
       <div className="md:mx-auto md:max-w-md">
         <h1 className="text-brand-charcoal font-serif text-3xl md:text-4xl">{title}</h1>
         {intro && <p className="text-brand-ink/75 mt-3 text-sm">{intro}</p>}

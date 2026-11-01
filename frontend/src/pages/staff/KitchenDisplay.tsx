@@ -96,7 +96,7 @@ export default function KitchenDisplay() {
   const oldestFirst = [...orders].reverse()
 
   return (
-    <div className="bg-brand-cream flex min-h-screen flex-col">
+    <div className="bg-brand-cream flex min-h-dvh flex-col">
       <header className="bg-brand-charcoal flex flex-wrap items-center gap-x-6 gap-y-3 px-6 py-4 text-white md:px-8">
         {from && (
           <Link

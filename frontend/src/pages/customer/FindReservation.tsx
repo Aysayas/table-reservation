@@ -93,7 +93,7 @@ export default function FindReservation() {
   const status = result ? reservationStatuses[result.status] : undefined
 
   return (
-    <div className="bg-brand-cream min-h-[calc(100vh-4rem)] px-4 pt-6 pb-12 md:py-12">
+    <div className="bg-brand-cream min-h-[calc(100dvh-4rem)] px-4 pt-6 pb-12 md:py-12">
       <div className="md:mx-auto md:max-w-xl">
         <div className="flex items-center gap-4">
           <button

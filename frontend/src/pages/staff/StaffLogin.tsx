@@ -44,7 +44,7 @@ export default function StaffLogin() {
   }
 
   return (
-    <div className="bg-brand-cream flex min-h-screen items-center justify-center px-4 py-16">
+    <div className="bg-brand-cream flex min-h-dvh items-center justify-center px-4 py-16">
       <div className="border-brand-gold/40 relative w-full max-w-[420px] rounded-2xl border bg-white px-8 pt-20 pb-10 shadow-sm sm:px-10">
         <div className="text-center">
           <span className="border-brand-gold/60 bg-brand-cream absolute -top-14 left-1/2 block size-28 -translate-x-1/2 rounded-full border p-2">

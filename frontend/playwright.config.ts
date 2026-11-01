@@ -18,8 +18,18 @@ export default defineConfig({
     },
     {
       name: 'desktop',
-      testIgnore: ['**/customer*.spec.ts', '**/table*.spec.ts'],
+      testIgnore: ['**/customer*.spec.ts', '**/table*.spec.ts', '**/devices.spec.ts'],
       use: { ...devices['Desktop Chrome'], viewport: { width: 1440, height: 900 } },
+    },
+    {
+      name: 'iphone',
+      testMatch: '**/devices.spec.ts',
+      use: { ...devices['iPhone 13'], viewport: { width: 390, height: 844 } },
+    },
+    {
+      name: 'android',
+      testMatch: '**/devices.spec.ts',
+      use: { ...devices['Pixel 7'], viewport: { width: 412, height: 915 } },
     },
   ],
   webServer: {
