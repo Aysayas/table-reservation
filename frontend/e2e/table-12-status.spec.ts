@@ -36,6 +36,14 @@ test('placing an order with pay now shows it received and paid', async ({ page }
   await expect(page.getByText('Paid', { exact: true })).toBeVisible()
 })
 
+test('an unpaid order can be paid online from its status page', async ({ page }) => {
+  await scan(page, 2)
+  await page.goto('/table/2/orders?order=1')
+  await page.getByRole('button', { name: 'Pay Now' }).click()
+  await expect(page.getByText('Paid', { exact: true })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Pay Now' })).toHaveCount(0)
+})
+
 test('order more goes back to the table menu', async ({ page }) => {
   await scan(page, 2)
   await page.goto('/table/2/orders?order=1')

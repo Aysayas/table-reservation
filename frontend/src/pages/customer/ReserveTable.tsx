@@ -195,7 +195,7 @@ export default function ReserveTable() {
         special_request: values.special_request || null,
       })
       writeDraft(null)
-      navigate(`/reserve/payment?code=${reservation.reference_code}`)
+      navigate(`/reserve/payment?code=${reservation.reference_code}`, { replace: true })
     } catch (e) {
       toast.error((e as Error).message)
     }

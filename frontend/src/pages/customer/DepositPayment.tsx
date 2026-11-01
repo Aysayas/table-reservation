@@ -1,9 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
 import { format, parseISO } from 'date-fns'
-import { ArrowLeft, CreditCard, Smartphone, Wallet } from 'lucide-react'
-import { useState } from 'react'
+import { ArrowLeft } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
+import { clearPaying, markPaying } from '@/hooks/usePaymentReturn'
 import { apiError } from '@/lib/api'
 import { getReservationByCode, startDeposit } from '@/services/reservations'
 import { getSettings } from '@/services/settings'
@@ -11,11 +12,6 @@ import { getSettings } from '@/services/settings'
 const card = 'border-brand-line rounded-lg border bg-white p-5 md:p-6'
 const redButton =
   'bg-brand-red hover:bg-brand-red/90 focus-visible:outline-brand-gold block w-full rounded-sm py-4 text-center text-sm font-bold tracking-[0.15em] text-white uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2'
-const methods = [
-  { name: 'GCash', icon: Smartphone },
-  { name: 'Maya', icon: Wallet },
-  { name: 'Credit / Debit Card', icon: CreditCard },
-]
 
 const peso = (amount: number) =>
   `₱${amount.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
@@ -24,7 +20,6 @@ export default function DepositPayment() {
   const navigate = useNavigate()
   const [params] = useSearchParams()
   const code = params.get('code') ?? ''
-  const [method, setMethod] = useState(methods[0].name)
   const [paying, setPaying] = useState(false)
   const { data: reservation, isLoading } = useQuery({
     queryKey: ['reservation', code],
@@ -32,6 +27,8 @@ export default function DepositPayment() {
     enabled: !!code,
   })
   const { data: settings } = useQuery({ queryKey: ['settings'], queryFn: getSettings })
+
+  useEffect(() => clearPaying(code), [code])
 
   const header = (
     <div className="flex items-center gap-4">
@@ -128,38 +125,22 @@ export default function DepositPayment() {
                   reservation.deposit_amount > 0
                     ? await startDeposit(reservation.reference_code)
                     : null
-                if (pay) window.location.assign(pay.checkout_url)
-                else navigate(`/reserve/confirmation/${reservation.reference_code}`)
+                if (pay) {
+                  markPaying(reservation.reference_code)
+                  window.location.assign(pay.checkout_url)
+                } else navigate(`/reserve/confirmation/${reservation.reference_code}`)
               } catch (e) {
                 toast.error(apiError(e))
                 setPaying(false)
               }
             }}
           >
-            <fieldset>
-              <legend className="text-brand-charcoal font-serif text-2xl">Payment Method</legend>
-              <div className="mt-4 space-y-3">
-                {methods.map(({ name, icon: Icon }) => (
-                  <label
-                    key={name}
-                    className={`flex cursor-pointer items-center gap-4 rounded-lg border bg-white px-4 py-4 transition-colors duration-200 ${method === name ? 'border-brand-red ring-brand-red ring-1' : 'border-brand-line hover:border-brand-gold'}`}
-                  >
-                    <input
-                      type="radio"
-                      name="method"
-                      value={name}
-                      checked={method === name}
-                      onChange={() => setMethod(name)}
-                      className="accent-brand-red size-4"
-                    />
-                    <span className="bg-brand-cream text-brand-charcoal flex size-10 items-center justify-center rounded-md">
-                      <Icon className="size-5" strokeWidth={1.5} />
-                    </span>
-                    <span className="text-brand-charcoal text-sm font-semibold">{name}</span>
-                  </label>
-                ))}
-              </div>
-            </fieldset>
+            <h2 className="text-brand-charcoal font-serif text-2xl">Payment</h2>
+            <p className="text-brand-ink/75 mt-3 text-sm">
+              {reservation.deposit_amount > 0
+                ? "You'll choose GCash, Maya or card on the next screen."
+                : 'No deposit is needed for this booking.'}
+            </p>
 
             <div className="bg-brand-cream/95 border-brand-line sticky bottom-0 -mx-4 mt-8 border-t px-4 py-4 md:static md:mx-0 md:border-0 md:bg-transparent md:p-0">
               {reservation.deposit_status === 'paid' ||
@@ -183,7 +164,7 @@ export default function DepositPayment() {
                   disabled={paying}
                   className={`${redButton} disabled:opacity-60`}
                 >
-                  Pay {amount}
+                  {reservation.deposit_amount > 0 ? `Pay ${amount}` : 'Continue'}
                 </button>
               )}
             </div>
