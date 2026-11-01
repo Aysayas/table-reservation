@@ -20,6 +20,7 @@ test('menu management lists 8 dishes a page with search and category filter', as
   await expect(page.getByRole('row')).toHaveCount(2)
   await expect(page.getByText('Showing 1–1 of 1')).toBeVisible()
   await page.getByLabel('Search').fill('')
+  await expect(page.getByText(/^Showing 1–8 of \d+$/)).toBeVisible()
 
   await page.getByLabel('Category').selectOption({ label: 'Breakfast Corner' })
   await expect(page.getByRole('cell', { name: 'Breakfast Corner' }).first()).toBeVisible()
