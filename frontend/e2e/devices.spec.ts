@@ -191,3 +191,18 @@ test('the logged-in header keeps its right gutter from 380 wide', async ({ page 
     expect((box?.x ?? 0) + (box?.width ?? 0)).toBeLessThanOrEqual(width - 12)
   }
 })
+
+test('the wide header button keeps the space in Reserve a Table', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto('/')
+  const words = page
+    .getByRole('banner')
+    .getByRole('link', { name: 'Reserve a Table' })
+    .getByText('a Table')
+  const widths = await words.evaluate((el) => {
+    const withSpace = el.getBoundingClientRect().width
+    el.textContent = 'a Table'
+    return { withSpace, without: el.getBoundingClientRect().width }
+  })
+  expect(widths.withSpace).toBeGreaterThan(widths.without)
+})

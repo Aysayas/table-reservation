@@ -144,8 +144,10 @@ export default function CustomerLayout() {
               onClick={() => setOpen(false)}
               className={`bg-brand-red hover:bg-brand-red/90 flex min-h-11 items-center rounded-md px-3 text-xs font-bold tracking-[0.12em] text-white uppercase transition-colors duration-200 ${account ? 'max-[419px]:px-2' : ''} ${wide ? 'md:px-5' : ''}`}
             >
-              Reserve
-              {wide && <span className="hidden xl:inline"> a Table</span>}
+              <span>
+                Reserve
+                {wide && <span className="hidden xl:inline"> a Table</span>}
+              </span>
             </Link>
           )}
           {account && (
