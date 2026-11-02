@@ -407,7 +407,7 @@ export const sampleReservations: Reservation[] = [
     reservation_time,
     pax,
     special_request: null,
-    deposit_amount: 0,
+    deposit_amount: n === 7 ? 300 : 0,
     status,
     reminder_sent_at: null,
     created_at: '2026-01-01T00:00:00',

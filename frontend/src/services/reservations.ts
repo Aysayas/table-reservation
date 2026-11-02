@@ -1,5 +1,5 @@
 import { isAxiosError } from 'axios'
-import { format } from 'date-fns'
+import { addMinutes, format, parseISO } from 'date-fns'
 import { api, USE_SAMPLE } from '@/lib/api'
 import {
   sampleCustomers,
@@ -22,6 +22,11 @@ export type NewReservation = {
   pax: number
   special_request: string | null
 }
+
+const payBy = (r: Reservation, paid: boolean) =>
+  r.status === 'pending' && !paid && r.deposit_amount > 0
+    ? format(addMinutes(parseISO(r.created_at), 30), "yyyy-MM-dd'T'HH:mm:ss")
+    : null
 
 const toMinutes = (time: string) => {
   const [h, m] = time.split(':').map(Number)
@@ -123,6 +128,7 @@ export async function getReservationByCode(code: string): Promise<PublicReservat
     },
     table_number: table?.table_number ?? null,
     deposit_status: paid ? 'paid' : 'unpaid',
+    pay_by: payBy(reservation, paid),
   }
 }
 
@@ -206,6 +212,9 @@ const perPage = 8
 
 const toStaff = (r: Reservation): PublicReservation => {
   const customer = sampleCustomers.find((c) => c.customer_id === r.customer_id)
+  const paid = samplePayments.some(
+    (p) => p.reservation_id === r.reservation_id && p.status === 'paid',
+  )
   return {
     ...r,
     customer: {
@@ -213,11 +222,8 @@ const toStaff = (r: Reservation): PublicReservation => {
       mobile_number: customer?.mobile_number ?? '',
     },
     table_number: sampleTables.find((t) => t.table_id === r.table_id)?.table_number ?? null,
-    deposit_status: samplePayments.some(
-      (p) => p.reservation_id === r.reservation_id && p.status === 'paid',
-    )
-      ? 'paid'
-      : 'unpaid',
+    deposit_status: paid ? 'paid' : 'unpaid',
+    pay_by: payBy(r, paid),
   }
 }
 
@@ -329,6 +335,18 @@ export async function updateReservationStatus(
     }
   }
   return toStaff(r)
+}
+
+export async function removeReservation(reservation_id: number): Promise<void> {
+  if (!USE_SAMPLE) {
+    await api.delete(`/reservations/${reservation_id}`)
+    return
+  }
+  const index = sampleReservations.findIndex((r) => r.reservation_id === reservation_id)
+  if (index < 0) throw new Error('Reservation not found')
+  const [removed] = sampleReservations.splice(index, 1)
+  const table = sampleTables.find((t) => t.table_id === removed.table_id)
+  if (table?.status === 'reserved' && removed.status !== 'cancelled') table.status = 'available'
 }
 
 export type ReservationEdit = {

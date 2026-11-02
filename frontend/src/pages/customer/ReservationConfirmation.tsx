@@ -99,7 +99,14 @@ export default function ReservationConfirmation() {
 
   const nextSteps = [
     ...(needsDeposit
-      ? [{ title: 'Pay your deposit', text: 'Your table is held once the deposit is paid.' }]
+      ? [
+          {
+            title: 'Pay your deposit',
+            text: reservation.pay_by
+              ? `Pay by ${format(parseISO(reservation.pay_by), 'h:mm a')} or this booking is cancelled.`
+              : 'Your table is held once the deposit is paid.',
+          },
+        ]
       : []),
     {
       title: 'Arrive and show your code',

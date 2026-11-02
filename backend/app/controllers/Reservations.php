@@ -15,6 +15,8 @@ class Reservations extends Controller {
 		$this->call->library('api');
 		$this->call->database();
 		$this->call->model(['Reservation_model', 'Customer_model', 'Table_model', 'Setting_model', 'User_model', 'Opening_hour_model', 'Payment_model']);
+		$this->call->library('expiry');
+		$this->expiry->run();
 	}
 
 	public function index()
@@ -262,6 +264,47 @@ class Reservations extends Controller {
 			$this->sms->reservation((int) $id, 'cancelled');
 		}
 		$this->api->respond(['data' => $this->format($this->Reservation_model->find($id), true)]);
+	}
+
+	public function destroy($id)
+	{
+		$this->api->require_role('staff', 'admin');
+		$reservation = $this->Reservation_model->find($id);
+		if (!$reservation) {
+			$this->api->respond_error('Reservation not found', 404);
+		}
+		if (!in_array($reservation['status'], ['pending', 'confirmed', 'cancelled'], true) || (float) $reservation['deposit_amount'] <= 0) {
+			$this->api->respond_error('Only unpaid bookings can be removed', 409);
+		}
+		if ($this->Payment_model->exists(['reservation_id' => (int) $id, 'status' => 'paid'])) {
+			$this->api->respond_error('This deposit is paid, so the booking can only be cancelled', 409);
+		}
+
+		$this->call->library('paymongo');
+		$this->paymongo->cancel_pending('reservation_id', (int) $id);
+		if ($reservation['status'] !== 'cancelled') {
+			$this->call->library('sms');
+			$this->sms->reservation((int) $id, 'cancelled');
+		}
+
+		$this->Reservation_model->transaction();
+		try {
+			if ($this->Payment_model->exists(['reservation_id' => (int) $id, 'status' => 'paid'])) {
+				$this->Reservation_model->rollback();
+				$this->api->respond_error('This deposit is paid, so the booking can only be cancelled', 409);
+			}
+			$this->Payment_model->delete_where(['reservation_id' => (int) $id]);
+			$this->Reservation_model->delete($id);
+			if ($reservation['table_id'] !== null && $reservation['status'] !== 'cancelled') {
+				$this->release_table((int) $reservation['table_id']);
+			}
+			$this->Reservation_model->commit();
+		} catch (Throwable $e) {
+			$this->Reservation_model->rollback();
+			$this->api->respond_error('Could not remove the reservation', 500);
+		}
+
+		$this->api->respond(['data' => ['message' => 'Removed']]);
 	}
 
 	public function availability()
@@ -653,6 +696,9 @@ class Reservations extends Controller {
 		$reservation['pax'] = (int) $reservation['pax'];
 		$reservation['deposit_amount'] = (float) $reservation['deposit_amount'];
 		$reservation['deposit_status'] = $this->Payment_model->exists(['reservation_id' => $reservation['reservation_id'], 'status' => 'paid']) ? 'paid' : 'unpaid';
+		$reservation['pay_by'] = $reservation['status'] === 'pending' && $reservation['deposit_status'] === 'unpaid' && $reservation['deposit_amount'] > 0
+			? date('Y-m-d H:i:s', strtotime($reservation['created_at']) + Reservation_model::PAY_MINUTES * 60)
+			: null;
 		$reservation['customer'] = [
 			'full_name' => $customer['full_name'] ?? null,
 			'mobile_number' => $full_mobile ? ($mobile ?: null) : (strlen($mobile) === 11 ? '09XX XXX ' . substr($mobile, -4) : null),

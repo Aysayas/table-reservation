@@ -99,6 +99,7 @@ $router->group(['prefix' => 'api'], function ($router) {
     $router->get('/reservations', 'Reservations::index');
     $router->get('/reservations/{id}', 'Reservations::show')->where_number('id');
     $router->put('/reservations/{id}', 'Reservations::update')->where_number('id');
+    $router->delete('/reservations/{id}', 'Reservations::destroy')->where_number('id');
     $router->patch('/reservations/{id}/status', 'Reservations::status')->where_number('id');
 
     $router->post('/orders', 'Orders::store');
