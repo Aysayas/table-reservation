@@ -24,7 +24,9 @@ test("today's reservations shows the filters, columns and today's bookings", asy
   await expect(page.getByRole('row')).toHaveCount(6)
   await expect(page.getByText('0900 000 0000').first()).toBeVisible()
   await expect(page.getByText('Showing 1–5 of 5')).toBeVisible()
-  await expect(page.getByRole('row').nth(1).getByRole('cell').nth(6)).toContainText(/\d{4}.*[AP]M/)
+  await expect(page.getByRole('row').nth(1).getByRole('cell').nth(6)).toContainText(
+    /Jan 1.*12:00 AM/,
+  )
 })
 
 test('arrived and no-show change a confirmed booking', async ({ page }) => {

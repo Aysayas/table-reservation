@@ -137,7 +137,9 @@ export default function TodaysReservations() {
                 <td className={td}>{r.pax}</td>
                 <td className={td}>{r.table_number ?? '—'}</td>
                 <td className={td}>
-                  <span className="block">{format(parseISO(r.created_at), 'MMM d, yyyy')}</span>
+                  <span className="block whitespace-nowrap">
+                    {format(parseISO(r.created_at), 'MMM d')}
+                  </span>
                   <span className="text-brand-ink/70 block text-xs">
                     {format(parseISO(r.created_at), 'h:mm a')}
                   </span>
