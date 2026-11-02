@@ -87,11 +87,13 @@ export default function Reservations() {
           <table className="w-full">
             <thead className="bg-brand-cream/60">
               <tr>
-                {['Ref Code', 'Date', 'Time', 'Name', 'Guests', 'Table', 'Status'].map((h) => (
-                  <th key={h} className={th}>
-                    {h}
-                  </th>
-                ))}
+                {['Ref Code', 'Date', 'Time', 'Name', 'Guests', 'Table', 'Added', 'Status'].map(
+                  (h) => (
+                    <th key={h} className={th}>
+                      {h}
+                    </th>
+                  ),
+                )}
                 <th className={th}>
                   <span className="sr-only">Actions</span>
                 </th>
@@ -108,6 +110,12 @@ export default function Reservations() {
                   <td className={td}>{r.customer.full_name}</td>
                   <td className={td}>{r.pax}</td>
                   <td className={td}>{r.table_number ?? '—'}</td>
+                  <td className={td}>
+                    <span className="block">{format(parseISO(r.created_at), 'MMM d, yyyy')}</span>
+                    <span className="text-brand-ink/70 block text-xs">
+                      {format(parseISO(r.created_at), 'h:mm a')}
+                    </span>
+                  </td>
                   <td className={td}>
                     <span
                       className={`inline-block rounded-full px-3 py-1 text-xs font-bold ${statusBadge[r.status]}`}
@@ -133,7 +141,7 @@ export default function Reservations() {
               ))}
               {rows.length === 0 && (
                 <tr>
-                  <td colSpan={8} className="text-brand-ink/70 px-4 py-10 text-center text-sm">
+                  <td colSpan={9} className="text-brand-ink/70 px-4 py-10 text-center text-sm">
                     No reservations found.
                   </td>
                 </tr>
