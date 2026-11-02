@@ -5,7 +5,7 @@ import { toast } from 'sonner'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import { formatTime } from '@/lib/hours'
 import { reservationStatuses } from '@/lib/reservationStatus'
-import { updateReservationStatus } from '@/services/reservations'
+import { removeReservation, updateReservationStatus } from '@/services/reservations'
 import { getTables, getTakenTables } from '@/services/tables'
 import type { PublicReservation, ReservationStatus } from '@/types/db'
 
@@ -21,7 +21,7 @@ export default function ReservationActions({
 }) {
   const queryClient = useQueryClient()
   const [assigning, setAssigning] = useState(false)
-  const [confirming, setConfirming] = useState<'no_show' | 'cancelled' | null>(null)
+  const [confirming, setConfirming] = useState<'no_show' | 'cancelled' | 'remove' | null>(null)
   const { data: tables = [] } = useQuery({
     queryKey: ['tables'],
     queryFn: () => getTables(),
@@ -47,6 +47,41 @@ export default function ReservationActions({
     },
     onError: (e) => toast.error(e.message),
   })
+  const remove = useMutation({
+    mutationFn: () => removeReservation(r.reservation_id),
+    onSuccess: () => {
+      toast.success(`${r.reference_code} removed`)
+      setConfirming(null)
+      for (const key of ['reservations', 'tables', 'dashboard']) {
+        queryClient.invalidateQueries({ queryKey: [key] })
+      }
+    },
+    onError: (e) => toast.error(e.message),
+  })
+  const removable =
+    r.deposit_status === 'unpaid' &&
+    r.deposit_amount > 0 &&
+    (r.status === 'pending' || r.status === 'confirmed' || r.status === 'cancelled')
+  const prompts = {
+    cancelled: {
+      title: `Cancel ${r.reference_code}?`,
+      body: `${r.customer.full_name}'s booking will be cancelled and this can't be undone.${r.deposit_status === 'paid' ? ' The deposit is non-refundable.' : ''}`,
+      confirmLabel: 'Cancel Reservation',
+      closeLabel: 'Keep Reservation',
+    },
+    no_show: {
+      title: `Mark ${r.reference_code} as a no-show?`,
+      body: `This frees the table. If ${r.customer.full_name} comes later, use Undo No-show.`,
+      confirmLabel: 'Mark No-show',
+      closeLabel: 'Go Back',
+    },
+    remove: {
+      title: `Remove ${r.reference_code}?`,
+      body: `${r.customer.full_name}'s unpaid booking will be deleted for good and won't appear in any list.`,
+      confirmLabel: 'Remove Booking',
+      closeLabel: 'Keep Booking',
+    },
+  }
   const seats = tables.filter((t) => t.capacity >= r.pax && t.table_number !== r.table_number)
   const allTaken = seats.length > 0 && seats.every((t) => taken.includes(t.table_id))
   const cancel = (
@@ -117,24 +152,25 @@ export default function ReservationActions({
             Undo No-show
           </button>
         )}
+        {removable && (
+          <button
+            type="button"
+            aria-label={`Remove ${r.reference_code}`}
+            onClick={() => setConfirming('remove')}
+            className={action}
+          >
+            Remove
+          </button>
+        )}
       </div>
 
       {confirming && (
         <ConfirmDialog
-          title={
-            confirming === 'cancelled'
-              ? `Cancel ${r.reference_code}?`
-              : `Mark ${r.reference_code} as a no-show?`
+          {...prompts[confirming]}
+          busy={change.isPending || remove.isPending}
+          onConfirm={() =>
+            confirming === 'remove' ? remove.mutate() : change.mutate({ status: confirming })
           }
-          body={
-            confirming === 'cancelled'
-              ? `${r.customer.full_name}'s booking will be cancelled and this can't be undone.${r.deposit_status === 'paid' ? ' The deposit is non-refundable.' : ''}`
-              : `This frees the table. If ${r.customer.full_name} comes later, use Undo No-show.`
-          }
-          confirmLabel={confirming === 'cancelled' ? 'Cancel Reservation' : 'Mark No-show'}
-          closeLabel={confirming === 'cancelled' ? 'Keep Reservation' : 'Go Back'}
-          busy={change.isPending}
-          onConfirm={() => change.mutate({ status: confirming })}
           onClose={() => setConfirming(null)}
         />
       )}

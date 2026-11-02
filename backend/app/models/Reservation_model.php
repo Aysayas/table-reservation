@@ -4,6 +4,7 @@ defined('PREVENT_DIRECT_ACCESS') OR exit('No direct script access allowed');
 class Reservation_model extends Model {
 	protected $table = 'reservations';
 	protected $primary_key = 'reservation_id';
+	const PAY_MINUTES = 30;
 	protected $fillable = ['customer_id', 'table_id', 'reference_code', 'reservation_date', 'reservation_time', 'pax', 'special_request', 'deposit_amount', 'status', 'reminder_sent_at'];
 
 	public function customer()
@@ -14,6 +15,17 @@ class Reservation_model extends Model {
 	public function table()
 	{
 		return $this->belongs_to('Table_model', 'table_id');
+	}
+
+	public function overdue_unpaid()
+	{
+		return $this->db->raw(
+			"SELECT r.reservation_id, r.table_id
+			 FROM reservations r
+			 WHERE r.status = 'pending' AND r.deposit_amount > 0
+			   AND r.created_at < NOW() - INTERVAL " . self::PAY_MINUTES . " MINUTE
+			   AND NOT EXISTS (SELECT 1 FROM payments p WHERE p.reservation_id = r.reservation_id AND p.status = 'paid')"
+		)->fetchAll(PDO::FETCH_ASSOC);
 	}
 
 	public function stats($from, $to)

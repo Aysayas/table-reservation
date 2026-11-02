@@ -113,6 +113,12 @@ export default function DepositPayment() {
                   {reservation.pax === 1 ? 'guest' : 'guests'}. This holds your table.
                 </p>
               )}
+              {reservation.pay_by && (
+                <p className="mt-2 text-sm font-semibold text-white">
+                  Pay by {format(parseISO(reservation.pay_by), 'h:mm a')} or this booking is
+                  cancelled.
+                </p>
+              )}
             </section>
           </div>
 

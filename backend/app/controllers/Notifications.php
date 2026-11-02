@@ -19,6 +19,9 @@ class Notifications extends Controller {
 			$this->api->respond_error('Unauthorized', 401);
 		}
 
+		$this->call->library('expiry');
+		$expired = $this->expiry->run();
+
 		$due = $this->db->raw(
 			"SELECT reservation_id FROM reservations
 			 WHERE status IN ('pending', 'confirmed') AND reminder_sent_at IS NULL
@@ -34,7 +37,7 @@ class Notifications extends Controller {
 				$sent++;
 			}
 		}
-		$this->api->respond(['data' => ['reminders_sent' => $sent]]);
+		$this->api->respond(['data' => ['reminders_sent' => $sent, 'bookings_expired' => $expired]]);
 	}
 }
 ?>

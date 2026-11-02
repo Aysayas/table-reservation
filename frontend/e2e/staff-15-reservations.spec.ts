@@ -49,6 +49,19 @@ test('staff can cancel a booking after confirming', async ({ page }) => {
   await expect(page.getByRole('row', { name: /RSV-000004/ })).toContainText('Cancelled')
 })
 
+test('staff can remove an unpaid booking, but not one with no deposit due', async ({ page }) => {
+  await page.goto(url)
+  await expect(page.getByRole('button', { name: 'Remove RSV-000004' })).toHaveCount(0)
+  await page.getByRole('button', { name: 'Remove RSV-000007' }).click()
+  const dialog = page.getByRole('dialog')
+  await dialog.getByRole('button', { name: 'Keep Booking' }).click()
+  await expect(page.getByRole('row', { name: /RSV-000007/ })).toBeVisible()
+  await page.getByRole('button', { name: 'Remove RSV-000007' }).click()
+  await dialog.getByRole('button', { name: 'Remove Booking' }).click()
+  await expect(page.getByText('RSV-000007 removed')).toBeVisible()
+  await expect(page.getByRole('row', { name: /RSV-000007/ })).toHaveCount(0)
+})
+
 test('assign table lists tables that fit and confirms the booking', async ({ page }) => {
   await page.goto(url)
   await page.getByRole('button', { name: 'Assign a table to RSV-000007' }).click()
