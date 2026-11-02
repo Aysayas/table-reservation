@@ -97,6 +97,29 @@ export async function getTables(status?: TableStatus): Promise<StaffTable[]> {
   return res.data.data
 }
 
+export async function getTakenTables(
+  date: string,
+  time: string,
+  exceptId: number,
+): Promise<number[]> {
+  if (!USE_SAMPLE) {
+    const res = await api.get('/tables/taken', {
+      params: { date, time, except_id: exceptId },
+    })
+    return res.data.data
+  }
+  return sampleReservations
+    .filter(
+      (r) =>
+        r.reservation_id !== exceptId &&
+        r.reservation_date === date &&
+        r.reservation_time === time &&
+        r.table_id !== null &&
+        (r.status === 'pending' || r.status === 'confirmed' || r.status === 'arrived'),
+    )
+    .map((r) => r.table_id as number)
+}
+
 export type AdminTable = StaffTable & { qr_token: string }
 
 export async function getAdminTables(): Promise<AdminTable[]> {

@@ -54,10 +54,11 @@ test('assign table lists tables that fit and confirms the booking', async ({ pag
   await page.getByRole('button', { name: 'Assign a table to RSV-000007' }).click()
   const dialog = page.getByRole('dialog', { name: 'Assign a table' })
   await expect(dialog.getByRole('button', { name: /T1 / })).toHaveCount(0)
-  await dialog.getByRole('button', { name: /T5/ }).click()
+  await expect(dialog.getByRole('button', { name: /T5 Booked/ })).toBeDisabled()
+  await dialog.getByRole('button', { name: /T6/ }).click()
   await expect(dialog).toHaveCount(0)
   const row = page.getByRole('row', { name: /RSV-000007/ })
-  await expect(row).toContainText('T5')
+  await expect(row).toContainText('T6')
   await expect(row).toContainText('Confirmed')
 })
 

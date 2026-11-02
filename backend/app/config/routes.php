@@ -80,6 +80,7 @@ $router->group(['prefix' => 'api'], function ($router) {
     $router->delete('/menu-items/{id}', 'Menu::destroy')->where_number('id');
 
     $router->get('/tables', 'Tables::index');
+    $router->get('/tables/taken', 'Tables::taken');
     $router->get('/tables/{id}', 'Tables::show')->where_number('id');
     $router->post('/tables', 'Tables::store');
     $router->put('/tables/{id}', 'Tables::update')->where_number('id');

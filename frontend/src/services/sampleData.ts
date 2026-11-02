@@ -396,7 +396,7 @@ export const sampleReservations: Reservation[] = [
       [4, 4, '12:00:00', 2, 'confirmed'],
       [5, 5, '18:00:00', 4, 'confirmed'],
       [6, 6, '19:00:00', 4, 'confirmed'],
-      [7, null, '20:00:00', 3, 'pending'],
+      [7, null, '18:00:00', 3, 'pending'],
     ] as const
   ).map(([n, table_id, reservation_time, pax, status]): Reservation => ({
     reservation_id: n,

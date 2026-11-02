@@ -6,7 +6,7 @@ import ConfirmDialog from '@/components/ConfirmDialog'
 import { formatTime } from '@/lib/hours'
 import { reservationStatuses } from '@/lib/reservationStatus'
 import { updateReservationStatus } from '@/services/reservations'
-import { getTables } from '@/services/tables'
+import { getTables, getTakenTables } from '@/services/tables'
 import type { PublicReservation, ReservationStatus } from '@/types/db'
 
 const action =
@@ -27,6 +27,11 @@ export default function ReservationActions({
     queryFn: () => getTables(),
     enabled: assigning,
   })
+  const { data: taken = [] } = useQuery({
+    queryKey: ['tables', 'taken', r.reservation_date, r.reservation_time, r.reservation_id],
+    queryFn: () => getTakenTables(r.reservation_date, r.reservation_time, r.reservation_id),
+    enabled: assigning,
+  })
   const change = useMutation({
     mutationFn: (args: { status?: ReservationStatus; table_id?: number }) =>
       updateReservationStatus(r.reservation_id, args),
@@ -43,6 +48,7 @@ export default function ReservationActions({
     onError: (e) => toast.error(e.message),
   })
   const seats = tables.filter((t) => t.capacity >= r.pax && t.table_number !== r.table_number)
+  const allTaken = seats.length > 0 && seats.every((t) => taken.includes(t.table_id))
   const cancel = (
     <button
       type="button"
@@ -166,22 +172,32 @@ export default function ReservationActions({
                 No other table seats {r.pax} guests. Add one under Tables and QR Codes.
               </p>
             )}
+            {allTaken && (
+              <p className="text-brand-red mt-5 text-sm">
+                Every table that fits is booked at this time.
+              </p>
+            )}
             <ul className="mt-5 grid grid-cols-4 gap-2">
-              {seats.map((t) => (
-                <li key={t.table_id}>
-                  <button
-                    type="button"
-                    disabled={change.isPending}
-                    onClick={() => change.mutate({ table_id: t.table_id })}
-                    className="border-brand-line hover:border-brand-red w-full rounded-md border px-2 py-3 text-center transition-colors duration-200"
-                  >
-                    <span className="text-brand-charcoal block text-sm font-bold">
-                      {t.table_number}
-                    </span>
-                    <span className="text-brand-ink/70 block text-xs">{t.capacity} seats</span>
-                  </button>
-                </li>
-              ))}
+              {seats.map((t) => {
+                const isTaken = taken.includes(t.table_id)
+                return (
+                  <li key={t.table_id}>
+                    <button
+                      type="button"
+                      disabled={change.isPending || isTaken}
+                      onClick={() => change.mutate({ table_id: t.table_id })}
+                      className="border-brand-line hover:border-brand-red disabled:hover:border-brand-line disabled:bg-brand-line/30 w-full rounded-md border px-2 py-3 text-center transition-colors duration-200 disabled:cursor-not-allowed"
+                    >
+                      <span className="text-brand-charcoal block text-sm font-bold">
+                        {t.table_number}
+                      </span>
+                      <span className="text-brand-ink/70 block text-xs">
+                        {isTaken ? 'Booked' : `${t.capacity} seats`}
+                      </span>
+                    </button>
+                  </li>
+                )
+              })}
             </ul>
           </div>
         </div>
