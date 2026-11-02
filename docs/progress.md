@@ -76,6 +76,7 @@ These differ from the 29 approved wireframes on purpose, to remove redundant ste
 - **Staff login (13) and top bar:** no Remember me, and no top bar menu.
 - **Staff (15, 16, 17):** Cancel, Undo No-show, Change Table, Seat Guests and Free Table added. An order must be picked before taking payment.
 - **Admin (24, 29):** Reservation Settings moved from 24 to 29, and 24 gets search and status actions.
+- **Reservations (15, 24):** an Added column shows when each booking was made.
 
 ## Backend progress
 

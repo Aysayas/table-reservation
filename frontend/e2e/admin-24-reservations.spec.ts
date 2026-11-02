@@ -7,7 +7,7 @@ test('reservations shows upcoming bookings first, and the tabs switch the list',
 }) => {
   await page.goto(url)
   await expect(page.getByRole('heading', { name: 'Reservations', level: 1 })).toBeVisible()
-  for (const column of ['Ref Code', 'Date', 'Time', 'Name', 'Guests', 'Table', 'Status']) {
+  for (const column of ['Ref Code', 'Date', 'Time', 'Name', 'Guests', 'Table', 'Added', 'Status']) {
     await expect(page.getByRole('columnheader', { name: column })).toBeVisible()
   }
   await expect(page.getByRole('button', { name: 'Upcoming' })).toHaveAttribute(
@@ -18,6 +18,9 @@ test('reservations shows upcoming bookings first, and the tabs switch the list',
     await expect(page.getByRole('cell', { name: code, exact: true })).toBeVisible()
   }
   await expect(page.getByText('Showing 1–3 of 3')).toBeVisible()
+  const added = page.getByRole('row', { name: /RSV-000008/ })
+  await expect(added.getByText('Jan 1, 2026')).toBeVisible()
+  await expect(added.getByText('12:00 AM')).toBeVisible()
 
   await page.getByRole('button', { name: 'Today' }).click()
   await expect(page.getByRole('row')).toHaveCount(6)

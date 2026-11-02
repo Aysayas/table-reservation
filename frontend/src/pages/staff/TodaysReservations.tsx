@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import { format, parseISO } from 'date-fns'
 import { ChevronLeft, ChevronRight, Search } from 'lucide-react'
 import { useState } from 'react'
 import ReservationActions from '@/components/ReservationActions'
@@ -110,6 +111,7 @@ export default function TodaysReservations() {
                 'Mobile',
                 'Guests',
                 'Table',
+                'Added',
                 'Deposit',
                 'Status',
                 'Actions',
@@ -134,6 +136,14 @@ export default function TodaysReservations() {
                 </td>
                 <td className={td}>{r.pax}</td>
                 <td className={td}>{r.table_number ?? '—'}</td>
+                <td className={td}>
+                  <span className="block whitespace-nowrap">
+                    {format(parseISO(r.created_at), 'MMM d')}
+                  </span>
+                  <span className="text-brand-ink/70 block text-xs">
+                    {format(parseISO(r.created_at), 'h:mm a')}
+                  </span>
+                </td>
                 <td className={td}>{r.deposit_status === 'paid' ? 'Paid' : 'Unpaid'}</td>
                 <td className={td}>
                   <span
@@ -149,7 +159,7 @@ export default function TodaysReservations() {
             ))}
             {rows.length === 0 && (
               <tr>
-                <td colSpan={9} className="text-brand-ink/70 px-4 py-10 text-center text-sm">
+                <td colSpan={10} className="text-brand-ink/70 px-4 py-10 text-center text-sm">
                   No reservations found.
                 </td>
               </tr>
