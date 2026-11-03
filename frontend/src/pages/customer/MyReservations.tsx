@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import CancelReservationDialog from '@/components/CancelReservationDialog'
+import LeaderRow from '@/components/LeaderRow'
 import LoadError from '@/components/LoadError'
 import useAccount from '@/hooks/useAccount'
 import { submitButton } from '@/lib/accountForm'
@@ -112,10 +113,9 @@ export default function MyReservations() {
                         : 'None',
                     ],
                   ].map(([term, value]) => (
-                    <div key={term} className="flex justify-between gap-4">
-                      <dt className="text-brand-ink/70">{term}</dt>
-                      <dd className="text-brand-charcoal text-right font-semibold">{value}</dd>
-                    </div>
+                    <LeaderRow key={term} term={term}>
+                      {value}
+                    </LeaderRow>
                   ))}
                 </dl>
                 {canChange && (

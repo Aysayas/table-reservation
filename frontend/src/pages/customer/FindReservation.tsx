@@ -7,6 +7,7 @@ import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-do
 import { toast } from 'sonner'
 import { z } from 'zod'
 import CancelReservationDialog from '@/components/CancelReservationDialog'
+import LeaderRow from '@/components/LeaderRow'
 import MobileInput from '@/components/MobileInput'
 import { apiError } from '@/lib/api'
 import { cleanMobile, mobileSchema, toLocalMobile } from '@/lib/mobile'
@@ -197,10 +198,9 @@ export default function FindReservation() {
                     : 'None',
                 ],
               ].map(([term, value]) => (
-                <div key={term} className="flex justify-between gap-4">
-                  <dt className="text-brand-ink/70">{term}</dt>
-                  <dd className="text-brand-charcoal text-right font-semibold">{value}</dd>
-                </div>
+                <LeaderRow key={term} term={term}>
+                  {value}
+                </LeaderRow>
               ))}
             </dl>
             {canPay && (
