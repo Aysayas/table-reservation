@@ -119,7 +119,7 @@ export default function CustomerLayout() {
             />
           </span>
           <span
-            className={`flex min-w-0 items-baseline gap-1.5 overflow-x-clip whitespace-nowrap ${wide ? '' : 'max-[379px]:hidden'}`}
+            className={`flex min-w-0 items-baseline gap-1.5 overflow-x-clip whitespace-nowrap ${wide ? 'max-[359px]:hidden' : 'max-[379px]:hidden'}`}
           >
             <span className={`font-serif text-lg font-bold text-white ${wide ? 'md:text-xl' : ''}`}>
               {words.join(' ')}

@@ -218,4 +218,12 @@ test('the logged-in phone header keeps space between its buttons', async ({ page
   expect((home?.x ?? 0) + (home?.width ?? 0)).toBeLessThanOrEqual((reserve?.x ?? 0) - 8)
   expect((reserve?.x ?? 0) + (reserve?.width ?? 0)).toBeLessThanOrEqual((menu?.x ?? 0) - 8)
   expect(home?.height).toBeGreaterThanOrEqual(44)
+  const clipped = await banner
+    .getByRole('link')
+    .first()
+    .evaluate((link) => {
+      const name = link.querySelector('span.whitespace-nowrap')
+      return name ? name.scrollWidth > name.clientWidth : false
+    })
+  expect(clipped).toBe(false)
 })
