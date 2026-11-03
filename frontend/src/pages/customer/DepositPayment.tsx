@@ -4,6 +4,7 @@ import { ArrowLeft } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
+import LeaderRow from '@/components/LeaderRow'
 import LoadError from '@/components/LoadError'
 import { clearPaying, markPaying } from '@/hooks/usePaymentReturn'
 import { apiError } from '@/lib/api'
@@ -107,10 +108,9 @@ export default function DepositPayment() {
               <h2 className="text-brand-charcoal font-serif text-2xl">Reservation Summary</h2>
               <dl className="mt-4 space-y-3 text-sm">
                 {summary.map((row) => (
-                  <div key={row.label} className="flex justify-between gap-4">
-                    <dt className="text-brand-ink/70">{row.label}</dt>
-                    <dd className="text-brand-charcoal text-right font-semibold">{row.value}</dd>
-                  </div>
+                  <LeaderRow key={row.label} term={row.label}>
+                    {row.value}
+                  </LeaderRow>
                 ))}
               </dl>
               <p className="text-brand-ink/75 mt-4 text-sm">
