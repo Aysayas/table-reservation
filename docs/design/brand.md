@@ -150,6 +150,11 @@ Screen 18 is read from across the kitchen, so it uses bigger text and buttons th
 - Buttons get stronger as the order moves: outline Start Preparing, charcoal Mark Ready, red Mark Served.
 - Below 1024 px the columns stack.
 
+## Admin
+
+- **Sidebar groups:** admin links sit under small gold uppercase labels: Today, Menu & Tables, Sales and Setup. The active link is red with a thin gold bar on its left. Staff has only five links, so its sidebar isn't grouped.
+- **Charts (Reports):** one data colour, charcoal. The highest point or bar is gold-deep. Red is kept for actions and warnings, not data. Tooltips are charcoal boxes with a gold label and white text. Axis text is ink at 70%.
+
 ## Photos
 
 - Stock photos only from free-licence sites (Unsplash, Pexels). Nothing copied from other restaurants' or hotels' sites.

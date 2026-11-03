@@ -47,17 +47,17 @@ const staffNav: NavItem[] = [
 ]
 
 const adminNav: NavItem[] = [
-  { to: '/admin', label: 'Dashboard' },
-  { to: '/admin/menu', label: 'Menu', title: 'Menu Management' },
-  { to: '/admin/categories', label: 'Categories' },
-  { to: '/admin/tables', label: 'Tables and QR Codes' },
-  { to: '/admin/reservations', label: 'Reservations' },
-  { to: '/kitchen', label: 'Kitchen' },
-  { to: '/admin/orders', label: 'Order History' },
-  { to: '/admin/payments', label: 'Payments' },
-  { to: '/admin/reports', label: 'Reports' },
-  { to: '/admin/users', label: 'Staff Accounts' },
-  { to: '/admin/settings', label: 'Settings' },
+  { to: '/admin', label: 'Dashboard', group: 'Today' },
+  { to: '/admin/reservations', label: 'Reservations', group: 'Today' },
+  { to: '/kitchen', label: 'Kitchen', group: 'Today' },
+  { to: '/admin/menu', label: 'Menu', title: 'Menu Management', group: 'Menu & Tables' },
+  { to: '/admin/categories', label: 'Categories', group: 'Menu & Tables' },
+  { to: '/admin/tables', label: 'Tables and QR Codes', group: 'Menu & Tables' },
+  { to: '/admin/orders', label: 'Order History', group: 'Sales' },
+  { to: '/admin/payments', label: 'Payments', group: 'Sales' },
+  { to: '/admin/reports', label: 'Reports', group: 'Sales' },
+  { to: '/admin/users', label: 'Staff Accounts', group: 'Setup' },
+  { to: '/admin/settings', label: 'Settings', group: 'Setup' },
 ]
 
 export const router = createBrowserRouter([

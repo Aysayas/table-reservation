@@ -6,6 +6,7 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
+  Cell,
   Line,
   LineChart,
   ResponsiveContainer,
@@ -20,7 +21,21 @@ const peso = (amount: number) =>
   `₱${amount.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
 const card = 'border-brand-line rounded-xl border bg-white p-6 break-inside-avoid'
 const title = 'text-brand-charcoal font-serif text-xl font-bold'
-const axis = { fill: 'var(--color-brand-ink)', fontSize: 12 }
+const axis = { fill: 'var(--color-brand-ink)', fillOpacity: 0.7, fontSize: 12 }
+const ink = 'var(--color-brand-charcoal)'
+const peak = 'var(--color-brand-gold-deep)'
+const tip = {
+  contentStyle: {
+    background: 'var(--color-brand-charcoal)',
+    border: 'none',
+    borderRadius: 6,
+    fontFamily: 'var(--font-sans)',
+    fontSize: 13,
+  },
+  labelStyle: { color: 'var(--color-brand-gold)', fontWeight: 700 },
+  itemStyle: { color: 'white' },
+  cursor: { fill: 'var(--color-brand-cream)', stroke: 'var(--color-brand-line)' },
+}
 const periods: { value: ReportPeriod; label: string }[] = [
   { value: 'daily', label: 'Daily' },
   { value: 'weekly', label: 'Weekly' },
@@ -53,6 +68,9 @@ export default function Reports() {
     label: format(parseISO(r.date), 'MMM d'),
   }))
   const best = data?.best_sellers ?? []
+  const topSales = Math.max(0, ...sales.map((s) => s.total))
+  const topBest = Math.max(0, ...best.map((b) => b.quantity))
+  const topBookings = Math.max(0, ...bookings.map((b) => b.count))
   const s = data?.summary
   const summary = s
     ? [
@@ -149,13 +167,23 @@ export default function Reports() {
                   tick={axis}
                   tickFormatter={(v: number) => `₱${v.toLocaleString('en-PH')}`}
                 />
-                <Tooltip formatter={(v) => [peso(Number(v)), 'Sales']} />
+                <Tooltip {...tip} formatter={(v) => [peso(Number(v)), 'Sales']} />
                 <Line
                   type="monotone"
                   dataKey="total"
-                  stroke="var(--color-brand-red)"
-                  strokeWidth={2.5}
-                  dot={{ r: 4, fill: 'var(--color-brand-red)' }}
+                  stroke={ink}
+                  strokeWidth={2}
+                  dot={({ cx, cy, payload }) => (
+                    <circle
+                      key={`${cx}-${cy}`}
+                      cx={cx}
+                      cy={cy}
+                      r={topSales > 0 && payload.total === topSales ? 6 : 4}
+                      fill={topSales > 0 && payload.total === topSales ? peak : ink}
+                      stroke="white"
+                      strokeWidth={2}
+                    />
+                  )}
                   isAnimationActive={false}
                 />
               </LineChart>
@@ -192,13 +220,12 @@ export default function Reports() {
                   axisLine={false}
                   tick={axis}
                 />
-                <Tooltip formatter={(v) => [`${v} sold`, 'Sold']} />
-                <Bar
-                  dataKey="quantity"
-                  fill="var(--color-brand-gold)"
-                  radius={[0, 4, 4, 0]}
-                  isAnimationActive={false}
-                />
+                <Tooltip {...tip} formatter={(v) => [`${v} sold`, 'Sold']} />
+                <Bar dataKey="quantity" fill={ink} radius={[0, 4, 4, 0]} isAnimationActive={false}>
+                  {best.map((b) => (
+                    <Cell key={b.name} fill={b.quantity === topBest ? peak : ink} />
+                  ))}
+                </Bar>
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -228,13 +255,15 @@ export default function Reports() {
                   axisLine={false}
                   tick={axis}
                 />
-                <Tooltip formatter={(v) => [String(v), 'Reservations']} />
-                <Bar
-                  dataKey="count"
-                  fill="var(--color-brand-charcoal)"
-                  radius={[4, 4, 0, 0]}
-                  isAnimationActive={false}
-                />
+                <Tooltip {...tip} formatter={(v) => [String(v), 'Reservations']} />
+                <Bar dataKey="count" fill={ink} radius={[4, 4, 0, 0]} isAnimationActive={false}>
+                  {bookings.map((b) => (
+                    <Cell
+                      key={b.label}
+                      fill={topBookings > 0 && b.count === topBookings ? peak : ink}
+                    />
+                  ))}
+                </Bar>
               </BarChart>
             </ResponsiveContainer>
           </div>
