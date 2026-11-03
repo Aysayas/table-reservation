@@ -6,6 +6,7 @@ import { toast } from 'sonner'
 import { z } from 'zod'
 import AccountCard from '@/components/AccountCard'
 import MobileInput from '@/components/MobileInput'
+import PageLoader from '@/components/PageLoader'
 import PasswordInput from '@/components/PasswordInput'
 import useAccount from '@/hooks/useAccount'
 import { field, fieldError, label, submitButton, textLink } from '@/lib/accountForm'
@@ -54,7 +55,7 @@ export default function Profile() {
     (toLocalMobile(mobile) !== account.mobile_number ||
       email.trim().toLowerCase() !== account.email)
 
-  if (isLoading) return null
+  if (isLoading) return <PageLoader />
   if (!account) return <Navigate to={`/login?next=${encodeURIComponent(pathname)}`} replace />
 
   const onSubmit = async (values: FormValues) => {

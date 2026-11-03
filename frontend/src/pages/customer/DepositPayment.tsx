@@ -6,6 +6,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import LeaderRow from '@/components/LeaderRow'
 import LoadError from '@/components/LoadError'
+import PageLoader from '@/components/PageLoader'
 import { clearPaying, markPaying } from '@/hooks/usePaymentReturn'
 import { apiError } from '@/lib/api'
 import { getReservationByCode, startDeposit } from '@/services/reservations'
@@ -51,7 +52,7 @@ export default function DepositPayment() {
     </div>
   )
 
-  if (code && isLoading) return null
+  if (code && isLoading) return <PageLoader />
 
   if (!reservation) {
     return (

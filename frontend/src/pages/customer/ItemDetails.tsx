@@ -6,6 +6,7 @@ import { toast } from 'sonner'
 import DishPhoto from '@/components/DishPhoto'
 import LoadError from '@/components/LoadError'
 import Ornament from '@/components/Ornament'
+import PageLoader from '@/components/PageLoader'
 import { dishDescription } from '@/lib/dish'
 import { getMenuItem, getRecommendations } from '@/services/menu'
 import { useCart } from '@/stores/cart'
@@ -36,7 +37,7 @@ export default function ItemDetails() {
   })
   const menuLink = `/table/${table}/menu`
 
-  if (isLoading) return null
+  if (isLoading) return <PageLoader />
 
   if (isLoadingError && !item) {
     return (
