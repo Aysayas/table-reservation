@@ -1,7 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
+import { CalendarCheck, ClipboardList } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import EmptyState from '@/components/EmptyState'
 import LoadError from '@/components/LoadError'
 import Ornament from '@/components/Ornament'
+import Skeleton from '@/components/Skeleton'
 import { formatTime } from '@/lib/hours'
 import { getStaffDashboard } from '@/services/dashboard'
 import type { OrderStatus, ReservationStatus } from '@/types/db'
@@ -57,8 +60,19 @@ export default function StaffDashboard() {
     refetchInterval: 30000,
   })
 
+  if (isLoadingError) return <LoadError what="the dashboard" onRetry={() => refetch()} />
   if (!data)
-    return isLoadingError ? <LoadError what="the dashboard" onRetry={() => refetch()} /> : null
+    return (
+      <div role="status" className="grid grid-cols-2 gap-4 xl:grid-cols-4">
+        <span className="sr-only">Loading</span>
+        {Array.from({ length: 4 }, (_, i) => (
+          <div key={i} className="border-brand-line rounded-lg border bg-white px-6 py-5">
+            <Skeleton className="h-3 w-32" />
+            <Skeleton className="mt-4 h-9 w-16" />
+          </div>
+        ))}
+      </div>
+    )
 
   const stats = [
     { label: 'Reservations Today', value: String(data.reservations_today) },
@@ -110,8 +124,12 @@ export default function StaffDashboard() {
               ))}
               {data.upcoming_reservations.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="text-brand-ink/70 px-4 py-8 text-center text-sm">
-                    No more reservations today.
+                  <td colSpan={5}>
+                    <EmptyState
+                      icon={CalendarCheck}
+                      title="No more reservations today."
+                      className="py-8"
+                    />
                   </td>
                 </tr>
               )}
@@ -148,8 +166,8 @@ export default function StaffDashboard() {
               ))}
               {data.active_orders_list.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="text-brand-ink/70 px-4 py-8 text-center text-sm">
-                    No active orders.
+                  <td colSpan={5}>
+                    <EmptyState icon={ClipboardList} title="No active orders." className="py-8" />
                   </td>
                 </tr>
               )}

@@ -4,6 +4,8 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { toast } from 'sonner'
 import LoadError from '@/components/LoadError'
+import Skeleton from '@/components/Skeleton'
+import Spinner from '@/components/Spinner'
 import { formatTime } from '@/lib/hours'
 import { updateReservationStatus } from '@/services/reservations'
 import { getTables, setTableStatus } from '@/services/tables'
@@ -12,7 +14,7 @@ import type { TableStatus as Status } from '@/types/db'
 const peso = (amount: number) =>
   `₱${amount.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
 const cardButton =
-  'border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal mt-4 block w-full rounded-md border bg-white py-2.5 text-center text-sm font-bold transition-colors duration-200 hover:text-white'
+  'border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal mt-4 flex w-full items-center justify-center gap-2 rounded-md border bg-white py-2.5 text-center text-sm font-bold transition-colors duration-200 hover:text-white'
 
 const look: Record<Status, { card: string; badge: string; text: string }> = {
   available: {
@@ -38,6 +40,7 @@ export default function TableStatus() {
   const [filter, setFilter] = useState<Status | 'all'>('all')
   const {
     data = [],
+    isPending,
     isLoadingError,
     refetch,
   } = useQuery({
@@ -78,6 +81,8 @@ export default function TableStatus() {
     onError: (e) => toast.error(e.message),
   })
 
+  const settingTable = (table_id: number) =>
+    setStatus.isPending && setStatus.variables?.table_id === table_id
   const count = (f: Status | 'all') =>
     f === 'all' ? tables.length : tables.filter((t) => t.status === f).length
   const shown = filter === 'all' ? tables : tables.filter((t) => t.status === filter)
@@ -102,6 +107,27 @@ export default function TableStatus() {
         <div className="mt-6">
           <LoadError what="the tables" onRetry={() => refetch()} />
         </div>
+      ) : isPending ? (
+        <ul
+          aria-label="Loading tables"
+          className="mt-6 grid grid-cols-1 gap-5 min-[380px]:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+        >
+          {Array.from({ length: 8 }, (_, i) => (
+            <li
+              key={i}
+              className="border-brand-line flex min-h-52 flex-col rounded-lg border bg-white p-5"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <Skeleton className="h-7 w-28" />
+                  <Skeleton className="mt-2 h-4 w-16" />
+                </div>
+                <Skeleton className="h-6 w-20 rounded-full" />
+              </div>
+              <Skeleton className="mt-auto h-10 w-full" />
+            </li>
+          ))}
+        </ul>
       ) : (
         <ul className="mt-6 grid grid-cols-1 gap-5 min-[380px]:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {shown.map((t) => (
@@ -131,9 +157,11 @@ export default function TableStatus() {
                     <button
                       type="button"
                       disabled={setStatus.isPending}
+                      aria-busy={settingTable(t.table_id)}
                       onClick={() => setStatus.mutate({ table_id: t.table_id, status: 'occupied' })}
                       className={cardButton}
                     >
+                      {settingTable(t.table_id) && <Spinner />}
                       Seat Guests
                     </button>
                   </>
@@ -164,11 +192,13 @@ export default function TableStatus() {
                       <button
                         type="button"
                         disabled={setStatus.isPending}
+                        aria-busy={settingTable(t.table_id)}
                         onClick={() =>
                           setStatus.mutate({ table_id: t.table_id, status: 'available' })
                         }
                         className={cardButton}
                       >
+                        {settingTable(t.table_id) && <Spinner />}
                         Free Table
                       </button>
                     </>
@@ -185,9 +215,14 @@ export default function TableStatus() {
                       <button
                         type="button"
                         disabled={arrive.isPending}
+                        aria-busy={
+                          arrive.isPending && arrive.variables === t.next_reservation.reservation_id
+                        }
                         onClick={() => arrive.mutate(t.next_reservation!.reservation_id)}
                         className={cardButton}
                       >
+                        {arrive.isPending &&
+                          arrive.variables === t.next_reservation.reservation_id && <Spinner />}
                         Mark Arrived
                       </button>
                     </>
@@ -197,11 +232,13 @@ export default function TableStatus() {
                       <button
                         type="button"
                         disabled={setStatus.isPending}
+                        aria-busy={settingTable(t.table_id)}
                         onClick={() =>
                           setStatus.mutate({ table_id: t.table_id, status: 'available' })
                         }
                         className={cardButton}
                       >
+                        {settingTable(t.table_id) && <Spinner />}
                         Free Table
                       </button>
                     </>

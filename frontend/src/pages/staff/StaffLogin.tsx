@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import Ornament from '@/components/Ornament'
+import Spinner from '@/components/Spinner'
 import { apiError } from '@/lib/api'
 import { login, roleHome } from '@/services/auth'
 import { getSettings } from '@/services/settings'
@@ -125,8 +126,10 @@ export default function StaffLogin() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="bg-brand-red hover:bg-brand-red/90 focus-visible:outline-brand-red w-full rounded-lg py-4 text-sm font-bold tracking-[0.15em] text-white uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-60"
+            aria-busy={isSubmitting}
+            className="bg-brand-red hover:bg-brand-red/90 focus-visible:outline-brand-red inline-flex w-full items-center justify-center gap-2 rounded-lg py-4 text-sm font-bold tracking-[0.15em] text-white uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-60"
           >
+            {isSubmitting && <Spinner />}
             Log In
           </button>
         </form>
