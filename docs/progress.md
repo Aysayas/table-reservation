@@ -78,6 +78,7 @@ These differ from the 29 approved wireframes on purpose, to remove redundant ste
 - **Admin (24, 29):** Reservation Settings moved from 24 to 29, and 24 gets search and status actions.
 - **Reservations (15, 24):** an Added column shows when each booking was made.
 - **Reservation row actions (15, 24):** each row shows its next step as one filled button (Arrived, Assign Table or Undo No-show). The other actions (No-show, Change Table, Edit, Cancel, Remove) are in a ⋯ menu, with Cancel and Remove in red.
+- **Diner flow (04, 06, 12, log in):** the deposit page shows one status line when there's nothing to pay (no per-guest or pay-by lines). Find My Reservation explains where the code is. Order status opens with a script "Salamat!", and guests who chose Pay at the Counter see Pay Now as a quiet outline button (Checkout adds `&pay=counter` to the link). Log in explains why an account is needed when it was opened from Reserve.
 
 ## Backend progress
 

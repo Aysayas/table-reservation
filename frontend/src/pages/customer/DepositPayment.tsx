@@ -78,6 +78,10 @@ export default function DepositPayment() {
   }
 
   const amount = peso(reservation.deposit_amount)
+  const closed =
+    reservation.deposit_status === 'paid' ||
+    (reservation.status !== 'pending' && reservation.status !== 'confirmed')
+  const due = !closed && reservation.deposit_amount > 0
   const summary = [
     { label: 'Reference Code', value: reservation.reference_code },
     { label: 'Date', value: format(parseISO(reservation.reservation_date), 'MMMM d, yyyy') },
@@ -119,13 +123,13 @@ export default function DepositPayment() {
                 Deposit Amount
               </h2>
               <p className="mt-2 font-serif text-4xl">{amount}</p>
-              {settings && (
+              {due && settings && (
                 <p className="mt-3 text-sm text-white/75">
                   {peso(settings.deposit_per_guest)} per guest × {reservation.pax}{' '}
                   {reservation.pax === 1 ? 'guest' : 'guests'}. This holds your table.
                 </p>
               )}
-              {reservation.pay_by && (
+              {due && reservation.pay_by && (
                 <p className="mt-2 text-sm font-semibold text-white">
                   Pay by {format(parseISO(reservation.pay_by), 'h:mm a')} or this booking is
                   cancelled.
@@ -153,16 +157,19 @@ export default function DepositPayment() {
               }
             }}
           >
-            <h2 className="text-brand-charcoal font-serif text-2xl">Payment</h2>
-            <p className="text-brand-ink/75 mt-3 text-sm">
-              {reservation.deposit_amount > 0
-                ? "You'll choose GCash, Maya or card on the next screen."
-                : 'No deposit is needed for this booking.'}
-            </p>
+            {!closed && (
+              <>
+                <h2 className="text-brand-charcoal font-serif text-2xl">Payment</h2>
+                <p className="text-brand-ink/75 mt-3 text-sm">
+                  {due
+                    ? "You'll choose GCash, Maya or card on the next screen."
+                    : 'No deposit is needed for this booking.'}
+                </p>
+              </>
+            )}
 
             <div className="bg-brand-cream/95 border-brand-line short:static short:mx-0 short:border-0 short:bg-transparent short:p-0 sticky bottom-0 -mx-4 mt-8 border-t px-4 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] md:static md:mx-0 md:border-0 md:bg-transparent md:p-0">
-              {reservation.deposit_status === 'paid' ||
-              (reservation.status !== 'pending' && reservation.status !== 'confirmed') ? (
+              {closed ? (
                 <>
                   <p className="text-brand-ink/75 mb-3 text-center text-sm">
                     {reservation.deposit_status === 'paid'

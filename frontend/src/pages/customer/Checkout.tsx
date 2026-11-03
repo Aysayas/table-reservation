@@ -68,7 +68,7 @@ export default function Checkout() {
         return
       }
       toast.success(method === 'now' ? 'Order placed and paid' : 'Order placed')
-      navigate(`/table/${table}/orders?order=${id}`)
+      navigate(`/table/${table}/orders?order=${id}${method === 'counter' ? '&pay=counter' : ''}`)
     } catch (e) {
       toast.error(apiError(e, "Couldn't place your order. Please try again."))
       setPlacing(false)

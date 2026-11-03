@@ -48,6 +48,19 @@ test('logging in returns to the page in next, but never to another site', async 
   await expect(page).toHaveURL('/my-reservations')
 })
 
+test('logging in to book says why an account is needed', async ({ page }) => {
+  await page.goto('/login?next=%2Freserve')
+  await expect(
+    page.getByText(
+      'Log in or create an account to book. You can then see and change your reservations anytime.',
+    ),
+  ).toBeVisible()
+  await page.goto('/login')
+  await expect(
+    page.getByText('Log in to reserve a table and keep track of your bookings.'),
+  ).toBeVisible()
+})
+
 test('register checks its fields, then logs the guest in', async ({ page }) => {
   await page.goto('/register')
   await page.getByRole('button', { name: 'Create Account' }).click()

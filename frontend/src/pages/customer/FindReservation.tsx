@@ -119,10 +119,18 @@ export default function FindReservation() {
               placeholder="RSV-000000"
               autoCapitalize="characters"
               aria-invalid={!!errors.reference_code}
+              aria-describedby="reference_code_help"
               {...register('reference_code')}
               className={`${field} uppercase placeholder:normal-case`}
             />
-            {errors.reference_code && <p className={error}>{errors.reference_code.message}</p>}
+            <p id="reference_code_help" className="text-brand-ink/75 mt-1.5 text-xs">
+              It starts with RSV- and is on your confirmation page.
+            </p>
+            {errors.reference_code && (
+              <p role="alert" className={error}>
+                {errors.reference_code.message}
+              </p>
+            )}
           </div>
           <div>
             <label htmlFor="mobile_number" className={label}>
@@ -133,7 +141,11 @@ export default function FindReservation() {
               invalid={!!errors.mobile_number}
               {...register('mobile_number')}
             />
-            {errors.mobile_number && <p className={error}>{errors.mobile_number.message}</p>}
+            {errors.mobile_number && (
+              <p role="alert" className={error}>
+                {errors.mobile_number.message}
+              </p>
+            )}
           </div>
           <button
             type="submit"

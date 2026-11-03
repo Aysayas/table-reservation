@@ -28,6 +28,7 @@ export default function OrderStatus() {
   const [params] = useSearchParams()
   const orderId = Number(params.get('order')) || readLastOrder(table) || 0
   const token = readTableToken(table) ?? ''
+  const counter = params.get('pay') === 'counter'
   const queryClient = useQueryClient()
   const [paying, setPaying] = useState(false)
   const {
@@ -96,6 +97,7 @@ export default function OrderStatus() {
 
   return (
     <div className="bg-brand-cream short:pb-6 min-h-[calc(100dvh-4rem)] px-4 pt-6 pb-28">
+      <p className="font-display text-brand-gold-deep text-3xl">Salamat!</p>
       <h1 className="text-brand-charcoal font-serif text-3xl">Order #{order.order_id}</h1>
       <p className="text-brand-ink/70 mt-1 text-sm">
         Placed at {format(parseISO(order.created_at), 'h:mm a')}
@@ -178,14 +180,16 @@ export default function OrderStatus() {
             ? 'Paid'
             : confirming
               ? 'Checking your payment…'
-              : 'Unpaid · Pay at the counter'}
+              : counter
+                ? "Unpaid · Pay at the counter when you're done"
+                : 'Unpaid · Pay at the counter'}
         </p>
         {order.payment_status === 'unpaid' && !confirming && token && (
           <button
             type="button"
             disabled={paying}
             onClick={payNow}
-            className="bg-brand-red hover:bg-brand-red/90 focus-visible:outline-brand-gold mt-3 block w-full rounded-lg py-3 text-sm font-bold tracking-[0.1em] uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-60"
+            className={`focus-visible:outline-brand-gold mt-3 block w-full rounded-lg py-3 text-sm font-bold tracking-[0.1em] uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-60 ${counter ? 'border border-white/40 hover:bg-white/10' : 'bg-brand-red hover:bg-brand-red/90'}`}
           >
             Pay Now
           </button>

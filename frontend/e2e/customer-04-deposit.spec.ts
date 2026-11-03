@@ -87,6 +87,10 @@ test('a paid deposit has no pay button', async ({ page }) => {
   await page.goto('/reserve/payment?code=RSV-000001')
   await expect(page.getByText('This deposit is already paid.')).toBeVisible()
   await expect(page.getByRole('button', { name: /^Pay / })).toHaveCount(0)
+  await expect(page.getByText(/per guest/)).toHaveCount(0)
+  await expect(page.getByText("You'll choose GCash, Maya or card on the next screen.")).toHaveCount(
+    0,
+  )
 })
 
 test('an unpaid booking shows when it must be paid by', async ({ page }) => {

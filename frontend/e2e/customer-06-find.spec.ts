@@ -11,6 +11,9 @@ test('find page shows the form', async ({ page }) => {
   await page.goto('/reservation')
   await expect(page.getByRole('heading', { name: 'Find My Reservation' })).toBeVisible()
   await expect(page.getByLabel('Reference Code')).toBeVisible()
+  await expect(page.getByLabel('Reference Code')).toHaveAccessibleDescription(
+    'It starts with RSV- and is on your confirmation page.',
+  )
   await expect(page.getByLabel('Mobile Number')).toBeVisible()
   await expect(page.getByRole('button', { name: 'Find Reservation' })).toBeVisible()
 })
@@ -20,6 +23,7 @@ test('an empty form shows errors', async ({ page }) => {
   await page.getByRole('button', { name: 'Find Reservation' }).click()
   await expect(page.getByText('Enter your reference code')).toBeVisible()
   await expect(page.getByText('Check your mobile number')).toBeVisible()
+  await expect(page.getByRole('alert')).toHaveCount(2)
 })
 
 test('a wrong code or mobile shows not found', async ({ page }) => {
