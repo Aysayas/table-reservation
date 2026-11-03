@@ -3,8 +3,10 @@ import { ChevronLeft, ChevronRight, Plus, Search, UtensilsCrossed } from 'lucide
 import { useState } from 'react'
 import { Link, useLocation, useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
+import EmptyState from '@/components/EmptyState'
 import LoadError from '@/components/LoadError'
 import Modal from '@/components/Modal'
+import Skeleton from '@/components/Skeleton'
 import Spinner from '@/components/Spinner'
 import { deleteMenuItem, getCategories, getMenuItems, setAvailability } from '@/services/menu'
 import type { MenuItem } from '@/types/db'
@@ -36,6 +38,7 @@ export default function MenuManagement() {
   const [deleting, setDeleting] = useState<MenuItem | null>(null)
   const {
     data: items = [],
+    isPending,
     isLoadingError,
     refetch,
   } = useQuery({
@@ -187,10 +190,20 @@ export default function MenuManagement() {
                   </td>
                 </tr>
               ))}
-              {rows.length === 0 && (
+              {isPending &&
+                Array.from({ length: 5 }, (_, i) => (
+                  <tr key={i} className="border-brand-line border-t">
+                    {Array.from({ length: 6 }, (_, j) => (
+                      <td key={j} className={td}>
+                        <Skeleton className="h-4 w-full max-w-28" />
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              {!isPending && rows.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="text-brand-ink/70 px-4 py-10 text-center text-sm">
-                    No menu items found.
+                  <td colSpan={6}>
+                    <EmptyState icon={UtensilsCrossed} title="No menu items found." />
                   </td>
                 </tr>
               )}

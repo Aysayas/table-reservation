@@ -6,6 +6,7 @@ import { useForm, useWatch, type Control } from 'react-hook-form'
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import { z } from 'zod'
+import Spinner from '@/components/Spinner'
 import {
   createMenuItem,
   getCategories,
@@ -274,8 +275,10 @@ export default function MenuItemForm() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="bg-brand-red hover:bg-brand-red/90 rounded-md px-8 py-3 text-sm font-bold text-white transition-colors duration-200 disabled:opacity-60"
+              aria-busy={isSubmitting}
+              className="bg-brand-red hover:bg-brand-red/90 inline-flex items-center justify-center gap-2 rounded-md px-8 py-3 text-sm font-bold text-white transition-colors duration-200 disabled:opacity-60"
             >
+              {isSubmitting && <Spinner />}
               Save Item
             </button>
             <Link

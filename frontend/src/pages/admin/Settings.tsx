@@ -6,6 +6,7 @@ import { toast } from 'sonner'
 import { z } from 'zod'
 import LoadError from '@/components/LoadError'
 import MobileInput from '@/components/MobileInput'
+import Spinner from '@/components/Spinner'
 import { dayNames, formatTime, weekOrder } from '@/lib/hours'
 import { cleanMobile, mobileSchema, toLocalMobile } from '@/lib/mobile'
 import {
@@ -443,8 +444,10 @@ export default function Settings() {
         <button
           type="submit"
           disabled={isSubmitting || !settings}
-          className="bg-brand-red hover:bg-brand-red/90 rounded-md px-6 py-3 text-sm font-bold text-white transition-colors duration-200 disabled:opacity-60"
+          aria-busy={isSubmitting}
+          className="bg-brand-red hover:bg-brand-red/90 inline-flex items-center justify-center gap-2 rounded-md px-6 py-3 text-sm font-bold text-white transition-colors duration-200 disabled:opacity-60"
         >
+          {isSubmitting && <Spinner />}
           Save Changes
         </button>
       </div>
