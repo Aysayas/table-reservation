@@ -333,7 +333,7 @@ sms.querySelector('.send').addEventListener('click', async (event) => {
     const r = await call('POST', 'api/diagnostics/sms', mobile ? { mobile } : undefined)
     smsState.textContent = r.status !== 'sent' ? 'Sending failed. Check the API logs.' : r.mode === 'fake' ? 'Sent in fake mode: logged and saved, no text was delivered.' : 'Queued at iProg SMS. It should arrive within a minute.'
     await loadBalance()
-    fill(sms.querySelector('.sim dl'), { message: r.message, length: `${r.length} / 160`, status: r.status })
+    fill(sms.querySelector('.sim dl'), { message: r.message, length: `${r.length} / 160`, status: r.status, ...(r.error ? { iprog_reply: r.error } : {}) })
     await loadTexts()
   } catch (e) {
     smsState.textContent = e.message
