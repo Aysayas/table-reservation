@@ -104,6 +104,13 @@ These differ from the 29 approved wireframes on purpose, to remove redundant ste
 - **Phone header and profile:** on phones, the header shows the logo and name, Reserve, and the menu button, 8px apart. The profile moved into the menu as a card ("Hi, …", My Reservations, Profile, Log Out). Desktop still shows the profile circle in the header. The backup before this round is tagged `backup/pre-mobile-2026-11-04`.
 - **Phone tap areas on guest and table pages:** on touch screens, chips, filters, Copy code and standalone links are at least 44px tall, and desktop is unchanged. On the table pages: 44px Back and quantity buttons, full-width "+ Add" buttons, solid bottom bars, and long dish names wrap.
 - **Staff and admin on phones:** below `md`, the reservation, order, payment, staff, menu and category tables become stacked cards with their actions visible, and desktop keeps the tables. Filter tabs, Edit/Delete, "#N" links, View all, kitchen Sound/Log Out and the show-password button are 44px on touch. Dialogs render into the page body.
+- **Kitchen display (18):**
+  - Bumps move tickets at once, and other tickets stay tappable while one saves.
+  - The header is slimmer, with live counts and a Full screen button.
+  - Columns are full height with pinned headers, and the screen stays awake.
+  - Tickets have a waiting bar and a red edge when late.
+  - Cooks can tap items to tick them off (kept on that screen only).
+  - The backup before this change is tagged `backup/pre-kitchen-2026-11-04`.
 - **Dish photos (sample data):** 71 more dishes have free stock photos in `frontend/public/photos/dishes/` (credits in `docs/design/brand.md`), so 73 of 93 show a photo in sample mode. Production photos are uploaded on screen 21.
 
 ## Backend progress
