@@ -43,7 +43,7 @@ export default function Cart() {
           type="button"
           aria-label="Back"
           onClick={() => navigate(-1)}
-          className="border-brand-line text-brand-charcoal hover:border-brand-gold flex size-10 shrink-0 items-center justify-center rounded-full border bg-white transition-colors duration-200"
+          className="border-brand-line text-brand-charcoal hover:border-brand-gold flex size-11 shrink-0 items-center justify-center rounded-full border bg-white transition-colors duration-200"
         >
           <ArrowLeft className="size-5" />
         </button>
@@ -80,7 +80,9 @@ export default function Cart() {
                 />
                 <div className="min-w-0 flex-1">
                   <div className="flex items-start justify-between gap-3">
-                    <p className="text-brand-charcoal text-sm font-semibold">{line.name}</p>
+                    <p className="text-brand-charcoal min-w-0 text-sm font-semibold wrap-break-word">
+                      {line.name}
+                    </p>
                     <p className="text-brand-charcoal shrink-0 font-serif text-base">
                       {peso(line.price * line.quantity)}
                     </p>
@@ -104,7 +106,7 @@ export default function Cart() {
                         aria-label={`Less ${line.name}`}
                         disabled={line.quantity <= 1}
                         onClick={() => setQuantity(line, line.quantity - 1)}
-                        className="text-brand-charcoal flex size-8 items-center justify-center disabled:opacity-40"
+                        className="text-brand-charcoal flex size-11 items-center justify-center disabled:opacity-40"
                       >
                         <Minus className="size-3.5" />
                       </button>
@@ -116,7 +118,7 @@ export default function Cart() {
                         aria-label={`More ${line.name}`}
                         disabled={line.quantity >= 99}
                         onClick={() => setQuantity(line, line.quantity + 1)}
-                        className="text-brand-charcoal flex size-8 items-center justify-center disabled:opacity-40"
+                        className="text-brand-charcoal flex size-11 items-center justify-center disabled:opacity-40"
                       >
                         <Plus className="size-3.5" />
                       </button>
@@ -130,7 +132,7 @@ export default function Cart() {
                           action: { label: 'Undo', onClick: () => add(table, line) },
                         })
                       }}
-                      className="text-brand-ink/70 hover:text-brand-red text-xs font-semibold underline-offset-2 hover:underline"
+                      className="text-brand-ink/70 hover:text-brand-red -mr-2 flex min-h-11 items-center px-2 text-xs font-semibold underline-offset-2 hover:underline"
                     >
                       Remove
                     </button>
@@ -149,7 +151,7 @@ export default function Cart() {
                 {suggestions.map((dish) => (
                   <li
                     key={dish.item_id}
-                    className="border-brand-line flex gap-2 rounded-lg border bg-white p-2"
+                    className="border-brand-line grid grid-cols-[3.5rem_minmax(0,1fr)] gap-2 rounded-lg border bg-white p-2"
                   >
                     <DishPhoto
                       name={dish.name}
@@ -161,24 +163,24 @@ export default function Cart() {
                         {dish.name}
                       </p>
                       <p className="text-brand-red font-serif text-sm">{peso(dish.price)}</p>
-                      <button
-                        type="button"
-                        aria-label={`Add ${dish.name}`}
-                        onClick={() => {
-                          add(table, {
-                            item_id: dish.item_id,
-                            name: dish.name,
-                            price: dish.price,
-                            quantity: 1,
-                            notes: '',
-                          })
-                          toast.success(`${dish.name} added to cart`)
-                        }}
-                        className="text-brand-charcoal hover:text-brand-red text-xs font-bold"
-                      >
-                        + Add
-                      </button>
                     </div>
+                    <button
+                      type="button"
+                      aria-label={`Add ${dish.name}`}
+                      onClick={() => {
+                        add(table, {
+                          item_id: dish.item_id,
+                          name: dish.name,
+                          price: dish.price,
+                          quantity: 1,
+                          notes: '',
+                        })
+                        toast.success(`${dish.name} added to cart`)
+                      }}
+                      className="border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal col-span-2 flex min-h-11 w-full items-center justify-center rounded-md border text-xs font-bold transition-colors duration-200 hover:text-white"
+                    >
+                      + Add
+                    </button>
                   </li>
                 ))}
               </ul>
@@ -205,7 +207,7 @@ export default function Cart() {
             </LeaderRow>
           </dl>
 
-          <div className="short:static short:mt-4 short:pb-0 short:px-0 fixed inset-x-0 bottom-0 z-20 mx-auto max-w-[390px] px-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+          <div className="short:static short:mt-4 short:pb-0 short:px-0 bg-brand-cream short:pt-0 fixed inset-x-0 bottom-0 z-20 mx-auto max-w-[390px] px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))]">
             {hasUnavailable ? (
               <button
                 type="button"
