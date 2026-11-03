@@ -13,7 +13,11 @@ import type { User, UserRole } from '@/types/db'
 
 const th = 'px-5 py-3.5 text-left text-xs font-bold tracking-[0.14em] text-white/70 uppercase'
 const td = 'text-brand-charcoal px-5 py-4 text-sm'
-const smallButton = 'rounded-md border px-3 py-1.5 text-xs font-bold transition-colors duration-200'
+const smallButton =
+  'pointer-coarse:min-h-11 inline-flex items-center justify-center rounded-md border px-3 py-1.5 text-xs font-bold transition-colors duration-200'
+const dl = 'grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm'
+const dt = 'text-brand-ink/70'
+const dd = 'text-brand-charcoal text-right'
 
 export default function StaffAccounts() {
   const queryClient = useQueryClient()
@@ -94,7 +98,65 @@ export default function StaffAccounts() {
       {error && <p className="text-brand-red mt-4 text-sm">{error.message}</p>}
 
       <div className="border-brand-line mt-5 overflow-x-auto rounded-xl border bg-white shadow-sm">
-        <table className="w-full">
+        <ul className="divide-brand-line divide-y md:hidden">
+          {users.map((u) => {
+            const isSelf = u.user_id === me?.user_id
+            return (
+              <li key={u.user_id} className="space-y-3 p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <p className="text-brand-charcoal font-semibold">
+                    {u.full_name}
+                    {isSelf && <span className="text-brand-ink/70 ml-2 text-xs">(you)</span>}
+                  </p>
+                  <span
+                    className={`rounded-full px-3 py-1 text-xs font-bold ${u.is_active ? 'bg-brand-green/10 text-brand-green' : 'bg-brand-ink/10 text-brand-ink'}`}
+                  >
+                    {u.is_active ? 'Active' : 'Disabled'}
+                  </span>
+                </div>
+                <dl className={dl}>
+                  <dt className={dt}>Email</dt>
+                  <dd className={`${dd} break-all`}>{u.email}</dd>
+                  <dt className={dt}>Role</dt>
+                  <dd className={dd}>{roleNames[u.role]}</dd>
+                  <dt className={dt}>Last Login</dt>
+                  <dd className={`${dd} tabular-nums`}>
+                    {u.last_login_at ? format(parseISO(u.last_login_at), 'MMMM d, yyyy') : 'Never'}
+                  </dd>
+                </dl>
+                <div className="flex gap-2 *:flex-1">
+                  <button
+                    type="button"
+                    aria-label={`Edit ${u.email}`}
+                    onClick={() => setDialog({ user: u })}
+                    className={`${smallButton} border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal hover:text-white`}
+                  >
+                    Edit
+                  </button>
+                  {!isSelf && (
+                    <button
+                      type="button"
+                      aria-label={`${u.is_active ? 'Disable' : 'Enable'} ${u.email}`}
+                      disabled={toggle.isPending}
+                      onClick={() => (u.is_active ? setDisabling(u) : toggle.mutate(u))}
+                      className={`${smallButton} ${u.is_active ? 'border-brand-red text-brand-red hover:bg-brand-red' : 'border-brand-green text-brand-green hover:bg-brand-green'} hover:text-white disabled:opacity-50`}
+                    >
+                      {u.is_active ? 'Disable' : 'Enable'}
+                    </button>
+                  )}
+                </div>
+              </li>
+            )
+          })}
+          {isPending &&
+            Array.from({ length: 5 }, (_, i) => (
+              <li key={i} className="space-y-3 p-4">
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-4 w-full" />
+              </li>
+            ))}
+        </ul>
+        <table className="hidden w-full md:table">
           <thead className="bg-brand-charcoal">
             <tr>
               {['Name', 'Email', 'Role', 'Status', 'Last Login', 'Actions'].map((h) => (
@@ -164,15 +226,11 @@ export default function StaffAccounts() {
                   ))}
                 </tr>
               ))}
-            {!isPending && users.length === 0 && (
-              <tr>
-                <td colSpan={6}>
-                  <EmptyState icon={Users} title="No staff accounts match." />
-                </td>
-              </tr>
-            )}
           </tbody>
         </table>
+        {!isPending && users.length === 0 && (
+          <EmptyState icon={Users} title="No staff accounts match." />
+        )}
       </div>
 
       {disabling && (

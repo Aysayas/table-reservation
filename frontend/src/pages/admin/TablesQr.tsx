@@ -198,7 +198,7 @@ export default function TablesQr() {
                   type="button"
                   aria-label={`Edit Table ${t.table_number}`}
                   onClick={() => setEditing(t)}
-                  className="text-brand-charcoal hover:text-brand-red"
+                  className="text-brand-charcoal hover:text-brand-red pointer-coarse:min-h-11 pointer-coarse:min-w-11"
                 >
                   Edit
                 </button>
@@ -206,7 +206,7 @@ export default function TablesQr() {
                   type="button"
                   aria-label={`Delete Table ${t.table_number}`}
                   onClick={() => setDeleting(t)}
-                  className="text-brand-ink/70 hover:text-brand-red"
+                  className="text-brand-ink/70 hover:text-brand-red pointer-coarse:min-h-11 pointer-coarse:min-w-11"
                 >
                   Delete
                 </button>
