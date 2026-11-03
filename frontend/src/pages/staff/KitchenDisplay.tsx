@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { differenceInMinutes, format, parseISO } from 'date-fns'
-import { ArrowLeft, ChefHat, LogOut, Volume2, VolumeX } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import { ArrowLeft, ChefHat, LogOut, Maximize, Minimize, Volume2, VolumeX } from 'lucide-react'
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import EmptyState from '@/components/EmptyState'
@@ -53,10 +53,16 @@ const columns = [
 }[]
 
 const ages = [
-  { label: 'On time', chip: 'bg-brand-green/10 text-brand-green' },
-  { label: '10+ min', chip: 'bg-brand-gold/20 text-brand-gold-deep' },
-  { label: '15+ min', chip: 'bg-brand-red/10 text-brand-red' },
+  { label: 'On time', chip: 'bg-brand-green/10 text-brand-green', bar: 'bg-brand-green' },
+  { label: '10+ min', chip: 'bg-brand-gold/20 text-brand-gold-deep', bar: 'bg-brand-gold' },
+  { label: '15+ min', chip: 'bg-brand-red/10 text-brand-red', bar: 'bg-brand-red' },
 ]
+const headerButton =
+  'flex items-center gap-2 text-sm text-white/70 transition-colors duration-200 hover:text-white pointer-coarse:min-h-11'
+const kitchenKey = ['orders', 'kitchen']
+const moveKey = ['kitchen-move']
+const ticksKey = 'kitchen-ticks'
+
 const chime = (ctx: AudioContext) => {
   void ctx.resume()
   ;[660, 880].forEach((frequency, i) => {
@@ -76,6 +82,19 @@ const chime = (ctx: AudioContext) => {
 const ageOf = (minutes: number) => ages[minutes >= 15 ? 2 : minutes >= 10 ? 1 : 0]
 const waited = (minutes: number) =>
   minutes < 60 ? `${minutes} min` : `${Math.floor(minutes / 60)} h ${minutes % 60} min`
+
+const onFullscreenChange = (change: () => void) => {
+  document.addEventListener('fullscreenchange', change)
+  return () => document.removeEventListener('fullscreenchange', change)
+}
+
+const readTicks = () => {
+  try {
+    return new Set<number>(JSON.parse(sessionStorage.getItem(ticksKey) ?? '[]'))
+  } catch {
+    return new Set<number>()
+  }
+}
 
 export default function KitchenDisplay() {
   const queryClient = useQueryClient()
@@ -98,7 +117,7 @@ export default function KitchenDisplay() {
     isLoadingError,
     refetch,
   } = useQuery({
-    queryKey: ['orders', 'kitchen'],
+    queryKey: kitchenKey,
     queryFn: () => listOrders({ status: ['received', 'preparing', 'ready'] }),
     refetchInterval: 15000,
   })
@@ -130,6 +149,34 @@ export default function KitchenDisplay() {
     },
     [],
   )
+  useEffect(() => {
+    let lock: WakeLockSentinel | undefined
+    let active = true
+    const hold = async () => {
+      if (document.visibilityState !== 'visible' || !('wakeLock' in navigator)) return
+      try {
+        const next = await navigator.wakeLock.request('screen')
+        if (active) lock = next
+        else void next.release()
+      } catch {
+        return
+      }
+    }
+    void hold()
+    document.addEventListener('visibilitychange', hold)
+    return () => {
+      active = false
+      document.removeEventListener('visibilitychange', hold)
+      void lock?.release()
+    }
+  }, [])
+  const fullscreen = useSyncExternalStore(onFullscreenChange, () => !!document.fullscreenElement)
+  const toggleFullscreen = () => {
+    const change = document.fullscreenElement
+      ? document.exitFullscreen()
+      : document.documentElement.requestFullscreen?.()
+    change?.catch(() => toast.error("Full screen isn't available on this device."))
+  }
   const toggleSound = () => {
     const next = !sound
     setSound(next)
@@ -140,6 +187,22 @@ export default function KitchenDisplay() {
       return
     }
   }
+  const [ticks, setTicks] = useState(readTicks)
+  const changeTicks = (change: (next: Set<number>) => void) =>
+    setTicks((previous) => {
+      const next = new Set(previous)
+      change(next)
+      try {
+        sessionStorage.setItem(ticksKey, JSON.stringify([...next]))
+      } catch {
+        return next
+      }
+      return next
+    })
+  const toggleTick = (id: number) =>
+    changeTicks((next) => {
+      if (!next.delete(id)) next.add(id)
+    })
   const seen = useRef<Set<number> | null>(null)
   const [fresh, setFresh] = useState<number[]>([])
   const [announcement, setAnnouncement] = useState('')
@@ -162,77 +225,119 @@ export default function KitchenDisplay() {
     )
     if (sound) chime((audio.current ??= new AudioContext()))
   }, [orders, isSuccess, sound])
+  const [saving, setSaving] = useState<number[]>([])
+  const savingIds = useRef(new Set<number>())
   const move = useMutation({
+    mutationKey: moveKey,
     mutationFn: ({ order, next }: { order: StaffOrder; next: OrderStatus }) =>
       updateOrderStatus(order.order_id, next),
+    onMutate: async ({ order, next }) => {
+      const itemIds = order.items.map((item) => item.order_item_id)
+      changeTicks((left) => {
+        for (const id of itemIds) left.delete(id)
+      })
+      await queryClient.cancelQueries({ queryKey: kitchenKey })
+      const previous = queryClient
+        .getQueryData<StaffOrder[]>(kitchenKey)
+        ?.find((o) => o.order_id === order.order_id)?.status
+      queryClient.setQueryData<StaffOrder[]>(kitchenKey, (list = []) =>
+        previous
+          ? list.map((o) => (o.order_id === order.order_id ? { ...o, status: next } : o))
+          : [{ ...order, status: next }, ...list],
+      )
+      return { previous }
+    },
     onSuccess: (updated, { order }) => {
       toast.success(
         `Order #${updated.order_id} is now ${updated.status}`,
         updated.status === 'served'
-          ? { action: { label: 'Undo', onClick: () => move.mutate({ order, next: 'ready' }) } }
+          ? { action: { label: 'Undo', onClick: () => bump(order, 'ready') } }
           : undefined,
       )
+    },
+    onError: (e, { order }, context) => {
+      queryClient.setQueryData<StaffOrder[]>(kitchenKey, (list = []) =>
+        context?.previous
+          ? list.map((o) =>
+              o.order_id === order.order_id ? { ...o, status: context.previous! } : o,
+            )
+          : list.filter((o) => o.order_id !== order.order_id),
+      )
+      toast.error(e.message)
+    },
+    onSettled: (_data, _error, { order }) => {
+      savingIds.current.delete(order.order_id)
+      setSaving((list) => list.filter((id) => id !== order.order_id))
+      if (queryClient.isMutating({ mutationKey: moveKey }) > 1) return
       for (const key of ['orders', 'tables', 'dashboard']) {
         queryClient.invalidateQueries({ queryKey: [key] })
       }
     },
-    onError: (e) => toast.error(e.message),
   })
-  const moving = (order: StaffOrder) =>
-    move.isPending && move.variables?.order.order_id === order.order_id
+  const bump = (order: StaffOrder, next: OrderStatus) => {
+    if (savingIds.current.has(order.order_id)) return
+    savingIds.current.add(order.order_id)
+    setSaving((list) => [...list, order.order_id])
+    move.mutate({ order, next })
+  }
   const oldestFirst = [...orders].reverse()
+  const minutesOf = (order: StaffOrder) =>
+    Math.max(0, differenceInMinutes(now, parseISO(order.created_at)))
+  const late = orders.filter((o) => minutesOf(o) >= 15).length
+  const average = orders.length
+    ? Math.round(orders.reduce((sum, o) => sum + minutesOf(o), 0) / orders.length)
+    : 0
 
   return (
-    <div className="bg-brand-cream flex min-h-dvh flex-col">
-      <header className="bg-brand-charcoal flex flex-wrap items-center gap-x-6 gap-y-3 px-6 py-4 text-white md:px-8">
+    <div className="bg-brand-cream flex min-h-dvh flex-col md:h-dvh">
+      <header className="bg-brand-charcoal flex flex-wrap items-center gap-x-5 gap-y-2 px-4 py-2.5 text-white md:px-6">
         {from && (
-          <Link
-            to={from}
-            className="flex items-center gap-2 text-sm text-white/70 transition-colors duration-200 hover:text-white pointer-coarse:min-h-11"
-          >
+          <Link to={from} className={headerButton}>
             <ArrowLeft className="size-4" />
             Back
           </Link>
         )}
-        <h1 className="font-serif text-2xl">Kitchen Display</h1>
-        <ul aria-label="Waiting time" className="flex flex-wrap gap-2">
+        <h1 className="font-serif text-xl">Kitchen Display</h1>
+        {!isPending && !isLoadingError && (
+          <p className="text-sm text-white/75 tabular-nums">
+            {orders.length} open ·{' '}
+            <span className={late ? 'text-brand-red-light font-bold' : ''}>{late} late</span> · avg{' '}
+            {average} min
+          </p>
+        )}
+        <ul aria-label="Waiting time" className="hidden flex-wrap gap-3 xl:flex">
           {ages.map((age) => (
-            <li key={age.label} className="rounded-full bg-white">
-              <span
-                className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-bold ${age.chip}`}
-              >
-                <span className="size-1.5 rounded-full bg-current" />
-                {age.label}
-              </span>
+            <li key={age.label} className="flex items-center gap-1.5 text-xs text-white/75">
+              <span className={`size-2 rounded-full ${age.bar}`} />
+              {age.label}
             </li>
           ))}
         </ul>
-        <p className="font-serif text-xl tabular-nums md:ml-auto">{format(now, 'h:mm a')}</p>
-        <button
-          type="button"
-          aria-pressed={sound}
-          onClick={toggleSound}
-          className="ml-auto flex items-center gap-2 text-sm text-white/70 transition-colors duration-200 hover:text-white md:ml-0 pointer-coarse:min-h-11"
-        >
+        <p className="ml-auto font-serif text-lg tabular-nums">{format(now, 'h:mm a')}</p>
+        <button type="button" aria-pressed={sound} onClick={toggleSound} className={headerButton}>
           {sound ? <Volume2 className="size-4" /> : <VolumeX className="size-4" />}
-          Sound
+          <span className="max-lg:sr-only">Sound</span>
         </button>
-        <Link
-          to="/staff/login"
-          onClick={signOut}
-          className="flex items-center gap-2 text-sm text-white/70 transition-colors duration-200 hover:text-white pointer-coarse:min-h-11"
-        >
+        {document.fullscreenEnabled && (
+          <button type="button" onClick={toggleFullscreen} className={headerButton}>
+            {fullscreen ? <Minimize className="size-4" /> : <Maximize className="size-4" />}
+            <span className="max-lg:sr-only">
+              {fullscreen ? 'Exit full screen' : 'Full screen'}
+            </span>
+          </button>
+        )}
+        <Link to="/staff/login" onClick={signOut} className={headerButton}>
           <LogOut className="size-4" />
-          Log Out
+          <span className="max-lg:sr-only">Log Out</span>
         </Link>
       </header>
       <p aria-live="polite" className="sr-only">
         {announcement}
       </p>
 
-      <main className="grid flex-1 items-start gap-5 p-4 md:p-6 lg:grid-cols-3">
+      <main className="grid flex-1 gap-4 p-4 md:min-h-0 md:grid-cols-3 md:p-5">
         {isLoadingError ? (
-          <div className="mx-auto mt-8 w-full max-w-md lg:col-span-3">
+          <div className="mx-auto mt-8 w-full max-w-md md:col-span-3">
             <LoadError what="the kitchen orders" onRetry={() => refetch()} />
           </div>
         ) : (
@@ -242,11 +347,11 @@ export default function KitchenDisplay() {
               <section
                 key={column.status}
                 aria-labelledby={`col-${column.status}`}
-                className={`border-brand-line rounded-xl border border-t-4 bg-white/50 p-5 lg:min-h-[70vh] ${column.top}`}
+                className={`border-brand-line flex flex-col rounded-xl border border-t-4 bg-white/50 md:min-h-0 ${column.top}`}
               >
                 <h2
                   id={`col-${column.status}`}
-                  className="text-brand-charcoal flex items-center justify-between font-serif text-2xl"
+                  className="text-brand-charcoal border-brand-line flex items-center justify-between border-b px-4 py-3 font-serif text-2xl"
                 >
                   {column.title}
                   <span
@@ -256,51 +361,73 @@ export default function KitchenDisplay() {
                     {list.length}
                   </span>
                 </h2>
-                <ul className="mt-4 space-y-4">
+                <ul className="flex-1 space-y-3 p-3 md:overflow-y-auto">
                   {list.map((order) => {
-                    const minutes = differenceInMinutes(now, parseISO(order.created_at))
+                    const minutes = minutesOf(order)
+                    const age = ageOf(minutes)
+                    const busy = saving.includes(order.order_id)
                     return (
                       <li
                         key={order.order_id}
                         aria-label={`Order #${order.order_id}`}
-                        className={`border-brand-line/60 rounded-xl border bg-white p-5 ${fresh.includes(order.order_id) ? 'ring-brand-gold ring-2 motion-safe:animate-pulse' : ''}`}
+                        className={`border-brand-line/60 rounded-xl border bg-white p-4 ${minutes >= 15 ? 'border-l-brand-red border-l-4' : ''} ${fresh.includes(order.order_id) ? 'ring-brand-gold ring-2 motion-safe:animate-pulse' : ''}`}
                       >
                         <div className="flex items-start justify-between gap-3">
                           <div>
-                            <p className="text-brand-charcoal font-serif text-3xl font-bold">
-                              Table {order.table_number}
+                            <p className="text-brand-charcoal font-serif text-4xl leading-none font-bold">
+                              <span className="sr-only">Table </span>
+                              {order.table_number}
                             </p>
-                            <p className="text-brand-ink/70 mt-1">Order #{order.order_id}</p>
+                            <p className="text-brand-ink/70 mt-1.5 text-sm">
+                              Order #{order.order_id}
+                            </p>
                           </div>
                           <span
-                            className={`shrink-0 rounded-full px-3 py-1 text-sm font-bold tabular-nums ${ageOf(minutes).chip}`}
+                            className={`shrink-0 rounded-full px-3 py-1 text-sm font-bold tabular-nums ${age.chip}`}
                           >
                             {waited(minutes)}
                           </span>
                         </div>
-                        <ul className="mt-4 space-y-2 text-lg">
-                          {order.items.map((item) => (
-                            <li key={item.order_item_id} className="text-brand-charcoal">
-                              <p className="grid grid-cols-[3rem_1fr]">
-                                <span className="font-bold">{item.quantity}×</span>
-                                {item.name}
-                              </p>
-                              {item.notes && (
-                                <p className="bg-brand-red/10 text-brand-red mt-2 inline-block rounded-md px-3 py-1 text-base font-bold">
-                                  {item.notes}
-                                </p>
-                              )}
-                            </li>
-                          ))}
+                        <div
+                          aria-hidden="true"
+                          className="bg-brand-line/40 mt-3 h-1 overflow-hidden rounded-full"
+                        >
+                          <div
+                            className={`h-full rounded-full ${age.bar}`}
+                            style={{ width: `${Math.min(100, (minutes / 15) * 100)}%` }}
+                          />
+                        </div>
+                        <ul className="mt-3 space-y-1">
+                          {order.items.map((item) => {
+                            const done = ticks.has(item.order_item_id)
+                            return (
+                              <li key={item.order_item_id}>
+                                <button
+                                  type="button"
+                                  aria-pressed={done}
+                                  onClick={() => toggleTick(item.order_item_id)}
+                                  className={`hover:bg-brand-cream grid min-h-11 w-full grid-cols-[2.5rem_1fr] items-center rounded-md px-1 text-left text-lg transition-colors duration-200 ${done ? 'text-brand-ink/50 line-through' : 'text-brand-charcoal'}`}
+                                >
+                                  <span className="font-bold">{item.quantity}×</span>
+                                  {item.name}
+                                </button>
+                                {item.notes && (
+                                  <p className="bg-brand-red/10 text-brand-red mt-1 ml-11 inline-block rounded-md px-3 py-1 text-base font-bold">
+                                    {item.notes}
+                                  </p>
+                                )}
+                              </li>
+                            )
+                          })}
                         </ul>
                         <button
                           type="button"
-                          disabled={move.isPending}
-                          aria-busy={moving(order)}
-                          onClick={() => move.mutate({ order, next: column.next })}
-                          className={`mt-5 flex w-full items-center justify-center gap-2 rounded-lg py-3.5 text-base font-bold tracking-wide transition-colors duration-200 disabled:opacity-50 ${column.button}`}
+                          disabled={busy}
+                          aria-busy={busy}
+                          onClick={() => bump(order, column.next)}
+                          className={`mt-4 flex min-h-12 w-full items-center justify-center gap-2 rounded-lg text-base font-bold tracking-wide transition-colors duration-200 disabled:opacity-50 ${column.button}`}
                         >
-                          {moving(order) && <Spinner />}
+                          {busy && <Spinner />}
                           {column.action}
                         </button>
                       </li>
@@ -308,12 +435,12 @@ export default function KitchenDisplay() {
                   })}
                   {isPending &&
                     Array.from({ length: 2 }, (_, i) => (
-                      <li key={i} className="border-brand-line/60 rounded-xl border bg-white p-5">
-                        <Skeleton className="h-8 w-32" />
+                      <li key={i} className="border-brand-line/60 rounded-xl border bg-white p-4">
+                        <Skeleton className="h-9 w-16" />
                         <Skeleton className="mt-2 h-4 w-20" />
-                        <Skeleton className="mt-5 h-5 w-3/4" />
+                        <Skeleton className="mt-4 h-5 w-3/4" />
                         <Skeleton className="mt-2 h-5 w-1/2" />
-                        <Skeleton className="mt-5 h-12 w-full" />
+                        <Skeleton className="mt-4 h-12 w-full" />
                       </li>
                     ))}
                   {!isPending && list.length === 0 && (

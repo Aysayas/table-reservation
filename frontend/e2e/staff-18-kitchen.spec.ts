@@ -57,3 +57,34 @@ test('log out goes to the staff login', async ({ page }) => {
   await page.getByRole('link', { name: 'Log Out' }).click()
   await expect(page).toHaveURL('/staff/login')
 })
+
+test('the header counts open orders and offers full screen', async ({ page }) => {
+  await page.goto(url)
+  await expect(page.getByRole('banner').getByText(/^3 open/)).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Full screen' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Sound' })).toHaveAttribute('aria-pressed', 'false')
+})
+
+test('bumping one ticket leaves the others ready to bump', async ({ page }) => {
+  await page.goto(url)
+  await page.getByRole('button', { name: 'Start Preparing' }).click()
+  const preparing = page.getByRole('region', { name: 'Preparing (2)' })
+  for (const id of ['Order #1', 'Order #3']) {
+    await expect(
+      preparing.getByRole('listitem', { name: id }).getByRole('button', { name: 'Mark Ready' }),
+    ).toBeEnabled()
+  }
+  await expect(page.getByRole('button', { name: 'Mark Served' })).toBeEnabled()
+})
+
+test('cooks can tick items off, and the ticks survive a reload', async ({ page }) => {
+  await page.goto(url)
+  const item = page
+    .getByRole('listitem', { name: 'Order #1' })
+    .getByRole('button', { name: /Hungarian Sausage/ })
+  await expect(item).toHaveAttribute('aria-pressed', 'false')
+  await item.click()
+  await expect(item).toHaveAttribute('aria-pressed', 'true')
+  await page.reload()
+  await expect(item).toHaveAttribute('aria-pressed', 'true')
+})
