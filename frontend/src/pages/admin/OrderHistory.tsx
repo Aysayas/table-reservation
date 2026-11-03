@@ -25,6 +25,9 @@ const peso = (amount: number) =>
   `₱${amount.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
 const th = 'text-brand-ink/70 px-5 py-3.5 text-left text-xs font-bold tracking-[0.14em] uppercase'
 const td = 'text-brand-charcoal px-5 py-4 text-sm'
+const dl = 'grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm'
+const dt = 'text-brand-ink/70'
+const dd = 'text-brand-charcoal text-right'
 const select =
   'border-brand-line focus:border-brand-gold h-11 rounded-lg border bg-white px-3 text-sm outline-none'
 const orderBadge: Record<OrderStatus, string> = {
@@ -215,7 +218,65 @@ export default function OrderHistory() {
         </div>
       ) : (
         <div className="border-brand-line relative mt-5 overflow-x-auto rounded-xl border bg-white shadow-sm">
-          <table className="w-full">
+          <ul className="divide-brand-line divide-y md:hidden">
+            {rows.map((o) => (
+              <li key={o.order_id} className="space-y-3 p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <p className="text-brand-charcoal text-base font-bold">#{o.order_id}</p>
+                  <span
+                    className={`inline-block rounded-full px-3 py-1 text-xs font-bold ${orderBadge[o.status]}`}
+                  >
+                    {cap(o.status)}
+                  </span>
+                </div>
+                <dl className={dl}>
+                  <dt className={dt}>Date</dt>
+                  <dd className={dd}>
+                    {format(parseISO(o.created_at), 'MMMM d, yyyy')}{' '}
+                    <span className="text-brand-ink/70 text-xs">
+                      {format(parseISO(o.created_at), 'h:mm a')}
+                    </span>
+                  </dd>
+                  <dt className={dt}>Table</dt>
+                  <dd className={dd}>
+                    <span className="border-brand-line bg-brand-cream/60 rounded-md border px-2 py-1 text-xs font-bold">
+                      {o.table_number}
+                    </span>
+                  </dd>
+                  <dt className={dt}>Items</dt>
+                  <dd className={`${dd} tabular-nums`}>{itemCount(o)}</dd>
+                  <dt className={dt}>Total</dt>
+                  <dd className={`${dd} font-semibold tabular-nums`}>{peso(o.total_amount)}</dd>
+                  <dt className={dt}>Payment</dt>
+                  <dd className={dd}>
+                    <PaymentBadge order={o} />
+                  </dd>
+                  <dt className={dt}>Method</dt>
+                  <dd className={dd}>
+                    <Method method={o.payment_method} />
+                  </dd>
+                </dl>
+                <button
+                  type="button"
+                  aria-label={`View order #${o.order_id}`}
+                  onClick={() => setViewing(o)}
+                  className="border-brand-line text-brand-charcoal hover:border-brand-red hover:text-brand-red flex min-h-11 w-full items-center justify-center gap-1.5 rounded-lg border text-sm font-bold transition-colors duration-200"
+                >
+                  <Eye className="size-4" />
+                  View
+                </button>
+              </li>
+            ))}
+            {isPending &&
+              Array.from({ length: 5 }, (_, i) => (
+                <li key={i} className="space-y-3 p-4">
+                  <Skeleton className="h-4 w-24" />
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-full" />
+                </li>
+              ))}
+          </ul>
+          <table className="hidden w-full md:table">
             <thead className="bg-brand-charcoal">
               <tr>
                 {['Order #', 'Date', 'Table', 'Items', 'Total', 'Payment', 'Method', 'Status'].map(
@@ -291,15 +352,11 @@ export default function OrderHistory() {
                     ))}
                   </tr>
                 ))}
-              {!isPending && rows.length === 0 && (
-                <tr>
-                  <td colSpan={9}>
-                    <EmptyState icon={ReceiptText} title="No orders found." />
-                  </td>
-                </tr>
-              )}
             </tbody>
           </table>
+          {!isPending && rows.length === 0 && (
+            <EmptyState icon={ReceiptText} title="No orders found." />
+          )}
         </div>
       )}
 

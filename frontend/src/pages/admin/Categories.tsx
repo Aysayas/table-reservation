@@ -20,7 +20,11 @@ import {
 
 const th = 'text-brand-ink/70 px-4 py-3 text-left text-xs font-bold tracking-[0.1em] uppercase'
 const td = 'text-brand-charcoal px-4 py-3 text-sm'
-const smallButton = 'rounded-md border px-3 py-1.5 text-xs font-bold transition-colors duration-200'
+const smallButton =
+  'pointer-coarse:min-h-11 inline-flex items-center justify-center rounded-md border px-3 py-1.5 text-xs font-bold transition-colors duration-200'
+const dl = 'grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm'
+const dt = 'text-brand-ink/70'
+const dd = 'text-brand-charcoal text-right'
 const label = 'text-brand-charcoal block text-sm font-bold'
 const field =
   'border-brand-line focus:border-brand-gold mt-2 block w-full rounded-md border bg-white px-4 py-3 text-sm font-normal outline-none placeholder:text-brand-ink/65'
@@ -98,7 +102,48 @@ export default function Categories() {
         </div>
       ) : (
         <div className="border-brand-line overflow-x-auto rounded-lg border bg-white">
-          <table className="w-full">
+          <ul className="divide-brand-line divide-y md:hidden">
+            {categories.map((c) => (
+              <li
+                key={c.category_id}
+                className={`space-y-3 p-4 ${editing?.category_id === c.category_id ? 'bg-brand-gold/10' : ''}`}
+              >
+                <p className="text-brand-charcoal font-semibold">{c.name}</p>
+                <dl className={dl}>
+                  <dt className={dt}>Order</dt>
+                  <dd className={`${dd} tabular-nums`}>{c.sort_order}</dd>
+                  <dt className={dt}>Items</dt>
+                  <dd className={`${dd} tabular-nums`}>{c.item_count}</dd>
+                </dl>
+                <div className="flex gap-2 *:flex-1">
+                  <button
+                    type="button"
+                    aria-label={`Edit ${c.name}`}
+                    onClick={() => setEditing(c)}
+                    className={`${smallButton} border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal hover:text-white`}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    type="button"
+                    aria-label={`Delete ${c.name}`}
+                    onClick={() => setDeleting(c)}
+                    className={`${smallButton} border-brand-red text-brand-red hover:bg-brand-red hover:text-white`}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </li>
+            ))}
+            {isPending &&
+              Array.from({ length: 5 }, (_, i) => (
+                <li key={i} className="space-y-3 p-4">
+                  <Skeleton className="h-4 w-24" />
+                  <Skeleton className="h-4 w-full" />
+                </li>
+              ))}
+          </ul>
+          <table className="hidden w-full md:table">
             <thead className="bg-brand-cream/60">
               <tr>
                 {['Order', 'Category Name', 'Items', 'Actions'].map((h) => (
@@ -149,15 +194,11 @@ export default function Categories() {
                     ))}
                   </tr>
                 ))}
-              {!isPending && categories.length === 0 && (
-                <tr>
-                  <td colSpan={4}>
-                    <EmptyState icon={Tags} title="No categories yet." />
-                  </td>
-                </tr>
-              )}
             </tbody>
           </table>
+          {!isPending && categories.length === 0 && (
+            <EmptyState icon={Tags} title="No categories yet." />
+          )}
         </div>
       )}
 

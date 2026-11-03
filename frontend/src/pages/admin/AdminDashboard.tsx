@@ -168,7 +168,7 @@ export default function AdminDashboard() {
           </h2>
           <Link
             to="/admin/orders"
-            className="text-brand-red text-xs font-bold tracking-[0.15em] uppercase hover:underline"
+            className="text-brand-red text-xs font-bold tracking-[0.15em] uppercase hover:underline pointer-coarse:inline-flex pointer-coarse:min-h-11 pointer-coarse:items-center"
           >
             View all
           </Link>
@@ -188,7 +188,10 @@ export default function AdminDashboard() {
               {data.recent_orders.map((o) => (
                 <tr key={o.order_id} className="border-brand-line border-t">
                   <td className={`${td} font-semibold`}>
-                    <Link to={`/admin/orders?order=${o.order_id}`} className="hover:text-brand-red">
+                    <Link
+                      to={`/admin/orders?order=${o.order_id}`}
+                      className="hover:text-brand-red pointer-coarse:inline-flex pointer-coarse:min-h-11 pointer-coarse:items-center"
+                    >
                       #{o.order_id}
                     </Link>
                   </td>

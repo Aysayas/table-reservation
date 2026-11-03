@@ -94,7 +94,7 @@ export default function Reports() {
               type="button"
               aria-pressed={period === p.value}
               onClick={() => choose(p.value)}
-              className={`rounded-full border px-4 py-2 text-sm font-semibold transition-colors duration-200 ${period === p.value ? 'bg-brand-charcoal border-brand-charcoal text-white' : 'border-brand-line text-brand-charcoal hover:border-brand-gold bg-white'}`}
+              className={`rounded-full border px-4 py-2 text-sm font-semibold transition-colors duration-200 pointer-coarse:min-h-11 ${period === p.value ? 'bg-brand-charcoal border-brand-charcoal text-white' : 'border-brand-line text-brand-charcoal hover:border-brand-gold bg-white'}`}
             >
               {p.label}
             </button>

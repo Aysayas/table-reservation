@@ -23,6 +23,9 @@ const peso = (amount: number) =>
   `₱${amount.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
 const th = 'px-5 py-3.5 text-left text-xs font-bold tracking-[0.14em] text-white/70 uppercase'
 const td = 'text-brand-charcoal px-5 py-4 text-sm'
+const dl = 'grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm'
+const dt = 'text-brand-ink/70'
+const dd = 'text-brand-charcoal text-right'
 const select =
   'border-brand-line focus:border-brand-gold h-11 rounded-lg border bg-white px-3 text-sm outline-none'
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
@@ -180,7 +183,74 @@ export default function Payments() {
         </div>
       ) : (
         <div className="border-brand-line mt-5 overflow-x-auto rounded-xl border bg-white shadow-sm">
-          <table className="w-full">
+          <ul className="divide-brand-line divide-y md:hidden">
+            {rows.map((p) => {
+              const Icon = p.method === 'cash' ? Banknote : Smartphone
+              return (
+                <li key={p.payment_id} className="space-y-3 p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <p className="text-brand-charcoal font-bold">{payId(p.payment_id)}</p>
+                    <span
+                      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold ${statusBadge[p.status]}`}
+                    >
+                      <span className="size-1.5 rounded-full bg-current" />
+                      {cap(p.status)}
+                    </span>
+                  </div>
+                  <dl className={dl}>
+                    <dt className={dt}>Amount</dt>
+                    <dd className={`${dd} font-semibold tabular-nums`}>{peso(p.amount)}</dd>
+                    <dt className={dt}>Date</dt>
+                    <dd className={dd}>
+                      {p.paid_at ? (
+                        <>
+                          {format(parseISO(p.paid_at), 'MMMM d, yyyy')}{' '}
+                          <span className="text-brand-ink/70 text-xs">
+                            {format(parseISO(p.paid_at), 'h:mm a')}
+                          </span>
+                        </>
+                      ) : (
+                        <span className="text-brand-ink/70">Not paid</span>
+                      )}
+                    </dd>
+                    <dt className={dt}>For</dt>
+                    <dd className={dd}>
+                      {p.for.type === 'order' ? (
+                        <Link
+                          to={`/admin/orders?order=${p.for.order_id}`}
+                          className="inline-flex min-h-11 items-center font-bold underline"
+                        >
+                          {forText(p)}
+                        </Link>
+                      ) : (
+                        <span className="text-brand-gold-deep font-bold">{forText(p)}</span>
+                      )}
+                    </dd>
+                    <dt className={dt}>Method</dt>
+                    <dd className={dd}>
+                      <span className="inline-flex items-center gap-1.5">
+                        <Icon className="text-brand-ink/70 size-4" />
+                        {cap(p.method)}
+                      </span>
+                    </dd>
+                    <dt className={dt}>Reference</dt>
+                    <dd className={`${dd} text-brand-ink/70 font-mono text-xs break-all`}>
+                      {p.provider_reference ?? '—'}
+                    </dd>
+                  </dl>
+                </li>
+              )
+            })}
+            {isPending &&
+              Array.from({ length: 5 }, (_, i) => (
+                <li key={i} className="space-y-3 p-4">
+                  <Skeleton className="h-4 w-24" />
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-full" />
+                </li>
+              ))}
+          </ul>
+          <table className="hidden w-full md:table">
             <thead className="bg-brand-charcoal">
               <tr>
                 {['Payment ID', 'Date', 'For', 'Method', 'Reference', 'Amount', 'Status'].map(
@@ -269,15 +339,11 @@ export default function Payments() {
                     ))}
                   </tr>
                 ))}
-              {!isPending && rows.length === 0 && (
-                <tr>
-                  <td colSpan={7}>
-                    <EmptyState icon={Wallet} title="No payments found." />
-                  </td>
-                </tr>
-              )}
             </tbody>
           </table>
+          {!isPending && rows.length === 0 && (
+            <EmptyState icon={Wallet} title="No payments found." />
+          )}
         </div>
       )}
 
