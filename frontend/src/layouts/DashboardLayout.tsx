@@ -112,7 +112,7 @@ export default function DashboardLayout({ title, items }: Props) {
             <span className="font-display text-brand-gold text-2xl">{lastWord}</span>
           </span>
         </Link>
-        <p className="text-brand-gold mt-2 px-2 text-[10px] font-bold tracking-[0.3em] uppercase">
+        <p className="text-brand-gold mt-2 px-2 text-xs font-bold tracking-[0.3em] uppercase">
           {title}
         </p>
         <nav aria-label={`${title} menu`} className="mt-8 flex flex-1 flex-col gap-1">

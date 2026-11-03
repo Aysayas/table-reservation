@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
+import LoadError from '@/components/LoadError'
 import { formatTime } from '@/lib/hours'
 import { getStaffDashboard } from '@/services/dashboard'
 import type { OrderStatus, ReservationStatus } from '@/types/db'
@@ -49,13 +50,14 @@ function Panel({ title, to, children }: { title: string; to: string; children: R
 }
 
 export default function StaffDashboard() {
-  const { data } = useQuery({
+  const { data, isLoadingError, refetch } = useQuery({
     queryKey: ['dashboard', 'staff'],
     queryFn: getStaffDashboard,
     refetchInterval: 30000,
   })
 
-  if (!data) return null
+  if (!data)
+    return isLoadingError ? <LoadError what="the dashboard" onRetry={() => refetch()} /> : null
 
   const stats = [
     { label: 'Reservations Today', value: String(data.reservations_today) },

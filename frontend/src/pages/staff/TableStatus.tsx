@@ -3,6 +3,7 @@ import { formatDistanceToNowStrict, parseISO } from 'date-fns'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { toast } from 'sonner'
+import LoadError from '@/components/LoadError'
 import { formatTime } from '@/lib/hours'
 import { updateReservationStatus } from '@/services/reservations'
 import { getTables, setTableStatus } from '@/services/tables'
@@ -35,7 +36,11 @@ const filters: (Status | 'all')[] = ['all', 'available', 'occupied', 'reserved']
 export default function TableStatus() {
   const queryClient = useQueryClient()
   const [filter, setFilter] = useState<Status | 'all'>('all')
-  const { data = [] } = useQuery({
+  const {
+    data = [],
+    isLoadingError,
+    refetch,
+  } = useQuery({
     queryKey: ['tables'],
     queryFn: () => getTables(),
     refetchInterval: 30000,
@@ -93,111 +98,119 @@ export default function TableStatus() {
         ))}
       </div>
 
-      <ul className="mt-6 grid grid-cols-1 gap-5 min-[380px]:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {shown.map((t) => (
-          <li
-            key={t.table_id}
-            aria-label={`Table ${t.table_number}`}
-            className={`flex min-h-52 flex-col rounded-lg p-5 ${look[t.status].card}`}
-          >
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <h2 className="text-brand-charcoal font-serif text-2xl font-bold">
-                  Table {t.table_number}
-                </h2>
-                <p className="text-brand-ink/70 text-sm">{t.capacity} seats</p>
+      {isLoadingError ? (
+        <div className="mt-6">
+          <LoadError what="the tables" onRetry={() => refetch()} />
+        </div>
+      ) : (
+        <ul className="mt-6 grid grid-cols-1 gap-5 min-[380px]:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {shown.map((t) => (
+            <li
+              key={t.table_id}
+              aria-label={`Table ${t.table_number}`}
+              className={`flex min-h-52 flex-col rounded-lg p-5 ${look[t.status].card}`}
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <h2 className="text-brand-charcoal font-serif text-2xl font-bold">
+                    Table {t.table_number}
+                  </h2>
+                  <p className="text-brand-ink/70 text-sm">{t.capacity} seats</p>
+                </div>
+                <span
+                  className={`rounded-full px-3 py-1 text-xs font-bold ${look[t.status].badge}`}
+                >
+                  {look[t.status].text}
+                </span>
               </div>
-              <span className={`rounded-full px-3 py-1 text-xs font-bold ${look[t.status].badge}`}>
-                {look[t.status].text}
-              </span>
-            </div>
 
-            <div className="mt-5 flex flex-1 flex-col justify-end text-sm">
-              {t.status === 'available' && (
-                <>
-                  <p className="text-brand-ink/70 mb-auto">Ready for guests</p>
-                  <button
-                    type="button"
-                    disabled={setStatus.isPending}
-                    onClick={() => setStatus.mutate({ table_id: t.table_id, status: 'occupied' })}
-                    className={cardButton}
-                  >
-                    Seat Guests
-                  </button>
-                </>
-              )}
-
-              {t.status === 'occupied' &&
-                (t.current_order ? (
+              <div className="mt-5 flex flex-1 flex-col justify-end text-sm">
+                {t.status === 'available' && (
                   <>
-                    <p className="text-brand-charcoal font-semibold">
-                      Order #{t.current_order.order_id} · {peso(t.current_order.total_amount)}
-                    </p>
-                    <p className="text-brand-ink/70 mt-1">
-                      Ordered{' '}
-                      {formatDistanceToNowStrict(parseISO(t.current_order.created_at), {
-                        addSuffix: true,
-                      })}
-                    </p>
-                    <Link
-                      to={`/staff/orders?order=${t.current_order.order_id}`}
-                      className={cardButton}
-                    >
-                      View Order
-                    </Link>
-                  </>
-                ) : (
-                  <>
-                    <p className="text-brand-ink/70 mb-auto">No unpaid or unserved order</p>
+                    <p className="text-brand-ink/70 mb-auto">Ready for guests</p>
                     <button
                       type="button"
                       disabled={setStatus.isPending}
-                      onClick={() =>
-                        setStatus.mutate({ table_id: t.table_id, status: 'available' })
-                      }
+                      onClick={() => setStatus.mutate({ table_id: t.table_id, status: 'occupied' })}
                       className={cardButton}
                     >
-                      Free Table
+                      Seat Guests
                     </button>
                   </>
-                ))}
+                )}
 
-              {t.status === 'reserved' &&
-                (t.next_reservation ? (
-                  <>
-                    <p className="text-brand-charcoal font-semibold">
-                      {t.next_reservation.full_name} ·{' '}
-                      {formatTime(t.next_reservation.reservation_time)}
-                    </p>
-                    <p className="text-brand-ink/70 mt-1">{t.next_reservation.reference_code}</p>
-                    <button
-                      type="button"
-                      disabled={arrive.isPending}
-                      onClick={() => arrive.mutate(t.next_reservation!.reservation_id)}
-                      className={cardButton}
-                    >
-                      Mark Arrived
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <p className="text-brand-ink/70 mb-auto">No booking left today</p>
-                    <button
-                      type="button"
-                      disabled={setStatus.isPending}
-                      onClick={() =>
-                        setStatus.mutate({ table_id: t.table_id, status: 'available' })
-                      }
-                      className={cardButton}
-                    >
-                      Free Table
-                    </button>
-                  </>
-                ))}
-            </div>
-          </li>
-        ))}
-      </ul>
+                {t.status === 'occupied' &&
+                  (t.current_order ? (
+                    <>
+                      <p className="text-brand-charcoal font-semibold">
+                        Order #{t.current_order.order_id} · {peso(t.current_order.total_amount)}
+                      </p>
+                      <p className="text-brand-ink/70 mt-1">
+                        Ordered{' '}
+                        {formatDistanceToNowStrict(parseISO(t.current_order.created_at), {
+                          addSuffix: true,
+                        })}
+                      </p>
+                      <Link
+                        to={`/staff/orders?order=${t.current_order.order_id}`}
+                        className={cardButton}
+                      >
+                        View Order
+                      </Link>
+                    </>
+                  ) : (
+                    <>
+                      <p className="text-brand-ink/70 mb-auto">No unpaid or unserved order</p>
+                      <button
+                        type="button"
+                        disabled={setStatus.isPending}
+                        onClick={() =>
+                          setStatus.mutate({ table_id: t.table_id, status: 'available' })
+                        }
+                        className={cardButton}
+                      >
+                        Free Table
+                      </button>
+                    </>
+                  ))}
+
+                {t.status === 'reserved' &&
+                  (t.next_reservation ? (
+                    <>
+                      <p className="text-brand-charcoal font-semibold">
+                        {t.next_reservation.full_name} ·{' '}
+                        {formatTime(t.next_reservation.reservation_time)}
+                      </p>
+                      <p className="text-brand-ink/70 mt-1">{t.next_reservation.reference_code}</p>
+                      <button
+                        type="button"
+                        disabled={arrive.isPending}
+                        onClick={() => arrive.mutate(t.next_reservation!.reservation_id)}
+                        className={cardButton}
+                      >
+                        Mark Arrived
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <p className="text-brand-ink/70 mb-auto">No booking left today</p>
+                      <button
+                        type="button"
+                        disabled={setStatus.isPending}
+                        onClick={() =>
+                          setStatus.mutate({ table_id: t.table_id, status: 'available' })
+                        }
+                        className={cardButton}
+                      >
+                        Free Table
+                      </button>
+                    </>
+                  ))}
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   )
 }

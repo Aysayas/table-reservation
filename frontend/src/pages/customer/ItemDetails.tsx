@@ -3,6 +3,7 @@ import { ArrowLeft, Minus, Plus, UtensilsCrossed } from 'lucide-react'
 import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
+import LoadError from '@/components/LoadError'
 import { getMenuItem, getRecommendations } from '@/services/menu'
 import { useCart } from '@/stores/cart'
 import type { MenuItem } from '@/types/db'
@@ -31,7 +32,12 @@ export default function ItemDetails() {
   const [quantity, setQuantity] = useState(1)
   const [notes, setNotes] = useState('')
   const add = useCart((s) => s.add)
-  const { data: item, isLoading } = useQuery({
+  const {
+    data: item,
+    isLoading,
+    isLoadingError,
+    refetch,
+  } = useQuery({
     queryKey: ['menu-item', Number(itemId)],
     queryFn: () => getMenuItem(Number(itemId)),
   })
@@ -42,6 +48,16 @@ export default function ItemDetails() {
   const menuLink = `/table/${table}/menu`
 
   if (isLoading) return null
+
+  if (isLoadingError && !item) {
+    return (
+      <div className="bg-brand-cream min-h-[calc(100dvh-4rem)] px-4 py-16">
+        <div className="mx-auto max-w-md">
+          <LoadError what="this dish" onRetry={() => refetch()} />
+        </div>
+      </div>
+    )
+  }
 
   if (!item) {
     return (
@@ -132,7 +148,7 @@ export default function ItemDetails() {
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             placeholder="e.g. less spicy"
-            className="border-brand-line focus:border-brand-gold placeholder:text-brand-ink/50 mt-2 block w-full resize-none rounded-md border bg-white px-4 py-3 text-sm font-normal outline-none"
+            className="border-brand-line focus:border-brand-gold placeholder:text-brand-ink/65 mt-2 block w-full resize-none rounded-md border bg-white px-4 py-3 text-sm font-normal outline-none"
           />
         </label>
 

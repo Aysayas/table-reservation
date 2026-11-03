@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { format, parseISO } from 'date-fns'
 import { ChevronLeft, ChevronRight, Search } from 'lucide-react'
 import { useState } from 'react'
+import LoadError from '@/components/LoadError'
 import { formatTime } from '@/lib/hours'
 import { listReservations, type ReservationView } from '@/services/reservations'
 import EditReservationDialog from '@/components/EditReservationDialog'
@@ -36,7 +37,7 @@ export default function Reservations() {
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
   const [editing, setEditing] = useState<PublicReservation | null>(null)
-  const { data } = useQuery({
+  const { data, isLoadingError, refetch } = useQuery({
     queryKey: ['reservations', { view, status: '', search, page }],
     queryFn: () => listReservations({ view, status: '', search, page }),
     refetchInterval: 30000,
@@ -62,7 +63,7 @@ export default function Reservations() {
                 setPage(1)
               }}
               placeholder="Search ref code or name"
-              className="placeholder:text-brand-ink/50 w-full py-2.5 text-sm outline-none"
+              className="placeholder:text-brand-ink/65 w-full py-2.5 text-sm outline-none"
             />
           </label>
           <div role="group" aria-label="Reservation view" className="flex flex-wrap gap-2">
@@ -83,72 +84,78 @@ export default function Reservations() {
           </div>
         </div>
 
-        <div className="border-brand-line relative mt-6 overflow-x-auto rounded-lg border bg-white">
-          <table className="w-full">
-            <thead className="bg-brand-cream/60">
-              <tr>
-                {['Ref Code', 'Date', 'Time', 'Name', 'Guests', 'Table', 'Added', 'Status'].map(
-                  (h) => (
-                    <th key={h} className={th}>
-                      {h}
-                    </th>
-                  ),
-                )}
-                <th className={th}>
-                  <span className="sr-only">Actions</span>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((r) => (
-                <tr key={r.reservation_id} className="border-brand-line border-t">
-                  <td className={`${td} font-semibold`}>{r.reference_code}</td>
-                  <td className={`${td} whitespace-nowrap`}>
-                    {format(parseISO(r.reservation_date), 'EEE, MMM d, yyyy')}
-                  </td>
-                  <td className={`${td} tabular-nums`}>{formatTime(r.reservation_time)}</td>
-                  <td className={td}>{r.customer.full_name}</td>
-                  <td className={td}>{r.pax}</td>
-                  <td className={td}>{r.table_number ?? '—'}</td>
-                  <td className={td}>
-                    <span className="block">{format(parseISO(r.created_at), 'MMM d, yyyy')}</span>
-                    <span className="text-brand-ink/70 block text-xs">
-                      {format(parseISO(r.created_at), 'h:mm a')}
-                    </span>
-                  </td>
-                  <td className={td}>
-                    <span
-                      className={`inline-block rounded-full px-3 py-1 text-xs font-bold ${statusBadge[r.status]}`}
-                    >
-                      {statusText[r.status]}
-                    </span>
-                  </td>
-                  <td className={`${td} !whitespace-normal`}>
-                    <ReservationActions reservation={r}>
-                      {(r.status === 'pending' || r.status === 'confirmed') && (
-                        <button
-                          type="button"
-                          aria-label={`Edit ${r.reference_code}`}
-                          onClick={() => setEditing(r)}
-                          className="border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal rounded-md border px-3 py-1.5 text-xs font-bold transition-colors duration-200 hover:text-white"
-                        >
-                          Edit
-                        </button>
-                      )}
-                    </ReservationActions>
-                  </td>
-                </tr>
-              ))}
-              {rows.length === 0 && (
+        {isLoadingError ? (
+          <div className="mt-6">
+            <LoadError what="the reservations" onRetry={() => refetch()} />
+          </div>
+        ) : (
+          <div className="border-brand-line relative mt-6 overflow-x-auto rounded-lg border bg-white">
+            <table className="w-full">
+              <thead className="bg-brand-cream/60">
                 <tr>
-                  <td colSpan={9} className="text-brand-ink/70 px-4 py-10 text-center text-sm">
-                    No reservations found.
-                  </td>
+                  {['Ref Code', 'Date', 'Time', 'Name', 'Guests', 'Table', 'Added', 'Status'].map(
+                    (h) => (
+                      <th key={h} className={th}>
+                        {h}
+                      </th>
+                    ),
+                  )}
+                  <th className={th}>
+                    <span className="sr-only">Actions</span>
+                  </th>
                 </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {rows.map((r) => (
+                  <tr key={r.reservation_id} className="border-brand-line border-t">
+                    <td className={`${td} font-semibold`}>{r.reference_code}</td>
+                    <td className={`${td} whitespace-nowrap`}>
+                      {format(parseISO(r.reservation_date), 'EEE, MMM d, yyyy')}
+                    </td>
+                    <td className={`${td} tabular-nums`}>{formatTime(r.reservation_time)}</td>
+                    <td className={td}>{r.customer.full_name}</td>
+                    <td className={td}>{r.pax}</td>
+                    <td className={td}>{r.table_number ?? '—'}</td>
+                    <td className={td}>
+                      <span className="block">{format(parseISO(r.created_at), 'MMM d, yyyy')}</span>
+                      <span className="text-brand-ink/70 block text-xs">
+                        {format(parseISO(r.created_at), 'h:mm a')}
+                      </span>
+                    </td>
+                    <td className={td}>
+                      <span
+                        className={`inline-block rounded-full px-3 py-1 text-xs font-bold ${statusBadge[r.status]}`}
+                      >
+                        {statusText[r.status]}
+                      </span>
+                    </td>
+                    <td className={`${td} !whitespace-normal`}>
+                      <ReservationActions reservation={r}>
+                        {(r.status === 'pending' || r.status === 'confirmed') && (
+                          <button
+                            type="button"
+                            aria-label={`Edit ${r.reference_code}`}
+                            onClick={() => setEditing(r)}
+                            className="border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal rounded-md border px-3 py-1.5 text-xs font-bold transition-colors duration-200 hover:text-white"
+                          >
+                            Edit
+                          </button>
+                        )}
+                      </ReservationActions>
+                    </td>
+                  </tr>
+                ))}
+                {rows.length === 0 && (
+                  <tr>
+                    <td colSpan={9} className="text-brand-ink/70 px-4 py-10 text-center text-sm">
+                      No reservations found.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
 
         <div className="mt-4 flex items-center justify-between">
           <p className="text-brand-ink/70 text-sm">

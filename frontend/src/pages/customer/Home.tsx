@@ -82,7 +82,7 @@ export default function Home() {
             />
             {badge && (
               <div className="bg-brand-cream border-brand-gold absolute -right-2 -bottom-6 flex size-32 flex-col items-center justify-center rounded-full border border-dashed text-center md:-right-6 md:size-36">
-                <p className="text-brand-red text-[10px] font-bold tracking-[0.2em] uppercase">
+                <p className="text-brand-red text-xs font-bold tracking-[0.2em] uppercase">
                   {hourGroups.length === 1 ? 'Open daily' : badge.days}
                 </p>
                 <p className="text-brand-charcoal mt-1 font-serif text-lg leading-tight">

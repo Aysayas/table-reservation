@@ -10,6 +10,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
+import LoadError from '@/components/LoadError'
 import { getAdminDashboard } from '@/services/dashboard'
 import type { OrderStatus } from '@/types/db'
 
@@ -27,13 +28,14 @@ const orderBadge: Record<OrderStatus, string> = {
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
 
 export default function AdminDashboard() {
-  const { data } = useQuery({
+  const { data, isLoadingError, refetch } = useQuery({
     queryKey: ['dashboard', 'admin'],
     queryFn: getAdminDashboard,
     refetchInterval: 60000,
   })
 
-  if (!data) return null
+  if (!data)
+    return isLoadingError ? <LoadError what="the dashboard" onRetry={() => refetch()} /> : null
 
   const stats = [
     { label: 'Sales Today', value: peso(data.sales_today) },

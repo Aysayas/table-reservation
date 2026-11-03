@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
+import LoadError from '@/components/LoadError'
 import MobileInput from '@/components/MobileInput'
 import { dayNames, formatTime, weekOrder } from '@/lib/hours'
 import { cleanMobile, mobileSchema, toLocalMobile } from '@/lib/mobile'
@@ -19,7 +20,7 @@ const card = 'border-brand-line rounded-xl border bg-white p-6 shadow-sm'
 const heading = 'text-brand-charcoal font-serif text-xl font-bold'
 const label = 'text-brand-charcoal block text-sm font-bold'
 const field =
-  'border-brand-line focus:border-brand-gold mt-2 block w-full rounded-md border bg-white px-4 py-3 text-sm font-normal outline-none placeholder:text-brand-ink/50'
+  'border-brand-line focus:border-brand-gold mt-2 block w-full rounded-md border bg-white px-4 py-3 text-sm font-normal outline-none placeholder:text-brand-ink/65'
 const timeField =
   'border-brand-line focus:border-brand-gold min-w-0 flex-1 rounded-md border bg-white px-2.5 py-2 text-sm outline-none'
 const error = 'text-brand-red mt-1.5 text-xs'
@@ -74,7 +75,11 @@ export default function Settings() {
   const fileInput = useRef<HTMLInputElement>(null)
   const [logo, setLogo] = useState<File | null>(null)
   const [preview, setPreview] = useState<string | null>(null)
-  const { data: settings } = useQuery({ queryKey: ['settings'], queryFn: getSettings })
+  const {
+    data: settings,
+    isLoadingError,
+    refetch,
+  } = useQuery({ queryKey: ['settings'], queryFn: getSettings })
   const { data: hours } = useQuery({ queryKey: ['opening-hours'], queryFn: getOpeningHours })
 
   const {
@@ -170,6 +175,9 @@ export default function Settings() {
   }
 
   const shownLogo = preview ?? settings?.logo_url ?? '/logo.png'
+
+  if (isLoadingError && !settings)
+    return <LoadError what="the settings" onRetry={() => refetch()} />
 
   return (
     <form

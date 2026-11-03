@@ -3,6 +3,7 @@ import { addHours, format, parseISO } from 'date-fns'
 import { CalendarDays, Check, Copy, LoaderCircle, MapPin } from 'lucide-react'
 import { Link, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
+import LoadError from '@/components/LoadError'
 import SiteFooter from '@/components/SiteFooter'
 import useAccount from '@/hooks/useAccount'
 import usePaymentReturn from '@/hooks/usePaymentReturn'
@@ -24,7 +25,12 @@ const notch = 'bg-brand-cream absolute top-1/2 size-6 -translate-y-1/2 rounded-f
 export default function ReservationConfirmation() {
   const { code = '' } = useParams()
   const { data: account } = useAccount()
-  const { data: reservation, isLoading } = useQuery({
+  const {
+    data: reservation,
+    isLoading,
+    isLoadingError,
+    refetch,
+  } = useQuery({
     queryKey: ['reservation', code],
     queryFn: () => getReservationByCode(code),
     refetchInterval: (query) => {
@@ -50,6 +56,16 @@ export default function ReservationConfirmation() {
       .writeText(code)
       .then(() => toast.success('Code copied'))
       .catch(() => toast.error("Couldn't copy the code"))
+  }
+
+  if (isLoadingError && !reservation) {
+    return (
+      <div className="bg-brand-cream min-h-[calc(100dvh-4rem)] px-4 py-16 md:py-24">
+        <div className="mx-auto max-w-md">
+          <LoadError what="your reservation" onRetry={() => refetch()} />
+        </div>
+      </div>
+    )
   }
 
   if (!reservation) {

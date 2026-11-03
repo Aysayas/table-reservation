@@ -3,6 +3,7 @@ import { ArrowRight, Plus, Search, ShoppingBag, UtensilsCrossed } from 'lucide-r
 import { useEffect, useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
+import LoadError from '@/components/LoadError'
 import { readLastOrder, readTableToken } from '@/lib/tableToken'
 import { getCategories, getMenuItems, getRecommendations } from '@/services/menu'
 import { getTable } from '@/services/tables'
@@ -37,7 +38,11 @@ export default function TableMenu() {
     queryFn: () => getTable(id),
   })
   const { data: categories = [] } = useQuery({ queryKey: ['categories'], queryFn: getCategories })
-  const { data: items = [] } = useQuery({ queryKey: ['menu-items'], queryFn: () => getMenuItems() })
+  const {
+    data: items = [],
+    isLoadingError,
+    refetch,
+  } = useQuery({ queryKey: ['menu-items'], queryFn: () => getMenuItems() })
   const add = useCart((s) => s.add)
   const cartTable = useCart((s) => s.tableId)
   const allLines = useCart((s) => s.lines)
@@ -119,7 +124,7 @@ export default function TableMenu() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search menu"
-            className="placeholder:text-brand-ink/50 w-full bg-transparent text-sm outline-none"
+            className="placeholder:text-brand-ink/65 w-full bg-transparent text-sm outline-none"
           />
         </label>
       </div>
@@ -177,7 +182,13 @@ export default function TableMenu() {
         </section>
       )}
 
-      {sections.length === 0 && (
+      {isLoadingError && (
+        <div className="mt-8 px-4">
+          <LoadError what="the menu" onRetry={() => refetch()} />
+        </div>
+      )}
+
+      {!isLoadingError && sections.length === 0 && (
         <p className="text-brand-ink/70 mt-10 text-center text-sm">No dishes match your search.</p>
       )}
 
@@ -227,7 +238,7 @@ export default function TableMenu() {
                     Add
                   </button>
                 ) : (
-                  <span className="text-brand-ink/70 shrink-0 text-[10px] font-bold tracking-[0.1em] uppercase">
+                  <span className="text-brand-ink/70 shrink-0 text-xs font-bold tracking-[0.1em] uppercase">
                     Not available
                   </span>
                 )}

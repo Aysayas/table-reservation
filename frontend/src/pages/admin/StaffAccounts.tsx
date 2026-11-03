@@ -9,7 +9,7 @@ import { getMe } from '@/services/auth'
 import { listUsers, roleNames, updateUser } from '@/services/users'
 import type { User, UserRole } from '@/types/db'
 
-const th = 'px-5 py-3.5 text-left text-[11px] font-bold tracking-[0.14em] text-white/70 uppercase'
+const th = 'px-5 py-3.5 text-left text-xs font-bold tracking-[0.14em] text-white/70 uppercase'
 const td = 'text-brand-charcoal px-5 py-4 text-sm'
 const smallButton = 'rounded-md border px-3 py-1.5 text-xs font-bold transition-colors duration-200'
 

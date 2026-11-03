@@ -164,7 +164,7 @@ export default function Checkout() {
               onChange={(e) => setName(e.target.value)}
               placeholder="Juan"
               autoComplete="given-name"
-              className="border-brand-line focus:border-brand-gold placeholder:text-brand-ink/50 mt-2 block w-full rounded-md border bg-white px-4 py-3 text-sm font-normal outline-none"
+              className="border-brand-line focus:border-brand-gold placeholder:text-brand-ink/65 mt-2 block w-full rounded-md border bg-white px-4 py-3 text-sm font-normal outline-none"
             />
           </label>
 

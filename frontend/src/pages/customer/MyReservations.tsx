@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import CancelReservationDialog from '@/components/CancelReservationDialog'
+import LoadError from '@/components/LoadError'
 import useAccount from '@/hooks/useAccount'
 import { submitButton } from '@/lib/accountForm'
 import { apiError } from '@/lib/api'
@@ -60,15 +61,8 @@ export default function MyReservations() {
         )}
 
         {isError && (
-          <div role="alert" className="text-brand-ink/75 mt-8 text-sm">
-            <p>We couldn't load your reservations.</p>
-            <button
-              type="button"
-              onClick={() => refetch()}
-              className={`${outlineButton} mt-3 px-5`}
-            >
-              Try Again
-            </button>
+          <div className="mt-8">
+            <LoadError what="your reservations" onRetry={() => refetch()} />
           </div>
         )}
 

@@ -4,6 +4,7 @@ import { ArrowLeft, LogOut } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
+import LoadError from '@/components/LoadError'
 import useOrderEvents, { STAFF_CHANNEL } from '@/hooks/useOrderEvents'
 import { logout } from '@/services/auth'
 import { listOrders, updateOrderStatus, type StaffOrder } from '@/services/orders'
@@ -71,7 +72,11 @@ export default function KitchenDisplay() {
     const id = setInterval(() => setNow(new Date()), 30000)
     return () => clearInterval(id)
   }, [])
-  const { data: orders = [] } = useQuery({
+  const {
+    data: orders = [],
+    isLoadingError,
+    refetch,
+  } = useQuery({
     queryKey: ['orders', 'kitchen'],
     queryFn: () => listOrders({ status: ['received', 'preparing', 'ready'] }),
     refetchInterval: 15000,
@@ -132,83 +137,89 @@ export default function KitchenDisplay() {
       </header>
 
       <main className="grid flex-1 items-start gap-5 p-4 md:p-6 lg:grid-cols-3">
-        {columns.map((column) => {
-          const list = oldestFirst.filter((o) => o.status === column.status)
-          return (
-            <section
-              key={column.status}
-              aria-labelledby={`col-${column.status}`}
-              className={`border-brand-line rounded-xl border border-t-4 bg-white/50 p-5 lg:min-h-[70vh] ${column.top}`}
-            >
-              <h2
-                id={`col-${column.status}`}
-                className="text-brand-charcoal flex items-center justify-between font-serif text-2xl"
+        {isLoadingError ? (
+          <div className="mx-auto mt-8 w-full max-w-md lg:col-span-3">
+            <LoadError what="the kitchen orders" onRetry={() => refetch()} />
+          </div>
+        ) : (
+          columns.map((column) => {
+            const list = oldestFirst.filter((o) => o.status === column.status)
+            return (
+              <section
+                key={column.status}
+                aria-labelledby={`col-${column.status}`}
+                className={`border-brand-line rounded-xl border border-t-4 bg-white/50 p-5 lg:min-h-[70vh] ${column.top}`}
               >
-                {column.title}
-                <span
-                  aria-label={`(${list.length})`}
-                  className={`grid size-8 place-items-center rounded-full font-sans text-sm font-bold ${column.count}`}
+                <h2
+                  id={`col-${column.status}`}
+                  className="text-brand-charcoal flex items-center justify-between font-serif text-2xl"
                 >
-                  {list.length}
-                </span>
-              </h2>
-              <ul className="mt-4 space-y-4">
-                {list.map((order) => {
-                  const minutes = differenceInMinutes(now, parseISO(order.created_at))
-                  return (
-                    <li
-                      key={order.order_id}
-                      aria-label={`Order #${order.order_id}`}
-                      className="border-brand-line/60 rounded-xl border bg-white p-5"
-                    >
-                      <div className="flex items-start justify-between gap-3">
-                        <div>
-                          <p className="text-brand-charcoal font-serif text-3xl font-bold">
-                            Table {order.table_number}
-                          </p>
-                          <p className="text-brand-ink/70 mt-1">Order #{order.order_id}</p>
-                        </div>
-                        <span
-                          className={`shrink-0 rounded-full px-3 py-1 text-sm font-bold tabular-nums ${ageOf(minutes).chip}`}
-                        >
-                          {waited(minutes)}
-                        </span>
-                      </div>
-                      <ul className="mt-4 space-y-2 text-lg">
-                        {order.items.map((item) => (
-                          <li key={item.order_item_id} className="text-brand-charcoal">
-                            <p className="grid grid-cols-[3rem_1fr]">
-                              <span className="font-bold">{item.quantity}×</span>
-                              {item.name}
-                            </p>
-                            {item.notes && (
-                              <p className="bg-brand-red/10 text-brand-red mt-2 inline-block rounded-md px-3 py-1 text-base font-bold">
-                                {item.notes}
-                              </p>
-                            )}
-                          </li>
-                        ))}
-                      </ul>
-                      <button
-                        type="button"
-                        disabled={move.isPending}
-                        onClick={() => move.mutate({ order, next: column.next })}
-                        className={`mt-5 block w-full rounded-lg py-3.5 text-base font-bold tracking-wide transition-colors duration-200 disabled:opacity-50 ${column.button}`}
+                  {column.title}
+                  <span
+                    aria-label={`(${list.length})`}
+                    className={`grid size-8 place-items-center rounded-full font-sans text-sm font-bold ${column.count}`}
+                  >
+                    {list.length}
+                  </span>
+                </h2>
+                <ul className="mt-4 space-y-4">
+                  {list.map((order) => {
+                    const minutes = differenceInMinutes(now, parseISO(order.created_at))
+                    return (
+                      <li
+                        key={order.order_id}
+                        aria-label={`Order #${order.order_id}`}
+                        className="border-brand-line/60 rounded-xl border bg-white p-5"
                       >
-                        {column.action}
-                      </button>
+                        <div className="flex items-start justify-between gap-3">
+                          <div>
+                            <p className="text-brand-charcoal font-serif text-3xl font-bold">
+                              Table {order.table_number}
+                            </p>
+                            <p className="text-brand-ink/70 mt-1">Order #{order.order_id}</p>
+                          </div>
+                          <span
+                            className={`shrink-0 rounded-full px-3 py-1 text-sm font-bold tabular-nums ${ageOf(minutes).chip}`}
+                          >
+                            {waited(minutes)}
+                          </span>
+                        </div>
+                        <ul className="mt-4 space-y-2 text-lg">
+                          {order.items.map((item) => (
+                            <li key={item.order_item_id} className="text-brand-charcoal">
+                              <p className="grid grid-cols-[3rem_1fr]">
+                                <span className="font-bold">{item.quantity}×</span>
+                                {item.name}
+                              </p>
+                              {item.notes && (
+                                <p className="bg-brand-red/10 text-brand-red mt-2 inline-block rounded-md px-3 py-1 text-base font-bold">
+                                  {item.notes}
+                                </p>
+                              )}
+                            </li>
+                          ))}
+                        </ul>
+                        <button
+                          type="button"
+                          disabled={move.isPending}
+                          onClick={() => move.mutate({ order, next: column.next })}
+                          className={`mt-5 block w-full rounded-lg py-3.5 text-base font-bold tracking-wide transition-colors duration-200 disabled:opacity-50 ${column.button}`}
+                        >
+                          {column.action}
+                        </button>
+                      </li>
+                    )
+                  })}
+                  {list.length === 0 && (
+                    <li className="border-brand-line text-brand-ink/70 rounded-xl border border-dashed py-10 text-center italic">
+                      No orders here. New orders appear automatically.
                     </li>
-                  )
-                })}
-                {list.length === 0 && (
-                  <li className="border-brand-line text-brand-ink/70 rounded-xl border border-dashed py-10 text-center italic">
-                    No orders here. New orders appear automatically.
-                  </li>
-                )}
-              </ul>
-            </section>
-          )
-        })}
+                  )}
+                </ul>
+              </section>
+            )
+          })
+        )}
       </main>
     </div>
   )
