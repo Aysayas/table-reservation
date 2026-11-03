@@ -6,6 +6,7 @@ class Sms {
 	private static $queue = [];
 	private $_lava;
 	private $token;
+	private $last_error = null;
 
 	public function __construct()
 	{
@@ -41,7 +42,7 @@ class Sms {
 		$customer = $this->_lava->Customer_model->first_or_create(['mobile_number' => $mobile], ['full_name' => 'Diagnostics Test'])['record'];
 		$message = "Vencio's Garden: This is a test message from the integration tests page.";
 		$status = $this->deliver($customer, $message) ? 'sent' : 'failed';
-		return ['message' => $message, 'length' => strlen($message), 'status' => $status, 'mode' => $this->mode()];
+		return ['message' => $message, 'length' => strlen($message), 'status' => $status, 'mode' => $this->mode(), 'error' => $status === 'failed' ? $this->last_error : null];
 	}
 
 	public function balance()
@@ -132,7 +133,9 @@ class Sms {
 			error_log("SMS sent to {$masked}: " . ($data['message_id'] ?? 'no id'));
 			return true;
 		}
-		error_log("SMS failed to {$masked}: " . ($data['message'] ?? 'no reply'));
+		unset($data['api_token']);
+		$this->last_error = mb_substr(json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?: 'no reply', 0, 500);
+		error_log("SMS failed to {$masked}: {$this->last_error}");
 		return false;
 	}
 
