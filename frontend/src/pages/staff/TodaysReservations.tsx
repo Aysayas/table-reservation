@@ -131,7 +131,7 @@ export default function TodaysReservations() {
             <tbody>
               {rows.map((r) => (
                 <tr key={r.reservation_id} className="border-brand-line border-t">
-                  <td className={`${td} font-semibold`}>{r.reference_code}</td>
+                  <td className={`${td} font-semibold whitespace-nowrap`}>{r.reference_code}</td>
                   <td className={`${td} whitespace-nowrap tabular-nums`}>
                     {view === 'today' && !search ? '' : `${r.reservation_date} `}
                     {formatTime(r.reservation_time)}

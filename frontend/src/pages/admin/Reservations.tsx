@@ -129,19 +129,15 @@ export default function Reservations() {
                         {statusText[r.status]}
                       </span>
                     </td>
-                    <td className={`${td} !whitespace-normal`}>
-                      <ReservationActions reservation={r}>
-                        {(r.status === 'pending' || r.status === 'confirmed') && (
-                          <button
-                            type="button"
-                            aria-label={`Edit ${r.reference_code}`}
-                            onClick={() => setEditing(r)}
-                            className="border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal rounded-md border px-3 py-1.5 text-xs font-bold transition-colors duration-200 hover:text-white"
-                          >
-                            Edit
-                          </button>
-                        )}
-                      </ReservationActions>
+                    <td className={td}>
+                      <ReservationActions
+                        reservation={r}
+                        onEdit={
+                          r.status === 'pending' || r.status === 'confirmed'
+                            ? () => setEditing(r)
+                            : undefined
+                        }
+                      />
                     </td>
                   </tr>
                 ))}
