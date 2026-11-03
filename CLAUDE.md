@@ -2,134 +2,78 @@
 
 ## Who you are working with
 
-The person in this session is the **frontend developer**. She is new to coding and new to Claude. Treat her as a capable beginner:
+The person in this session is **Aysayas, the project lead**. They own the whole stack: backend, database and, since 2026-11-01, the frontend too. Christina (the original frontend developer) is no longer on the project, so don't draft tasks or messages for her.
 
-- Use plain, short sentences. No jargon without a one-line explanation.
-- Do **one small step at a time**, then show the result and wait.
-- After every change, explain in 3 bullets or fewer: what you changed, which file, what she should look at.
-- When she asks "why", teach. Questions are always welcome and never count as going off track.
-- Never make her feel bad for asking something out of scope. Be kind, be clear, offer the right path.
-- She may write in English, Tagalog or Taglish. Reply in the language she uses. For Taglish, keep it natural and light like her guide in `guides/frontend/`: everyday Filipino with English tech terms, no slang or forced deep Tagalog.
-
-The **project lead** set these rules and reviews her work. You can't see the lead; they read `LEAD-REVIEW.md` and `docs/progress.md`.
+- Treat them as the lead, not a beginner. Keep replies short and plain, one step at a time.
+- Their terminal is **PowerShell**, so give PowerShell syntax for commands they run.
+- Ask before anything outward-facing or hard to undo.
 
 ## What this project is
 
-A table reservation and QR menu ordering system for a school project (Systems Integration and Architecture 1 × Web Systems and Technologies 2).
+A table reservation and QR menu ordering system with menu recommendations, for **Vencio's Garden** (a school project: Systems Integration and Architecture 1 × Web Systems and Technologies 2).
 
-The restaurant is **Vencio's Garden**. Its name, logo (`frontend/public/logo.png`), menu, prices and business contacts (address, phone, email, Facebook) are real and already in `frontend/src/services/sampleData.ts` and `backend/database/seed.sql`. People's names and contacts (customers, staff) stay placeholders. Food photos may be free-licence stock photos (source noted in `docs/design/brand.md`); real restaurant photos only when the lead approves them.
+- The restaurant's name, logo, menu, prices and contacts are real (`frontend/src/services/sampleData.ts`, `backend/database/seed.sql`). People's names and contacts stay placeholders (`Juan Dela Cruz`, `09XX XXX XXXX`, `placeholder-domain.com`).
+- `frontend/`: React 19 + TypeScript + Vite + Tailwind CSS v4 + React Router + React Query, hosted on Vercel.
+- `backend/`: LavaLust PHP API + MySQL (Aiven), on Render as `vencios-api` (`https://vencios-api.onrender.com/api`). `recommender/`: a small FastAPI service on Render.
+- Integrations: PayMongo (test mode, for good), Cloudinary (photos), Pusher (live orders), iProg SMS (texts), a Google Apps Script relay (email, `docs/email-relay.gs`).
 
-- `frontend/` is **her job**: React + TypeScript + Vite + Tailwind CSS v4 + React Router.
-- `backend/` (LavaLust PHP + MySQL) is **the lead's job**. Don't change it. The "Backend progress" section of `docs/progress.md` shows which screens already have a working endpoint.
-- The screens are fixed: **29 screens** in `docs/wireframes/` (one `.svg` and one `png/` image per screen, plus `Wireframes.pdf`). The Figma file is saved as `docs/design/Wireframes.fig`. You don't need Figma or a Figma connection; everything in it is in these files.
-- The wireframes fix **what** each screen shows and does (its parts, buttons, links and data), not **how it looks**. She designs the look freely: colours, fonts, layout, shared layouts, logo use and motion. Each screen must keep its URL, its navigation, and the data from `docs/api.md`, so it still fits the backend. She records her choices in `docs/design/brand.md`.
-
-Read these before building anything. They are the source of truth:
+## Source of truth
 
 | File | What it decides |
 |---|---|
 | `docs/screens-and-routes.md` | The 29 screens, their URLs and layouts |
-| `docs/wireframes/png/NN Name.png` | What each screen looks like (open it as an image) |
-| `docs/wireframes/NN Name.svg` | Exact labels, sizes and positions (`<text>` and `<rect>` elements) |
-| `docs/design/navigation.md` | Where every button and link goes (from the Figma prototype) |
-| `docs/design/brand.md` | The look she chose: colours, fonts, logo use, motion, photo credits (she keeps it up to date) |
-| `docs/styling.md` | Theme colours, placeholder content, no code comments |
-| `docs/project-structure.md` | Where files go and how they are named |
-| `docs/packages.md` | The only libraries we use |
-| `docs/building-a-screen.md` | The steps for building a screen |
-| `docs/testing.md` | How to write Playwright tests |
-| `docs/progress.md` | Which screens are done, in progress or free, and the deliberate changes from the wireframes |
+| `docs/wireframes/` | What each screen shows and does (`png/`, `.svg`, `Wireframes.pdf`) |
+| `docs/design/navigation.md` | Where every button and link goes |
+| `docs/design/brand.md` | The look: colours, fonts, flourishes, loading and feedback, mobile, kitchen, photo credits |
+| `docs/styling.md`, `docs/project-structure.md`, `docs/packages.md` | Theme, file layout, the only libraries we use |
+| `docs/testing.md` | Playwright tests |
+| `docs/api.md` | Every endpoint, SMS and email behaviour |
+| `docs/progress.md` | Screen status and every deliberate change from the wireframes |
+| `backend/README.md` | Backend setup, env vars, migrations, integrations |
+
+Screens keep their URL, buttons, links and the data in `docs/api.md`. The look is ours to polish.
+
+## Design direction
+
+Keep the current look: charcoal, gold, cream and red; Playfair Display, Montserrat and Great Vibes; plus the gold flourishes, loaders, dialogs and toasts in `brand.md`. **Polish only, no redesigns.** Show a mockup in chat before any visual round. The Impeccable skill (`.claude/skills/impeccable`, untracked) is for audits and polish; the `mobile-app-ui-design` skill is installed at user level.
 
 ## How to work
 
-1. At the start of a session, check `docs/progress.md` and `LEAD-REVIEW.md`, then ask which screen she is working on today.
-2. Build **one screen at a time**, matching its wireframe. Use `/build-screen NN` steps.
-3. Build without waiting for the backend. Screens get data **only** through functions in `frontend/src/services/` (see `menu.ts`). Every service function has two branches: with `VITE_USE_SAMPLE=true` it returns data from `frontend/src/services/sampleData.ts` (typed with `frontend/src/types/db.ts`), otherwise it calls the endpoint in `docs/api.md` through `api` (see `menu.ts`). Daily work and the Playwright tests use `VITE_USE_SAMPLE=true`; a new service function gets both branches. Shape the sample data like the responses in `docs/api.md`. Field names match the ERD and `backend/database/schema.sql` exactly (`item_id`, `is_available`, `reservation_date`). Add sample records there when a screen needs more; never invent endpoints for things not in `docs/api.md`. In sample mode, actions that need the backend (pay, login, upload) pretend to succeed and move to the next screen; in live mode they call the API (payments redirect to PayMongo).
-4. Show the screen in the browser preview at the right size (390 wide for 01–12, 1440 × 900 for 13–29). Customer screens 01–07 are responsive: check them at both 390 × 844 and 1440 × 900.
-5. Run the checks before saying a screen is done: `npm run format`, `npm run build`, `npm run lint`, `npm run test:e2e` (all from `frontend/`).
-6. Update `docs/progress.md` when a screen changes status.
+- **Start from `origin/main`.** Run `git fetch` first. The main checkout at `C:\dev\table-reservation` may be behind: read from `origin/main` and never switch branches in it or change it.
+- **One worktree per PR** (`git worktree add ../tr-<name> -b <branch> origin/main`), removed when done (`git worktree remove`).
+- **One PR at a time**, on `frontend/<name>`, `backend/<name>` or `docs/<name>`. Never push to `main`, force-push, `reset --hard`, rebase or delete branches.
+- **The lead merges** in PowerShell: give them `gh pr merge <n> --merge` (merge commits, never squash). When they say "merged", check the state. Don't merge, close, approve or comment on GitHub without their OK.
+- **Bigger rounds:** build shared pieces first, then let parallel agents work on separate files in their own worktrees, merge them with `git merge`, run the checks once, and have a review agent read the diff before the PR. Push a backup tag (`backup/pre-<round>-<date>`) before big visual work.
+- Commits end with `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`. PR bodies end with `🤖 Generated with [Claude Code](https://claude.com/claude-code)` and fill in `.github/pull_request_template.md`.
+- At a checkpoint, update the Obsidian vault (`C:\SecondBrain\02-Projects\Vencios-Garden-Table-Reservation`: `HANDOFF.md` and a dated note in `Progress/`).
 
-Commands run from `frontend/`. The dev server preview is configured in `.claude/launch.json`.
+## Checks before a PR
 
-## Git and GitHub
+- Frontend, from `frontend/`: `npm run format`, `npm run build`, `npm run lint` (0 warnings), `npm run test:e2e`. Read both the **passed and failed** counts in the summary. The tests run in sample mode (`VITE_USE_SAMPLE=true`) on port 5174; if that port is taken, change it in `playwright.config.ts` locally and never commit that.
+- Show changed screens in the browser preview: 390 × 844 and 1440 × 900 (customer 01–07 at both, table 08–12 at 390, staff and admin 13–29 at 1440 plus a phone).
+- Backend: `php -l` on changed files, and curl tests in a **throwaway** Docker project, never the lead's running containers.
 
-The repo is `github.com/Aysayas/table-reservation`. She has write access, but **`main` is the lead's**: she works only on her own branches and sends pull requests. The lead reviews and merges. GitHub doesn't stop a push to `main` here, so you must.
+## Safety
 
-First-time setup (do it for her, explaining each step in one sentence):
-
-1. `gh auth status`. If she isn't signed in, have her run `gh auth login` herself (GitHub.com → HTTPS → browser). She types her password in the browser, never in chat.
-2. From `C:\dev`: `git clone https://github.com/Aysayas/table-reservation.git`.
-
-Every screen:
-
-- Get the latest first: `git switch main`, then `git pull`.
-- Make a branch from `main`: `frontend/screen-NN-short-name` (e.g. `frontend/screen-07-about`). One branch and one pull request per screen.
-- Commit after each working step with a short plain message (`Build screen 07 About Us`, `Add test for screen 07`). Explain what a commit is the first time.
-- When a screen is 🟦 Ready for review: `git push -u origin <branch>`, then `gh pr create --base main`, filling in `.github/pull_request_template.md`. Give her the link.
-- When she says "save my work", commit and push her branch.
-- Before every commit and push, check `git branch --show-current`. If it says `main`, stop, move the work to a branch, and explain why.
-- Never push to `main`, never force-push, never merge pull requests, never delete remote branches, never rewrite history (`reset --hard`, `rebase`). Merging is the lead's job.
-- If a pull gives a conflict, stop and explain it simply; resolve only files in `frontend/src/` or `frontend/e2e/`, otherwise ask her to contact the lead.
-- Changing files the lead owns (see `.github/CODEOWNERS`, including everything in `backend/`) is a 🔴 in the drift check below. The **Protected files** CI check also fails any pull request not opened by the lead that touches them.
-
-## Staying on track (drift check)
-
-Before doing any request that **changes files**, check it against the lists below. This is the most important part of these instructions.
-
-### 🟢 Go ahead
-
-- Building or fixing a screen from the wireframes
-- Making components, hooks, stores, services and types for those screens
-- Adding Playwright tests in `frontend/e2e/`
-- Fixing errors from build, lint or tests
-- Explaining code, concepts, errors, React, Tailwind, anything she wants to learn
-
-### 🟡 Pause, explain, offer the on-plan way
-
-If the request matches anything here, **don't do it yet**. Reply with:
-
-1. **"Quick check before I do this 🟡"**
-2. One or two plain sentences: which rule it bumps into and why the rule exists.
-3. The on-plan alternative, offered as the next step.
-4. "If you still want it, the project lead needs to OK it. Want me to note it for them?"
-
-| If she asks to… | Why it's off track | Offer instead |
-|---|---|---|
-| Use real people's names, phone numbers or emails, or photos without a free licence | People stay private; photos need a licence to use | `Juan Dela Cruz`, `09XX XXX XXXX`, `placeholder-domain.com`, free-licence photos (Unsplash, Pexels) with the source noted |
-| Add a screen, page or feature that isn't in the 29 wireframes (customer accounts, chat, dark mode toggle, a landing page) | The design is approved and fixed | Finish the planned screens first |
-| Change a URL, rename routes or reorganise `router.tsx` | The URLs come from the approved sitemap | Swap the placeholder for the page only |
-| Remove or change what a screen shows or does: its data, buttons, links or where they go | Each screen must keep fitting the backend endpoints and the navigation | Restyle it freely; keep its content and flow |
-| Install a package not in `docs/packages.md` (any `@fontsource/*` font is fine), or switch tools (Bootstrap, MUI, Redux, Next.js, Vue, styled-components, CSS files per screen) | We agreed on one tool per job | The matching tool from `docs/packages.md` |
-| Edit config: `vite.config.ts`, `tsconfig*.json`, `playwright.config.ts`, `.prettierrc.json`, `package.json` scripts, `.claude/` | Shared setup; changes affect everyone | Explain what's wrong; the lead changes config |
-| Build several screens in one go | Big changes are hard to check and learn from | One screen, then the next |
-| Write explanatory comments in code | School rule: no explanatory comments in submitted files | Put explanations in chat or the docs |
-
-### 🔴 Stop, don't do it, tell her plainly
-
-| If she asks to… | Say |
-|---|---|
-| Write backend code: PHP, LavaLust, SQL, database tables | "That's the backend teammate's part. I can help you agree on what data the screen needs instead." |
-| Put API keys, passwords or tokens in the frontend or `.env.local` | "Anything in the frontend is public. Keys stay in the backend." |
-| Delete or skip tests, or turn off checks (`// @ts-ignore`, `any` everywhere, `oxlint-disable`, removing a failing test) | "Hiding the error doesn't fix it. Let's fix the cause together." |
-| Delete files or folders she didn't create in this session | "Let's ask the lead first, deleting can't easily be undone." |
-| Work outside this repository, or on unrelated homework or another project | "This folder is only for this project. I'm happy to explain the idea, but I won't change files for it here." |
-| Mark a screen done while checks fail | "Not yet, here's what's still failing." |
-
-### Logging for the lead
-
-When she asks for something 🟡 and still wants it after the check, or anything 🔴, add an entry to `LEAD-REVIEW.md` using its template. Tell her you've noted it; this isn't secret, she knows the lead reads that file. Don't log normal questions, and don't log things she dropped after the check.
-
-If an entry in `LEAD-REVIEW.md` is marked **Approved** by the lead, you may do it.
-
-### Watch for slow drift too
-
-Every few steps, and before saying a screen is done, compare what's on screen with its wireframe. The look may differ; the content may not. If parts, buttons, links or data are missing or different, say so: "We've drifted a little from the wireframe here: …. Want to bring it back?"
+- Never paste or ask for secrets, and never put keys in the frontend (everything `VITE_` is public). `PUSHER_SECRET` never goes on Vercel.
+- Never type the production password: the lead logs in themself.
+- Never import `seed.sql` into production, and never run Reset DB.
+- Temporary changes to `backend/.env` get restored.
+- `backend/database/schema.sql` is the frozen baseline read by migration 001: schema changes go in a new numbered migration (`backend/app/migrations/00N_*.php`).
 
 ## Code rules
 
-- TypeScript, function components, one component per file, `export default`.
-- Tailwind classes only. Colours come from the theme in `src/index.css`, never hard-coded hex values.
-- Import with `@/` (e.g. `@/lib/api`).
-- Use `Link`/`useNavigate` for navigation, `api` from `@/lib/api` for requests, React Query for loading data, `react-hook-form` + `zod` for forms, `sonner` for messages, `lucide-react` for icons.
-- Labels on every form field and accessible names on buttons, so Playwright tests can find them with `getByRole`/`getByLabel`.
-- No explanatory comments in code.
+- TypeScript function components, one per file, `export default`. Import with `@/`.
+- Tailwind classes only, theme colours from `src/index.css` (no hex in TSX).
+- No explanatory comments. A known limit gets one line: `// shortcut: <the limit>, <when to upgrade>`.
+- Screens get data only through `frontend/src/services/`; each service function has a sample branch (`sampleData.ts`, field names from the ERD) and a live branch (`api`, endpoint from `docs/api.md`).
+- Labels on every field and accessible names on buttons, so Playwright finds them by role. Tap targets are at least 44px on touch (`pointer-coarse:min-h-11`).
+- No new app packages without asking (any `@fontsource/*` font is fine).
+
+## Decisions not to reopen
+
+- PayMongo stays in test mode.
+- Android is tested by emulation only.
+- SMS goes through iProg when `IPROG_SMS_TOKEN` is set; no token or `SMS_MODE=fake` means fake (logged only). The switch stays a Render env var, no admin toggle. No custom sender name (₱3,000), so Smart and TNT guests rely on email.
+- Booking emails go through the Apps Script relay; the 2-hour reminder is SMS only. No per-message toggles in admin.
+- The old skills `/build-screen`, `/check-my-work` and `/e2e` and the file `LEAD-REVIEW.md` were written for Christina. They still work but speak to a beginner.
