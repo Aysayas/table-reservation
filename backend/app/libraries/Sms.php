@@ -12,7 +12,8 @@ class Sms {
 		$this->_lava = lava_instance();
 		$this->_lava->call->model(['Reservation_model', 'Customer_model', 'Notification_model']);
 		$this->_lava->call->helper('after_response');
-		$this->token = trim(getenv('IPROG_SMS_TOKEN') ?: '');
+		$forced_fake = strtolower(trim(getenv('SMS_MODE') ?: '')) === 'fake';
+		$this->token = $forced_fake ? '' : trim(getenv('IPROG_SMS_TOKEN') ?: '');
 	}
 
 	public function mode()
