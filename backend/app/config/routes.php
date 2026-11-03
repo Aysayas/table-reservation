@@ -121,6 +121,7 @@ $router->group(['prefix' => 'api'], function ($router) {
     $router->delete('/diagnostics/cloudinary/photo', 'Diagnostics::delete_photo');
     $router->post('/diagnostics/sms', 'Diagnostics::send_sms');
     $router->get('/diagnostics/sms/latest', 'Diagnostics::latest_sms');
+    $router->get('/diagnostics/sms/balance', 'Diagnostics::sms_balance');
 
     $router->get('/users', 'Users::index');
     $router->post('/users', 'Users::store');

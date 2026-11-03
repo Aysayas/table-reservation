@@ -157,8 +157,26 @@ class Diagnostics extends Controller {
 	public function send_sms()
 	{
 		$this->api->require_role('admin');
+		$mobile = trim((string) ($this->api->body()['mobile'] ?? ''));
+		if ($mobile === '') {
+			$mobile = $this->test_mobile;
+		} elseif (!preg_match('/^09\d{9}$/', $mobile)) {
+			$this->api->respond_error('Use a mobile number like 09171234567', 422);
+		}
 		$this->call->library('sms');
-		$this->api->respond(['data' => $this->sms->test($this->test_mobile)], 201);
+		$this->api->respond(['data' => $this->sms->test($mobile)], 201);
+	}
+
+	public function sms_balance()
+	{
+		$this->api->require_role('admin');
+		$this->call->library('sms');
+		try {
+			$balance = $this->sms->balance();
+		} catch (Throwable $e) {
+			$this->api->respond_error('iProg SMS: ' . $e->getMessage(), 502);
+		}
+		$this->api->respond(['data' => ['mode' => $this->sms->mode(), 'balance' => $balance]]);
 	}
 
 	public function latest_sms()

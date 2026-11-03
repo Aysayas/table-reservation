@@ -152,9 +152,24 @@ async function run(s) {
   }
 }
 
+async function loadBalance() {
+  const pill = sms.querySelector('.mode')
+  try {
+    const r = await call('GET', 'api/diagnostics/sms/balance')
+    pill.textContent = r.mode === 'iprog' ? 'iProg SMS' : 'Fake mode'
+    pill.className = `pill mode ${r.mode === 'iprog' ? 'ok' : 'fake'}`
+    fill(sms.querySelector('.balance'), r.mode === 'iprog' ? { credits: `${r.balance} left (₱1 each)` } : { credits: 'none needed in fake mode' })
+  } catch (e) {
+    pill.textContent = 'Failed'
+    pill.className = 'pill mode failed'
+    fill(sms.querySelector('.balance'), { error: e.message })
+  }
+}
+
 function runAll() {
   services.forEach(run)
   loadTexts()
+  loadBalance()
 }
 
 function addPaymentTest(card) {
@@ -287,7 +302,7 @@ addPhotoTest(services[2].card)
 
 const sms = document.createElement('article')
 sms.className = 'card'
-sms.innerHTML = `<div class="head"><h2>SMS</h2><span class="pill fake">Fake mode</span></div><p class="what">No SMS provider yet: texts are only logged and saved.</p><div class="sim"><h3>Test SMS</h3><p class="note">Sends one test text to the customer "Diagnostics Test" (09000000000) and saves it in notifications.</p><div class="row"><button type="button" class="send" disabled>Send test SMS</button></div><p class="note state" aria-live="polite"></p><dl></dl></div><div class="sim"><div class="row"><h3>Latest texts</h3><button type="button" class="ghost refresh" disabled>Refresh</button></div><ol class="texts"></ol></div>`
+sms.innerHTML = `<div class="head"><h2>SMS</h2><span class="pill fake mode">Checking…</span></div><p class="what">iProg SMS when IPROG_SMS_TOKEN is set on the API, otherwise fake mode (texts are only logged and saved).</p><dl class="balance"></dl><div class="sim"><h3>Test SMS</h3><p class="note">Sends one test text and saves it in notifications. Leave the number empty to use the "Diagnostics Test" customer (09000000000). In iProg mode each test costs one credit.</p><label>Mobile <input class="mobile" type="tel" inputmode="numeric" placeholder="09171234567" maxlength="11"></label><div class="row"><button type="button" class="send" disabled>Send test SMS</button></div><p class="note state" aria-live="polite"></p><dl></dl></div><div class="sim"><div class="row"><h3>Latest texts</h3><button type="button" class="ghost refresh" disabled>Refresh</button></div><ol class="texts"></ol></div>`
 cards.append(sms)
 const smsState = sms.querySelector('.state')
 
@@ -314,9 +329,11 @@ sms.querySelector('.send').addEventListener('click', async (event) => {
   button.disabled = true
   smsState.textContent = 'Sending…'
   try {
-    const r = await call('POST', 'api/diagnostics/sms')
-    smsState.textContent = r.status === 'sent' ? 'Sent in fake mode: logged and saved, no text was delivered.' : 'Sending failed.'
-    fill(sms.querySelector('dl'), { message: r.message, length: `${r.length} / 160`, status: r.status })
+    const mobile = sms.querySelector('.mobile').value.trim()
+    const r = await call('POST', 'api/diagnostics/sms', mobile ? { mobile } : undefined)
+    smsState.textContent = r.status !== 'sent' ? 'Sending failed. Check the API logs.' : r.mode === 'fake' ? 'Sent in fake mode: logged and saved, no text was delivered.' : 'Queued at iProg SMS. It should arrive within a minute.'
+    await loadBalance()
+    fill(sms.querySelector('.sim dl'), { message: r.message, length: `${r.length} / 160`, status: r.status })
     await loadTexts()
   } catch (e) {
     smsState.textContent = e.message
