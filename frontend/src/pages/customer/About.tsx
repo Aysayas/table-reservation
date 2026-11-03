@@ -67,7 +67,10 @@ export default function About() {
         <span aria-hidden="true" className="sm:gold-corners pointer-events-none absolute inset-0" />
         <div className={`relative ${wrap}`}>
           <nav aria-label="Breadcrumb" className="text-sm">
-            <Link to="/" className="text-brand-gold hover:underline">
+            <Link
+              to="/"
+              className="text-brand-gold inline-flex items-center hover:underline pointer-coarse:min-h-11"
+            >
               Home
             </Link>
             <span className="text-white/60"> / </span>
@@ -219,7 +222,7 @@ export default function About() {
                           href={href}
                           target={label === 'Facebook' ? '_blank' : undefined}
                           rel={label === 'Facebook' ? 'noreferrer' : undefined}
-                          className="hover:text-brand-gold break-words transition-colors duration-200"
+                          className="hover:text-brand-gold inline-block break-words transition-colors duration-200 pointer-coarse:-my-3 pointer-coarse:py-3"
                         >
                           {value}
                         </a>

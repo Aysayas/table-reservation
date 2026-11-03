@@ -138,7 +138,7 @@ export default function Home() {
           </p>
           <Link
             to="/about"
-            className="text-brand-red mt-6 inline-flex items-center gap-1 text-xs font-bold tracking-[0.2em] uppercase hover:underline"
+            className="text-brand-red mt-6 inline-flex items-center gap-1 text-xs font-bold tracking-[0.2em] uppercase hover:underline pointer-coarse:min-h-11"
           >
             Read our story
             <ArrowRight className="size-4" />
@@ -159,7 +159,7 @@ export default function Home() {
           <div className="mt-4 flex justify-center">
             <Link
               to="/menu"
-              className="text-brand-gold flex items-center gap-1 text-xs font-bold tracking-[0.15em] whitespace-nowrap uppercase hover:underline"
+              className="text-brand-gold flex items-center gap-1 text-xs font-bold tracking-[0.15em] whitespace-nowrap uppercase hover:underline pointer-coarse:min-h-11"
             >
               View full menu
               <ArrowRight className="size-4" />

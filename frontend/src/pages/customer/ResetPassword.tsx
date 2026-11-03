@@ -57,7 +57,10 @@ export default function ResetPassword() {
       <AccountCard title="Reset Password">
         <p className="text-brand-charcoal text-sm">This reset link is invalid or has expired.</p>
         <p className="mt-5 text-sm">
-          <Link to="/forgot-password" className={textLink}>
+          <Link
+            to="/forgot-password"
+            className={`${textLink} inline-flex items-center pointer-coarse:min-h-11`}
+          >
             Send a new link
           </Link>
         </p>

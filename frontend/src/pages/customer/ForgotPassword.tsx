@@ -74,7 +74,7 @@ export default function ForgotPassword() {
       <p className="mt-5 text-sm">
         <Link
           to={nextParam ? `/login?next=${encodeURIComponent(nextParam)}` : '/login'}
-          className={textLink}
+          className={`${textLink} inline-flex items-center pointer-coarse:min-h-11`}
         >
           Back to Log In
         </Link>

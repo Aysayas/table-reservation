@@ -112,7 +112,7 @@ export default function TableMenu() {
             <ArrowRight className="text-brand-gold size-4" />
           </Link>
         )}
-        <label className="border-brand-line focus-within:border-brand-gold flex items-center gap-3 rounded-full border bg-white px-4 py-3">
+        <label className="border-brand-line focus-within:border-brand-gold flex min-h-11 items-center gap-3 rounded-full border bg-white px-4 py-3">
           <Search className="text-brand-ink/70 size-5 shrink-0" />
           <span className="sr-only">Search menu</span>
           <input
@@ -138,7 +138,7 @@ export default function TableMenu() {
                 type="button"
                 aria-pressed={active}
                 onClick={() => setCategory(c.category_id)}
-                className={`shrink-0 rounded-full border px-4 py-2 text-xs font-bold tracking-[0.08em] whitespace-nowrap transition-colors duration-200 ${active ? 'bg-brand-charcoal border-brand-charcoal text-white' : 'border-brand-line text-brand-charcoal bg-white'}`}
+                className={`inline-flex shrink-0 items-center rounded-full border px-4 py-2 text-xs font-bold tracking-[0.08em] whitespace-nowrap transition-colors duration-200 pointer-coarse:min-h-11 ${active ? 'bg-brand-charcoal border-brand-charcoal text-white' : 'border-brand-line text-brand-charcoal bg-white'}`}
               >
                 {c.name}
               </button>
@@ -240,7 +240,7 @@ export default function TableMenu() {
                     className="size-16 shrink-0 rounded-md"
                   />
                   <span className="min-w-0">
-                    <span className="text-brand-charcoal block text-sm font-semibold">
+                    <span className="text-brand-charcoal block text-sm font-semibold wrap-break-word">
                       {item.name}
                     </span>
                     {dishDescription(item.description) && (
@@ -258,7 +258,7 @@ export default function TableMenu() {
                     type="button"
                     aria-label={`Add ${item.name}`}
                     onClick={() => addOne(item)}
-                    className="border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal flex shrink-0 items-center gap-1 rounded-md border px-3 py-2 text-xs font-bold tracking-[0.08em] uppercase transition-colors duration-200 hover:text-white"
+                    className="border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal flex min-h-11 shrink-0 items-center gap-1 rounded-md border px-3 py-2 text-xs font-bold tracking-[0.08em] uppercase transition-colors duration-200 hover:text-white"
                   >
                     <Plus className="size-3.5" />
                     Add
@@ -275,7 +275,7 @@ export default function TableMenu() {
       ))}
 
       {count > 0 && (
-        <div className="short:static short:mt-4 short:pb-0 fixed inset-x-0 bottom-0 z-20 mx-auto max-w-[390px] px-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+        <div className="short:static short:mt-4 short:pb-0 bg-brand-cream short:pt-0 fixed inset-x-0 bottom-0 z-20 mx-auto max-w-[390px] px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))]">
           <Link
             to={`/table/${id}/cart`}
             className="bg-brand-charcoal hover:bg-brand-charcoal/90 flex items-center justify-between gap-3 rounded-lg px-5 py-4 text-sm font-bold text-white shadow-lg transition-colors duration-200"
