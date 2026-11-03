@@ -111,7 +111,7 @@ class Mailer {
 		$contact = array_filter([$settings['address'] ?? '', $settings['contact_number'] ?? '', $settings['email'] ?? '']);
 		$manage = "{$this->frontend}/reservation?code={$code}";
 
-		$text = "Hi {$name},\n\n{$heading}. {$lead}\n\n";
+		$text = "Hi {$name},\n\n{$lead}\n\n";
 		foreach ($rows as $label => $value) {
 			$text .= "{$label}: {$value}\n";
 		}
@@ -130,7 +130,7 @@ class Mailer {
 			. '<tr><td style="padding:28px">'
 			. '<p style="margin:0 0 6px;color:#7d5f24;font-size:12px;font-weight:bold;letter-spacing:2px;text-transform:uppercase">Reservation ' . $e($code) . '</p>'
 			. '<h1 style="margin:0 0 12px;font-family:Georgia,serif;font-size:26px;font-weight:normal;color:#1c1917">' . $e($heading) . '</h1>'
-			. '<p style="margin:0 0 20px;color:#2b2522;font-size:15px;line-height:1.6">Hi ' . $e($name) . ', ' . $e($lead) . '</p>'
+			. '<p style="margin:0 0 20px;color:#2b2522;font-size:15px;line-height:1.6">Hi ' . $e($name) . ',<br>' . $e($lead) . '</p>'
 			. '<table role="presentation" width="100%" cellpadding="0" cellspacing="0">' . $details . '</table>'
 			. '<p style="margin:24px 0 0"><a href="' . $e($button[1]) . '" style="display:inline-block;background:#b3121b;color:#ffffff;text-decoration:none;font-weight:bold;font-size:14px;letter-spacing:1px;text-transform:uppercase;padding:14px 24px;border-radius:4px">' . $e($button[0]) . '</a></p>'
 			. '<p style="margin:16px 0 0;font-size:13px;color:#6b5f55"><a href="' . $e($manage) . '" style="color:#7d5f24">Manage your booking</a> with your reference code and mobile number.</p>'
