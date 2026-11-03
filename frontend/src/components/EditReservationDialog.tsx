@@ -5,6 +5,8 @@ import { useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
+import Modal from '@/components/Modal'
+import Spinner from '@/components/Spinner'
 import { formatTime } from '@/lib/hours'
 import { getAvailability, updateReservation } from '@/services/reservations'
 import { getTables, getTakenTables } from '@/services/tables'
@@ -81,115 +83,105 @@ export default function EditReservationDialog({ reservation, onClose }: Props) {
   }
 
   return (
-    <div className="fixed inset-0 z-30 flex items-center justify-center bg-black/40 p-4">
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="edit-title"
-        className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl"
-      >
-        <h2 id="edit-title" className="text-brand-charcoal font-serif text-2xl font-bold">
-          Edit {reservation.reference_code}
-        </h2>
-        <p className="text-brand-ink/70 mt-1 text-sm">{reservation.customer.full_name}</p>
-        <form noValidate onSubmit={handleSubmit(onSubmit)} className="mt-5 space-y-5">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="edit_date" className={label}>
-                Date
-              </label>
-              <input
-                id="edit_date"
-                type="date"
-                min={today}
-                aria-invalid={!!errors.reservation_date}
-                {...register('reservation_date')}
-                className={field}
-              />
-              {errors.reservation_date && (
-                <p className={error}>{errors.reservation_date.message}</p>
-              )}
-            </div>
-            <div>
-              <label htmlFor="edit_time" className={label}>
-                Time
-              </label>
-              <select
-                id="edit_time"
-                aria-invalid={!!errors.reservation_time}
-                {...register('reservation_time')}
-                className={field}
-              >
-                <option value="">Choose a time</option>
-                {times.map((s) => (
-                  <option key={s.time} value={s.time}>
-                    {formatTime(s.time)}
-                    {s.available ? '' : ' (full)'}
-                  </option>
-                ))}
-              </select>
-              {errors.reservation_time && (
-                <p className={error}>{errors.reservation_time.message}</p>
-              )}
-            </div>
+    <Modal title={`Edit ${reservation.reference_code}`} onClose={onClose}>
+      <p className="text-brand-ink/70 -mt-2 text-center text-sm">
+        {reservation.customer.full_name}
+      </p>
+      <form noValidate onSubmit={handleSubmit(onSubmit)} className="mt-5 space-y-5">
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label htmlFor="edit_date" className={label}>
+              Date
+            </label>
+            <input
+              id="edit_date"
+              type="date"
+              min={today}
+              aria-invalid={!!errors.reservation_date}
+              {...register('reservation_date')}
+              className={field}
+            />
+            {errors.reservation_date && <p className={error}>{errors.reservation_date.message}</p>}
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="edit_pax" className={label}>
-                Guests
-              </label>
-              <input
-                id="edit_pax"
-                type="number"
-                min="1"
-                step="1"
-                aria-invalid={!!errors.pax}
-                {...register('pax', { valueAsNumber: true })}
-                className={field}
-              />
-              {errors.pax && <p className={error}>{errors.pax.message}</p>}
-            </div>
-            <div>
-              <label htmlFor="edit_table" className={label}>
-                Table
-              </label>
-              <select
-                id="edit_table"
-                {...register('table_id', { valueAsNumber: true })}
-                className={field}
-              >
-                <option value={0}>No table yet</option>
-                {tables.map((t) => (
-                  <option
-                    key={t.table_id}
-                    value={t.table_id}
-                    disabled={t.capacity < (pax || 1) || taken.includes(t.table_id)}
-                  >
-                    {t.table_number} ·{' '}
-                    {taken.includes(t.table_id) ? 'booked' : `${t.capacity} seats`}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-          <div className="flex justify-end gap-3 pt-2">
-            <button
-              type="button"
-              onClick={onClose}
-              className="border-brand-line text-brand-charcoal rounded-md border px-4 py-2 text-sm font-bold"
+          <div>
+            <label htmlFor="edit_time" className={label}>
+              Time
+            </label>
+            <select
+              id="edit_time"
+              aria-invalid={!!errors.reservation_time}
+              {...register('reservation_time')}
+              className={field}
             >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="bg-brand-red hover:bg-brand-red/90 rounded-md px-4 py-2 text-sm font-bold text-white disabled:opacity-50"
-            >
-              Save Changes
-            </button>
+              <option value="">Choose a time</option>
+              {times.map((s) => (
+                <option key={s.time} value={s.time}>
+                  {formatTime(s.time)}
+                  {s.available ? '' : ' (full)'}
+                </option>
+              ))}
+            </select>
+            {errors.reservation_time && <p className={error}>{errors.reservation_time.message}</p>}
           </div>
-        </form>
-      </div>
-    </div>
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label htmlFor="edit_pax" className={label}>
+              Guests
+            </label>
+            <input
+              id="edit_pax"
+              type="number"
+              min="1"
+              step="1"
+              aria-invalid={!!errors.pax}
+              {...register('pax', { valueAsNumber: true })}
+              className={field}
+            />
+            {errors.pax && <p className={error}>{errors.pax.message}</p>}
+          </div>
+          <div>
+            <label htmlFor="edit_table" className={label}>
+              Table
+            </label>
+            <select
+              id="edit_table"
+              {...register('table_id', { valueAsNumber: true })}
+              className={field}
+            >
+              <option value={0}>No table yet</option>
+              {tables.map((t) => (
+                <option
+                  key={t.table_id}
+                  value={t.table_id}
+                  disabled={t.capacity < (pax || 1) || taken.includes(t.table_id)}
+                >
+                  {t.table_number} · {taken.includes(t.table_id) ? 'booked' : `${t.capacity} seats`}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <div className="flex justify-end gap-3 pt-2">
+          <button
+            type="button"
+            disabled={isSubmitting}
+            onClick={onClose}
+            className="border-brand-line text-brand-charcoal rounded-md border px-4 py-2 text-sm font-bold disabled:opacity-50"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            aria-busy={isSubmitting}
+            className="bg-brand-red hover:bg-brand-red/90 inline-flex items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-bold text-white disabled:opacity-50"
+          >
+            {isSubmitting && <Spinner />}
+            Save Changes
+          </button>
+        </div>
+      </form>
+    </Modal>
   )
 }

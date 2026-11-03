@@ -6,6 +6,8 @@ import { toast } from 'sonner'
 import CancelReservationDialog from '@/components/CancelReservationDialog'
 import LeaderRow from '@/components/LeaderRow'
 import LoadError from '@/components/LoadError'
+import PageLoader from '@/components/PageLoader'
+import Skeleton from '@/components/Skeleton'
 import useAccount from '@/hooks/useAccount'
 import { submitButton } from '@/lib/accountForm'
 import { apiError } from '@/lib/api'
@@ -46,7 +48,7 @@ export default function MyReservations() {
     onError: (e) => toast.error(apiError(e, "Couldn't cancel the reservation")),
   })
 
-  if (accountLoading) return null
+  if (accountLoading) return <PageLoader />
   if (!account) return <Navigate to={`/login?next=${encodeURIComponent(pathname)}`} replace />
 
   return (
@@ -56,9 +58,20 @@ export default function MyReservations() {
         <p className="text-brand-ink/75 mt-3 text-sm">Hi, {account.full_name}.</p>
 
         {isLoading && (
-          <p role="status" className="text-brand-ink/75 mt-8 text-sm">
-            Loading your reservations…
-          </p>
+          <div className="mt-8">
+            <p role="status" className="text-brand-ink/75 text-sm">
+              Loading your reservations…
+            </p>
+            <div aria-hidden="true" className="mt-4 space-y-4">
+              {Array.from({ length: 2 }, (_, i) => (
+                <div key={i} className="border-brand-line rounded-lg border bg-white p-5 md:p-6">
+                  <Skeleton className="h-6 w-40" />
+                  <Skeleton className="mt-4 h-4 w-3/4" />
+                  <Skeleton className="mt-2 h-4 w-1/2" />
+                </div>
+              ))}
+            </div>
+          </div>
         )}
 
         {isError && (

@@ -8,6 +8,8 @@ import { Link, Navigate, useLocation, useNavigate, useSearchParams } from 'react
 import { toast } from 'sonner'
 import { z } from 'zod'
 import MobileInput from '@/components/MobileInput'
+import PageLoader from '@/components/PageLoader'
+import Skeleton from '@/components/Skeleton'
 import useAccount from '@/hooks/useAccount'
 import { formatTime } from '@/lib/hours'
 import { cleanMobile, mobileSchema, toLocalMobile } from '@/lib/mobile'
@@ -209,7 +211,7 @@ export default function ReserveTable() {
     'the restaurant'
   )
 
-  if (code ? bookingLoading : accountLoading) return null
+  if (code ? bookingLoading : accountLoading) return <PageLoader />
 
   if (!code && !account) {
     return (
@@ -355,9 +357,16 @@ export default function ReserveTable() {
                     </button>
                   </div>
                 ) : slotsLoading ? (
-                  <p role="status" className="text-brand-ink/75 mt-2 text-sm">
-                    Loading times…
-                  </p>
+                  <div className="mt-2">
+                    <p role="status" className="text-brand-ink/75 text-sm">
+                      Loading times…
+                    </p>
+                    <div aria-hidden="true" className="mt-2 grid grid-cols-3 gap-2">
+                      {Array.from({ length: 6 }, (_, i) => (
+                        <Skeleton key={i} className="h-10" />
+                      ))}
+                    </div>
+                  </div>
                 ) : isFetched && slots.length === 0 ? (
                   <p className="text-brand-ink/70 mt-2 text-sm">No times left on this day.</p>
                 ) : (

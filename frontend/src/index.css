@@ -39,6 +39,12 @@
 
   --animate-dialog-in: dialog-in 200ms cubic-bezier(0.16, 1, 0.3, 1);
 
+  @keyframes dialog-out {
+    to {
+      opacity: 0;
+      translate: 0 8px;
+    }
+  }
   @keyframes dialog-in {
     from {
       opacity: 0;
@@ -63,8 +69,9 @@ body {
   outline-offset: -2px;
 }
 
-[role='dialog'] {
-  max-height: 100%;
+[role='dialog'],
+dialog {
+  max-height: calc(100% - 2rem);
   overflow-y: auto;
 }
 
@@ -107,7 +114,8 @@ body {
       scale: 0.97;
     }
 
-    [role='dialog'] {
+    [role='dialog'],
+    dialog[open] {
       animation: var(--animate-dialog-in);
     }
   }

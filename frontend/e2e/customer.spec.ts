@@ -22,3 +22,20 @@ test('header links open the menu, reserve and about pages', async ({ page }) => 
   await header.getByRole('link', { name: 'About', exact: true }).click()
   await expect(page).toHaveURL('/about')
 })
+
+test('each page names itself in the browser tab', async ({ page }) => {
+  await page.goto('/')
+  await expect(page).toHaveTitle("Vencio's Garden")
+  await page.goto('/menu')
+  await expect(page).toHaveTitle("Menu · Vencio's Garden")
+})
+
+test('keyboard users can skip to the page content', async ({ page }) => {
+  await page.goto('/menu')
+  await expect(page.getByRole('heading', { name: 'Our Menu' })).toBeVisible()
+  await page.keyboard.press('Tab')
+  const skip = page.getByRole('link', { name: 'Skip to content' })
+  await expect(skip).toBeFocused()
+  await skip.press('Enter')
+  await expect(page.locator('main#main')).toBeFocused()
+})

@@ -8,6 +8,7 @@ import FramedPhoto from '@/components/FramedPhoto'
 import Ornament from '@/components/Ornament'
 import Reveal from '@/components/Reveal'
 import SiteFooter from '@/components/SiteFooter'
+import Skeleton from '@/components/Skeleton'
 import { groupHours } from '@/lib/hours'
 import { getMenuItems } from '@/services/menu'
 import { getOpeningHours, getSettings } from '@/services/settings'
@@ -35,7 +36,10 @@ export default function Home() {
   const [date, setDate] = useState('')
   const [pax, setPax] = useState('2')
   const { data: hours = [] } = useQuery({ queryKey: ['opening-hours'], queryFn: getOpeningHours })
-  const { data: items = [] } = useQuery({ queryKey: ['menu-items'], queryFn: () => getMenuItems() })
+  const { data: items = [], isLoading: itemsLoading } = useQuery({
+    queryKey: ['menu-items'],
+    queryFn: () => getMenuItems(),
+  })
   const { data: settings } = useQuery({ queryKey: ['settings'], queryFn: getSettings })
   const maxPax = settings?.max_pax ?? 10
 
@@ -161,6 +165,30 @@ export default function Home() {
               <ArrowRight className="size-4" />
             </Link>
           </div>
+          {itemsLoading && (
+            <>
+              <p role="status" className="sr-only">
+                Loading popular dishes…
+              </p>
+              <ul
+                aria-hidden="true"
+                className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6"
+              >
+                {Array.from({ length: 4 }, (_, i) => (
+                  <li
+                    key={i}
+                    className={`flex flex-col overflow-hidden rounded-lg border border-white/10 bg-white/5 ${i >= 2 ? 'hidden md:flex' : ''}`}
+                  >
+                    <Skeleton className="h-32 md:h-44" />
+                    <div className="space-y-3 px-4 py-4">
+                      <Skeleton className="h-4 w-3/4" />
+                      <Skeleton className="h-5 w-20" />
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
           <div className="group/marquee mt-8 motion-safe:overflow-hidden motion-safe:py-2">
             <ul className="motion-safe:animate-marquee grid grid-cols-2 gap-4 motion-safe:flex motion-safe:w-max motion-safe:gap-0 motion-safe:group-focus-within/marquee:[animation-play-state:paused] motion-safe:group-hover/marquee:[animation-play-state:paused] md:grid-cols-4 md:gap-6">
               {[...popular, ...popular].map((item, index) => {

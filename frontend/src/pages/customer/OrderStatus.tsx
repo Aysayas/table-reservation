@@ -6,6 +6,7 @@ import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import LeaderRow from '@/components/LeaderRow'
 import LoadError from '@/components/LoadError'
+import PageLoader from '@/components/PageLoader'
 import useOrderEvents from '@/hooks/useOrderEvents'
 import usePaymentReturn, { markPaying } from '@/hooks/usePaymentReturn'
 import { apiError } from '@/lib/api'
@@ -70,7 +71,7 @@ export default function OrderStatus() {
     </Link>
   )
 
-  if (orderId > 0 && isLoading) return null
+  if (orderId > 0 && isLoading) return <PageLoader />
 
   if (isLoadingError && !order) {
     return (

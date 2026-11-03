@@ -83,6 +83,16 @@ These differ from the 29 approved wireframes on purpose, to remove redundant ste
 - **Admin sidebar groups:** the admin links are grouped under Today, Menu & Tables, Sales and Setup. Kitchen moved up next to Reservations. Every label and URL is the same.
 - **Gold flourishes (01, 02, 07, 08):** gold corner frames on the dark heroes and the Menu title band, an offset gold frame behind hero photos, and gold ◆ dividers. Menu categories show a decorative "Track NN" line and staff lines, playing on the menu's song-named sections (approved by the lead 2026-11-04). On Home, "Popular Dishes" is now a gold ornament heading with "View full menu" under it. A backup of the design before this is tagged `backup/pre-vamp-2026-11-04`.
 - **Dotted leader rows and light admin touches (04, 06, 09–13, 14, 19, My Reservations):** summary and total rows read like a printed menu (label, dotted gold line, value). Item Details and both dashboards get one gold divider, and Staff Login gets gold corners and a divider. All text is the same.
+- **Loading, dialogs and toasts (all screens):**
+  - Pages load on demand with a branded loader ("Sandali lang…").
+  - Guest lists show skeletons, and empty lists show a styled empty state.
+  - All 10 dialogs use the native `<dialog>`: Escape, backdrop click and a focus trap, with a spinner on the confirm button while saving.
+  - Toasts are branded.
+  - Each page sets its browser tab title.
+  - Both layouts have a "Skip to content" link.
+  - A broken page shows a "Something went wrong" card.
+  - Unknown dashboard pages show "Page not found" with "Back to Dashboard".
+  - The backup before this round is tagged `backup/pre-polish-2026-11-04`.
 - **Dish photos (sample data):** 71 more dishes have free stock photos in `frontend/public/photos/dishes/` (credits in `docs/design/brand.md`), so 73 of 93 show a photo in sample mode. Production photos are uploaded on screen 21.
 
 ## Backend progress

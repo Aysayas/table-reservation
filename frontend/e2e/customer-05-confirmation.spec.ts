@@ -113,6 +113,7 @@ const bookUnpaid = async (page: import('@playwright/test').Page) => {
   await page.getByRole('button', { name: '7:00 PM' }).click()
   await page.getByRole('button', { name: 'Continue to Deposit' }).click()
   await expect(page).toHaveURL(/\/reserve\/payment\?code=RSV-/)
+  await expect(page.getByRole('heading', { name: 'Deposit Payment' })).toBeVisible()
   return new URL(page.url()).searchParams.get('code')
 }
 

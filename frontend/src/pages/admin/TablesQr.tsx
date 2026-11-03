@@ -8,6 +8,8 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import LoadError from '@/components/LoadError'
+import Modal from '@/components/Modal'
+import Spinner from '@/components/Spinner'
 import { getSettings } from '@/services/settings'
 import {
   createTable,
@@ -220,100 +222,95 @@ export default function TablesQr() {
       </div>
 
       {editing && (
-        <div className="fixed inset-0 z-30 flex items-center justify-center bg-black/40 p-4 print:hidden">
-          <div
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="table-form-title"
-            className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl"
-          >
-            <h2 id="table-form-title" className="text-brand-charcoal font-serif text-2xl font-bold">
-              {editing === 'new' ? 'Add Table' : `Edit Table ${editing.table_number}`}
-            </h2>
-            <form noValidate onSubmit={handleSubmit(onSubmit)} className="mt-5 space-y-5">
-              <div>
-                <label htmlFor="table_number" className={label}>
-                  Table Number
-                </label>
-                <input
-                  id="table_number"
-                  placeholder="e.g. T9"
-                  aria-invalid={!!errors.table_number}
-                  {...register('table_number')}
-                  className={field}
-                />
-                {errors.table_number && <p className={error}>{errors.table_number.message}</p>}
-              </div>
-              <div>
-                <label htmlFor="capacity" className={label}>
-                  Seats
-                </label>
-                <input
-                  id="capacity"
-                  type="number"
-                  min="1"
-                  max="50"
-                  step="1"
-                  aria-invalid={!!errors.capacity}
-                  {...register('capacity', { valueAsNumber: true })}
-                  className={field}
-                />
-                {errors.capacity && <p className={error}>{errors.capacity.message}</p>}
-              </div>
-              <div className="flex justify-end gap-3 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setEditing(null)}
-                  className="border-brand-line text-brand-charcoal rounded-md border px-4 py-2 text-sm font-bold"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="bg-brand-red hover:bg-brand-red/90 rounded-md px-4 py-2 text-sm font-bold text-white disabled:opacity-50"
-                >
-                  Save Table
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {deleting && (
-        <div className="fixed inset-0 z-30 flex items-center justify-center bg-black/40 p-4 print:hidden">
-          <div
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="delete-title"
-            className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl"
-          >
-            <h2 id="delete-title" className="text-brand-charcoal font-serif text-2xl font-bold">
-              Delete Table {deleting.table_number}?
-            </h2>
-            <p className="text-brand-ink/70 mt-2 text-sm">
-              Its QR code will stop working. This can&apos;t be undone.
-            </p>
-            <div className="mt-6 flex justify-end gap-3">
+        <Modal
+          title={editing === 'new' ? 'Add Table' : `Edit Table ${editing.table_number}`}
+          onClose={() => setEditing(null)}
+          className="max-w-md print:hidden"
+        >
+          <form noValidate onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+            <div>
+              <label htmlFor="table_number" className={label}>
+                Table Number
+              </label>
+              <input
+                id="table_number"
+                placeholder="e.g. T9"
+                aria-invalid={!!errors.table_number}
+                {...register('table_number')}
+                className={field}
+              />
+              {errors.table_number && <p className={error}>{errors.table_number.message}</p>}
+            </div>
+            <div>
+              <label htmlFor="capacity" className={label}>
+                Seats
+              </label>
+              <input
+                id="capacity"
+                type="number"
+                min="1"
+                max="50"
+                step="1"
+                aria-invalid={!!errors.capacity}
+                {...register('capacity', { valueAsNumber: true })}
+                className={field}
+              />
+              {errors.capacity && <p className={error}>{errors.capacity.message}</p>}
+            </div>
+            <div className="flex justify-end gap-3 pt-2">
               <button
                 type="button"
-                onClick={() => setDeleting(null)}
-                className="border-brand-line text-brand-charcoal rounded-md border px-4 py-2 text-sm font-bold"
+                disabled={isSubmitting}
+                onClick={() => setEditing(null)}
+                className="border-brand-line text-brand-charcoal rounded-md border px-4 py-2 text-sm font-bold disabled:opacity-50"
               >
                 Cancel
               </button>
               <button
-                type="button"
-                disabled={remove.isPending}
-                onClick={() => remove.mutate(deleting)}
-                className="bg-brand-red hover:bg-brand-red/90 rounded-md px-4 py-2 text-sm font-bold text-white disabled:opacity-50"
+                type="submit"
+                disabled={isSubmitting}
+                aria-busy={isSubmitting}
+                className="bg-brand-red hover:bg-brand-red/90 inline-flex items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-bold text-white disabled:opacity-50"
               >
-                Delete
+                {isSubmitting && <Spinner />}
+                Save Table
               </button>
             </div>
+          </form>
+        </Modal>
+      )}
+
+      {deleting && (
+        <Modal
+          title={`Delete Table ${deleting.table_number}?`}
+          onClose={() => setDeleting(null)}
+          framed
+          className="max-w-md print:hidden"
+        >
+          <p className="text-brand-ink/70 text-center text-sm">
+            Its QR code will stop working. This can&apos;t be undone.
+          </p>
+          <div className="mt-6 flex justify-center gap-3">
+            <button
+              type="button"
+              disabled={remove.isPending}
+              onClick={() => setDeleting(null)}
+              className="border-brand-line text-brand-charcoal rounded-md border px-4 py-2 text-sm font-bold disabled:opacity-50"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              disabled={remove.isPending}
+              aria-busy={remove.isPending}
+              onClick={() => remove.mutate(deleting)}
+              className="bg-brand-red hover:bg-brand-red/90 inline-flex items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-bold text-white disabled:opacity-50"
+            >
+              {remove.isPending && <Spinner />}
+              Delete
+            </button>
           </div>
-        </div>
+        </Modal>
       )}
     </div>
   )
