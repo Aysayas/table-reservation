@@ -28,7 +28,7 @@ export default function MobileInput({ id, invalid, className = '', onChange, ...
           e.target.value = cleanMobile(e.target.value)
           return onChange(e)
         }}
-        className="placeholder:text-brand-ink/50 w-full bg-transparent px-4 py-3 text-sm tracking-normal normal-case outline-none"
+        className="placeholder:text-brand-ink/65 w-full bg-transparent px-4 py-3 text-sm tracking-normal normal-case outline-none"
       />
     </div>
   )

@@ -4,6 +4,7 @@ import { Check } from 'lucide-react'
 import { useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
+import LoadError from '@/components/LoadError'
 import useOrderEvents from '@/hooks/useOrderEvents'
 import usePaymentReturn, { markPaying } from '@/hooks/usePaymentReturn'
 import { apiError } from '@/lib/api'
@@ -29,7 +30,12 @@ export default function OrderStatus() {
   const token = readTableToken(table) ?? ''
   const queryClient = useQueryClient()
   const [paying, setPaying] = useState(false)
-  const { data: order, isLoading } = useQuery({
+  const {
+    data: order,
+    isLoading,
+    isLoadingError,
+    refetch,
+  } = useQuery({
     queryKey: ['order', orderId, token],
     queryFn: () => getOrder(orderId, token),
     enabled: orderId > 0,
@@ -63,6 +69,16 @@ export default function OrderStatus() {
   )
 
   if (orderId > 0 && isLoading) return null
+
+  if (isLoadingError && !order) {
+    return (
+      <div className="bg-brand-cream min-h-[calc(100dvh-4rem)] px-4 py-16">
+        <div className="mx-auto max-w-md">
+          <LoadError what="your order" onRetry={() => refetch()} />
+        </div>
+      </div>
+    )
+  }
 
   if (!order) {
     return (

@@ -8,7 +8,7 @@ import type { User } from '@/types/db'
 
 const label = 'text-brand-charcoal block text-sm font-bold'
 const field =
-  'border-brand-line focus:border-brand-gold mt-2 block w-full rounded-md border bg-white px-4 py-3 text-sm font-normal outline-none disabled:bg-brand-cream/60 placeholder:text-brand-ink/50'
+  'border-brand-line focus:border-brand-gold mt-2 block w-full rounded-md border bg-white px-4 py-3 text-sm font-normal outline-none disabled:bg-brand-cream/60 placeholder:text-brand-ink/65'
 const error = 'text-brand-red mt-1.5 text-xs'
 
 const password = z.string().min(8, 'Use at least 8 characters').max(72, 'Use 72 characters or less')

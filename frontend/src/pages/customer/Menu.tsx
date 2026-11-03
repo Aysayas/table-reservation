@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { QrCode, Search, UtensilsCrossed } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import LoadError from '@/components/LoadError'
 import { getCategories, getMenuItems } from '@/services/menu'
 import type { MenuItem } from '@/types/db'
 
@@ -35,11 +36,11 @@ function Dish({ item, category }: { item: MenuItem; category: string }) {
           </div>
         )}
         {item.is_recommended && (
-          <span className="bg-brand-gold text-brand-charcoal absolute top-2 left-2 rounded-sm px-2 py-0.5 text-[9px] font-bold tracking-[0.15em] uppercase">
+          <span className="bg-brand-gold text-brand-charcoal absolute top-2 left-2 rounded-sm px-2 py-0.5 text-xs font-bold tracking-[0.15em] uppercase">
             Best Seller
           </span>
         )}
-        <span className="bg-brand-red absolute right-2 bottom-0 max-w-[80%] truncate rounded-t-sm px-2 py-0.5 text-[9px] font-bold tracking-[0.1em] text-white uppercase">
+        <span className="bg-brand-red absolute right-2 bottom-0 max-w-[80%] truncate rounded-t-sm px-2 py-0.5 text-xs font-bold tracking-[0.1em] text-white uppercase">
           {category}
         </span>
       </div>
@@ -54,7 +55,7 @@ function Dish({ item, category }: { item: MenuItem; category: string }) {
           {item.is_available ? (
             <span />
           ) : (
-            <span className="bg-brand-ink/10 text-brand-ink rounded-full px-2 py-0.5 text-[10px] font-bold tracking-[0.1em] uppercase">
+            <span className="bg-brand-ink/10 text-brand-ink rounded-full px-2 py-0.5 text-xs font-bold tracking-[0.1em] uppercase">
               Not available
             </span>
           )}
@@ -73,7 +74,12 @@ export default function Menu() {
   const [bestOnly, setBestOnly] = useState(false)
   const [category, setCategory] = useState<number | null>(null)
   const { data: categories = [] } = useQuery({ queryKey: ['categories'], queryFn: getCategories })
-  const { data: items = [], isFetched } = useQuery({
+  const {
+    data: items = [],
+    isFetched,
+    isLoadingError,
+    refetch,
+  } = useQuery({
     queryKey: ['menu-items'],
     queryFn: () => getMenuItems(),
   })
@@ -154,7 +160,7 @@ export default function Menu() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search menu"
-                className="placeholder:text-brand-ink/50 w-full bg-transparent px-4 py-3 text-sm outline-none"
+                className="placeholder:text-brand-ink/65 w-full bg-transparent px-4 py-3 text-sm outline-none"
               />
               <span className="bg-brand-red flex self-stretch px-3.5 text-white">
                 <Search className="my-auto size-4" />
@@ -227,7 +233,7 @@ export default function Menu() {
                     className={`flex shrink-0 items-center justify-between gap-3 rounded-full border px-4 py-2 text-xs font-bold tracking-[0.08em] whitespace-nowrap transition-colors duration-200 lg:rounded-none lg:border-0 lg:border-b lg:border-dashed lg:px-0 lg:py-2.5 lg:text-sm lg:font-medium lg:tracking-normal lg:last:border-b-0 ${active ? 'bg-brand-charcoal border-brand-charcoal lg:text-brand-red lg:border-brand-line/70 text-white lg:bg-transparent lg:font-bold' : 'border-brand-line text-brand-charcoal hover:border-brand-gold lg:border-brand-line/70 lg:hover:text-brand-red bg-white lg:bg-transparent'}`}
                   >
                     <span>
-                      <span aria-hidden="true" className="mr-2 hidden text-[10px] lg:inline">
+                      <span aria-hidden="true" className="mr-2 hidden text-xs lg:inline">
                         ▸
                       </span>
                       {c.name}
@@ -241,7 +247,13 @@ export default function Menu() {
         </aside>
 
         <div className="px-4 lg:px-0">
-          {isFetched && sections.length === 0 && (
+          {isLoadingError && (
+            <div className="mt-6 lg:mt-0">
+              <LoadError what="the menu" onRetry={() => refetch()} />
+            </div>
+          )}
+
+          {isFetched && !isLoadingError && sections.length === 0 && (
             <p className="text-brand-ink/70 mt-10 text-center text-sm">
               No dishes match your search.
             </p>

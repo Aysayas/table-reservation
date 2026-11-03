@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { flushSync } from 'react-dom'
 import { useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
+import LoadError from '@/components/LoadError'
 import Receipt from '@/components/Receipt'
 import useOrderEvents, { STAFF_CHANNEL } from '@/hooks/useOrderEvents'
 import { listOrders, recordPayment } from '@/services/orders'
@@ -35,7 +36,11 @@ export default function OrdersPayments() {
   const [params, setParams] = useSearchParams()
   const [filter, setFilter] = useState<'' | 'paid' | 'unpaid'>('')
   const [cash, setCash] = useState('')
-  const { data: orders = [] } = useQuery({
+  const {
+    data: orders = [],
+    isLoadingError,
+    refetch,
+  } = useQuery({
     queryKey: ['orders', filter],
     queryFn: () =>
       listOrders({
@@ -90,60 +95,66 @@ export default function OrdersPayments() {
           ))}
         </div>
 
-        <div className="border-brand-line mt-6 overflow-x-auto rounded-lg border bg-white">
-          <table className="w-full">
-            <thead className="bg-brand-cream/60">
-              <tr>
-                {['Order #', 'Table', 'Time', 'Total', 'Status', 'Payment'].map((h) => (
-                  <th key={h} className={th}>
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {orders.map((o) => (
-                <tr
-                  key={o.order_id}
-                  onClick={() => select(o.order_id)}
-                  aria-selected={o.order_id === selectedId}
-                  className={`border-brand-line hover:bg-brand-cream/60 cursor-pointer border-t transition-colors duration-150 ${o.order_id === selectedId ? 'bg-brand-gold/10' : ''}`}
-                >
-                  <td className={`${td} font-semibold`}>
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        select(o.order_id)
-                      }}
-                      className="hover:text-brand-red font-semibold"
-                    >
-                      #{o.order_id}
-                    </button>
-                  </td>
-                  <td className={td}>{o.table_number}</td>
-                  <td className={`${td} tabular-nums`}>{time(o.created_at)}</td>
-                  <td className={`${td} tabular-nums`}>{peso(o.total_amount)}</td>
-                  <td className={td}>
-                    <span
-                      className={`inline-block rounded-full px-3 py-1 text-xs font-bold ${orderBadge[o.status]}`}
-                    >
-                      {cap(o.status)}
-                    </span>
-                  </td>
-                  <td className={td}>{o.payment_status === 'paid' ? 'Paid' : 'Unpaid'}</td>
-                </tr>
-              ))}
-              {orders.length === 0 && (
+        {isLoadingError ? (
+          <div className="mt-6">
+            <LoadError what="the orders" onRetry={() => refetch()} />
+          </div>
+        ) : (
+          <div className="border-brand-line mt-6 overflow-x-auto rounded-lg border bg-white">
+            <table className="w-full">
+              <thead className="bg-brand-cream/60">
                 <tr>
-                  <td colSpan={6} className="text-brand-ink/70 px-4 py-10 text-center text-sm">
-                    No orders here.
-                  </td>
+                  {['Order #', 'Table', 'Time', 'Total', 'Status', 'Payment'].map((h) => (
+                    <th key={h} className={th}>
+                      {h}
+                    </th>
+                  ))}
                 </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {orders.map((o) => (
+                  <tr
+                    key={o.order_id}
+                    onClick={() => select(o.order_id)}
+                    aria-selected={o.order_id === selectedId}
+                    className={`border-brand-line hover:bg-brand-cream/60 cursor-pointer border-t transition-colors duration-150 ${o.order_id === selectedId ? 'bg-brand-gold/10' : ''}`}
+                  >
+                    <td className={`${td} font-semibold`}>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          select(o.order_id)
+                        }}
+                        className="hover:text-brand-red font-semibold"
+                      >
+                        #{o.order_id}
+                      </button>
+                    </td>
+                    <td className={td}>{o.table_number}</td>
+                    <td className={`${td} tabular-nums`}>{time(o.created_at)}</td>
+                    <td className={`${td} tabular-nums`}>{peso(o.total_amount)}</td>
+                    <td className={td}>
+                      <span
+                        className={`inline-block rounded-full px-3 py-1 text-xs font-bold ${orderBadge[o.status]}`}
+                      >
+                        {cap(o.status)}
+                      </span>
+                    </td>
+                    <td className={td}>{o.payment_status === 'paid' ? 'Paid' : 'Unpaid'}</td>
+                  </tr>
+                ))}
+                {orders.length === 0 && (
+                  <tr>
+                    <td colSpan={6} className="text-brand-ink/70 px-4 py-10 text-center text-sm">
+                      No orders here.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
 
       {!selected && (

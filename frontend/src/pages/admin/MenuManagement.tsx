@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight, Plus, Search, UtensilsCrossed } from 'lucide
 import { useState } from 'react'
 import { Link, useLocation, useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
+import LoadError from '@/components/LoadError'
 import { deleteMenuItem, getCategories, getMenuItems, setAvailability } from '@/services/menu'
 import type { MenuItem } from '@/types/db'
 
@@ -31,7 +32,11 @@ export default function MenuManagement() {
   const setPage = (value: number) => update({ page: value > 1 ? String(value) : '' })
   const from = { from: `${pathname}${linkSearch}` }
   const [deleting, setDeleting] = useState<MenuItem | null>(null)
-  const { data: items = [] } = useQuery({
+  const {
+    data: items = [],
+    isLoadingError,
+    refetch,
+  } = useQuery({
     queryKey: ['menu-items'],
     queryFn: () => getMenuItems(),
   })
@@ -108,79 +113,89 @@ export default function MenuManagement() {
         </Link>
       </div>
 
-      <div className="border-brand-line mt-6 overflow-x-auto rounded-lg border bg-white">
-        <table className="w-full">
-          <thead className="bg-brand-cream/60">
-            <tr>
-              {['Image', 'Name', 'Category', 'Price', 'Available', 'Actions'].map((h) => (
-                <th key={h} className={th}>
-                  {h}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((item) => (
-              <tr key={item.item_id} className="border-brand-line border-t">
-                <td className="px-4 py-2">
-                  {item.image_url ? (
-                    <img src={item.image_url} alt="" className="size-12 rounded-md object-cover" />
-                  ) : (
-                    <span className="bg-brand-cream text-brand-gold-deep flex size-12 items-center justify-center rounded-md">
-                      <UtensilsCrossed className="size-5" strokeWidth={1.5} />
-                    </span>
-                  )}
-                </td>
-                <td className={`${td} font-semibold`}>{item.name}</td>
-                <td className={td}>{categoryName(item.category_id)}</td>
-                <td className={`${td} tabular-nums`}>{peso(item.price)}</td>
-                <td className={td}>
-                  <button
-                    type="button"
-                    role="switch"
-                    aria-checked={item.is_available}
-                    aria-label={`${item.name} available`}
-                    disabled={toggle.isPending}
-                    onClick={() => toggle.mutate(item)}
-                    className={`relative h-6 w-11 rounded-full transition-colors duration-200 ${item.is_available ? 'bg-brand-green' : 'bg-brand-ink/20'}`}
-                  >
-                    <span
-                      className={`absolute top-0.5 left-0.5 size-5 rounded-full bg-white shadow transition-transform duration-200 ${item.is_available ? 'translate-x-5' : ''}`}
-                    />
-                  </button>
-                </td>
-                <td className={td}>
-                  <div className="flex gap-2">
-                    <Link
-                      to={`/admin/menu/${item.item_id}/edit`}
-                      state={from}
-                      aria-label={`Edit ${item.name}`}
-                      className={`${smallButton} border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal hover:text-white`}
-                    >
-                      Edit
-                    </Link>
+      {isLoadingError ? (
+        <div className="mt-6">
+          <LoadError what="the menu" onRetry={() => refetch()} />
+        </div>
+      ) : (
+        <div className="border-brand-line mt-6 overflow-x-auto rounded-lg border bg-white">
+          <table className="w-full">
+            <thead className="bg-brand-cream/60">
+              <tr>
+                {['Image', 'Name', 'Category', 'Price', 'Available', 'Actions'].map((h) => (
+                  <th key={h} className={th}>
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((item) => (
+                <tr key={item.item_id} className="border-brand-line border-t">
+                  <td className="px-4 py-2">
+                    {item.image_url ? (
+                      <img
+                        src={item.image_url}
+                        alt=""
+                        className="size-12 rounded-md object-cover"
+                      />
+                    ) : (
+                      <span className="bg-brand-cream text-brand-gold-deep flex size-12 items-center justify-center rounded-md">
+                        <UtensilsCrossed className="size-5" strokeWidth={1.5} />
+                      </span>
+                    )}
+                  </td>
+                  <td className={`${td} font-semibold`}>{item.name}</td>
+                  <td className={td}>{categoryName(item.category_id)}</td>
+                  <td className={`${td} tabular-nums`}>{peso(item.price)}</td>
+                  <td className={td}>
                     <button
                       type="button"
-                      aria-label={`Delete ${item.name}`}
-                      onClick={() => setDeleting(item)}
-                      className={`${smallButton} border-brand-red text-brand-red hover:bg-brand-red hover:text-white`}
+                      role="switch"
+                      aria-checked={item.is_available}
+                      aria-label={`${item.name} available`}
+                      disabled={toggle.isPending}
+                      onClick={() => toggle.mutate(item)}
+                      className={`relative h-6 w-11 rounded-full transition-colors duration-200 ${item.is_available ? 'bg-brand-green' : 'bg-brand-ink/20'}`}
                     >
-                      Delete
+                      <span
+                        className={`absolute top-0.5 left-0.5 size-5 rounded-full bg-white shadow transition-transform duration-200 ${item.is_available ? 'translate-x-5' : ''}`}
+                      />
                     </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-            {rows.length === 0 && (
-              <tr>
-                <td colSpan={6} className="text-brand-ink/70 px-4 py-10 text-center text-sm">
-                  No menu items found.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+                  </td>
+                  <td className={td}>
+                    <div className="flex gap-2">
+                      <Link
+                        to={`/admin/menu/${item.item_id}/edit`}
+                        state={from}
+                        aria-label={`Edit ${item.name}`}
+                        className={`${smallButton} border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal hover:text-white`}
+                      >
+                        Edit
+                      </Link>
+                      <button
+                        type="button"
+                        aria-label={`Delete ${item.name}`}
+                        onClick={() => setDeleting(item)}
+                        className={`${smallButton} border-brand-red text-brand-red hover:bg-brand-red hover:text-white`}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+              {rows.length === 0 && (
+                <tr>
+                  <td colSpan={6} className="text-brand-ink/70 px-4 py-10 text-center text-sm">
+                    No menu items found.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
 
       <div className="mt-4 flex items-center justify-between">
         <p className="text-brand-ink/70 text-sm">

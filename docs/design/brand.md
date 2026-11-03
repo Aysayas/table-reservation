@@ -123,6 +123,13 @@ Gentle and slow, so it never makes anyone dizzy. Made with Tailwind only (no mot
 - **Never:** parallax, fast or bouncing movement, anything else that moves on its own, or entrance animations that delay the content.
 - **Reduce motion:** every animation uses Tailwind's `motion-safe:` (or sits inside `prefers-reduced-motion: no-preference` in `index.css`), so people who turn on "reduce motion" see everything at once with no movement.
 
+## States
+
+- **Couldn't load:** when a page's data fails to load, it shows `LoadError` (`src/components/LoadError.tsx`): a white card with "We couldn't load {what}", a hint and Try Again. It shows only when the first load fails; a failed refresh keeps the data already on screen.
+- **Focus:** every input, select and textarea shows a 2px `brand-gold-deep` ring inside its border when focused (set once in `src/index.css`).
+- **Smallest text:** `text-xs` (12px). The cart count in its small red circle is the only exception.
+- **Placeholders:** `placeholder:text-brand-ink/65`, so hints stay readable.
+
 ## Mobile numbers
 
 - Every field people type a mobile number into uses the shared `MobileInput`: a fixed cream `+63` box joined to the input, the placeholder `912 345 6789`, and the short error "Check your mobile number". Numbers that are only shown stay as `09…`.

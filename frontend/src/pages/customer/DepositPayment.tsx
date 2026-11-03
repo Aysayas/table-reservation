@@ -4,6 +4,7 @@ import { ArrowLeft } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
+import LoadError from '@/components/LoadError'
 import { clearPaying, markPaying } from '@/hooks/usePaymentReturn'
 import { apiError } from '@/lib/api'
 import { getReservationByCode, startDeposit } from '@/services/reservations'
@@ -21,7 +22,12 @@ export default function DepositPayment() {
   const [params] = useSearchParams()
   const code = params.get('code') ?? ''
   const [paying, setPaying] = useState(false)
-  const { data: reservation, isLoading } = useQuery({
+  const {
+    data: reservation,
+    isLoading,
+    isLoadingError,
+    refetch,
+  } = useQuery({
     queryKey: ['reservation', code],
     queryFn: () => getReservationByCode(code),
     enabled: !!code,
@@ -51,15 +57,21 @@ export default function DepositPayment() {
       <div className="bg-brand-cream min-h-[calc(100dvh-4rem)] px-4 pt-6 md:py-12">
         <div className="md:mx-auto md:max-w-4xl">
           {header}
-          <div className={`${card} mt-8 text-center md:mx-auto md:max-w-md`}>
-            <h2 className="text-brand-charcoal font-serif text-2xl">Reservation not found</h2>
-            <p className="text-brand-ink/75 mt-3 text-sm">
-              We couldn't find a reservation to pay for. Please book a table first.
-            </p>
-            <Link to="/reserve" className={`${redButton} mt-6`}>
-              Reserve a Table
-            </Link>
-          </div>
+          {isLoadingError ? (
+            <div className="mt-8 md:mx-auto md:max-w-md">
+              <LoadError what="your reservation" onRetry={() => refetch()} />
+            </div>
+          ) : (
+            <div className={`${card} mt-8 text-center md:mx-auto md:max-w-md`}>
+              <h2 className="text-brand-charcoal font-serif text-2xl">Reservation not found</h2>
+              <p className="text-brand-ink/75 mt-3 text-sm">
+                We couldn't find a reservation to pay for. Please book a table first.
+              </p>
+              <Link to="/reserve" className={`${redButton} mt-6`}>
+                Reserve a Table
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     )

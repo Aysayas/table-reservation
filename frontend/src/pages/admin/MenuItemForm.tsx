@@ -17,7 +17,7 @@ import { apiError } from '@/lib/api'
 
 const label = 'text-brand-charcoal block text-sm font-bold'
 const field =
-  'border-brand-line focus:border-brand-gold mt-2 block w-full rounded-md border bg-white px-4 py-3 text-sm font-normal outline-none placeholder:text-brand-ink/50'
+  'border-brand-line focus:border-brand-gold mt-2 block w-full rounded-md border bg-white px-4 py-3 text-sm font-normal outline-none placeholder:text-brand-ink/65'
 const error = 'text-brand-red mt-1.5 text-xs'
 
 const schema = z.object({

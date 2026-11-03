@@ -18,7 +18,7 @@ const peso = (amount: number) =>
   `₱${amount.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
 const label = 'text-brand-charcoal text-xs font-bold tracking-[0.15em] uppercase'
 const field =
-  'border-brand-line focus:border-brand-gold mt-2 w-full rounded-sm border bg-white px-4 py-3 text-sm outline-none placeholder:text-brand-ink/50'
+  'border-brand-line focus:border-brand-gold mt-2 w-full rounded-sm border bg-white px-4 py-3 text-sm outline-none placeholder:text-brand-ink/65'
 const error = 'text-brand-red mt-1.5 text-xs'
 const outlineButton =
   'border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal rounded-sm border py-3 text-sm font-bold tracking-[0.1em] uppercase transition-colors duration-200 hover:text-white disabled:pointer-events-none disabled:opacity-40'

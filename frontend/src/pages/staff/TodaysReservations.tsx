@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { format, parseISO } from 'date-fns'
 import { ChevronLeft, ChevronRight, Search } from 'lucide-react'
 import { useState } from 'react'
+import LoadError from '@/components/LoadError'
 import ReservationActions from '@/components/ReservationActions'
 import { formatTime } from '@/lib/hours'
 import { listReservations, type ReservationView } from '@/services/reservations'
@@ -38,7 +39,7 @@ export default function TodaysReservations() {
   const [view, setView] = useState<ReservationView>('today')
   const [status, setStatus] = useState<ReservationStatus | ''>('')
   const [page, setPage] = useState(1)
-  const { data } = useQuery({
+  const { data, isLoadingError, refetch } = useQuery({
     queryKey: ['reservations', { view, status, search, page }],
     queryFn: () => listReservations({ view, status, search, page }),
     refetchInterval: 30000,
@@ -66,7 +67,7 @@ export default function TodaysReservations() {
             value={search}
             onChange={(e) => resetPage(setSearch)(e.target.value)}
             placeholder="Search ref code or name"
-            className="placeholder:text-brand-ink/50 w-full py-2.5 text-sm outline-none"
+            className="placeholder:text-brand-ink/65 w-full py-2.5 text-sm outline-none"
           />
         </label>
         <label>
@@ -100,73 +101,79 @@ export default function TodaysReservations() {
         </label>
       </div>
 
-      <div className="border-brand-line mt-6 overflow-x-auto rounded-lg border bg-white">
-        <table className="w-full min-w-[60rem]">
-          <thead className="bg-brand-cream/60">
-            <tr>
-              {[
-                'Ref Code',
-                'Time',
-                'Name',
-                'Mobile',
-                'Guests',
-                'Table',
-                'Added',
-                'Deposit',
-                'Status',
-                'Actions',
-              ].map((h) => (
-                <th key={h} className={th}>
-                  {h}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((r) => (
-              <tr key={r.reservation_id} className="border-brand-line border-t">
-                <td className={`${td} font-semibold`}>{r.reference_code}</td>
-                <td className={`${td} whitespace-nowrap tabular-nums`}>
-                  {view === 'today' && !search ? '' : `${r.reservation_date} `}
-                  {formatTime(r.reservation_time)}
-                </td>
-                <td className={td}>{r.customer.full_name}</td>
-                <td className={`${td} whitespace-nowrap tabular-nums`}>
-                  {r.customer.mobile_number.replace(/^(\d{4})(\d{3})(\d{4})$/, '$1 $2 $3')}
-                </td>
-                <td className={td}>{r.pax}</td>
-                <td className={td}>{r.table_number ?? '—'}</td>
-                <td className={td}>
-                  <span className="block whitespace-nowrap">
-                    {format(parseISO(r.created_at), 'MMM d')}
-                  </span>
-                  <span className="text-brand-ink/70 block text-xs">
-                    {format(parseISO(r.created_at), 'h:mm a')}
-                  </span>
-                </td>
-                <td className={td}>{r.deposit_status === 'paid' ? 'Paid' : 'Unpaid'}</td>
-                <td className={td}>
-                  <span
-                    className={`inline-block rounded-full px-3 py-1 text-xs font-bold whitespace-nowrap ${statusBadge[r.status]}`}
-                  >
-                    {statusText[r.status]}
-                  </span>
-                </td>
-                <td className={td}>
-                  <ReservationActions reservation={r} />
-                </td>
-              </tr>
-            ))}
-            {rows.length === 0 && (
+      {isLoadingError ? (
+        <div className="mt-6">
+          <LoadError what="today's reservations" onRetry={() => refetch()} />
+        </div>
+      ) : (
+        <div className="border-brand-line mt-6 overflow-x-auto rounded-lg border bg-white">
+          <table className="w-full min-w-[60rem]">
+            <thead className="bg-brand-cream/60">
               <tr>
-                <td colSpan={10} className="text-brand-ink/70 px-4 py-10 text-center text-sm">
-                  No reservations found.
-                </td>
+                {[
+                  'Ref Code',
+                  'Time',
+                  'Name',
+                  'Mobile',
+                  'Guests',
+                  'Table',
+                  'Added',
+                  'Deposit',
+                  'Status',
+                  'Actions',
+                ].map((h) => (
+                  <th key={h} className={th}>
+                    {h}
+                  </th>
+                ))}
               </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {rows.map((r) => (
+                <tr key={r.reservation_id} className="border-brand-line border-t">
+                  <td className={`${td} font-semibold`}>{r.reference_code}</td>
+                  <td className={`${td} whitespace-nowrap tabular-nums`}>
+                    {view === 'today' && !search ? '' : `${r.reservation_date} `}
+                    {formatTime(r.reservation_time)}
+                  </td>
+                  <td className={td}>{r.customer.full_name}</td>
+                  <td className={`${td} whitespace-nowrap tabular-nums`}>
+                    {r.customer.mobile_number.replace(/^(\d{4})(\d{3})(\d{4})$/, '$1 $2 $3')}
+                  </td>
+                  <td className={td}>{r.pax}</td>
+                  <td className={td}>{r.table_number ?? '—'}</td>
+                  <td className={td}>
+                    <span className="block whitespace-nowrap">
+                      {format(parseISO(r.created_at), 'MMM d')}
+                    </span>
+                    <span className="text-brand-ink/70 block text-xs">
+                      {format(parseISO(r.created_at), 'h:mm a')}
+                    </span>
+                  </td>
+                  <td className={td}>{r.deposit_status === 'paid' ? 'Paid' : 'Unpaid'}</td>
+                  <td className={td}>
+                    <span
+                      className={`inline-block rounded-full px-3 py-1 text-xs font-bold whitespace-nowrap ${statusBadge[r.status]}`}
+                    >
+                      {statusText[r.status]}
+                    </span>
+                  </td>
+                  <td className={td}>
+                    <ReservationActions reservation={r} />
+                  </td>
+                </tr>
+              ))}
+              {rows.length === 0 && (
+                <tr>
+                  <td colSpan={10} className="text-brand-ink/70 px-4 py-10 text-center text-sm">
+                    No reservations found.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
 
       <div className="mt-4 flex items-center justify-between">
         <p className="text-brand-ink/70 text-sm">

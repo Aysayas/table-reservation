@@ -12,13 +12,14 @@ import {
 } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import LoadError from '@/components/LoadError'
 import { listPayments, type AdminPayment } from '@/services/payments'
 import type { PaymentMethod, PaymentStatus } from '@/types/db'
 
 const perPage = 8
 const peso = (amount: number) =>
   `₱${amount.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-const th = 'px-5 py-3.5 text-left text-[11px] font-bold tracking-[0.14em] text-white/70 uppercase'
+const th = 'px-5 py-3.5 text-left text-xs font-bold tracking-[0.14em] text-white/70 uppercase'
 const td = 'text-brand-charcoal px-5 py-4 text-sm'
 const select =
   'border-brand-line focus:border-brand-gold h-11 rounded-lg border bg-white px-3 text-sm outline-none'
@@ -47,7 +48,7 @@ export default function Payments() {
   const [page, setPage] = useState(1)
   const [today] = useState(() => new Date())
   const date_from = range ? format(subDays(today, Number(range)), 'yyyy-MM-dd') : undefined
-  const { data } = useQuery({
+  const { data, isLoadingError, refetch } = useQuery({
     queryKey: ['payments', { search, date_from, method, status, page }],
     queryFn: () =>
       listPayments({
@@ -170,93 +171,103 @@ export default function Payments() {
         )}
       </div>
 
-      <div className="border-brand-line mt-5 overflow-x-auto rounded-xl border bg-white shadow-sm">
-        <table className="w-full">
-          <thead className="bg-brand-charcoal">
-            <tr>
-              {['Payment ID', 'Date', 'For', 'Method', 'Reference', 'Amount', 'Status'].map((h) => (
-                <th key={h} className={`${th} ${h === 'Amount' ? 'text-right' : ''}`}>
-                  {h}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((p) => {
-              const Icon = p.method === 'cash' ? Banknote : Smartphone
-              return (
-                <tr
-                  key={p.payment_id}
-                  className="border-brand-line/70 hover:bg-brand-cream/50 border-t transition-colors duration-150"
-                >
-                  <td className={`${td} font-bold`}>{payId(p.payment_id)}</td>
-                  <td className={`${td} whitespace-nowrap`}>
-                    {p.paid_at ? (
-                      <>
-                        <span className="block">{format(parseISO(p.paid_at), 'MMMM d, yyyy')}</span>
-                        <span className="text-brand-ink/70 text-xs">
-                          {format(parseISO(p.paid_at), 'h:mm a')}
-                        </span>
-                      </>
-                    ) : (
-                      <span className="text-brand-ink/70">Not paid</span>
-                    )}
-                  </td>
-                  <td className={td}>
-                    <span
-                      className={`inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-bold ${p.for.type === 'deposit' ? 'bg-brand-gold/15 text-brand-gold-deep' : 'bg-brand-cream text-brand-charcoal'}`}
-                    >
-                      {p.for.type === 'deposit' ? (
-                        <Ticket className="size-3.5" />
+      {isLoadingError ? (
+        <div className="mt-5">
+          <LoadError what="the payments" onRetry={() => refetch()} />
+        </div>
+      ) : (
+        <div className="border-brand-line mt-5 overflow-x-auto rounded-xl border bg-white shadow-sm">
+          <table className="w-full">
+            <thead className="bg-brand-charcoal">
+              <tr>
+                {['Payment ID', 'Date', 'For', 'Method', 'Reference', 'Amount', 'Status'].map(
+                  (h) => (
+                    <th key={h} className={`${th} ${h === 'Amount' ? 'text-right' : ''}`}>
+                      {h}
+                    </th>
+                  ),
+                )}
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((p) => {
+                const Icon = p.method === 'cash' ? Banknote : Smartphone
+                return (
+                  <tr
+                    key={p.payment_id}
+                    className="border-brand-line/70 hover:bg-brand-cream/50 border-t transition-colors duration-150"
+                  >
+                    <td className={`${td} font-bold`}>{payId(p.payment_id)}</td>
+                    <td className={`${td} whitespace-nowrap`}>
+                      {p.paid_at ? (
+                        <>
+                          <span className="block">
+                            {format(parseISO(p.paid_at), 'MMMM d, yyyy')}
+                          </span>
+                          <span className="text-brand-ink/70 text-xs">
+                            {format(parseISO(p.paid_at), 'h:mm a')}
+                          </span>
+                        </>
                       ) : (
-                        <CreditCard className="size-3.5" />
+                        <span className="text-brand-ink/70">Not paid</span>
                       )}
-                      {p.for.type === 'order' ? (
-                        <Link
-                          to={`/admin/orders?order=${p.for.order_id}`}
-                          className="hover:underline"
-                        >
-                          {forText(p)}
-                        </Link>
-                      ) : (
-                        forText(p)
-                      )}
-                    </span>
-                  </td>
-                  <td className={td}>
-                    <span className="inline-flex items-center gap-1.5">
-                      <Icon className="text-brand-ink/70 size-4" />
-                      {cap(p.method)}
-                    </span>
-                  </td>
-                  <td className={`${td} text-brand-ink/70 font-mono text-xs`}>
-                    {p.provider_reference ?? '—'}
-                  </td>
-                  <td className={`${td} text-right font-semibold tabular-nums`}>
-                    {peso(p.amount)}
-                  </td>
-                  <td className={td}>
-                    <span
-                      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold ${statusBadge[p.status]}`}
-                    >
-                      <span className="size-1.5 rounded-full bg-current" />
-                      {cap(p.status)}
-                    </span>
+                    </td>
+                    <td className={td}>
+                      <span
+                        className={`inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-bold ${p.for.type === 'deposit' ? 'bg-brand-gold/15 text-brand-gold-deep' : 'bg-brand-cream text-brand-charcoal'}`}
+                      >
+                        {p.for.type === 'deposit' ? (
+                          <Ticket className="size-3.5" />
+                        ) : (
+                          <CreditCard className="size-3.5" />
+                        )}
+                        {p.for.type === 'order' ? (
+                          <Link
+                            to={`/admin/orders?order=${p.for.order_id}`}
+                            className="hover:underline"
+                          >
+                            {forText(p)}
+                          </Link>
+                        ) : (
+                          forText(p)
+                        )}
+                      </span>
+                    </td>
+                    <td className={td}>
+                      <span className="inline-flex items-center gap-1.5">
+                        <Icon className="text-brand-ink/70 size-4" />
+                        {cap(p.method)}
+                      </span>
+                    </td>
+                    <td className={`${td} text-brand-ink/70 font-mono text-xs`}>
+                      {p.provider_reference ?? '—'}
+                    </td>
+                    <td className={`${td} text-right font-semibold tabular-nums`}>
+                      {peso(p.amount)}
+                    </td>
+                    <td className={td}>
+                      <span
+                        className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold ${statusBadge[p.status]}`}
+                      >
+                        <span className="size-1.5 rounded-full bg-current" />
+                        {cap(p.status)}
+                      </span>
+                    </td>
+                  </tr>
+                )
+              })}
+              {rows.length === 0 && (
+                <tr>
+                  <td colSpan={7} className="px-5 py-14 text-center">
+                    <Wallet className="text-brand-gold-deep/60 mx-auto size-8" />
+                    <p className="text-brand-ink/70 mt-3 text-sm">No payments found.</p>
                   </td>
                 </tr>
-              )
-            })}
-            {rows.length === 0 && (
-              <tr>
-                <td colSpan={7} className="px-5 py-14 text-center">
-                  <Wallet className="text-brand-gold-deep/60 mx-auto size-8" />
-                  <p className="text-brand-ink/70 mt-3 text-sm">No payments found.</p>
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
 
       <div className="mt-4 flex items-center justify-between">
         <p className="text-brand-ink/70 text-sm">

@@ -58,6 +58,11 @@ body {
   padding-right: env(safe-area-inset-right);
 }
 
+:is(input, select, textarea):focus-visible {
+  outline: 2px solid var(--color-brand-gold-deep);
+  outline-offset: -2px;
+}
+
 [role='dialog'] {
   max-height: 100%;
   overflow-y: auto;

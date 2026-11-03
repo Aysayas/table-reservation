@@ -13,14 +13,14 @@ import {
 } from 'lucide-react'
 import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import LoadError from '@/components/LoadError'
 import { listOrders, type StaffOrder } from '@/services/orders'
 import type { OrderStatus } from '@/types/db'
 
 const perPage = 8
 const peso = (amount: number) =>
   `₱${amount.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-const th =
-  'text-brand-ink/70 px-5 py-3.5 text-left text-[11px] font-bold tracking-[0.14em] uppercase'
+const th = 'text-brand-ink/70 px-5 py-3.5 text-left text-xs font-bold tracking-[0.14em] uppercase'
 const td = 'text-brand-charcoal px-5 py-4 text-sm'
 const select =
   'border-brand-line focus:border-brand-gold h-11 rounded-lg border bg-white px-3 text-sm outline-none'
@@ -72,7 +72,11 @@ export default function OrderHistory() {
   const [viewing, setViewing] = useState<StaffOrder | null>(null)
   const [today] = useState(() => new Date())
   const date_from = range ? format(subDays(today, Number(range)), 'yyyy-MM-dd') : undefined
-  const { data: orders = [] } = useQuery({
+  const {
+    data: orders = [],
+    isLoadingError,
+    refetch,
+  } = useQuery({
     queryKey: ['orders', 'history', { search, date_from, status, payment }],
     queryFn: () =>
       listOrders({
@@ -200,84 +204,90 @@ export default function OrderHistory() {
         </button>
       </div>
 
-      <div className="border-brand-line relative mt-5 overflow-x-auto rounded-xl border bg-white shadow-sm">
-        <table className="w-full">
-          <thead className="bg-brand-charcoal">
-            <tr>
-              {['Order #', 'Date', 'Table', 'Items', 'Total', 'Payment', 'Method', 'Status'].map(
-                (h) => (
-                  <th
-                    key={h}
-                    className={`${th} text-white/70 ${h === 'Total' ? 'text-right' : ''}`}
-                  >
-                    {h}
-                  </th>
-                ),
-              )}
-              <th className={th}>
-                <span className="sr-only">Actions</span>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((o) => (
-              <tr
-                key={o.order_id}
-                className="border-brand-line/70 hover:bg-brand-cream/50 border-t transition-colors duration-150"
-              >
-                <td className={`${td} text-base font-bold`}>#{o.order_id}</td>
-                <td className={`${td} whitespace-nowrap`}>
-                  <span className="block">{format(parseISO(o.created_at), 'MMMM d, yyyy')}</span>
-                  <span className="text-brand-ink/70 text-xs">
-                    {format(parseISO(o.created_at), 'h:mm a')}
-                  </span>
-                </td>
-                <td className={td}>
-                  <span className="border-brand-line bg-brand-cream/60 rounded-md border px-2 py-1 text-xs font-bold">
-                    {o.table_number}
-                  </span>
-                </td>
-                <td className={`${td} tabular-nums`}>{itemCount(o)}</td>
-                <td className={`${td} text-right font-semibold tabular-nums`}>
-                  {peso(o.total_amount)}
-                </td>
-                <td className={td}>
-                  <PaymentBadge order={o} />
-                </td>
-                <td className={td}>
-                  <Method method={o.payment_method} />
-                </td>
-                <td className={td}>
-                  <span
-                    className={`inline-block rounded-full px-3 py-1 text-xs font-bold ${orderBadge[o.status]}`}
-                  >
-                    {cap(o.status)}
-                  </span>
-                </td>
-                <td className={`${td} text-right`}>
-                  <button
-                    type="button"
-                    aria-label={`View order #${o.order_id}`}
-                    onClick={() => setViewing(o)}
-                    className="border-brand-line text-brand-charcoal hover:border-brand-red hover:text-brand-red inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-bold transition-colors duration-200"
-                  >
-                    <Eye className="size-3.5" />
-                    View
-                  </button>
-                </td>
-              </tr>
-            ))}
-            {rows.length === 0 && (
+      {isLoadingError ? (
+        <div className="mt-5">
+          <LoadError what="the orders" onRetry={() => refetch()} />
+        </div>
+      ) : (
+        <div className="border-brand-line relative mt-5 overflow-x-auto rounded-xl border bg-white shadow-sm">
+          <table className="w-full">
+            <thead className="bg-brand-charcoal">
               <tr>
-                <td colSpan={9} className="px-5 py-14 text-center">
-                  <ReceiptText className="text-brand-gold-deep/60 mx-auto size-8" />
-                  <p className="text-brand-ink/70 mt-3 text-sm">No orders found.</p>
-                </td>
+                {['Order #', 'Date', 'Table', 'Items', 'Total', 'Payment', 'Method', 'Status'].map(
+                  (h) => (
+                    <th
+                      key={h}
+                      className={`${th} text-white/70 ${h === 'Total' ? 'text-right' : ''}`}
+                    >
+                      {h}
+                    </th>
+                  ),
+                )}
+                <th className={th}>
+                  <span className="sr-only">Actions</span>
+                </th>
               </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {rows.map((o) => (
+                <tr
+                  key={o.order_id}
+                  className="border-brand-line/70 hover:bg-brand-cream/50 border-t transition-colors duration-150"
+                >
+                  <td className={`${td} text-base font-bold`}>#{o.order_id}</td>
+                  <td className={`${td} whitespace-nowrap`}>
+                    <span className="block">{format(parseISO(o.created_at), 'MMMM d, yyyy')}</span>
+                    <span className="text-brand-ink/70 text-xs">
+                      {format(parseISO(o.created_at), 'h:mm a')}
+                    </span>
+                  </td>
+                  <td className={td}>
+                    <span className="border-brand-line bg-brand-cream/60 rounded-md border px-2 py-1 text-xs font-bold">
+                      {o.table_number}
+                    </span>
+                  </td>
+                  <td className={`${td} tabular-nums`}>{itemCount(o)}</td>
+                  <td className={`${td} text-right font-semibold tabular-nums`}>
+                    {peso(o.total_amount)}
+                  </td>
+                  <td className={td}>
+                    <PaymentBadge order={o} />
+                  </td>
+                  <td className={td}>
+                    <Method method={o.payment_method} />
+                  </td>
+                  <td className={td}>
+                    <span
+                      className={`inline-block rounded-full px-3 py-1 text-xs font-bold ${orderBadge[o.status]}`}
+                    >
+                      {cap(o.status)}
+                    </span>
+                  </td>
+                  <td className={`${td} text-right`}>
+                    <button
+                      type="button"
+                      aria-label={`View order #${o.order_id}`}
+                      onClick={() => setViewing(o)}
+                      className="border-brand-line text-brand-charcoal hover:border-brand-red hover:text-brand-red inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-bold transition-colors duration-200"
+                    >
+                      <Eye className="size-3.5" />
+                      View
+                    </button>
+                  </td>
+                </tr>
+              ))}
+              {rows.length === 0 && (
+                <tr>
+                  <td colSpan={9} className="px-5 py-14 text-center">
+                    <ReceiptText className="text-brand-gold-deep/60 mx-auto size-8" />
+                    <p className="text-brand-ink/70 mt-3 text-sm">No orders found.</p>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
 
       <div className="mt-4 flex items-center justify-between">
         <p className="text-brand-ink/70 text-sm">
@@ -326,7 +336,7 @@ export default function OrderHistory() {
           >
             <div className="bg-brand-charcoal flex items-start justify-between gap-4 px-6 py-5 text-white">
               <div>
-                <p className="text-brand-gold text-[11px] font-bold tracking-[0.2em] uppercase">
+                <p className="text-brand-gold text-xs font-bold tracking-[0.2em] uppercase">
                   Order details
                 </p>
                 <h2 id="order-title" className="mt-1 font-serif text-3xl font-bold">

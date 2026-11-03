@@ -21,7 +21,7 @@ import { getSettings } from '@/services/settings'
 
 const label = 'text-brand-charcoal text-xs font-bold tracking-[0.15em] uppercase'
 const field =
-  'border-brand-line focus:border-brand-gold mt-2 w-full rounded-sm border bg-white px-4 py-3 text-sm font-normal tracking-normal normal-case outline-none placeholder:text-brand-ink/50'
+  'border-brand-line focus:border-brand-gold mt-2 w-full rounded-sm border bg-white px-4 py-3 text-sm font-normal tracking-normal normal-case outline-none placeholder:text-brand-ink/65'
 const error = 'text-brand-red mt-1.5 text-xs'
 
 const schema = z.object({

@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
+import LoadError from '@/components/LoadError'
 import {
   createCategory,
   deleteCategory,
@@ -17,7 +18,7 @@ const td = 'text-brand-charcoal px-4 py-3 text-sm'
 const smallButton = 'rounded-md border px-3 py-1.5 text-xs font-bold transition-colors duration-200'
 const label = 'text-brand-charcoal block text-sm font-bold'
 const field =
-  'border-brand-line focus:border-brand-gold mt-2 block w-full rounded-md border bg-white px-4 py-3 text-sm font-normal outline-none placeholder:text-brand-ink/50'
+  'border-brand-line focus:border-brand-gold mt-2 block w-full rounded-md border bg-white px-4 py-3 text-sm font-normal outline-none placeholder:text-brand-ink/65'
 const error = 'text-brand-red mt-1.5 text-xs'
 
 const schema = z.object({
@@ -34,7 +35,11 @@ export default function Categories() {
   const queryClient = useQueryClient()
   const [editing, setEditing] = useState<CategoryWithCount | null>(null)
   const [deleting, setDeleting] = useState<CategoryWithCount | null>(null)
-  const { data: categories = [] } = useQuery({ queryKey: ['categories'], queryFn: getCategories })
+  const {
+    data: categories = [],
+    isLoadingError,
+    refetch,
+  } = useQuery({ queryKey: ['categories'], queryFn: getCategories })
   const nextOrder = Math.max(0, ...categories.map((c) => c.sort_order)) + 1
 
   const {
@@ -81,58 +86,64 @@ export default function Categories() {
 
   return (
     <div className="grid items-start gap-6 xl:grid-cols-[1fr_24rem]">
-      <div className="border-brand-line overflow-x-auto rounded-lg border bg-white">
-        <table className="w-full">
-          <thead className="bg-brand-cream/60">
-            <tr>
-              {['Order', 'Category Name', 'Items', 'Actions'].map((h) => (
-                <th key={h} className={th}>
-                  {h}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {categories.map((c) => (
-              <tr
-                key={c.category_id}
-                className={`border-brand-line border-t ${editing?.category_id === c.category_id ? 'bg-brand-gold/10' : ''}`}
-              >
-                <td className={`${td} tabular-nums`}>{c.sort_order}</td>
-                <td className={`${td} font-semibold`}>{c.name}</td>
-                <td className={`${td} tabular-nums`}>{c.item_count}</td>
-                <td className={td}>
-                  <div className="flex gap-2">
-                    <button
-                      type="button"
-                      aria-label={`Edit ${c.name}`}
-                      onClick={() => setEditing(c)}
-                      className={`${smallButton} border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal hover:text-white`}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      type="button"
-                      aria-label={`Delete ${c.name}`}
-                      onClick={() => setDeleting(c)}
-                      className={`${smallButton} border-brand-red text-brand-red hover:bg-brand-red hover:text-white`}
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-            {categories.length === 0 && (
+      {isLoadingError ? (
+        <div>
+          <LoadError what="the categories" onRetry={() => refetch()} />
+        </div>
+      ) : (
+        <div className="border-brand-line overflow-x-auto rounded-lg border bg-white">
+          <table className="w-full">
+            <thead className="bg-brand-cream/60">
               <tr>
-                <td colSpan={4} className="text-brand-ink/70 px-4 py-10 text-center text-sm">
-                  No categories yet.
-                </td>
+                {['Order', 'Category Name', 'Items', 'Actions'].map((h) => (
+                  <th key={h} className={th}>
+                    {h}
+                  </th>
+                ))}
               </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {categories.map((c) => (
+                <tr
+                  key={c.category_id}
+                  className={`border-brand-line border-t ${editing?.category_id === c.category_id ? 'bg-brand-gold/10' : ''}`}
+                >
+                  <td className={`${td} tabular-nums`}>{c.sort_order}</td>
+                  <td className={`${td} font-semibold`}>{c.name}</td>
+                  <td className={`${td} tabular-nums`}>{c.item_count}</td>
+                  <td className={td}>
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        aria-label={`Edit ${c.name}`}
+                        onClick={() => setEditing(c)}
+                        className={`${smallButton} border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal hover:text-white`}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        type="button"
+                        aria-label={`Delete ${c.name}`}
+                        onClick={() => setDeleting(c)}
+                        className={`${smallButton} border-brand-red text-brand-red hover:bg-brand-red hover:text-white`}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+              {categories.length === 0 && (
+                <tr>
+                  <td colSpan={4} className="text-brand-ink/70 px-4 py-10 text-center text-sm">
+                    No categories yet.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
 
       <section
         aria-labelledby="category-form-title"

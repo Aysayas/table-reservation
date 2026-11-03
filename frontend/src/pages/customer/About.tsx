@@ -164,7 +164,7 @@ export default function About() {
                       <span className="flex items-center gap-2.5">
                         <span>{dayNames[day]}</span>
                         {isToday && (
-                          <span className="bg-brand-red rounded-full px-2 py-0.5 text-[10px] font-bold tracking-[0.15em] uppercase">
+                          <span className="bg-brand-red rounded-full px-2 py-0.5 text-xs font-bold tracking-[0.15em] uppercase">
                             Today
                           </span>
                         )}
@@ -204,7 +204,7 @@ export default function About() {
                   >
                     <Icon className="text-brand-gold size-5 shrink-0" strokeWidth={1.5} />
                     <div className="min-w-0">
-                      <dt className="text-[11px] font-semibold tracking-[0.15em] text-white/60 uppercase">
+                      <dt className="text-xs font-semibold tracking-[0.15em] text-white/60 uppercase">
                         {label}
                       </dt>
                       <dd className="mt-0.5 text-sm">

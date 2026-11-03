@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 export const label = 'text-brand-charcoal text-xs font-bold tracking-[0.15em] uppercase'
 export const field =
-  'border-brand-line focus:border-brand-gold mt-2 w-full rounded-sm border bg-white px-4 py-3 text-sm font-normal tracking-normal normal-case outline-none placeholder:text-brand-ink/50'
+  'border-brand-line focus:border-brand-gold mt-2 w-full rounded-sm border bg-white px-4 py-3 text-sm font-normal tracking-normal normal-case outline-none placeholder:text-brand-ink/65'
 export const fieldError = 'text-brand-red mt-1.5 text-xs'
 export const textLink = 'text-brand-red font-bold hover:underline'
 export const submitButton =

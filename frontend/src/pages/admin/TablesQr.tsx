@@ -7,6 +7,7 @@ import { flushSync } from 'react-dom'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
+import LoadError from '@/components/LoadError'
 import { getSettings } from '@/services/settings'
 import {
   createTable,
@@ -18,7 +19,7 @@ import {
 
 const label = 'text-brand-charcoal block text-sm font-bold'
 const field =
-  'border-brand-line focus:border-brand-gold mt-2 block w-full rounded-md border bg-white px-4 py-3 text-sm font-normal outline-none placeholder:text-brand-ink/50'
+  'border-brand-line focus:border-brand-gold mt-2 block w-full rounded-md border bg-white px-4 py-3 text-sm font-normal outline-none placeholder:text-brand-ink/65'
 const error = 'text-brand-red mt-1.5 text-xs'
 const outline =
   'border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal rounded-md border py-2 text-sm font-bold transition-colors duration-200 hover:text-white'
@@ -45,7 +46,11 @@ export default function TablesQr() {
   const [editing, setEditing] = useState<AdminTable | 'new' | null>(null)
   const [deleting, setDeleting] = useState<AdminTable | null>(null)
   const [printing, setPrinting] = useState<AdminTable[]>([])
-  const { data: tables = [] } = useQuery({ queryKey: ['tables', 'admin'], queryFn: getAdminTables })
+  const {
+    data: tables = [],
+    isLoadingError,
+    refetch,
+  } = useQuery({ queryKey: ['tables', 'admin'], queryFn: getAdminTables })
   const { data: settings } = useQuery({ queryKey: ['settings'], queryFn: getSettings })
 
   const {
@@ -122,76 +127,82 @@ export default function TablesQr() {
         </button>
       </div>
 
-      <ul className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 print:hidden">
-        {tables.map((t) => (
-          <li
-            key={t.table_id}
-            aria-label={`Table ${t.table_number}`}
-            className="border-brand-line rounded-lg border bg-white p-5"
-          >
-            <div className="bg-brand-cream/60 flex justify-center rounded-md p-4">
-              <QRCodeSVG
-                value={orderLink(t)}
-                size={144}
-                marginSize={2}
-                role="img"
-                aria-label={`QR code for ${orderLink(t)}`}
-                className="bg-white"
-              />
-              <QRCodeCanvas
-                id={`qr-${t.table_id}`}
-                value={orderLink(t)}
-                size={512}
-                marginSize={2}
-                aria-hidden="true"
-                className="hidden"
-              />
-            </div>
-            <div className="mt-4 flex items-baseline justify-between gap-3">
-              <p className="text-brand-charcoal font-serif text-xl font-bold">
-                Table {t.table_number}
-              </p>
-              <p className="text-brand-ink/70 text-xs">{t.capacity} seats</p>
-            </div>
-            <div className="mt-4 grid grid-cols-2 gap-2">
-              <button
-                type="button"
-                aria-label={`Download Table ${t.table_number} QR`}
-                onClick={() => download(t)}
-                className={outline}
-              >
-                Download
-              </button>
-              <button
-                type="button"
-                aria-label={`Print Table ${t.table_number} QR`}
-                onClick={() => print([t])}
-                className={outline}
-              >
-                Print
-              </button>
-            </div>
-            <div className="mt-4 flex justify-between text-sm font-bold">
-              <button
-                type="button"
-                aria-label={`Edit Table ${t.table_number}`}
-                onClick={() => setEditing(t)}
-                className="text-brand-charcoal hover:text-brand-red"
-              >
-                Edit
-              </button>
-              <button
-                type="button"
-                aria-label={`Delete Table ${t.table_number}`}
-                onClick={() => setDeleting(t)}
-                className="text-brand-ink/70 hover:text-brand-red"
-              >
-                Delete
-              </button>
-            </div>
-          </li>
-        ))}
-      </ul>
+      {isLoadingError ? (
+        <div className="mt-6 print:hidden">
+          <LoadError what="the tables" onRetry={() => refetch()} />
+        </div>
+      ) : (
+        <ul className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 print:hidden">
+          {tables.map((t) => (
+            <li
+              key={t.table_id}
+              aria-label={`Table ${t.table_number}`}
+              className="border-brand-line rounded-lg border bg-white p-5"
+            >
+              <div className="bg-brand-cream/60 flex justify-center rounded-md p-4">
+                <QRCodeSVG
+                  value={orderLink(t)}
+                  size={144}
+                  marginSize={2}
+                  role="img"
+                  aria-label={`QR code for ${orderLink(t)}`}
+                  className="bg-white"
+                />
+                <QRCodeCanvas
+                  id={`qr-${t.table_id}`}
+                  value={orderLink(t)}
+                  size={512}
+                  marginSize={2}
+                  aria-hidden="true"
+                  className="hidden"
+                />
+              </div>
+              <div className="mt-4 flex items-baseline justify-between gap-3">
+                <p className="text-brand-charcoal font-serif text-xl font-bold">
+                  Table {t.table_number}
+                </p>
+                <p className="text-brand-ink/70 text-xs">{t.capacity} seats</p>
+              </div>
+              <div className="mt-4 grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  aria-label={`Download Table ${t.table_number} QR`}
+                  onClick={() => download(t)}
+                  className={outline}
+                >
+                  Download
+                </button>
+                <button
+                  type="button"
+                  aria-label={`Print Table ${t.table_number} QR`}
+                  onClick={() => print([t])}
+                  className={outline}
+                >
+                  Print
+                </button>
+              </div>
+              <div className="mt-4 flex justify-between text-sm font-bold">
+                <button
+                  type="button"
+                  aria-label={`Edit Table ${t.table_number}`}
+                  onClick={() => setEditing(t)}
+                  className="text-brand-charcoal hover:text-brand-red"
+                >
+                  Edit
+                </button>
+                <button
+                  type="button"
+                  aria-label={`Delete Table ${t.table_number}`}
+                  onClick={() => setDeleting(t)}
+                  className="text-brand-ink/70 hover:text-brand-red"
+                >
+                  Delete
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
 
       <div className="hidden print:block">
         {printing.map((t) => (
