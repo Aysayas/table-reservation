@@ -15,15 +15,19 @@ type Props = {
 export default function AccountMenu({ account, showName, onOpen, onLogOut }: Props) {
   const [open, setOpen] = useState(false)
   const box = useRef<HTMLDivElement>(null)
+  const trigger = useRef<HTMLButtonElement>(null)
   const firstName = account.full_name.split(' ')[0]
 
   useEffect(() => {
     if (!open) return
+    box.current?.querySelector<HTMLElement>('nav a')?.focus()
     const closeOutside = (event: MouseEvent) => {
       if (!box.current?.contains(event.target as Node)) setOpen(false)
     }
     const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setOpen(false)
+      if (event.key !== 'Escape') return
+      setOpen(false)
+      trigger.current?.focus()
     }
     document.addEventListener('mousedown', closeOutside)
     document.addEventListener('keydown', closeOnEscape)
@@ -36,6 +40,7 @@ export default function AccountMenu({ account, showName, onOpen, onLogOut }: Pro
   return (
     <div ref={box} className="relative">
       <button
+        ref={trigger}
         type="button"
         aria-label={`Account menu, logged in as ${account.full_name}`}
         aria-expanded={open}
@@ -57,7 +62,7 @@ export default function AccountMenu({ account, showName, onOpen, onLogOut }: Pro
       {open && (
         <nav
           aria-label="Account"
-          className="bg-brand-charcoal text-brand-cream absolute top-full right-0 z-20 mt-3 w-64 rounded-md border border-white/10 shadow-lg"
+          className="bg-brand-charcoal text-brand-cream absolute top-full right-0 z-20 mt-3 w-64 rounded-md border border-white/10 shadow-lg motion-safe:transition-[opacity,translate] motion-safe:duration-180 motion-safe:ease-out starting:-translate-y-2 starting:opacity-0"
         >
           <p className="px-4 py-3 text-sm">
             Logged in as <strong className="text-brand-gold">{account.full_name}</strong>

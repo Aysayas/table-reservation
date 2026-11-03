@@ -1,8 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
 import { addHours, format, parseISO } from 'date-fns'
-import { CalendarDays, Check, Copy, LoaderCircle, MapPin } from 'lucide-react'
+import { CalendarDays, Copy, LoaderCircle, MapPin } from 'lucide-react'
 import { Link, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
+import DrawnCheck from '@/components/DrawnCheck'
 import LoadError from '@/components/LoadError'
 import PageLoader from '@/components/PageLoader'
 import SiteFooter from '@/components/SiteFooter'
@@ -172,8 +173,8 @@ export default function ReservationConfirmation() {
             ) : (
               !inactive &&
               !needsDeposit && (
-                <div className="bg-brand-red mx-auto flex size-24 items-center justify-center rounded-full text-white">
-                  <Check className="size-11" strokeWidth={2} />
+                <div className="bg-brand-red text-brand-gold mx-auto flex size-24 items-center justify-center rounded-full">
+                  <DrawnCheck className="size-11" />
                 </div>
               )
             )}

@@ -179,7 +179,7 @@ export default function ReservationActions({
               onToggle={(event) => {
                 if (event.newState === 'open') placeMenu()
               }}
-              className="border-brand-line inset-auto m-0 w-44 rounded-md border bg-white py-1 shadow-lg"
+              className="border-brand-line inset-auto m-0 w-44 origin-top-right rounded-md border bg-white py-1 shadow-lg motion-safe:transition-[opacity,scale] motion-safe:duration-150 motion-safe:ease-out starting:scale-95 starting:opacity-0"
             >
               {others.map((a) => (
                 <button
@@ -188,6 +188,7 @@ export default function ReservationActions({
                   aria-label={a.aria}
                   onClick={() => {
                     menu.current?.hidePopover()
+                    trigger.current?.focus()
                     a.run()
                   }}
                   className={`${item} ${a.danger ? 'text-brand-red' : 'text-brand-charcoal'}`}

@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { differenceInMinutes, format, parseISO } from 'date-fns'
-import { ArrowLeft, ChefHat, LogOut } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { ArrowLeft, ChefHat, LogOut, Volume2, VolumeX } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import EmptyState from '@/components/EmptyState'
@@ -57,6 +57,22 @@ const ages = [
   { label: '10+ min', chip: 'bg-brand-gold/20 text-brand-gold-deep' },
   { label: '15+ min', chip: 'bg-brand-red/10 text-brand-red' },
 ]
+const chime = (ctx: AudioContext) => {
+  void ctx.resume()
+  ;[660, 880].forEach((frequency, i) => {
+    const start = ctx.currentTime + i * 0.18
+    const tone = ctx.createOscillator()
+    const volume = ctx.createGain()
+    tone.frequency.value = frequency
+    volume.gain.setValueAtTime(0.0001, start)
+    volume.gain.exponentialRampToValueAtTime(0.06, start + 0.02)
+    volume.gain.exponentialRampToValueAtTime(0.0001, start + 0.15)
+    tone.connect(volume).connect(ctx.destination)
+    tone.start(start)
+    tone.stop(start + 0.16)
+  })
+}
+
 const ageOf = (minutes: number) => ages[minutes >= 15 ? 2 : minutes >= 10 ? 1 : 0]
 const waited = (minutes: number) =>
   minutes < 60 ? `${minutes} min` : `${Math.floor(minutes / 60)} h ${minutes % 60} min`
@@ -78,6 +94,7 @@ export default function KitchenDisplay() {
   const {
     data: orders = [],
     isPending,
+    isSuccess,
     isLoadingError,
     refetch,
   } = useQuery({
@@ -86,6 +103,65 @@ export default function KitchenDisplay() {
     refetchInterval: 15000,
   })
   useOrderEvents(STAFF_CHANNEL, ['orders'])
+  const [sound, setSound] = useState(() => {
+    try {
+      return localStorage.getItem('kitchen-sound') === 'on'
+    } catch {
+      return false
+    }
+  })
+  const audio = useRef<AudioContext | null>(null)
+  const timers = useRef<number[]>([])
+  useEffect(() => {
+    if (!sound) return
+    const unlock = () => void (audio.current ??= new AudioContext()).resume()
+    window.addEventListener('pointerdown', unlock, { once: true })
+    window.addEventListener('keydown', unlock, { once: true })
+    return () => {
+      window.removeEventListener('pointerdown', unlock)
+      window.removeEventListener('keydown', unlock)
+    }
+  }, [sound])
+  useEffect(
+    () => () => {
+      for (const timer of timers.current) clearTimeout(timer)
+      void audio.current?.close()
+      audio.current = null
+    },
+    [],
+  )
+  const toggleSound = () => {
+    const next = !sound
+    setSound(next)
+    if (next) chime((audio.current ??= new AudioContext()))
+    try {
+      localStorage.setItem('kitchen-sound', next ? 'on' : 'off')
+    } catch {
+      return
+    }
+  }
+  const seen = useRef<Set<number> | null>(null)
+  const [fresh, setFresh] = useState<number[]>([])
+  const [announcement, setAnnouncement] = useState('')
+  useEffect(() => {
+    if (!isSuccess) return
+    if (!seen.current) {
+      seen.current = new Set(orders.map((o) => o.order_id))
+      return
+    }
+    const known = seen.current
+    const arrived = orders.filter((o) => o.status === 'received' && !known.has(o.order_id))
+    for (const o of orders) known.add(o.order_id)
+    if (arrived.length === 0) return
+    const ids = arrived.map((o) => o.order_id)
+    for (const o of arrived) toast.info('New order', { description: `Table ${o.table_number}` })
+    setAnnouncement(arrived.map((o) => `New order for table ${o.table_number}`).join('. '))
+    setFresh((list) => [...list, ...ids])
+    timers.current.push(
+      window.setTimeout(() => setFresh((list) => list.filter((id) => !ids.includes(id))), 4000),
+    )
+    if (sound) chime((audio.current ??= new AudioContext()))
+  }, [orders, isSuccess, sound])
   const move = useMutation({
     mutationFn: ({ order, next }: { order: StaffOrder; next: OrderStatus }) =>
       updateOrderStatus(order.order_id, next),
@@ -132,15 +208,27 @@ export default function KitchenDisplay() {
           ))}
         </ul>
         <p className="font-serif text-xl tabular-nums md:ml-auto">{format(now, 'h:mm a')}</p>
+        <button
+          type="button"
+          aria-pressed={sound}
+          onClick={toggleSound}
+          className="ml-auto flex items-center gap-2 text-sm text-white/70 transition-colors duration-200 hover:text-white md:ml-0"
+        >
+          {sound ? <Volume2 className="size-4" /> : <VolumeX className="size-4" />}
+          Sound
+        </button>
         <Link
           to="/staff/login"
           onClick={signOut}
-          className="ml-auto flex items-center gap-2 text-sm text-white/70 transition-colors duration-200 hover:text-white md:ml-0"
+          className="flex items-center gap-2 text-sm text-white/70 transition-colors duration-200 hover:text-white"
         >
           <LogOut className="size-4" />
           Log Out
         </Link>
       </header>
+      <p aria-live="polite" className="sr-only">
+        {announcement}
+      </p>
 
       <main className="grid flex-1 items-start gap-5 p-4 md:p-6 lg:grid-cols-3">
         {isLoadingError ? (
@@ -175,7 +263,7 @@ export default function KitchenDisplay() {
                       <li
                         key={order.order_id}
                         aria-label={`Order #${order.order_id}`}
-                        className="border-brand-line/60 rounded-xl border bg-white p-5"
+                        className={`border-brand-line/60 rounded-xl border bg-white p-5 ${fresh.includes(order.order_id) ? 'ring-brand-gold ring-2 motion-safe:animate-pulse' : ''}`}
                       >
                         <div className="flex items-start justify-between gap-3">
                           <div>

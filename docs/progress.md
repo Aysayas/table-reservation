@@ -94,6 +94,13 @@ These differ from the 29 approved wireframes on purpose, to remove redundant ste
   - Unknown dashboard pages show "Page not found" with "Back to Dashboard".
   - The backup before this round is tagged `backup/pre-polish-2026-11-04`.
 - **Loading on staff and admin pages:** lists and dashboards show skeletons until the first load, then an empty state if there's nothing to show. Filtered lists keep their old rows while a search reloads. Save buttons show a spinner. The dashboards show a thin gold bar while data refreshes. An offline bar appears at the top of every page, and staff and admin pages show one toast if a background refresh fails.
+- **Live moments:**
+  - The kitchen highlights a new order in gold for a few seconds and shows a "New order" toast. A Sound toggle (off by default) can play a soft chime.
+  - Guests get a toast when their order is being prepared, ready or served.
+  - The booking confirmation draws a gold check.
+  - Dish photos load lazily and fade in.
+  - The phone menu and account menu close on Escape or an outside tap.
+  - Focus returns to the ⋯ button after a row-action dialog.
 - **Dish photos (sample data):** 71 more dishes have free stock photos in `frontend/public/photos/dishes/` (credits in `docs/design/brand.md`), so 73 of 93 show a photo in sample mode. Production photos are uploaded on screen 21.
 
 ## Backend progress
