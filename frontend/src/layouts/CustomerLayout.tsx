@@ -5,6 +5,7 @@ import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 import { toast } from 'sonner'
 import AccountMenu from '@/components/AccountMenu'
 import useAccount from '@/hooks/useAccount'
+import { accountLinks } from '@/lib/accountLinks'
 import { logoutAccount } from '@/services/account'
 import { getSettings } from '@/services/settings'
 import { getTable } from '@/services/tables'
@@ -105,7 +106,7 @@ export default function CustomerLayout() {
         <Link
           to="/"
           aria-label={settings?.restaurant_name}
-          className="flex min-w-0 items-center gap-2"
+          className="flex min-h-11 min-w-0 items-center gap-2"
           onClick={() => setOpen(false)}
         >
           <span
@@ -118,7 +119,7 @@ export default function CustomerLayout() {
             />
           </span>
           <span
-            className={`flex min-w-0 items-baseline gap-1.5 overflow-x-clip whitespace-nowrap ${account ? (wide ? 'max-[379px]:hidden' : 'hidden') : ''}`}
+            className={`flex min-w-0 items-baseline gap-1.5 overflow-x-clip whitespace-nowrap ${wide ? 'max-[359px]:hidden' : 'max-[379px]:hidden'}`}
           >
             <span className={`font-serif text-lg font-bold text-white ${wide ? 'md:text-xl' : ''}`}>
               {words.join(' ')}
@@ -128,9 +129,7 @@ export default function CustomerLayout() {
             </span>
           </span>
         </Link>
-        <div
-          className={`flex shrink-0 items-center gap-2 ${account ? 'max-[419px]:gap-0' : 'max-[379px]:gap-0.5'} ${wide ? 'xl:gap-8' : ''}`}
-        >
+        <div className={`flex shrink-0 items-center gap-2 ${wide ? 'xl:gap-8' : ''}`}>
           {wide && (
             <nav aria-label="Main" className="text-brand-cream hidden items-center gap-8 xl:flex">
               {siteLinks.map((link) => (
@@ -169,7 +168,7 @@ export default function CustomerLayout() {
             <Link
               to="/reserve"
               onClick={() => setOpen(false)}
-              className={`bg-brand-red hover:bg-brand-red/90 flex min-h-11 items-center rounded-md px-3 text-xs font-bold tracking-[0.12em] text-white uppercase transition-colors duration-200 ${account ? 'max-[419px]:px-2' : ''} ${wide ? 'md:px-5' : ''}`}
+              className={`bg-brand-red hover:bg-brand-red/90 flex min-h-11 items-center rounded-md px-3 text-xs font-bold tracking-[0.12em] text-white uppercase transition-colors duration-200 ${wide ? 'md:px-5' : ''}`}
             >
               <span>
                 Reserve
@@ -177,13 +176,15 @@ export default function CustomerLayout() {
               </span>
             </Link>
           )}
-          {account && (
-            <AccountMenu
-              account={account}
-              showName={wide}
-              onOpen={() => setOpen(false)}
-              onLogOut={logOut}
-            />
+          {account && wide && (
+            <div className="hidden xl:block">
+              <AccountMenu
+                account={account}
+                showName
+                onOpen={() => setOpen(false)}
+                onLogOut={logOut}
+              />
+            </div>
           )}
           <button
             ref={toggle}
@@ -201,6 +202,38 @@ export default function CustomerLayout() {
             ref={panel}
             className={`bg-brand-charcoal text-brand-cream absolute inset-x-0 top-full z-20 border-t border-white/10 shadow-lg motion-safe:transition-[opacity,translate] motion-safe:duration-180 motion-safe:ease-out starting:-translate-y-2 starting:opacity-0 ${wide ? 'xl:hidden' : ''}`}
           >
+            {account && (
+              <div className="border-b border-white/10 px-4 py-4">
+                <div className="flex items-center gap-3">
+                  <span
+                    aria-hidden="true"
+                    className="bg-brand-gold text-brand-charcoal flex size-11 shrink-0 items-center justify-center rounded-full text-base font-bold"
+                  >
+                    {account.full_name.charAt(0).toUpperCase()}
+                  </span>
+                  <div className="min-w-0">
+                    <p className="truncate font-serif text-xl text-white">
+                      Hi, {account.full_name.split(' ')[0]}
+                    </p>
+                    <p className="truncate text-xs text-white/70">
+                      Logged in as <span className="text-brand-gold">{account.full_name}</span>
+                    </p>
+                  </div>
+                </div>
+                <div className="mt-4 grid grid-cols-2 gap-2">
+                  {accountLinks.map((link) => (
+                    <Link
+                      key={link.to}
+                      to={link.to}
+                      onClick={() => setOpen(false)}
+                      className="hover:border-brand-gold hover:text-brand-gold flex min-h-11 items-center justify-center rounded-md border border-white/20 px-2 text-center text-xs font-bold tracking-[0.1em] uppercase transition-colors duration-200"
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
             {panelLinks.map((link) => (
               <Link key={link.to} to={link.to} className={navLink} onClick={() => setOpen(false)}>
                 {link.label}
@@ -210,6 +243,15 @@ export default function CustomerLayout() {
               <Link to="/login" className={navLink} onClick={() => setOpen(false)}>
                 Log In
               </Link>
+            )}
+            {account && (
+              <button
+                type="button"
+                onClick={logOut}
+                className={`${navLink} text-brand-red-light w-full text-left`}
+              >
+                Log Out
+              </button>
             )}
           </nav>
         )}
