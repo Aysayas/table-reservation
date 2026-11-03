@@ -1,8 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
 import { format } from 'date-fns'
-import { ArrowRight, UtensilsCrossed } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import DishPhoto from '@/components/DishPhoto'
 import Reveal from '@/components/Reveal'
 import SiteFooter from '@/components/SiteFooter'
 import { groupHours } from '@/lib/hours'
@@ -165,23 +166,14 @@ export default function Home() {
                     inert={copy}
                     className={`group hover:border-brand-gold/40 flex flex-col overflow-hidden rounded-lg border border-white/10 bg-white/5 transition duration-300 motion-safe:mr-4 motion-safe:w-56 motion-safe:shrink-0 motion-safe:hover:-translate-y-1 md:motion-safe:mr-6 md:motion-safe:w-64 ${copy ? 'motion-reduce:hidden' : index >= 2 ? 'motion-reduce:hidden md:motion-reduce:flex' : ''}`}
                   >
-                    {item.image_url ? (
-                      <div className="overflow-hidden">
-                        <img
-                          src={item.image_url}
-                          alt={`${item.name} photo`}
-                          className={`h-32 w-full object-cover md:h-44 ${zoom}`}
-                        />
-                      </div>
-                    ) : (
-                      <div
-                        role="img"
-                        aria-label={`${item.name} photo`}
-                        className="text-brand-gold/60 flex h-32 items-center justify-center bg-white/5 md:h-44"
-                      >
-                        <UtensilsCrossed className="size-8" strokeWidth={1.25} />
-                      </div>
-                    )}
+                    <div className="overflow-hidden">
+                      <DishPhoto
+                        name={item.name}
+                        src={item.image_url}
+                        className={`h-32 w-full md:h-44 ${zoom}`}
+                        letter="text-5xl"
+                      />
+                    </div>
                     <div className="flex flex-1 flex-col px-4 py-4">
                       <p className="text-sm font-semibold">{item.name}</p>
                       <div className="mt-auto flex items-center justify-between gap-2 pt-3">

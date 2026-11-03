@@ -1,28 +1,14 @@
 import { useQuery } from '@tanstack/react-query'
-import { ArrowLeft, Minus, Plus, UtensilsCrossed } from 'lucide-react'
+import { ArrowLeft, Minus, Plus } from 'lucide-react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
+import DishPhoto from '@/components/DishPhoto'
 import { getMenuItems, getRecommendations } from '@/services/menu'
 import { getSettings } from '@/services/settings'
 import { cartTotal, useCart } from '@/stores/cart'
-import type { MenuItem } from '@/types/db'
 
 const peso = (amount: number) =>
   `₱${amount.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-
-function Photo({ item, name, className }: { item?: MenuItem; name: string; className: string }) {
-  return item?.image_url ? (
-    <img src={item.image_url} alt={`${name} photo`} className={`${className} object-cover`} />
-  ) : (
-    <div
-      role="img"
-      aria-label={`${name} photo`}
-      className={`${className} bg-brand-charcoal text-brand-gold/60 flex items-center justify-center`}
-    >
-      <UtensilsCrossed className="size-5" strokeWidth={1.25} />
-    </div>
-  )
-}
 
 export default function Cart() {
   const navigate = useNavigate()
@@ -81,9 +67,9 @@ export default function Cart() {
                 key={`${line.item_id}-${line.notes}`}
                 className="border-brand-line flex gap-3 border-b py-4"
               >
-                <Photo
-                  item={itemFor(line.item_id)}
+                <DishPhoto
                   name={line.name}
+                  src={itemFor(line.item_id)?.image_url}
                   className="size-16 shrink-0 rounded-md"
                 />
                 <div className="min-w-0 flex-1">
@@ -159,7 +145,11 @@ export default function Cart() {
                     key={dish.item_id}
                     className="border-brand-line flex gap-2 rounded-lg border bg-white p-2"
                   >
-                    <Photo item={dish} name={dish.name} className="size-14 shrink-0 rounded-md" />
+                    <DishPhoto
+                      name={dish.name}
+                      src={dish.image_url}
+                      className="size-14 shrink-0 rounded-md"
+                    />
                     <div className="min-w-0">
                       <p className="text-brand-charcoal line-clamp-2 text-xs font-semibold">
                         {dish.name}

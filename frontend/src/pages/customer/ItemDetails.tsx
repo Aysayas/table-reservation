@@ -1,29 +1,17 @@
 import { useQuery } from '@tanstack/react-query'
-import { ArrowLeft, Minus, Plus, UtensilsCrossed } from 'lucide-react'
+import { ArrowLeft, Minus, Plus } from 'lucide-react'
 import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
+import DishPhoto from '@/components/DishPhoto'
 import LoadError from '@/components/LoadError'
+import { dishDescription } from '@/lib/dish'
 import { getMenuItem, getRecommendations } from '@/services/menu'
 import { useCart } from '@/stores/cart'
 import type { MenuItem } from '@/types/db'
 
 const peso = (amount: number) =>
   `₱${amount.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-
-function Photo({ item, className, icon }: { item: MenuItem; className: string; icon: string }) {
-  return item.image_url ? (
-    <img src={item.image_url} alt={`${item.name} photo`} className={`${className} object-cover`} />
-  ) : (
-    <div
-      role="img"
-      aria-label={`${item.name} photo`}
-      className={`${className} bg-brand-charcoal text-brand-gold/60 flex items-center justify-center`}
-    >
-      <UtensilsCrossed className={icon} strokeWidth={1.25} />
-    </div>
-  )
-}
 
 export default function ItemDetails() {
   const navigate = useNavigate()
@@ -84,7 +72,12 @@ export default function ItemDetails() {
   return (
     <div className="bg-brand-cream short:pb-6 min-h-[calc(100dvh-4rem)] pb-28">
       <div className="relative">
-        <Photo item={item} className="h-60 w-full" icon="size-12" />
+        <DishPhoto
+          name={item.name}
+          src={item.image_url}
+          className={item.image_url ? 'h-60 w-full' : 'h-36 w-full'}
+          letter="text-6xl"
+        />
         <button
           type="button"
           aria-label="Back"
@@ -100,7 +93,7 @@ export default function ItemDetails() {
           <h1 className="text-brand-charcoal font-serif text-2xl leading-tight">{item.name}</h1>
           <p className="text-brand-red shrink-0 font-serif text-2xl">{peso(item.price)}</p>
         </div>
-        {item.description && (
+        {dishDescription(item.description) && (
           <p className="text-brand-ink/75 mt-3 text-sm leading-6">{item.description}</p>
         )}
 
@@ -163,7 +156,11 @@ export default function ItemDetails() {
                   key={dish.item_id}
                   className="border-brand-line flex gap-2 rounded-lg border bg-white p-2"
                 >
-                  <Photo item={dish} className="size-14 shrink-0 rounded-md" icon="size-5" />
+                  <DishPhoto
+                    name={dish.name}
+                    src={dish.image_url}
+                    className="size-14 shrink-0 rounded-md"
+                  />
                   <div className="min-w-0">
                     <p className="text-brand-charcoal line-clamp-2 text-xs font-semibold">
                       {dish.name}
