@@ -96,10 +96,16 @@ export default function Login() {
         </button>
       </form>
       <div className="mt-5 flex flex-wrap justify-between gap-3 text-sm">
-        <Link to={`/forgot-password${carry}`} className={textLink}>
+        <Link
+          to={`/forgot-password${carry}`}
+          className={`${textLink} inline-flex items-center pointer-coarse:min-h-11`}
+        >
           Forgot password?
         </Link>
-        <Link to={`/register${carry}`} className={textLink}>
+        <Link
+          to={`/register${carry}`}
+          className={`${textLink} inline-flex items-center pointer-coarse:min-h-11`}
+        >
           Create an account
         </Link>
       </div>

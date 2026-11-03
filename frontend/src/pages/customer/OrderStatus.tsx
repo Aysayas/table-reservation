@@ -185,7 +185,7 @@ export default function OrderStatus() {
         <ul className="mt-4 space-y-2 text-sm">
           {order.items.map((item) => (
             <li key={item.order_item_id} className="flex justify-between gap-4">
-              <span className="text-brand-charcoal">
+              <span className="text-brand-charcoal min-w-0 wrap-break-word">
                 {item.quantity}x {item.name}
                 {item.notes && (
                   <span className="text-brand-ink/70 block text-xs">Note: {item.notes}</span>
@@ -226,14 +226,14 @@ export default function OrderStatus() {
             type="button"
             disabled={paying}
             onClick={payNow}
-            className={`focus-visible:outline-brand-gold mt-3 block w-full rounded-lg py-3 text-sm font-bold tracking-[0.1em] uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-60 ${counter ? 'border border-white/40 hover:bg-white/10' : 'bg-brand-red hover:bg-brand-red/90'}`}
+            className={`focus-visible:outline-brand-gold mt-3 block min-h-11 w-full rounded-lg py-3 text-sm font-bold tracking-[0.1em] uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-60 ${counter ? 'border border-white/40 hover:bg-white/10' : 'bg-brand-red hover:bg-brand-red/90'}`}
           >
             Pay Now
           </button>
         )}
       </div>
 
-      <div className="short:static short:mt-4 short:pb-0 short:px-0 fixed inset-x-0 bottom-0 z-20 mx-auto max-w-[390px] px-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+      <div className="short:static short:mt-4 short:pb-0 short:px-0 bg-brand-cream short:pt-0 fixed inset-x-0 bottom-0 z-20 mx-auto max-w-[390px] px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))]">
         {orderMore}
       </div>
     </div>

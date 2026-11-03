@@ -133,7 +133,10 @@ export default function Menu() {
             aria-label="Breadcrumb"
             className="text-xs tracking-[0.15em] text-white/60 uppercase"
           >
-            <Link to="/" className="hover:text-brand-gold transition-colors duration-200">
+            <Link
+              to="/"
+              className="hover:text-brand-gold inline-flex items-center transition-colors duration-200 pointer-coarse:min-h-11"
+            >
               Home
             </Link>
             <span className="mx-2">/</span>
@@ -179,7 +182,7 @@ export default function Menu() {
                     setMaxPrice(null)
                     setBestOnly(false)
                   }}
-                  className="text-brand-red ml-auto text-xs font-bold hover:underline"
+                  className="text-brand-red ml-auto text-xs font-bold hover:underline pointer-coarse:min-h-11"
                 >
                   Clear filters
                 </button>
@@ -210,7 +213,7 @@ export default function Menu() {
                 type="button"
                 aria-pressed={bestOnly}
                 onClick={() => setBestOnly(!bestOnly)}
-                className={`rounded-full border px-4 py-2 text-xs font-bold tracking-[0.08em] transition-colors duration-200 ${bestOnly ? 'bg-brand-gold border-brand-gold text-brand-charcoal' : 'border-brand-line text-brand-charcoal hover:border-brand-gold bg-white'}`}
+                className={`rounded-full border px-4 py-2 text-xs font-bold tracking-[0.08em] transition-colors duration-200 pointer-coarse:min-h-11 ${bestOnly ? 'bg-brand-gold border-brand-gold text-brand-charcoal' : 'border-brand-line text-brand-charcoal hover:border-brand-gold bg-white'}`}
               >
                 Best Seller
               </button>
@@ -231,7 +234,7 @@ export default function Menu() {
                     type="button"
                     aria-pressed={active}
                     onClick={() => setCategory(c.category_id)}
-                    className={`flex shrink-0 items-center justify-between gap-3 rounded-full border px-4 py-2 text-xs font-bold tracking-[0.08em] whitespace-nowrap transition-colors duration-200 lg:rounded-none lg:border-0 lg:border-b lg:border-dashed lg:px-0 lg:py-2.5 lg:text-sm lg:font-medium lg:tracking-normal lg:last:border-b-0 ${active ? 'bg-brand-charcoal border-brand-charcoal lg:text-brand-red lg:border-brand-line/70 text-white lg:bg-transparent lg:font-bold' : 'border-brand-line text-brand-charcoal hover:border-brand-gold lg:border-brand-line/70 lg:hover:text-brand-red bg-white lg:bg-transparent'}`}
+                    className={`flex shrink-0 items-center justify-between gap-3 rounded-full border px-4 py-2 text-xs font-bold tracking-[0.08em] whitespace-nowrap transition-colors duration-200 lg:rounded-none lg:border-0 lg:border-b lg:border-dashed lg:px-0 lg:py-2.5 lg:text-sm lg:font-medium lg:tracking-normal lg:last:border-b-0 pointer-coarse:min-h-11 ${active ? 'bg-brand-charcoal border-brand-charcoal lg:text-brand-red lg:border-brand-line/70 text-white lg:bg-transparent lg:font-bold' : 'border-brand-line text-brand-charcoal hover:border-brand-gold lg:border-brand-line/70 lg:hover:text-brand-red bg-white lg:bg-transparent'}`}
                   >
                     <span>
                       <span aria-hidden="true" className="mr-2 hidden text-xs lg:inline">

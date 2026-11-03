@@ -242,7 +242,7 @@ export default function ReservationConfirmation() {
                   <button
                     type="button"
                     onClick={copyCode}
-                    className="focus-visible:outline-brand-gold mt-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-5 py-2 text-xs font-bold tracking-[0.15em] text-white uppercase transition-colors duration-200 hover:bg-white/20 focus-visible:outline-2 focus-visible:outline-offset-2"
+                    className="focus-visible:outline-brand-gold mt-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-5 py-2 text-xs font-bold tracking-[0.15em] text-white uppercase transition-colors duration-200 hover:bg-white/20 focus-visible:outline-2 focus-visible:outline-offset-2 pointer-coarse:min-h-11"
                   >
                     <Copy className="size-4" strokeWidth={1.75} />
                     Copy code

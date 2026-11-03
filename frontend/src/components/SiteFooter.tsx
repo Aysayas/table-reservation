@@ -68,7 +68,7 @@ export default function SiteFooter({ children }: { children?: ReactNode }) {
             href={directionsUrl(settings?.restaurant_name)}
             target="_blank"
             rel="noreferrer"
-            className="text-brand-gold mt-3 inline-flex items-center gap-1 text-sm font-semibold hover:underline"
+            className="text-brand-gold mt-3 inline-flex items-center gap-1 text-sm font-semibold hover:underline pointer-coarse:min-h-11"
           >
             Get directions
             <ArrowRight className="size-4" />
