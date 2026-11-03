@@ -351,7 +351,7 @@ export default function ReserveTable() {
                     <button
                       type="button"
                       onClick={() => refetchSlots()}
-                      className="border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal mt-3 rounded-sm border px-5 py-2.5 text-sm font-bold transition-colors duration-200 hover:text-white"
+                      className="border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal mt-3 rounded-sm border px-5 py-2.5 text-sm font-bold transition-colors duration-200 hover:text-white pointer-coarse:min-h-11"
                     >
                       Try Again
                     </button>
