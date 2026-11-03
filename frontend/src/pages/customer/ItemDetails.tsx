@@ -5,6 +5,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import DishPhoto from '@/components/DishPhoto'
 import LoadError from '@/components/LoadError'
+import Ornament from '@/components/Ornament'
 import { dishDescription } from '@/lib/dish'
 import { getMenuItem, getRecommendations } from '@/services/menu'
 import { useCart } from '@/stores/cart'
@@ -147,6 +148,7 @@ export default function ItemDetails() {
 
         {often.length > 0 && (
           <section aria-labelledby="often" className="mt-8">
+            <Ornament className="mb-6" />
             <h2 id="often" className="text-brand-charcoal font-serif text-xl">
               Often Ordered With
             </h2>

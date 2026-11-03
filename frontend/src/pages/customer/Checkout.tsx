@@ -3,6 +3,7 @@ import { ArrowLeft } from 'lucide-react'
 import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
+import LeaderRow from '@/components/LeaderRow'
 import { markPaying } from '@/hooks/usePaymentReturn'
 import { apiError } from '@/lib/api'
 import { readTableToken, rememberLastOrder } from '@/lib/tableToken'
@@ -123,10 +124,16 @@ export default function Checkout() {
                 </li>
               ))}
             </ul>
-            <div className="border-brand-line mt-4 flex justify-between border-t pt-3">
-              <span className="text-brand-charcoal font-serif text-lg">Total</span>
-              <span className="text-brand-red font-serif text-lg">{peso(total)}</span>
-            </div>
+            <dl>
+              <LeaderRow
+                term="Total"
+                className="border-brand-line mt-4 border-t pt-3"
+                termClassName="text-brand-charcoal font-serif text-lg"
+                valueClassName="text-brand-red font-serif text-lg"
+              >
+                {peso(total)}
+              </LeaderRow>
+            </dl>
           </section>
 
           <fieldset className="mt-8">

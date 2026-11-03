@@ -3,6 +3,7 @@ import { ArrowLeft, Minus, Plus } from 'lucide-react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import DishPhoto from '@/components/DishPhoto'
+import LeaderRow from '@/components/LeaderRow'
 import { getMenuItems, getRecommendations } from '@/services/menu'
 import { getSettings } from '@/services/settings'
 import { cartTotal, useCart } from '@/stores/cart'
@@ -180,22 +181,23 @@ export default function Cart() {
           )}
 
           <dl className="mt-6 space-y-2 text-sm">
-            <div className="flex justify-between">
-              <dt className="text-brand-ink/70">Subtotal</dt>
-              <dd className="text-brand-charcoal">{peso(subtotal)}</dd>
-            </div>
-            <div className="flex justify-between">
-              <dt className="text-brand-ink/70">
-                Service Charge ({settings?.service_charge_percent ?? 0}%)
-              </dt>
-              <dd className="text-brand-charcoal">{peso(serviceCharge)}</dd>
-            </div>
-            <div className="border-brand-line flex justify-between border-t pt-3">
-              <dt className="text-brand-charcoal font-serif text-xl">Total</dt>
-              <dd className="text-brand-red font-serif text-xl">
-                {peso(subtotal + serviceCharge)}
-              </dd>
-            </div>
+            <LeaderRow term="Subtotal" valueClassName="text-brand-charcoal">
+              {peso(subtotal)}
+            </LeaderRow>
+            <LeaderRow
+              term={`Service Charge (${settings?.service_charge_percent ?? 0}%)`}
+              valueClassName="text-brand-charcoal"
+            >
+              {peso(serviceCharge)}
+            </LeaderRow>
+            <LeaderRow
+              term="Total"
+              className="border-brand-line border-t pt-3"
+              termClassName="text-brand-charcoal font-serif text-xl"
+              valueClassName="text-brand-red font-serif text-xl"
+            >
+              {peso(subtotal + serviceCharge)}
+            </LeaderRow>
           </dl>
 
           <div className="short:static short:mt-4 short:pb-0 short:px-0 fixed inset-x-0 bottom-0 z-20 mx-auto max-w-[390px] px-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
