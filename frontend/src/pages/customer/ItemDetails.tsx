@@ -55,7 +55,7 @@ export default function ItemDetails() {
         <h1 className="text-brand-charcoal font-serif text-3xl">Dish not found</h1>
         <Link
           to={menuLink}
-          className="text-brand-red mt-4 inline-block text-sm font-bold underline"
+          className="text-brand-red mt-4 inline-flex min-h-11 items-center text-sm font-bold underline"
         >
           Back to the menu
         </Link>
@@ -84,7 +84,7 @@ export default function ItemDetails() {
           type="button"
           aria-label="Back"
           onClick={() => navigate(-1)}
-          className="text-brand-charcoal hover:bg-brand-cream absolute top-4 left-4 flex size-10 items-center justify-center rounded-full bg-white/90 shadow transition-colors duration-200"
+          className="text-brand-charcoal hover:bg-brand-cream absolute top-4 left-4 flex size-11 items-center justify-center rounded-full bg-white/90 shadow transition-colors duration-200"
         >
           <ArrowLeft className="size-5" />
         </button>
@@ -92,7 +92,9 @@ export default function ItemDetails() {
 
       <div className="px-4 pt-5">
         <div className="flex items-start justify-between gap-4">
-          <h1 className="text-brand-charcoal font-serif text-2xl leading-tight">{item.name}</h1>
+          <h1 className="text-brand-charcoal min-w-0 font-serif text-2xl leading-tight wrap-break-word">
+            {item.name}
+          </h1>
           <p className="text-brand-red shrink-0 font-serif text-2xl">{peso(item.price)}</p>
         </div>
         {dishDescription(item.description) && (
@@ -113,7 +115,7 @@ export default function ItemDetails() {
               aria-label="Less"
               disabled={quantity <= 1}
               onClick={() => setQuantity(quantity - 1)}
-              className="text-brand-charcoal flex size-10 items-center justify-center disabled:opacity-40"
+              className="text-brand-charcoal flex size-11 items-center justify-center disabled:opacity-40"
             >
               <Minus className="size-4" />
             </button>
@@ -128,7 +130,7 @@ export default function ItemDetails() {
               aria-label="More"
               disabled={quantity >= 99}
               onClick={() => setQuantity(quantity + 1)}
-              className="text-brand-charcoal flex size-10 items-center justify-center disabled:opacity-40"
+              className="text-brand-charcoal flex size-11 items-center justify-center disabled:opacity-40"
             >
               <Plus className="size-4" />
             </button>
@@ -157,7 +159,7 @@ export default function ItemDetails() {
               {often.map((dish) => (
                 <li
                   key={dish.item_id}
-                  className="border-brand-line flex gap-2 rounded-lg border bg-white p-2"
+                  className="border-brand-line grid grid-cols-[3.5rem_minmax(0,1fr)] gap-2 rounded-lg border bg-white p-2"
                 >
                   <DishPhoto
                     name={dish.name}
@@ -169,18 +171,18 @@ export default function ItemDetails() {
                       {dish.name}
                     </p>
                     <p className="text-brand-red font-serif text-sm">{peso(dish.price)}</p>
-                    <button
-                      type="button"
-                      aria-label={`Add ${dish.name}`}
-                      onClick={() => {
-                        add(table, line(dish, 1, ''))
-                        toast.success(`${dish.name} added to cart`)
-                      }}
-                      className="text-brand-charcoal hover:text-brand-red text-xs font-bold"
-                    >
-                      + Add
-                    </button>
                   </div>
+                  <button
+                    type="button"
+                    aria-label={`Add ${dish.name}`}
+                    onClick={() => {
+                      add(table, line(dish, 1, ''))
+                      toast.success(`${dish.name} added to cart`)
+                    }}
+                    className="border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal col-span-2 flex min-h-11 w-full items-center justify-center rounded-md border text-xs font-bold transition-colors duration-200 hover:text-white"
+                  >
+                    + Add
+                  </button>
                 </li>
               ))}
             </ul>
@@ -188,7 +190,7 @@ export default function ItemDetails() {
         )}
       </div>
 
-      <div className="short:static short:mt-4 short:pb-0 fixed inset-x-0 bottom-0 z-20 mx-auto max-w-[390px] px-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+      <div className="short:static short:mt-4 short:pb-0 bg-brand-cream short:pt-0 fixed inset-x-0 bottom-0 z-20 mx-auto max-w-[390px] px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))]">
         <button
           type="button"
           disabled={!item.is_available}
