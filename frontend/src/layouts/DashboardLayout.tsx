@@ -10,6 +10,7 @@ import {
   useMatches,
   useNavigate,
 } from 'react-router-dom'
+import RefreshBar from '@/components/RefreshBar'
 import { getMe, logout, roleHome } from '@/services/auth'
 import { roleNames } from '@/services/users'
 import { getSettings } from '@/services/settings'
@@ -161,7 +162,7 @@ export default function DashboardLayout({ title, items }: Props) {
         >
           Skip to content
         </a>
-        <header className="border-brand-line flex items-center gap-3 border-b bg-white px-4 py-3 sm:px-6 lg:px-8 lg:py-4 print:hidden">
+        <header className="border-brand-line relative flex items-center gap-3 border-b bg-white px-4 py-3 sm:px-6 lg:px-8 lg:py-4 print:hidden">
           <button
             ref={menuButton}
             type="button"
@@ -184,6 +185,7 @@ export default function DashboardLayout({ title, items }: Props) {
               {me && <span className="text-brand-ink/70 block text-xs">{roleNames[me.role]}</span>}
             </span>
           </div>
+          <RefreshBar />
         </header>
         <main id="main" tabIndex={-1} className="px-4 py-6 outline-none sm:px-6 lg:px-8 lg:py-8">
           <Outlet />

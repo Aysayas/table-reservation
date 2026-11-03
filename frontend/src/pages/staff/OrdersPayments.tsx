@@ -1,12 +1,15 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { format, parseISO } from 'date-fns'
-import { Printer } from 'lucide-react'
+import { Printer, ReceiptText } from 'lucide-react'
 import { useState } from 'react'
 import { flushSync } from 'react-dom'
 import { useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
+import EmptyState from '@/components/EmptyState'
 import LoadError from '@/components/LoadError'
 import Receipt from '@/components/Receipt'
+import Skeleton from '@/components/Skeleton'
+import Spinner from '@/components/Spinner'
 import useOrderEvents, { STAFF_CHANNEL } from '@/hooks/useOrderEvents'
 import { listOrders, recordPayment } from '@/services/orders'
 import { getMe } from '@/services/auth'
@@ -38,10 +41,12 @@ export default function OrdersPayments() {
   const [cash, setCash] = useState('')
   const {
     data: orders = [],
+    isPending,
     isLoadingError,
     refetch,
   } = useQuery({
     queryKey: ['orders', filter],
+    placeholderData: keepPreviousData,
     queryFn: () =>
       listOrders({
         payment_status: filter || undefined,
@@ -144,10 +149,20 @@ export default function OrdersPayments() {
                     <td className={td}>{o.payment_status === 'paid' ? 'Paid' : 'Unpaid'}</td>
                   </tr>
                 ))}
-                {orders.length === 0 && (
+                {isPending &&
+                  Array.from({ length: 5 }, (_, i) => (
+                    <tr key={i} className="border-brand-line border-t">
+                      {Array.from({ length: 6 }, (_, j) => (
+                        <td key={j} className={td}>
+                          <Skeleton className="h-4 w-full" />
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                {!isPending && orders.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="text-brand-ink/70 px-4 py-10 text-center text-sm">
-                      No orders here.
+                    <td colSpan={6}>
+                      <EmptyState icon={ReceiptText} title="No orders here." />
                     </td>
                   </tr>
                 )}
@@ -262,9 +277,11 @@ export default function OrdersPayments() {
               <button
                 type="button"
                 disabled={received < selected.total_amount || pay.isPending}
+                aria-busy={pay.isPending}
                 onClick={() => pay.mutate()}
-                className="bg-brand-red hover:bg-brand-red/90 mt-5 block w-full rounded-md py-3.5 text-sm font-bold tracking-[0.08em] text-white uppercase transition-colors duration-200 disabled:opacity-50"
+                className="bg-brand-red hover:bg-brand-red/90 mt-5 flex w-full items-center justify-center gap-2 rounded-md py-3.5 text-sm font-bold tracking-[0.08em] text-white uppercase transition-colors duration-200 disabled:opacity-50"
               >
+                {pay.isPending && <Spinner />}
                 Mark Order #{selected.order_id} Paid (Cash)
               </button>
             </div>

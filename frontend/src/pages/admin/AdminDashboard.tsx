@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { format, parseISO } from 'date-fns'
+import { BarChart3 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import {
   CartesianGrid,
@@ -10,8 +11,10 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
+import EmptyState from '@/components/EmptyState'
 import LoadError from '@/components/LoadError'
 import Ornament from '@/components/Ornament'
+import Skeleton from '@/components/Skeleton'
 import { getAdminDashboard } from '@/services/dashboard'
 import type { OrderStatus } from '@/types/db'
 
@@ -36,7 +39,25 @@ export default function AdminDashboard() {
   })
 
   if (!data)
-    return isLoadingError ? <LoadError what="the dashboard" onRetry={() => refetch()} /> : null
+    return isLoadingError ? (
+      <LoadError what="the dashboard" onRetry={() => refetch()} />
+    ) : (
+      <div role="status" aria-busy="true" className="space-y-8">
+        <span className="sr-only">Loading</span>
+        <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
+          {Array.from({ length: 4 }, (_, i) => (
+            <div key={i} className={`${card} px-6 py-5`}>
+              <Skeleton className="h-3 w-24" />
+              <Skeleton className="mt-3 h-10 w-32" />
+            </div>
+          ))}
+        </div>
+        <div className="grid gap-6 xl:grid-cols-[1fr_22rem]">
+          <Skeleton className="h-80" />
+          <Skeleton className="h-80" />
+        </div>
+      </div>
+    )
 
   const stats = [
     { label: 'Sales Today', value: peso(data.sales_today) },
@@ -132,7 +153,9 @@ export default function AdminDashboard() {
               </li>
             ))}
             {data.best_sellers.length === 0 && (
-              <li className="text-brand-ink/70 text-sm">No sales in the last 30 days.</li>
+              <li>
+                <EmptyState icon={BarChart3} title="No sales in the last 30 days." />
+              </li>
             )}
           </ol>
         </section>

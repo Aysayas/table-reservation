@@ -1,11 +1,14 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { Tags } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
+import EmptyState from '@/components/EmptyState'
 import LoadError from '@/components/LoadError'
 import Modal from '@/components/Modal'
+import Skeleton from '@/components/Skeleton'
 import Spinner from '@/components/Spinner'
 import {
   createCategory,
@@ -39,6 +42,7 @@ export default function Categories() {
   const [deleting, setDeleting] = useState<CategoryWithCount | null>(null)
   const {
     data: categories = [],
+    isPending,
     isLoadingError,
     refetch,
   } = useQuery({ queryKey: ['categories'], queryFn: getCategories })
@@ -135,10 +139,20 @@ export default function Categories() {
                   </td>
                 </tr>
               ))}
-              {categories.length === 0 && (
+              {isPending &&
+                Array.from({ length: 5 }, (_, i) => (
+                  <tr key={i} className="border-brand-line border-t">
+                    {Array.from({ length: 4 }, (_, j) => (
+                      <td key={j} className={td}>
+                        <Skeleton className="h-4 w-full max-w-28" />
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              {!isPending && categories.length === 0 && (
                 <tr>
-                  <td colSpan={4} className="text-brand-ink/70 px-4 py-10 text-center text-sm">
-                    No categories yet.
+                  <td colSpan={4}>
+                    <EmptyState icon={Tags} title="No categories yet." />
                   </td>
                 </tr>
               )}
@@ -186,8 +200,10 @@ export default function Categories() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="bg-brand-red hover:bg-brand-red/90 block w-full rounded-md py-3 text-sm font-bold text-white transition-colors duration-200 disabled:opacity-60"
+            aria-busy={isSubmitting}
+            className="bg-brand-red hover:bg-brand-red/90 flex w-full items-center justify-center gap-2 rounded-md py-3 text-sm font-bold text-white transition-colors duration-200 disabled:opacity-60"
           >
+            {isSubmitting && <Spinner />}
             Save Category
           </button>
           {editing && (

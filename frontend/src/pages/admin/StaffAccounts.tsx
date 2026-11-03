@@ -1,9 +1,11 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { format, parseISO } from 'date-fns'
-import { Plus, Search } from 'lucide-react'
+import { Plus, Search, Users } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import ConfirmDialog from '@/components/ConfirmDialog'
+import EmptyState from '@/components/EmptyState'
+import Skeleton from '@/components/Skeleton'
 import StaffDialog from '@/components/StaffDialog'
 import { getMe } from '@/services/auth'
 import { listUsers, roleNames, updateUser } from '@/services/users'
@@ -24,8 +26,13 @@ export default function StaffAccounts() {
     queryFn: () => getMe('admin'),
     retry: false,
   })
-  const { data: users = [], error } = useQuery({
+  const {
+    data: users = [],
+    isPending,
+    error,
+  } = useQuery({
     queryKey: ['users', role, search.trim()],
+    placeholderData: keepPreviousData,
     queryFn: () => listUsers({ role: role || undefined, search }),
   })
 
@@ -147,10 +154,20 @@ export default function StaffAccounts() {
                 </tr>
               )
             })}
-            {users.length === 0 && (
+            {isPending &&
+              Array.from({ length: 5 }, (_, i) => (
+                <tr key={i} className="border-brand-line border-t">
+                  {Array.from({ length: 6 }, (_, j) => (
+                    <td key={j} className={td}>
+                      <Skeleton className="h-4 w-full max-w-28" />
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            {!isPending && users.length === 0 && (
               <tr>
-                <td colSpan={6} className="text-brand-ink/70 px-5 py-10 text-center text-sm">
-                  No staff accounts match.
+                <td colSpan={6}>
+                  <EmptyState icon={Users} title="No staff accounts match." />
                 </td>
               </tr>
             )}

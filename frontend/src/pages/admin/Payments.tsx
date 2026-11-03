@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { format, parseISO, subDays } from 'date-fns'
 import {
   Banknote,
@@ -12,7 +12,9 @@ import {
 } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import EmptyState from '@/components/EmptyState'
 import LoadError from '@/components/LoadError'
+import Skeleton from '@/components/Skeleton'
 import { listPayments, type AdminPayment } from '@/services/payments'
 import type { PaymentMethod, PaymentStatus } from '@/types/db'
 
@@ -48,8 +50,9 @@ export default function Payments() {
   const [page, setPage] = useState(1)
   const [today] = useState(() => new Date())
   const date_from = range ? format(subDays(today, Number(range)), 'yyyy-MM-dd') : undefined
-  const { data, isLoadingError, refetch } = useQuery({
+  const { data, isPending, isLoadingError, refetch } = useQuery({
     queryKey: ['payments', { search, date_from, method, status, page }],
+    placeholderData: keepPreviousData,
     queryFn: () =>
       listPayments({
         search,
@@ -256,11 +259,20 @@ export default function Payments() {
                   </tr>
                 )
               })}
-              {rows.length === 0 && (
+              {isPending &&
+                Array.from({ length: 5 }, (_, i) => (
+                  <tr key={i} className="border-brand-line border-t">
+                    {Array.from({ length: 7 }, (_, j) => (
+                      <td key={j} className={td}>
+                        <Skeleton className="h-4 w-full max-w-28" />
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              {!isPending && rows.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="px-5 py-14 text-center">
-                    <Wallet className="text-brand-gold-deep/60 mx-auto size-8" />
-                    <p className="text-brand-ink/70 mt-3 text-sm">No payments found.</p>
+                  <td colSpan={7}>
+                    <EmptyState icon={Wallet} title="No payments found." />
                   </td>
                 </tr>
               )}

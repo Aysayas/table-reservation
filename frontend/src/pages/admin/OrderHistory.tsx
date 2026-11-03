@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { format, parseISO, subDays } from 'date-fns'
 import {
   Banknote,
@@ -13,8 +13,10 @@ import {
 } from 'lucide-react'
 import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import EmptyState from '@/components/EmptyState'
 import LoadError from '@/components/LoadError'
 import Modal from '@/components/Modal'
+import Skeleton from '@/components/Skeleton'
 import { listOrders, type StaffOrder } from '@/services/orders'
 import type { OrderStatus } from '@/types/db'
 
@@ -75,10 +77,12 @@ export default function OrderHistory() {
   const date_from = range ? format(subDays(today, Number(range)), 'yyyy-MM-dd') : undefined
   const {
     data: orders = [],
+    isPending,
     isLoadingError,
     refetch,
   } = useQuery({
     queryKey: ['orders', 'history', { search, date_from, status, payment }],
+    placeholderData: keepPreviousData,
     queryFn: () =>
       listOrders({
         search,
@@ -277,11 +281,20 @@ export default function OrderHistory() {
                   </td>
                 </tr>
               ))}
-              {rows.length === 0 && (
+              {isPending &&
+                Array.from({ length: 5 }, (_, i) => (
+                  <tr key={i} className="border-brand-line border-t">
+                    {Array.from({ length: 9 }, (_, j) => (
+                      <td key={j} className={td}>
+                        <Skeleton className="h-4 w-full max-w-28" />
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              {!isPending && rows.length === 0 && (
                 <tr>
-                  <td colSpan={9} className="px-5 py-14 text-center">
-                    <ReceiptText className="text-brand-gold-deep/60 mx-auto size-8" />
-                    <p className="text-brand-ink/70 mt-3 text-sm">No orders found.</p>
+                  <td colSpan={9}>
+                    <EmptyState icon={ReceiptText} title="No orders found." />
                   </td>
                 </tr>
               )}

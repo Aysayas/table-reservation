@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { Outlet, ScrollRestoration, useMatches } from 'react-router-dom'
+import OfflineBanner from '@/components/OfflineBanner'
 
 export default function RootLayout() {
   const tab = useMatches()
@@ -12,6 +13,7 @@ export default function RootLayout() {
 
   return (
     <>
+      <OfflineBanner />
       <Outlet />
       <ScrollRestoration />
     </>
