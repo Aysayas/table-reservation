@@ -14,7 +14,12 @@ type Props = {
 
 export default function CancelReservationDialog({ reservation, busy, onKeep, onCancel }: Props) {
   return (
-    <Modal title={`Cancel ${reservation.reference_code}?`} onClose={onKeep} framed>
+    <Modal
+      title={`Cancel ${reservation.reference_code}?`}
+      onClose={onKeep}
+      framed
+      dismissible={!busy}
+    >
       <p className="text-brand-ink/75 text-center text-sm">
         {reservation.deposit_status === 'paid' && reservation.deposit_amount > 0
           ? `Your ${peso(reservation.deposit_amount)} deposit is non-refundable. This can't be undone.`

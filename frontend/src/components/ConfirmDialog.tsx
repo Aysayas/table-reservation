@@ -21,7 +21,7 @@ export default function ConfirmDialog({
   onClose,
 }: Props) {
   return (
-    <Modal title={title} onClose={onClose} framed>
+    <Modal title={title} onClose={onClose} framed dismissible={!busy}>
       <p className="text-brand-ink/70 text-center text-sm">{body}</p>
       <div className="mt-6 flex justify-center gap-3">
         <button

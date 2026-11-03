@@ -25,8 +25,7 @@ createRoot(document.getElementById('root')!).render(
           classNames: {
             toast:
               'bg-brand-charcoal border-brand-gold flex w-[min(100vw-2rem,22rem)] items-start gap-3 rounded-lg border-l-4 px-4 py-3 font-sans text-sm text-white shadow-lg',
-            error:
-              '!bg-white !text-brand-ink !border-brand-red border border-l-4 border-brand-red/30',
+            error: 'bg-white! text-brand-ink! border-brand-red!',
             title: 'font-bold',
             description: 'mt-0.5 text-xs opacity-80',
             icon: 'mt-0.5 shrink-0',
