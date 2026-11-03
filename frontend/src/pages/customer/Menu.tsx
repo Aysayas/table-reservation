@@ -1,10 +1,12 @@
 import { useQuery } from '@tanstack/react-query'
-import { QrCode, Search } from 'lucide-react'
+import { QrCode, Search, SearchX } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import DishPhoto from '@/components/DishPhoto'
+import EmptyState from '@/components/EmptyState'
 import LoadError from '@/components/LoadError'
 import Ornament from '@/components/Ornament'
+import Skeleton from '@/components/Skeleton'
 import TrackHeading from '@/components/TrackHeading'
 import { dishDescription } from '@/lib/dish'
 import { getCategories, getMenuItems } from '@/services/menu'
@@ -71,6 +73,7 @@ export default function Menu() {
   const { data: categories = [] } = useQuery({ queryKey: ['categories'], queryFn: getCategories })
   const {
     data: items = [],
+    isLoading,
     isFetched,
     isLoadingError,
     refetch,
@@ -251,10 +254,31 @@ export default function Menu() {
             </div>
           )}
 
+          {isLoading && (
+            <div className="mt-6 lg:mt-0">
+              <p role="status" className="sr-only">
+                Loading the menu…
+              </p>
+              <ul aria-hidden="true" className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4">
+                {Array.from({ length: 6 }, (_, i) => (
+                  <li
+                    key={i}
+                    className="border-brand-line flex flex-col overflow-hidden rounded-xl border bg-white"
+                  >
+                    <Skeleton className="h-28 md:h-32" />
+                    <div className="space-y-2 px-3 py-3 md:px-4">
+                      <Skeleton className="h-4 w-3/4" />
+                      <Skeleton className="h-3 w-full" />
+                      <Skeleton className="ml-auto h-5 w-16" />
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
           {isFetched && !isLoadingError && sections.length === 0 && (
-            <p className="text-brand-ink/70 mt-10 text-center text-sm">
-              No dishes match your search.
-            </p>
+            <EmptyState icon={SearchX} title="No dishes match your search." className="mt-6" />
           )}
 
           {sections.map((section) => (

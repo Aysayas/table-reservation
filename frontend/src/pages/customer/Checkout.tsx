@@ -1,8 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, ShoppingBag } from 'lucide-react'
 import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
+import EmptyState from '@/components/EmptyState'
 import LeaderRow from '@/components/LeaderRow'
 import { markPaying } from '@/hooks/usePaymentReturn'
 import { apiError } from '@/lib/api'
@@ -91,15 +92,19 @@ export default function Checkout() {
       </div>
 
       {lines.length === 0 ? (
-        <div className="mt-16 text-center">
-          <p className="text-brand-charcoal font-serif text-2xl">Your cart is empty</p>
-          <Link
-            to={`/table/${table}/menu`}
-            className="bg-brand-red hover:bg-brand-red/90 mt-6 inline-block rounded-lg px-8 py-3 text-sm font-bold tracking-[0.1em] text-white uppercase transition-colors duration-200"
-          >
-            Browse the menu
-          </Link>
-        </div>
+        <EmptyState
+          icon={ShoppingBag}
+          title="Your cart is empty"
+          className="mt-10"
+          action={
+            <Link
+              to={`/table/${table}/menu`}
+              className="bg-brand-red hover:bg-brand-red/90 inline-block rounded-lg px-8 py-3 text-sm font-bold tracking-[0.1em] text-white uppercase transition-colors duration-200"
+            >
+              Browse the menu
+            </Link>
+          }
+        />
       ) : (
         <>
           <section

@@ -1,8 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
-import { ArrowLeft, Minus, Plus } from 'lucide-react'
+import { ArrowLeft, Minus, Plus, ShoppingBag } from 'lucide-react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import DishPhoto from '@/components/DishPhoto'
+import EmptyState from '@/components/EmptyState'
 import LeaderRow from '@/components/LeaderRow'
 import { getMenuItems, getRecommendations } from '@/services/menu'
 import { getSettings } from '@/services/settings'
@@ -50,16 +51,20 @@ export default function Cart() {
       </div>
 
       {lines.length === 0 ? (
-        <div className="mt-16 text-center">
-          <p className="text-brand-charcoal font-serif text-2xl">Your cart is empty</p>
-          <p className="text-brand-ink/70 mt-2 text-sm">Add a few dishes from the menu first.</p>
-          <Link
-            to={menuLink}
-            className="bg-brand-red hover:bg-brand-red/90 mt-6 inline-block rounded-lg px-8 py-3 text-sm font-bold tracking-[0.1em] text-white uppercase transition-colors duration-200"
-          >
-            Browse the menu
-          </Link>
-        </div>
+        <EmptyState
+          icon={ShoppingBag}
+          title="Your cart is empty"
+          text="Add a few dishes from the menu first."
+          className="mt-10"
+          action={
+            <Link
+              to={menuLink}
+              className="bg-brand-red hover:bg-brand-red/90 inline-block rounded-lg px-8 py-3 text-sm font-bold tracking-[0.1em] text-white uppercase transition-colors duration-200"
+            >
+              Browse the menu
+            </Link>
+          }
+        />
       ) : (
         <>
           <ul className="mt-6">

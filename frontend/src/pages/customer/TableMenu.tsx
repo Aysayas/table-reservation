@@ -1,11 +1,14 @@
 import { useQuery } from '@tanstack/react-query'
-import { ArrowRight, Plus, Search, ShoppingBag } from 'lucide-react'
+import { ArrowRight, Plus, Search, SearchX, ShoppingBag } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import DishPhoto from '@/components/DishPhoto'
+import EmptyState from '@/components/EmptyState'
 import LoadError from '@/components/LoadError'
 import Ornament from '@/components/Ornament'
+import PageLoader from '@/components/PageLoader'
+import Skeleton from '@/components/Skeleton'
 import TrackHeading from '@/components/TrackHeading'
 import { dishDescription } from '@/lib/dish'
 import { readLastOrder, readTableToken } from '@/lib/tableToken'
@@ -30,6 +33,8 @@ export default function TableMenu() {
   const { data: categories = [] } = useQuery({ queryKey: ['categories'], queryFn: getCategories })
   const {
     data: items = [],
+    isLoading: itemsLoading,
+    isFetched,
     isLoadingError,
     refetch,
   } = useQuery({ queryKey: ['menu-items'], queryFn: () => getMenuItems() })
@@ -53,7 +58,7 @@ export default function TableMenu() {
     }
   }, [id, token])
 
-  if (isLoading) return null
+  if (isLoading) return <PageLoader />
 
   if (!table) {
     return (
@@ -185,8 +190,29 @@ export default function TableMenu() {
         </div>
       )}
 
-      {!isLoadingError && sections.length === 0 && (
-        <p className="text-brand-ink/70 mt-10 text-center text-sm">No dishes match your search.</p>
+      {itemsLoading && (
+        <div className="mt-8 px-4">
+          <p role="status" className="sr-only">
+            Loading the menu…
+          </p>
+          <ul aria-hidden="true">
+            {Array.from({ length: 6 }, (_, i) => (
+              <li key={i} className="border-brand-line flex items-center gap-3 border-b py-3">
+                <Skeleton className="size-16 shrink-0" />
+                <div className="flex-1 space-y-2">
+                  <Skeleton className="h-4 w-3/4" />
+                  <Skeleton className="h-3 w-1/2" />
+                  <Skeleton className="h-4 w-16" />
+                </div>
+                <Skeleton className="h-8 w-16 shrink-0" />
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {isFetched && !isLoadingError && sections.length === 0 && (
+        <EmptyState icon={SearchX} title="No dishes match your search." />
       )}
 
       {sections.map((section) => (

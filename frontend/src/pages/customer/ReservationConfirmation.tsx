@@ -4,6 +4,7 @@ import { CalendarDays, Check, Copy, LoaderCircle, MapPin } from 'lucide-react'
 import { Link, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import LoadError from '@/components/LoadError'
+import PageLoader from '@/components/PageLoader'
 import SiteFooter from '@/components/SiteFooter'
 import useAccount from '@/hooks/useAccount'
 import usePaymentReturn from '@/hooks/usePaymentReturn'
@@ -49,7 +50,7 @@ export default function ReservationConfirmation() {
     reservation.deposit_status === 'unpaid'
   const { confirming, timedOut } = usePaymentReturn(code, !!reservation && !needsDeposit)
 
-  if (isLoading) return null
+  if (isLoading) return <PageLoader />
 
   const copyCode = () => {
     navigator.clipboard
