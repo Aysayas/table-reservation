@@ -206,3 +206,16 @@ test('the wide header button keeps the space in Reserve a Table', async ({ page 
   })
   expect(widths.withSpace).toBeGreaterThan(widths.without)
 })
+
+test('the logged-in phone header keeps space between its buttons', async ({ page }) => {
+  await logIn(page)
+  await page.setViewportSize({ width: 360, height: 780 })
+  await page.goto('/')
+  const banner = page.getByRole('banner')
+  const home = await banner.getByRole('link').first().boundingBox()
+  const reserve = await banner.getByRole('link', { name: /^Reserve/ }).boundingBox()
+  const menu = await banner.getByRole('button', { name: 'Open menu' }).boundingBox()
+  expect((home?.x ?? 0) + (home?.width ?? 0)).toBeLessThanOrEqual((reserve?.x ?? 0) - 8)
+  expect((reserve?.x ?? 0) + (reserve?.width ?? 0)).toBeLessThanOrEqual((menu?.x ?? 0) - 8)
+  expect(home?.height).toBeGreaterThanOrEqual(44)
+})

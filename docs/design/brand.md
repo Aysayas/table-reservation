@@ -134,6 +134,16 @@ Small gold details that make the pages feel dressed up without changing the pale
 - **Live alerts**: a new kitchen order gets a gold ring for 4 seconds, an info toast and a screen-reader line. The kitchen can turn on a soft two-note chime, which is off by default. Guests get a toast when their order moves to Preparing, Ready or Served, and the current step pulses once.
 - **Success**: a gold check draws in on a confirmed booking, and "Salamat!" fades in on the order status page.
 
+## Mobile
+
+Checked against the `mobile-app-ui-design` skill and Impeccable's adapt checklist. This guide wins where they disagree.
+
+- **Header on phones:** the logo and name, Reserve, and the menu button only, 8px apart, each at least 44px tall. Nothing ever touches.
+- **Profile:** on phones and on the table pages, the profile lives at the top of the menu: a gold initial, "Hi, {first name}", "Logged in as {name}", buttons for My Reservations and Profile, and Log Out at the bottom. From `xl` up, the gold circle with the first name stays in the header.
+- **Tap size:** buttons and links that stand alone are at least 44px tall. Inline text links are exempt.
+- **Spacing:** use the 4 and 8 scale (8, 12, 16, 24, 32 …). Related items sit close, and separate groups get about twice the gap.
+- **Bottom bars:** main actions such as Add to Cart, Pay and Place Order sit in a bar at the bottom of the screen, within thumb reach, on a solid background, with the bottom safe-area inset.
+
 ## Motion
 
 Gentle and slow, so it never makes anyone dizzy. Made with Tailwind only (no motion package yet).

@@ -39,7 +39,7 @@ test('logging in returns to the page in next, but never to another site', async 
   await page.getByRole('button', { name: 'Log In' }).click()
   await expect(page).toHaveURL('/menu')
 
-  await page.getByRole('button', { name: /^Account menu/ }).click()
+  await page.getByRole('button', { name: 'Open menu' }).click()
   await page.getByRole('button', { name: 'Log Out' }).click()
   await page.goto('/login?next=%2F%2Fexample.com')
   await page.getByLabel('Mobile Number').fill('9000000000')
@@ -152,23 +152,22 @@ test('the header shows who is logged in, with the account links in one menu', as
   await page.getByRole('button', { name: 'Open menu' }).click()
   await expect(page.getByRole('link', { name: 'Log In' })).toBeVisible()
   await logIn(page)
-  const account = page.getByRole('button', {
-    name: 'Account menu, logged in as Customer Name',
-  })
-  await expect(account).toBeVisible()
+  await page.reload()
+  await expect(page.getByRole('button', { name: /^Account menu/ })).toHaveCount(0)
   await page.getByRole('button', { name: 'Open menu' }).click()
+  await expect(page.getByText('Logged in as')).toBeVisible()
+  await expect(page.locator('header').getByText('Customer Name')).toBeVisible()
   await expect(page.locator('header').getByRole('link', { name: 'Log In' })).toHaveCount(0)
   await expect(
     page.locator('header').getByRole('link', { name: 'Find My Reservation' }),
   ).toHaveCount(0)
-  await account.click()
-  await expect(page.getByText('Logged in as')).toBeVisible()
   await expect(page.getByRole('link', { name: 'My Reservations' })).toBeVisible()
   await expect(page.getByRole('link', { name: 'Profile' })).toBeVisible()
   await page.getByRole('button', { name: 'Log Out' }).click()
   await expect(page).toHaveURL('/')
   await expect(page.getByText("You're logged out")).toBeVisible()
-  await expect(account).toHaveCount(0)
+  await page.getByRole('button', { name: 'Open menu' }).click()
+  await expect(page.getByText('Logged in as')).toHaveCount(0)
 })
 
 test('the account menu also works at desktop width and closes on escape', async ({ page }) => {
@@ -185,7 +184,8 @@ test('the account menu also works at desktop width and closes on escape', async 
 test('a logged-in guest at a table can still see they are logged in', async ({ page }) => {
   await page.addInitScript(() => sessionStorage.setItem('sample-account', '100'))
   await page.goto('/table/1/menu')
-  await expect(page.getByRole('button', { name: /^Account menu/ })).toBeVisible()
+  await page.getByRole('button', { name: 'Open menu' }).click()
+  await expect(page.getByText('Logged in as')).toBeVisible()
 })
 
 test('passwords must match when signing up and resetting', async ({ page }) => {
@@ -227,21 +227,20 @@ test('profile needs a login', async ({ page }) => {
 
 test('profile saves a name without a password', async ({ page }) => {
   await logIn(page)
-  await page.getByRole('button', { name: /^Account menu/ }).click()
+  await page.getByRole('button', { name: 'Open menu' }).click()
   await page.getByRole('link', { name: 'Profile' }).click()
   await expect(page.getByLabel('Mobile Number')).toHaveValue('9000000000')
   await expect(page.getByLabel('Current Password')).toHaveCount(0)
   await page.getByLabel('Full Name').fill('Juan Dela Cruz')
   await page.getByRole('button', { name: 'Save Changes' }).click()
   await expect(page.getByText('Your details were saved')).toBeVisible()
-  await expect(
-    page.getByRole('button', { name: 'Account menu, logged in as Juan Dela Cruz' }),
-  ).toBeVisible()
+  await page.getByRole('button', { name: 'Open menu' }).click()
+  await expect(page.locator('header').getByText('Juan Dela Cruz')).toBeVisible()
 })
 
 test('profile asks for the password to change the mobile or email', async ({ page }) => {
   await logIn(page)
-  await page.getByRole('button', { name: /^Account menu/ }).click()
+  await page.getByRole('button', { name: 'Open menu' }).click()
   await page.getByRole('link', { name: 'Profile' }).click()
   await page.getByLabel('Mobile Number').fill('9171234567')
   await page.getByRole('button', { name: 'Save Changes' }).click()
@@ -273,7 +272,7 @@ test('a new booking shows up in my reservations', async ({ page }) => {
   await page.getByRole('button', { name: 'Continue to Deposit' }).click()
   await expect(page).toHaveURL(/\/reserve\/payment\?code=RSV-/)
   const code = new URL(page.url()).searchParams.get('code')
-  await page.getByRole('button', { name: /^Account menu/ }).click()
+  await page.getByRole('button', { name: 'Open menu' }).click()
   await page.getByRole('link', { name: 'My Reservations' }).click()
   await expect(page.getByRole('listitem', { name: `Reservation ${code}` })).toBeVisible()
 })

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { accountLinks } from '@/lib/accountLinks'
 import type { CustomerAccount } from '@/types/db'
 
 const item =
@@ -67,12 +68,11 @@ export default function AccountMenu({ account, showName, onOpen, onLogOut }: Pro
           <p className="px-4 py-3 text-sm">
             Logged in as <strong className="text-brand-gold">{account.full_name}</strong>
           </p>
-          <Link to="/my-reservations" className={item} onClick={() => setOpen(false)}>
-            My Reservations
-          </Link>
-          <Link to="/profile" className={item} onClick={() => setOpen(false)}>
-            Profile
-          </Link>
+          {accountLinks.map((link) => (
+            <Link key={link.to} to={link.to} className={item} onClick={() => setOpen(false)}>
+              {link.label}
+            </Link>
+          ))}
           <button type="button" onClick={onLogOut} className={item}>
             Log Out
           </button>

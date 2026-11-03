@@ -101,6 +101,7 @@ These differ from the 29 approved wireframes on purpose, to remove redundant ste
   - Dish photos load lazily and fade in.
   - The phone menu and account menu close on Escape or an outside tap.
   - Focus returns to the ⋯ button after a row-action dialog.
+- **Phone header and profile:** on phones, the header shows the logo and name, Reserve, and the menu button, 8px apart. The profile moved into the menu as a card ("Hi, …", My Reservations, Profile, Log Out). Desktop still shows the profile circle in the header. The backup before this round is tagged `backup/pre-mobile-2026-11-04`.
 - **Dish photos (sample data):** 71 more dishes have free stock photos in `frontend/public/photos/dishes/` (credits in `docs/design/brand.md`), so 73 of 93 show a photo in sample mode. Production photos are uploaded on screen 21.
 
 ## Backend progress
