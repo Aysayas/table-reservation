@@ -17,3 +17,12 @@ test('log out returns to staff login', async ({ page }) => {
   await page.getByRole('link', { name: 'Log Out' }).click()
   await expect(page.getByRole('heading', { name: 'Staff Login' })).toBeVisible()
 })
+
+test('an unknown admin page shows not found inside the dashboard', async ({ page }) => {
+  await page.goto('/admin/nope')
+  await expect(page.getByRole('heading', { name: 'Page not found' })).toBeVisible()
+  await expect(page.getByRole('navigation', { name: 'Admin menu' })).toBeVisible()
+  await page.getByRole('link', { name: 'Back to Dashboard' }).click()
+  await expect(page).toHaveURL('/admin')
+  await expect(page).toHaveTitle("Admin Dashboard · Vencio's Garden")
+})

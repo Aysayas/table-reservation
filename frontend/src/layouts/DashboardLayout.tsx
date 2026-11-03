@@ -155,6 +155,12 @@ export default function DashboardLayout({ title, items }: Props) {
       </aside>
 
       <div inert={open} className="min-w-0 flex-1">
+        <a
+          href="#main"
+          className="focus:bg-brand-gold focus:text-brand-charcoal sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:rounded-sm focus:px-4 focus:py-2 focus:text-sm focus:font-bold"
+        >
+          Skip to content
+        </a>
         <header className="border-brand-line flex items-center gap-3 border-b bg-white px-4 py-3 sm:px-6 lg:px-8 lg:py-4 print:hidden">
           <button
             ref={menuButton}
@@ -179,7 +185,7 @@ export default function DashboardLayout({ title, items }: Props) {
             </span>
           </div>
         </header>
-        <main className="px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+        <main id="main" tabIndex={-1} className="px-4 py-6 outline-none sm:px-6 lg:px-8 lg:py-8">
           <Outlet />
         </main>
       </div>

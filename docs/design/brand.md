@@ -121,6 +121,17 @@ Small gold details that make the pages feel dressed up without changing the pale
 - **Track headers** (`TrackHeading`): menu categories read like songs, so each one shows "Track NN" above its name, with the last word in italic red over five thin staff lines. Used on 02 Menu and 08 Table Menu. "Popular" has no number.
 - **Leader rows** (`LeaderRow`): label, a dotted gold leader, then the value, like a printed menu. Used for summaries and order lists, not for photo cards.
 
+## Loading and feedback
+
+- **Page loader** (`PageLoader`): the round logo in a slow gold ring, "Sandali lang…" in Great Vibes, and a small ornament. It waits 300 ms before showing, so quick loads don't flash. Pages load on demand (route `lazy`), and the first load shows it too.
+- **Skeletons** (`Skeleton`): soft cream blocks in the shape of what's coming (cards, rows, stat tiles). They pulse gently, and stay still when reduce motion is on.
+- **Dialogs** (`Modal`): the native `<dialog>`, so Escape, the focus trap, scroll lock and focus return work by default. A click on the dark backdrop closes it. Each has a Playfair title with a small ornament, and confirmations can use gold corners. It fades in, and fades out when closed with Escape, the backdrop or Cancel.
+- **Toasts**: success is charcoal with a gold check and a gold left edge, info is charcoal with a gold bell, and an error is white with a red alert and a red edge. They show at the top of the screen, so they never cover the bottom buttons on phones.
+- **Busy buttons** (`Spinner`): a small ring next to the same label while saving. The label never changes, so screen readers and tests still find it.
+- **Empty states** (`EmptyState`): a gold-ringed icon, a Playfair line, a short sentence, and an optional next step.
+- **Something went wrong**: a framed card with Try Again and Go Home. An unknown page inside the dashboards shows "Page not found" with Back to Dashboard.
+- **Browser tab**: each page sets its tab title, for example "Menu · Vencio's Garden".
+
 ## Motion
 
 Gentle and slow, so it never makes anyone dizzy. Made with Tailwind only (no motion package yet).

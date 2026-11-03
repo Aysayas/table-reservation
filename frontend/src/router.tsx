@@ -1,42 +1,15 @@
+import type { ComponentType } from 'react'
 import { createBrowserRouter } from 'react-router-dom'
+import ErrorPage from '@/components/ErrorPage'
+import PageLoader from '@/components/PageLoader'
 import CustomerLayout from '@/layouts/CustomerLayout'
 import DashboardLayout, { type NavItem } from '@/layouts/DashboardLayout'
-import AdminDashboard from '@/pages/admin/AdminDashboard'
-import Categories from '@/pages/admin/Categories'
-import MenuItemForm from '@/pages/admin/MenuItemForm'
-import MenuManagement from '@/pages/admin/MenuManagement'
-import OrderHistory from '@/pages/admin/OrderHistory'
-import Payments from '@/pages/admin/Payments'
-import Reports from '@/pages/admin/Reports'
-import Reservations from '@/pages/admin/Reservations'
-import Settings from '@/pages/admin/Settings'
-import StaffAccounts from '@/pages/admin/StaffAccounts'
-import TablesQr from '@/pages/admin/TablesQr'
-import About from '@/pages/customer/About'
-import Cart from '@/pages/customer/Cart'
-import Checkout from '@/pages/customer/Checkout'
-import DepositPayment from '@/pages/customer/DepositPayment'
-import FindReservation from '@/pages/customer/FindReservation'
-import Home from '@/pages/customer/Home'
-import ItemDetails from '@/pages/customer/ItemDetails'
-import Menu from '@/pages/customer/Menu'
-import OrderStatus from '@/pages/customer/OrderStatus'
-import ReservationConfirmation from '@/pages/customer/ReservationConfirmation'
-import ReserveTable from '@/pages/customer/ReserveTable'
-import TableMenu from '@/pages/customer/TableMenu'
-import OrdersPayments from '@/pages/staff/OrdersPayments'
-import StaffDashboard from '@/pages/staff/StaffDashboard'
-import ForgotPassword from '@/pages/customer/ForgotPassword'
-import Login from '@/pages/customer/Login'
-import MyReservations from '@/pages/customer/MyReservations'
+import RootLayout from '@/layouts/RootLayout'
 import NotFound from '@/pages/customer/NotFound'
-import Profile from '@/pages/customer/Profile'
-import Register from '@/pages/customer/Register'
-import ResetPassword from '@/pages/customer/ResetPassword'
-import KitchenDisplay from '@/pages/staff/KitchenDisplay'
-import StaffLogin from '@/pages/staff/StaffLogin'
-import TableStatus from '@/pages/staff/TableStatus'
-import TodaysReservations from '@/pages/staff/TodaysReservations'
+
+const page = (load: () => Promise<{ default: ComponentType }>) => async () => ({
+  Component: (await load()).default,
+})
 
 const staffNav: NavItem[] = [
   { to: '/staff', label: 'Dashboard' },
@@ -62,68 +35,211 @@ const adminNav: NavItem[] = [
 
 export const router = createBrowserRouter([
   {
-    element: <CustomerLayout />,
+    element: <RootLayout />,
+    hydrateFallbackElement: <PageLoader />,
+    errorElement: <ErrorPage />,
     children: [
-      { path: '/', element: <Home /> },
-      { path: '/menu', element: <Menu /> },
-      { path: '/reserve', element: <ReserveTable /> },
-      { path: '/reserve/payment', element: <DepositPayment /> },
       {
-        path: '/reserve/confirmation/:code',
-        element: <ReservationConfirmation />,
+        element: <CustomerLayout />,
+        children: [
+          { path: '/', lazy: page(() => import('@/pages/customer/Home')) },
+          {
+            path: '/menu',
+            handle: { tab: 'Menu' },
+            lazy: page(() => import('@/pages/customer/Menu')),
+          },
+          {
+            path: '/reserve',
+            handle: { tab: 'Reserve a Table' },
+            lazy: page(() => import('@/pages/customer/ReserveTable')),
+          },
+          {
+            path: '/reserve/payment',
+            handle: { tab: 'Deposit Payment' },
+            lazy: page(() => import('@/pages/customer/DepositPayment')),
+          },
+          {
+            path: '/reserve/confirmation/:code',
+            handle: { tab: 'Reservation Confirmed' },
+            lazy: page(() => import('@/pages/customer/ReservationConfirmation')),
+          },
+          {
+            path: '/reservation',
+            handle: { tab: 'Find My Reservation' },
+            lazy: page(() => import('@/pages/customer/FindReservation')),
+          },
+          {
+            path: '/login',
+            handle: { tab: 'Log In' },
+            lazy: page(() => import('@/pages/customer/Login')),
+          },
+          {
+            path: '/register',
+            handle: { tab: 'Create Account' },
+            lazy: page(() => import('@/pages/customer/Register')),
+          },
+          {
+            path: '/forgot-password',
+            handle: { tab: 'Forgot Password' },
+            lazy: page(() => import('@/pages/customer/ForgotPassword')),
+          },
+          {
+            path: '/reset-password',
+            handle: { tab: 'Reset Password' },
+            lazy: page(() => import('@/pages/customer/ResetPassword')),
+          },
+          {
+            path: '/my-reservations',
+            handle: { tab: 'My Reservations' },
+            lazy: page(() => import('@/pages/customer/MyReservations')),
+          },
+          {
+            path: '/profile',
+            handle: { tab: 'Profile' },
+            lazy: page(() => import('@/pages/customer/Profile')),
+          },
+          {
+            path: '/about',
+            handle: { tab: 'About Us' },
+            lazy: page(() => import('@/pages/customer/About')),
+          },
+          { path: '*', handle: { tab: 'Page Not Found' }, element: <NotFound /> },
+          {
+            path: '/table/:tableId',
+            handle: { tab: 'Table Menu' },
+            lazy: page(() => import('@/pages/customer/TableMenu')),
+          },
+          {
+            path: '/table/:tableId/menu',
+            handle: { tab: 'Table Menu' },
+            lazy: page(() => import('@/pages/customer/TableMenu')),
+          },
+          {
+            path: '/table/:tableId/menu/:itemId',
+            handle: { tab: 'Item Details' },
+            lazy: page(() => import('@/pages/customer/ItemDetails')),
+          },
+          {
+            path: '/table/:tableId/cart',
+            handle: { tab: 'Cart' },
+            lazy: page(() => import('@/pages/customer/Cart')),
+          },
+          {
+            path: '/table/:tableId/checkout',
+            handle: { tab: 'Checkout' },
+            lazy: page(() => import('@/pages/customer/Checkout')),
+          },
+          {
+            path: '/table/:tableId/orders',
+            handle: { tab: 'Order Status' },
+            lazy: page(() => import('@/pages/customer/OrderStatus')),
+          },
+        ],
       },
-      { path: '/reservation', element: <FindReservation /> },
-      { path: '/login', element: <Login /> },
-      { path: '/register', element: <Register /> },
-      { path: '/forgot-password', element: <ForgotPassword /> },
-      { path: '/reset-password', element: <ResetPassword /> },
-      { path: '/my-reservations', element: <MyReservations /> },
-      { path: '/profile', element: <Profile /> },
-      { path: '/about', element: <About /> },
-      { path: '*', element: <NotFound /> },
-      { path: '/table/:tableId', element: <TableMenu /> },
-      { path: '/table/:tableId/menu', element: <TableMenu /> },
       {
-        path: '/table/:tableId/menu/:itemId',
-        element: <ItemDetails />,
+        path: '/staff/login',
+        handle: { tab: 'Staff Login' },
+        lazy: page(() => import('@/pages/staff/StaffLogin')),
       },
-      { path: '/table/:tableId/cart', element: <Cart /> },
-      { path: '/table/:tableId/checkout', element: <Checkout /> },
-      { path: '/table/:tableId/orders', element: <OrderStatus /> },
-    ],
-  },
-  { path: '/staff/login', element: <StaffLogin /> },
-  { path: '/kitchen', element: <KitchenDisplay /> },
-  {
-    path: '/staff',
-    element: <DashboardLayout title="Staff" items={staffNav} />,
-    children: [
-      { index: true, element: <StaffDashboard /> },
-      { path: 'reservations', element: <TodaysReservations /> },
-      { path: 'tables', element: <TableStatus /> },
-      { path: 'orders', element: <OrdersPayments /> },
-    ],
-  },
-  {
-    path: '/admin',
-    element: <DashboardLayout title="Admin" items={adminNav} />,
-    children: [
-      { index: true, element: <AdminDashboard /> },
-      { path: 'menu', element: <MenuManagement /> },
-      { path: 'menu/new', element: <MenuItemForm />, handle: { title: 'Add Menu Item' } },
       {
-        path: 'menu/:id/edit',
-        element: <MenuItemForm />,
-        handle: { title: 'Edit Menu Item' },
+        path: '/kitchen',
+        handle: { tab: 'Kitchen' },
+        lazy: page(() => import('@/pages/staff/KitchenDisplay')),
       },
-      { path: 'categories', element: <Categories /> },
-      { path: 'tables', element: <TablesQr /> },
-      { path: 'reservations', element: <Reservations /> },
-      { path: 'orders', element: <OrderHistory /> },
-      { path: 'payments', element: <Payments /> },
-      { path: 'reports', element: <Reports /> },
-      { path: 'users', element: <StaffAccounts /> },
-      { path: 'settings', element: <Settings /> },
+      {
+        path: '/staff',
+        element: <DashboardLayout title="Staff" items={staffNav} />,
+        children: [
+          {
+            index: true,
+            lazy: page(() => import('@/pages/staff/StaffDashboard')),
+            handle: { tab: 'Staff Dashboard' },
+          },
+          {
+            path: 'reservations',
+            lazy: page(() => import('@/pages/staff/TodaysReservations')),
+            handle: { tab: "Today's Reservations" },
+          },
+          {
+            path: 'tables',
+            lazy: page(() => import('@/pages/staff/TableStatus')),
+            handle: { tab: 'Table Status' },
+          },
+          {
+            path: 'orders',
+            lazy: page(() => import('@/pages/staff/OrdersPayments')),
+            handle: { tab: 'Orders and Payments' },
+          },
+          { path: '*', element: <NotFound home="/staff" />, handle: { tab: 'Page Not Found' } },
+        ],
+      },
+      {
+        path: '/admin',
+        element: <DashboardLayout title="Admin" items={adminNav} />,
+        children: [
+          {
+            index: true,
+            lazy: page(() => import('@/pages/admin/AdminDashboard')),
+            handle: { tab: 'Admin Dashboard' },
+          },
+          {
+            path: 'menu',
+            lazy: page(() => import('@/pages/admin/MenuManagement')),
+            handle: { tab: 'Menu Management' },
+          },
+          {
+            path: 'menu/new',
+            lazy: page(() => import('@/pages/admin/MenuItemForm')),
+            handle: { title: 'Add Menu Item', tab: 'Add Menu Item' },
+          },
+          {
+            path: 'menu/:id/edit',
+            lazy: page(() => import('@/pages/admin/MenuItemForm')),
+            handle: { title: 'Edit Menu Item', tab: 'Edit Menu Item' },
+          },
+          {
+            path: 'categories',
+            lazy: page(() => import('@/pages/admin/Categories')),
+            handle: { tab: 'Categories' },
+          },
+          {
+            path: 'tables',
+            lazy: page(() => import('@/pages/admin/TablesQr')),
+            handle: { tab: 'Tables and QR Codes' },
+          },
+          {
+            path: 'reservations',
+            lazy: page(() => import('@/pages/admin/Reservations')),
+            handle: { tab: 'Reservations' },
+          },
+          {
+            path: 'orders',
+            lazy: page(() => import('@/pages/admin/OrderHistory')),
+            handle: { tab: 'Order History' },
+          },
+          {
+            path: 'payments',
+            lazy: page(() => import('@/pages/admin/Payments')),
+            handle: { tab: 'Payments' },
+          },
+          {
+            path: 'reports',
+            lazy: page(() => import('@/pages/admin/Reports')),
+            handle: { tab: 'Reports' },
+          },
+          {
+            path: 'users',
+            lazy: page(() => import('@/pages/admin/StaffAccounts')),
+            handle: { tab: 'Staff Accounts' },
+          },
+          {
+            path: 'settings',
+            lazy: page(() => import('@/pages/admin/Settings')),
+            handle: { tab: 'Settings' },
+          },
+          { path: '*', element: <NotFound home="/admin" />, handle: { tab: 'Page Not Found' } },
+        ],
+      },
     ],
   },
 ])

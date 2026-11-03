@@ -72,6 +72,12 @@ export default function CustomerLayout() {
     <div
       className={`mx-auto min-h-dvh max-w-[390px] border-x border-neutral-200 ${wide ? 'sm:max-w-none sm:border-x-0' : ''}`}
     >
+      <a
+        href="#main"
+        className="focus:bg-brand-gold focus:text-brand-charcoal sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:rounded-sm focus:px-4 focus:py-2 focus:text-sm focus:font-bold"
+      >
+        Skip to content
+      </a>
       <header
         className={`bg-brand-charcoal relative flex items-center justify-between gap-2 border-b border-white/10 px-3 py-3 min-[380px]:px-4 ${wide ? 'md:px-[max(2.5rem,calc((100%_-_72rem)/2_+_2.5rem))] md:py-4' : ''}`}
       >
@@ -188,7 +194,7 @@ export default function CustomerLayout() {
       {!wide && (
         <div aria-hidden="true" className="bg-brand-cream fixed inset-0 -z-10 print:hidden" />
       )}
-      <main>
+      <main id="main" tabIndex={-1} className="outline-none">
         <Outlet />
       </main>
     </div>
