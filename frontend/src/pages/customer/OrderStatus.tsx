@@ -1,12 +1,13 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { format, parseISO } from 'date-fns'
 import { Check } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import LeaderRow from '@/components/LeaderRow'
 import LoadError from '@/components/LoadError'
 import PageLoader from '@/components/PageLoader'
+import Spinner from '@/components/Spinner'
 import useOrderEvents from '@/hooks/useOrderEvents'
 import usePaymentReturn, { markPaying } from '@/hooks/usePaymentReturn'
 import { apiError } from '@/lib/api'
@@ -23,6 +24,12 @@ const steps: { status: Status; label: string }[] = [
   { status: 'ready', label: 'Ready' },
   { status: 'served', label: 'Served' },
 ]
+
+const updates: Partial<Record<Status, string>> = {
+  preparing: 'Your order is being prepared',
+  ready: 'Your order is ready',
+  served: 'Enjoy your meal!',
+}
 
 export default function OrderStatus() {
   const { tableId = '' } = useParams()
@@ -45,6 +52,18 @@ export default function OrderStatus() {
     refetchInterval: (query) => (query.state.data?.payment_status === 'unpaid' ? 5000 : 15000),
   })
   useOrderEvents(order?.channel, ['order', orderId])
+  const lastStatus = useRef<Status | null>(null)
+  const [update, setUpdate] = useState('')
+  const status = order?.status
+  useEffect(() => {
+    if (!status) return
+    const previous = lastStatus.current
+    lastStatus.current = status
+    const line = updates[status]
+    if (!previous || previous === status || !line) return
+    toast.info(line)
+    setUpdate(line)
+  }, [status])
   const { confirming } = usePaymentReturn(`order:${orderId}`, order?.payment_status === 'paid')
   const payNow = async () => {
     setPaying(true)
@@ -99,7 +118,12 @@ export default function OrderStatus() {
 
   return (
     <div className="bg-brand-cream short:pb-6 min-h-[calc(100dvh-4rem)] px-4 pt-6 pb-28">
-      <p className="font-display text-brand-gold-deep text-3xl">Salamat!</p>
+      <p className="font-display text-brand-gold-deep text-3xl motion-safe:animate-[dialog-in_700ms_ease-out]">
+        Salamat!
+      </p>
+      <p aria-live="polite" className="sr-only">
+        {update}
+      </p>
       <h1 className="text-brand-charcoal font-serif text-3xl">Order #{order.order_id}</h1>
       <p className="text-brand-ink/70 mt-1 text-sm">
         Placed at {format(parseISO(order.created_at), 'h:mm a')}
@@ -122,7 +146,7 @@ export default function OrderStatus() {
                 />
               )}
               <span
-                className={`relative flex size-8 shrink-0 items-center justify-center rounded-full border-2 ${done ? 'bg-brand-red border-brand-red text-white' : now ? 'border-brand-red bg-white' : 'border-brand-line bg-white'}`}
+                className={`relative flex size-8 shrink-0 items-center justify-center rounded-full border-2 ${update && index === current ? 'motion-safe:animate-[pulse_1s_ease-in-out_1]' : ''} ${done ? 'bg-brand-red border-brand-red text-white' : now ? 'border-brand-red bg-white' : 'border-brand-line bg-white'}`}
               >
                 {done ? (
                   <Check className="size-4" />
@@ -183,7 +207,8 @@ export default function OrderStatus() {
 
       <div className="bg-brand-charcoal mt-4 rounded-lg px-5 py-4 text-white">
         <p className="text-brand-gold text-xs font-bold tracking-[0.15em] uppercase">Payment</p>
-        <p className="mt-1 text-sm font-semibold">
+        <p className="mt-1 flex items-center gap-2 text-sm font-semibold">
+          {confirming && order.payment_status !== 'paid' && <Spinner />}
           {order.payment_status === 'paid'
             ? 'Paid'
             : confirming

@@ -1,8 +1,26 @@
-type Props = { name: string; src?: string | null; className: string; letter?: string }
+import { useState } from 'react'
 
-export default function DishPhoto({ name, src, className, letter = 'text-2xl' }: Props) {
+type Props = {
+  name: string
+  src?: string | null
+  className: string
+  letter?: string
+  eager?: boolean
+}
+
+export default function DishPhoto({ name, src, className, letter = 'text-2xl', eager }: Props) {
+  const [loaded, setLoaded] = useState(false)
   return src ? (
-    <img src={src} alt={`${name} photo`} className={`${className} object-cover`} />
+    <img
+      src={src}
+      alt={`${name} photo`}
+      loading={eager ? 'eager' : 'lazy'}
+      fetchPriority={eager ? 'high' : undefined}
+      decoding="async"
+      onLoad={() => setLoaded(true)}
+      onError={() => setLoaded(true)}
+      className={`${className} bg-brand-cream object-cover motion-safe:transition-[opacity,transform,translate,scale]! motion-safe:duration-700 ${loaded ? 'opacity-100' : 'opacity-0'}`}
+    />
   ) : (
     <div
       role="img"
