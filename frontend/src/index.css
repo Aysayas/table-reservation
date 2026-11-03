@@ -39,6 +39,15 @@
 
   --animate-dialog-in: dialog-in 200ms cubic-bezier(0.16, 1, 0.3, 1);
 
+  @keyframes refresh {
+    from {
+      translate: -100% 0;
+    }
+    to {
+      translate: 300% 0;
+    }
+  }
+
   @keyframes dialog-out {
     to {
       opacity: 0;
