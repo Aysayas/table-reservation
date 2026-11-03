@@ -4,6 +4,8 @@ import { ArrowRight } from 'lucide-react'
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import DishPhoto from '@/components/DishPhoto'
+import FramedPhoto from '@/components/FramedPhoto'
+import Ornament from '@/components/Ornament'
 import Reveal from '@/components/Reveal'
 import SiteFooter from '@/components/SiteFooter'
 import { groupHours } from '@/lib/hours'
@@ -48,7 +50,7 @@ export default function Home() {
 
   return (
     <div className="bg-brand-cream">
-      <section className="bg-brand-charcoal px-4 pt-10 pb-28 text-white md:pt-16 md:pb-32">
+      <section className="bg-brand-charcoal sm:gold-corners px-4 pt-10 pb-28 text-white md:pt-16 md:pb-32">
         <div className={`md:grid md:grid-cols-[1.15fr_1fr] md:items-center md:gap-12 ${wrap}`}>
           <div>
             <p className="font-display text-brand-gold text-4xl">Mabuhay!</p>
@@ -76,11 +78,13 @@ export default function Home() {
             </div>
           </div>
           <div className="relative mt-10 md:mt-0">
-            <img
-              src="/photos/stock-sisig.jpg"
-              alt="Sizzling pork sisig in a cast-iron pan"
-              className="h-64 w-full rounded-lg object-cover md:h-[26rem]"
-            />
+            <FramedPhoto>
+              <img
+                src="/photos/stock-sisig.jpg"
+                alt="Sizzling pork sisig in a cast-iron pan"
+                className="h-64 w-full rounded-lg object-cover md:h-[26rem]"
+              />
+            </FramedPhoto>
             {badge && (
               <div className="bg-brand-cream border-brand-gold absolute -right-2 -bottom-6 flex size-32 flex-col items-center justify-center rounded-full border border-dashed text-center md:-right-6 md:size-36">
                 <p className="text-brand-red text-xs font-bold tracking-[0.2em] uppercase">
@@ -114,8 +118,10 @@ export default function Home() {
         </ul>
       </Reveal>
 
+      <Ornament className="mx-auto max-w-xs px-4 pt-14 md:pt-20" />
+
       <Reveal
-        className={`px-4 py-16 md:grid md:grid-cols-2 md:items-center md:gap-12 md:py-24 ${wrap}`}
+        className={`px-4 pt-10 pb-16 md:grid md:grid-cols-2 md:items-center md:gap-12 md:pt-14 md:pb-24 ${wrap}`}
       >
         <div>
           <p className={eyebrow}>Our story</p>
@@ -145,11 +151,11 @@ export default function Home() {
 
       <section className="bg-brand-charcoal px-4 py-16 text-white md:py-20">
         <Reveal className={wrap}>
-          <div className="flex items-end justify-between gap-4">
-            <h2 className="font-serif text-4xl leading-tight md:text-5xl">Popular Dishes</h2>
+          <Ornament label="Popular Dishes" tone="dark" />
+          <div className="mt-4 flex justify-center">
             <Link
               to="/menu"
-              className="text-brand-gold mb-1 flex items-center gap-1 text-xs font-bold tracking-[0.15em] whitespace-nowrap uppercase hover:underline"
+              className="text-brand-gold flex items-center gap-1 text-xs font-bold tracking-[0.15em] whitespace-nowrap uppercase hover:underline"
             >
               View full menu
               <ArrowRight className="size-4" />

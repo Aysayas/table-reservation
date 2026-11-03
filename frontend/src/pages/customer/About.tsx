@@ -2,6 +2,8 @@ import { useQuery } from '@tanstack/react-query'
 import { Globe, Mail, Phone } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import FramedPhoto from '@/components/FramedPhoto'
+import Ornament from '@/components/Ornament'
 import RestaurantMap from '@/components/RestaurantMap'
 import Reveal from '@/components/Reveal'
 import SiteFooter from '@/components/SiteFooter'
@@ -62,6 +64,7 @@ export default function About() {
             className="from-brand-charcoal via-brand-charcoal/90 to-brand-charcoal/40 absolute inset-0 bg-gradient-to-r md:hidden"
           />
         </div>
+        <span aria-hidden="true" className="sm:gold-corners pointer-events-none absolute inset-0" />
         <div className={`relative ${wrap}`}>
           <nav aria-label="Breadcrumb" className="text-sm">
             <Link to="/" className="text-brand-gold hover:underline">
@@ -119,8 +122,10 @@ export default function About() {
         </Reveal>
       </section>
 
+      <Ornament className="mx-auto max-w-xs px-4 pt-14 md:pt-20" />
+
       <Reveal
-        className={`px-4 py-16 md:grid md:grid-cols-2 md:items-center md:gap-12 md:py-24 ${wrap}`}
+        className={`px-4 pt-10 pb-16 md:grid md:grid-cols-2 md:items-center md:gap-12 md:pt-14 md:pb-24 ${wrap}`}
       >
         <div>
           <p className={eyebrow}>Our story</p>
@@ -135,13 +140,15 @@ export default function About() {
             “This is our heritage. Today, it's on your plate.”
           </blockquote>
         </div>
-        <div className="group mt-10 overflow-hidden rounded-lg md:mt-0">
-          <img
-            src="/photos/vencios-counter.jpg"
-            alt="Vencio's Garden counter"
-            className="h-72 w-full object-cover motion-safe:transition-transform motion-safe:duration-700 motion-safe:group-hover:scale-105 md:h-[26rem]"
-          />
-        </div>
+        <FramedPhoto className="mt-10 md:mt-0">
+          <div className="group overflow-hidden rounded-lg">
+            <img
+              src="/photos/vencios-counter.jpg"
+              alt="Vencio's Garden counter"
+              className="h-72 w-full object-cover motion-safe:transition-transform motion-safe:duration-700 motion-safe:group-hover:scale-105 md:h-[26rem]"
+            />
+          </div>
+        </FramedPhoto>
       </Reveal>
 
       <section className="bg-brand-charcoal px-4 py-16 text-white md:py-24">
