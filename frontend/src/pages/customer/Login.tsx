@@ -51,7 +51,14 @@ export default function Login() {
   const carry = nextParam ? `?next=${encodeURIComponent(nextParam)}` : ''
 
   return (
-    <AccountCard title="Log In" intro="Log in to reserve a table and keep track of your bookings.">
+    <AccountCard
+      title="Log In"
+      intro={
+        next.startsWith('/reserve')
+          ? 'Log in or create an account to book. You can then see and change your reservations anytime.'
+          : 'Log in to reserve a table and keep track of your bookings.'
+      }
+    >
       <form noValidate onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <div>
           <label htmlFor="mobile_number" className={label}>
