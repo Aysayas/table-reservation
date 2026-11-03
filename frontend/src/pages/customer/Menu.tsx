@@ -4,6 +4,8 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import DishPhoto from '@/components/DishPhoto'
 import LoadError from '@/components/LoadError'
+import Ornament from '@/components/Ornament'
+import TrackHeading from '@/components/TrackHeading'
 import { dishDescription } from '@/lib/dish'
 import { getCategories, getMenuItems } from '@/services/menu'
 import type { MenuItem } from '@/types/db'
@@ -96,15 +98,18 @@ export default function Menu() {
           {
             id: 0,
             name: 'Popular',
+            track: undefined,
             items: matching.filter((i) => i.is_recommended && i.is_available),
           },
         ]
       : []),
     ...categories
+      .map((c, index) => ({ ...c, track: index + 1 }))
       .filter((c) => category === null || c.category_id === category)
       .map((c) => ({
         id: c.category_id,
         name: c.name,
+        track: c.track,
         items: matching.filter((i) => i.category_id === c.category_id),
       })),
   ].filter((section) => section.items.length > 0)
@@ -119,7 +124,7 @@ export default function Menu() {
 
   return (
     <div className="bg-brand-cream min-h-[calc(100dvh-4rem)] pb-16">
-      <section className="bg-brand-charcoal px-4 py-8 text-white md:py-14">
+      <section className="bg-brand-charcoal gold-corners px-4 py-8 text-white md:py-14">
         <div className="md:mx-auto md:max-w-6xl md:px-10">
           <nav
             aria-label="Breadcrumb"
@@ -258,13 +263,11 @@ export default function Menu() {
               aria-labelledby={`section-${section.id}`}
               className="mt-10 first:mt-6 lg:first:mt-0"
             >
-              <h2
+              <TrackHeading
                 id={`section-${section.id}`}
-                className="text-brand-charcoal font-serif text-2xl md:text-3xl"
-              >
-                {section.name}
-              </h2>
-              <span aria-hidden="true" className="bg-brand-gold mt-3 block h-px w-12" />
+                name={section.name}
+                track={section.track}
+              />
               <ul className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4">
                 {section.items.map((item) => (
                   <Dish
@@ -277,7 +280,8 @@ export default function Menu() {
             </section>
           ))}
 
-          <p className="bg-brand-charcoal mt-12 flex items-center gap-3 rounded-xl px-5 py-5 text-sm text-white">
+          <Ornament className="mt-12" />
+          <p className="bg-brand-charcoal mt-8 flex items-center gap-3 rounded-xl px-5 py-5 text-sm text-white">
             <QrCode className="text-brand-gold size-6 shrink-0" />
             Dining in? Scan the QR code on your table to order.
           </p>
