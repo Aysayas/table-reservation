@@ -1,10 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { differenceInMinutes, format, parseISO } from 'date-fns'
-import { ArrowLeft, LogOut } from 'lucide-react'
+import { ArrowLeft, ChefHat, LogOut } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
+import EmptyState from '@/components/EmptyState'
 import LoadError from '@/components/LoadError'
+import Skeleton from '@/components/Skeleton'
+import Spinner from '@/components/Spinner'
 import useOrderEvents, { STAFF_CHANNEL } from '@/hooks/useOrderEvents'
 import { logout } from '@/services/auth'
 import { listOrders, updateOrderStatus, type StaffOrder } from '@/services/orders'
@@ -74,6 +77,7 @@ export default function KitchenDisplay() {
   }, [])
   const {
     data: orders = [],
+    isPending,
     isLoadingError,
     refetch,
   } = useQuery({
@@ -98,6 +102,8 @@ export default function KitchenDisplay() {
     },
     onError: (e) => toast.error(e.message),
   })
+  const moving = (order: StaffOrder) =>
+    move.isPending && move.variables?.order.order_id === order.order_id
   const oldestFirst = [...orders].reverse()
 
   return (
@@ -202,17 +208,32 @@ export default function KitchenDisplay() {
                         <button
                           type="button"
                           disabled={move.isPending}
+                          aria-busy={moving(order)}
                           onClick={() => move.mutate({ order, next: column.next })}
-                          className={`mt-5 block w-full rounded-lg py-3.5 text-base font-bold tracking-wide transition-colors duration-200 disabled:opacity-50 ${column.button}`}
+                          className={`mt-5 flex w-full items-center justify-center gap-2 rounded-lg py-3.5 text-base font-bold tracking-wide transition-colors duration-200 disabled:opacity-50 ${column.button}`}
                         >
+                          {moving(order) && <Spinner />}
                           {column.action}
                         </button>
                       </li>
                     )
                   })}
-                  {list.length === 0 && (
-                    <li className="border-brand-line text-brand-ink/70 rounded-xl border border-dashed py-10 text-center italic">
-                      No orders here. New orders appear automatically.
+                  {isPending &&
+                    Array.from({ length: 2 }, (_, i) => (
+                      <li key={i} className="border-brand-line/60 rounded-xl border bg-white p-5">
+                        <Skeleton className="h-8 w-32" />
+                        <Skeleton className="mt-2 h-4 w-20" />
+                        <Skeleton className="mt-5 h-5 w-3/4" />
+                        <Skeleton className="mt-2 h-5 w-1/2" />
+                        <Skeleton className="mt-5 h-12 w-full" />
+                      </li>
+                    ))}
+                  {!isPending && list.length === 0 && (
+                    <li className="border-brand-line rounded-xl border border-dashed">
+                      <EmptyState
+                        icon={ChefHat}
+                        title="No orders here. New orders appear automatically."
+                      />
                     </li>
                   )}
                 </ul>

@@ -1,9 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
 import { format, parseISO } from 'date-fns'
-import { ChevronLeft, ChevronRight, Search } from 'lucide-react'
+import { CalendarX, ChevronLeft, ChevronRight, Search } from 'lucide-react'
 import { useState } from 'react'
+import EmptyState from '@/components/EmptyState'
 import LoadError from '@/components/LoadError'
 import ReservationActions from '@/components/ReservationActions'
+import Skeleton from '@/components/Skeleton'
 import { formatTime } from '@/lib/hours'
 import { listReservations, type ReservationView } from '@/services/reservations'
 import type { ReservationStatus } from '@/types/db'
@@ -39,7 +41,7 @@ export default function TodaysReservations() {
   const [view, setView] = useState<ReservationView>('today')
   const [status, setStatus] = useState<ReservationStatus | ''>('')
   const [page, setPage] = useState(1)
-  const { data, isLoadingError, refetch } = useQuery({
+  const { data, isPending, isLoadingError, refetch } = useQuery({
     queryKey: ['reservations', { view, status, search, page }],
     queryFn: () => listReservations({ view, status, search, page }),
     refetchInterval: 30000,
@@ -163,10 +165,20 @@ export default function TodaysReservations() {
                   </td>
                 </tr>
               ))}
-              {rows.length === 0 && (
+              {isPending &&
+                Array.from({ length: 5 }, (_, i) => (
+                  <tr key={i} className="border-brand-line border-t">
+                    {Array.from({ length: 10 }, (_, j) => (
+                      <td key={j} className={td}>
+                        <Skeleton className="h-4 w-full" />
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              {!isPending && rows.length === 0 && (
                 <tr>
-                  <td colSpan={10} className="text-brand-ink/70 px-4 py-10 text-center text-sm">
-                    No reservations found.
+                  <td colSpan={10}>
+                    <EmptyState icon={CalendarX} title="No reservations found." />
                   </td>
                 </tr>
               )}
