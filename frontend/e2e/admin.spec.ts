@@ -2,6 +2,10 @@ import { expect, test } from '@playwright/test'
 
 test('admin sidebar opens each section', async ({ page }) => {
   await page.goto('/admin')
+  const sidebar = page.getByRole('navigation', { name: 'Admin menu' })
+  for (const group of ['Today', 'Menu & Tables', 'Sales', 'Setup']) {
+    await expect(sidebar.getByText(group, { exact: true })).toBeVisible()
+  }
   await page.getByRole('link', { name: 'Menu', exact: true }).click()
   await expect(page.getByRole('heading', { name: 'Menu Management' })).toBeVisible()
   await page.getByRole('link', { name: 'Settings' }).click()
