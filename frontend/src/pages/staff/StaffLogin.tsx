@@ -9,6 +9,7 @@ import { z } from 'zod'
 import { apiError } from '@/lib/api'
 import { login, roleHome } from '@/services/auth'
 import { getSettings } from '@/services/settings'
+import Ornament from '@/components/Ornament'
 
 const schema = z.object({
   email: z.email('Enter a valid email'),
@@ -45,7 +46,7 @@ export default function StaffLogin() {
 
   return (
     <div className="bg-brand-cream flex min-h-dvh items-center justify-center px-4 py-16">
-      <div className="border-brand-gold/40 relative w-full max-w-[420px] rounded-2xl border bg-white px-8 pt-20 pb-10 shadow-sm sm:px-10">
+      <div className="border-brand-gold/40 gold-corners relative w-full max-w-[420px] rounded-2xl border bg-white px-8 pt-20 pb-10 shadow-sm sm:px-10">
         <div className="text-center">
           <span className="border-brand-gold/60 bg-brand-cream absolute -top-14 left-1/2 block size-28 -translate-x-1/2 rounded-full border p-2">
             <span className="block size-full overflow-hidden rounded-full">
@@ -60,6 +61,7 @@ export default function StaffLogin() {
             Staff portal
           </p>
           <h1 className="text-brand-charcoal mt-3 font-serif text-5xl">Staff Login</h1>
+          <Ornament className="mx-auto mt-3 max-w-40" />
           <p className="text-brand-ink/75 mt-2 text-sm">Sign in to manage today's reservations.</p>
         </div>
 
