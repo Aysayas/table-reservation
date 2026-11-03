@@ -214,8 +214,8 @@ class Payments extends Controller {
 			$this->call->library('pusher');
 			$this->pusher->order_changed($order_id, 'order.paid');
 		} else {
-			$this->call->library('sms');
-			$this->sms->reservation($reservation_id, 'deposit_paid');
+			$this->call->library('notify');
+			$this->notify->reservation($reservation_id, 'deposit_paid');
 		}
 
 		$payment = $this->Payment_model->find($id);
@@ -274,8 +274,8 @@ class Payments extends Controller {
 		} elseif ($this->Reservation_model->find($payment['reservation_id'])['status'] === 'cancelled') {
 			error_log("Reservation {$payment['reservation_id']} was cancelled before online payment {$id} arrived; it needs a refund");
 		} else {
-			$this->call->library('sms');
-			$this->sms->reservation((int) $payment['reservation_id'], 'deposit_paid');
+			$this->call->library('notify');
+			$this->notify->reservation((int) $payment['reservation_id'], 'deposit_paid');
 		}
 		$this->api->respond(['received' => true]);
 	}
