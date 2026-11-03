@@ -226,6 +226,7 @@ export default function KitchenDisplay() {
     if (sound) chime((audio.current ??= new AudioContext()))
   }, [orders, isSuccess, sound])
   const [saving, setSaving] = useState<number[]>([])
+  const savingIds = useRef(new Set<number>())
   const move = useMutation({
     mutationKey: moveKey,
     mutationFn: ({ order, next }: { order: StaffOrder; next: OrderStatus }) =>
@@ -265,6 +266,7 @@ export default function KitchenDisplay() {
       toast.error(e.message)
     },
     onSettled: (_data, _error, { order }) => {
+      savingIds.current.delete(order.order_id)
       setSaving((list) => list.filter((id) => id !== order.order_id))
       if (queryClient.isMutating({ mutationKey: moveKey }) > 1) return
       for (const key of ['orders', 'tables', 'dashboard']) {
@@ -273,7 +275,8 @@ export default function KitchenDisplay() {
     },
   })
   const bump = (order: StaffOrder, next: OrderStatus) => {
-    if (saving.includes(order.order_id)) return
+    if (savingIds.current.has(order.order_id)) return
+    savingIds.current.add(order.order_id)
     setSaving((list) => [...list, order.order_id])
     move.mutate({ order, next })
   }
