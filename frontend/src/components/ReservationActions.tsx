@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { X } from 'lucide-react'
-import { type ReactNode, useState } from 'react'
+import { Ellipsis, X } from 'lucide-react'
+import { useRef, useState } from 'react'
 import { toast } from 'sonner'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import { formatTime } from '@/lib/hours'
@@ -9,17 +9,25 @@ import { removeReservation, updateReservationStatus } from '@/services/reservati
 import { getTables, getTakenTables } from '@/services/tables'
 import type { PublicReservation, ReservationStatus } from '@/types/db'
 
-const action =
-  'border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal rounded-md border px-3 py-1.5 text-xs font-bold whitespace-nowrap transition-colors duration-200 hover:text-white'
+const primary =
+  'bg-brand-charcoal hover:bg-brand-charcoal/85 pointer-coarse:min-h-11 rounded-md px-3 py-1.5 text-xs font-bold whitespace-nowrap text-white transition-colors duration-200'
+const more =
+  'border-brand-line text-brand-charcoal hover:border-brand-charcoal pointer-coarse:min-h-11 pointer-coarse:min-w-11 flex items-center justify-center rounded-md border px-2 py-1.5 transition-colors duration-200'
+const item =
+  'hover:bg-brand-cream focus-visible:bg-brand-cream pointer-coarse:py-3.5 block w-full px-4 py-2.5 text-left text-sm font-semibold outline-none'
+type Action = { label: string; aria: string; run: () => void; danger?: boolean }
 
 export default function ReservationActions({
   reservation: r,
-  children,
+  onEdit,
 }: {
   reservation: PublicReservation
-  children?: ReactNode
+  onEdit?: () => void
 }) {
   const queryClient = useQueryClient()
+  const trigger = useRef<HTMLButtonElement>(null)
+  const menu = useRef<HTMLDivElement>(null)
+  const menuId = `actions-${r.reservation_id}`
   const [assigning, setAssigning] = useState(false)
   const [confirming, setConfirming] = useState<'no_show' | 'cancelled' | 'remove' | null>(null)
   const { data: tables = [] } = useQuery({
@@ -84,83 +92,110 @@ export default function ReservationActions({
   }
   const seats = tables.filter((t) => t.capacity >= r.pax && t.table_number !== r.table_number)
   const allTaken = seats.length > 0 && seats.every((t) => taken.includes(t.table_id))
-  const cancel = (
-    <button
-      type="button"
-      aria-label={`Cancel ${r.reference_code}`}
-      onClick={() => setConfirming('cancelled')}
-      className={action}
-    >
-      Cancel
-    </button>
-  )
+  const ref = r.reference_code
+  const next: Action | null =
+    r.status === 'confirmed'
+      ? {
+          label: 'Arrived',
+          aria: `Mark ${ref} arrived`,
+          run: () => change.mutate({ status: 'arrived' }),
+        }
+      : r.status === 'pending'
+        ? { label: 'Assign Table', aria: `Assign a table to ${ref}`, run: () => setAssigning(true) }
+        : r.status === 'no_show'
+          ? {
+              label: 'Undo No-show',
+              aria: `Undo no-show for ${ref}`,
+              run: () => change.mutate({ status: 'confirmed' }),
+            }
+          : null
+  const active = r.status === 'pending' || r.status === 'confirmed'
+  const others = [
+    r.status === 'confirmed' && {
+      label: 'No-show',
+      aria: `Mark ${ref} no-show`,
+      run: () => setConfirming('no_show'),
+    },
+    r.status === 'confirmed' && {
+      label: 'Change Table',
+      aria: `Change the table for ${ref}`,
+      run: () => setAssigning(true),
+    },
+    onEdit && { label: 'Edit', aria: `Edit ${ref}`, run: onEdit },
+    active && {
+      label: 'Cancel',
+      aria: `Cancel ${ref}`,
+      run: () => setConfirming('cancelled'),
+      danger: true,
+    },
+    removable && {
+      label: 'Remove',
+      aria: `Remove ${ref}`,
+      run: () => setConfirming('remove'),
+      danger: true,
+    },
+  ].filter((a): a is Action => Boolean(a))
+
+  const placeMenu = () => {
+    const box = menu.current
+    const anchor = trigger.current?.getBoundingClientRect()
+    if (!box || !anchor) return
+    const fitsBelow = anchor.bottom + 4 + box.offsetHeight <= window.innerHeight
+    box.style.top = `${fitsBelow ? anchor.bottom + 4 : anchor.top - 4 - box.offsetHeight}px`
+    box.style.left = `${Math.max(8, anchor.right - box.offsetWidth)}px`
+    box.querySelector('button')?.focus()
+  }
 
   return (
     <>
-      <div className="flex flex-wrap gap-2">
-        {children}
-        {r.status === 'confirmed' && (
-          <>
-            <button
-              type="button"
-              aria-label={`Mark ${r.reference_code} arrived`}
-              onClick={() => change.mutate({ status: 'arrived' })}
-              className={action}
-            >
-              Arrived
-            </button>
-            <button
-              type="button"
-              aria-label={`Mark ${r.reference_code} no-show`}
-              onClick={() => setConfirming('no_show')}
-              className={action}
-            >
-              No-show
-            </button>
-            <button
-              type="button"
-              aria-label={`Change the table for ${r.reference_code}`}
-              onClick={() => setAssigning(true)}
-              className={action}
-            >
-              Change Table
-            </button>
-            {cancel}
-          </>
-        )}
-        {r.status === 'pending' && (
-          <>
-            <button
-              type="button"
-              aria-label={`Assign a table to ${r.reference_code}`}
-              onClick={() => setAssigning(true)}
-              className={action}
-            >
-              Assign Table
-            </button>
-            {cancel}
-          </>
-        )}
-        {r.status === 'no_show' && (
+      <div className="flex items-center gap-2">
+        {next && (
           <button
             type="button"
-            aria-label={`Undo no-show for ${r.reference_code}`}
+            aria-label={next.aria}
             disabled={change.isPending}
-            onClick={() => change.mutate({ status: 'confirmed' })}
-            className={action}
+            onClick={next.run}
+            className={primary}
           >
-            Undo No-show
+            {next.label}
           </button>
         )}
-        {removable && (
-          <button
-            type="button"
-            aria-label={`Remove ${r.reference_code}`}
-            onClick={() => setConfirming('remove')}
-            className={action}
-          >
-            Remove
-          </button>
+        {others.length > 0 && (
+          <>
+            <button
+              ref={trigger}
+              type="button"
+              popoverTarget={menuId}
+              aria-label={`More actions for ${ref}`}
+              className={more}
+            >
+              <Ellipsis aria-hidden="true" className="size-4" />
+            </button>
+            <div
+              ref={menu}
+              id={menuId}
+              popover="auto"
+              onToggle={(event) => {
+                if (event.newState === 'open') placeMenu()
+              }}
+              className="border-brand-line inset-auto m-0 w-44 rounded-md border bg-white py-1 shadow-lg"
+            >
+              {others.map((a) => (
+                <button
+                  key={a.label}
+                  type="button"
+                  aria-label={a.aria}
+                  onClick={() => {
+                    menu.current?.hidePopover()
+                    a.run()
+                  }}
+                  className={`${item} ${a.danger ? 'text-brand-red' : 'text-brand-charcoal'}`}
+                >
+                  {a.label}
+                </button>
+              ))}
+            </div>
+          </>
         )}
       </div>
 

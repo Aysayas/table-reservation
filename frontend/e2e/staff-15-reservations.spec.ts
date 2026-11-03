@@ -34,10 +34,12 @@ test('arrived and no-show change a confirmed booking', async ({ page }) => {
   await page.getByRole('button', { name: 'Mark RSV-000004 arrived' }).click()
   await expect(page.getByText('RSV-000004 is now arrived')).toBeVisible()
   await expect(page.getByRole('row', { name: /RSV-000004/ })).toContainText('Arrived')
+  await page.getByRole('button', { name: 'More actions for RSV-000005' }).click()
   await page.getByRole('button', { name: 'Mark RSV-000005 no-show' }).click()
   const dialog = page.getByRole('dialog')
   await dialog.getByRole('button', { name: 'Go Back' }).click()
   await expect(page.getByRole('row', { name: /RSV-000005/ })).toContainText('Confirmed')
+  await page.getByRole('button', { name: 'More actions for RSV-000005' }).click()
   await page.getByRole('button', { name: 'Mark RSV-000005 no-show' }).click()
   await dialog.getByRole('button', { name: 'Mark No-show' }).click()
   await expect(page.getByRole('row', { name: /RSV-000005/ })).toContainText('No-show')
@@ -47,6 +49,7 @@ test('arrived and no-show change a confirmed booking', async ({ page }) => {
 
 test('staff can cancel a booking after confirming', async ({ page }) => {
   await page.goto(url)
+  await page.getByRole('button', { name: 'More actions for RSV-000004' }).click()
   await page.getByRole('button', { name: 'Cancel RSV-000004' }).click()
   await page.getByRole('dialog').getByRole('button', { name: 'Cancel Reservation' }).click()
   await expect(page.getByText('RSV-000004 is now cancelled')).toBeVisible()
@@ -55,11 +58,15 @@ test('staff can cancel a booking after confirming', async ({ page }) => {
 
 test('staff can remove an unpaid booking, but not one with no deposit due', async ({ page }) => {
   await page.goto(url)
+  await page.getByRole('button', { name: 'More actions for RSV-000004' }).click()
   await expect(page.getByRole('button', { name: 'Remove RSV-000004' })).toHaveCount(0)
+  await page.keyboard.press('Escape')
+  await page.getByRole('button', { name: 'More actions for RSV-000007' }).click()
   await page.getByRole('button', { name: 'Remove RSV-000007' }).click()
   const dialog = page.getByRole('dialog')
   await dialog.getByRole('button', { name: 'Keep Booking' }).click()
   await expect(page.getByRole('row', { name: /RSV-000007/ })).toBeVisible()
+  await page.getByRole('button', { name: 'More actions for RSV-000007' }).click()
   await page.getByRole('button', { name: 'Remove RSV-000007' }).click()
   await dialog.getByRole('button', { name: 'Remove Booking' }).click()
   await expect(page.getByText('RSV-000007 removed')).toBeVisible()

@@ -129,6 +129,7 @@ Gentle and slow, so it never makes anyone dizzy. Made with Tailwind only (no mot
 - **Focus:** every input, select and textarea shows a 2px `brand-gold-deep` ring inside its border when focused (set once in `src/index.css`).
 - **Smallest text:** `text-xs` (12px). The cart count in its small red circle is the only exception.
 - **Placeholders:** `placeholder:text-brand-ink/65`, so hints stay readable.
+- **Row actions:** a list row shows one filled charcoal button for its next step and a ⋯ button for the rest (`ReservationActions`). The ⋯ menu uses the browser's `popover`, so a scrolling table can't clip it; red text marks actions that cancel or delete. On touch screens both buttons are at least 44px.
 
 ## Mobile numbers
 

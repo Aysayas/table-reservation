@@ -77,6 +77,7 @@ These differ from the 29 approved wireframes on purpose, to remove redundant ste
 - **Staff (15, 16, 17):** Cancel, Undo No-show, Change Table, Seat Guests and Free Table added. An order must be picked before taking payment.
 - **Admin (24, 29):** Reservation Settings moved from 24 to 29, and 24 gets search and status actions.
 - **Reservations (15, 24):** an Added column shows when each booking was made.
+- **Reservation row actions (15, 24):** each row shows its next step as one filled button (Arrived, Assign Table or Undo No-show). The other actions (No-show, Change Table, Edit, Cancel, Remove) are in a ⋯ menu, with Cancel and Remove in red.
 
 ## Backend progress
 
