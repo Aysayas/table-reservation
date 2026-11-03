@@ -111,6 +111,25 @@ export default function KitchenDisplay() {
     }
   })
   const audio = useRef<AudioContext | null>(null)
+  const timers = useRef<number[]>([])
+  useEffect(() => {
+    if (!sound) return
+    const unlock = () => void (audio.current ??= new AudioContext()).resume()
+    window.addEventListener('pointerdown', unlock, { once: true })
+    window.addEventListener('keydown', unlock, { once: true })
+    return () => {
+      window.removeEventListener('pointerdown', unlock)
+      window.removeEventListener('keydown', unlock)
+    }
+  }, [sound])
+  useEffect(
+    () => () => {
+      for (const timer of timers.current) clearTimeout(timer)
+      void audio.current?.close()
+      audio.current = null
+    },
+    [],
+  )
   const toggleSound = () => {
     const next = !sound
     setSound(next)
@@ -138,7 +157,9 @@ export default function KitchenDisplay() {
     for (const o of arrived) toast.info('New order', { description: `Table ${o.table_number}` })
     setAnnouncement(arrived.map((o) => `New order for table ${o.table_number}`).join('. '))
     setFresh((list) => [...list, ...ids])
-    setTimeout(() => setFresh((list) => list.filter((id) => !ids.includes(id))), 4000)
+    timers.current.push(
+      window.setTimeout(() => setFresh((list) => list.filter((id) => !ids.includes(id))), 4000),
+    )
     if (sound) chime((audio.current ??= new AudioContext()))
   }, [orders, isSuccess, sound])
   const move = useMutation({

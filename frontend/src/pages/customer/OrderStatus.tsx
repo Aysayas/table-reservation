@@ -52,18 +52,22 @@ export default function OrderStatus() {
     refetchInterval: (query) => (query.state.data?.payment_status === 'unpaid' ? 5000 : 15000),
   })
   useOrderEvents(order?.channel, ['order', orderId])
-  const lastStatus = useRef<Status | null>(null)
+  const lastStatus = useRef<{ id: number; status: Status } | null>(null)
   const [update, setUpdate] = useState('')
   const status = order?.status
   useEffect(() => {
     if (!status) return
     const previous = lastStatus.current
-    lastStatus.current = status
+    lastStatus.current = { id: orderId, status }
+    if (previous?.id !== orderId) {
+      setUpdate('')
+      return
+    }
     const line = updates[status]
-    if (!previous || previous === status || !line) return
+    if (previous.status === status || !line) return
     toast.info(line)
     setUpdate(line)
-  }, [status])
+  }, [status, orderId])
   const { confirming } = usePaymentReturn(`order:${orderId}`, order?.payment_status === 'paid')
   const payNow = async () => {
     setPaying(true)

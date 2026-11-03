@@ -131,6 +131,8 @@ Small gold details that make the pages feel dressed up without changing the pale
 - **Empty states** (`EmptyState`): a gold-ringed icon, a Playfair line, a short sentence, and an optional next step.
 - **Something went wrong**: a framed card with Try Again and Go Home. An unknown page inside the dashboards shows "Page not found" with Back to Dashboard.
 - **Browser tab**: each page sets its tab title, for example "Menu · Vencio's Garden".
+- **Live alerts**: a new kitchen order gets a gold ring for 4 seconds, an info toast and a screen-reader line. The kitchen can turn on a soft two-note chime, which is off by default. Guests get a toast when their order moves to Preparing, Ready or Served, and the current step pulses once.
+- **Success**: a gold check draws in on a confirmed booking, and "Salamat!" fades in on the order status page.
 
 ## Motion
 
