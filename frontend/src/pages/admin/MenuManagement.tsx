@@ -4,6 +4,8 @@ import { useState } from 'react'
 import { Link, useLocation, useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import LoadError from '@/components/LoadError'
+import Modal from '@/components/Modal'
+import Spinner from '@/components/Spinner'
 import { deleteMenuItem, getCategories, getMenuItems, setAvailability } from '@/services/menu'
 import type { MenuItem } from '@/types/db'
 
@@ -235,38 +237,31 @@ export default function MenuManagement() {
       </div>
 
       {deleting && (
-        <div className="fixed inset-0 z-30 flex items-center justify-center bg-black/40 p-4">
-          <div
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="delete-title"
-            className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl"
-          >
-            <h2 id="delete-title" className="text-brand-charcoal font-serif text-2xl font-bold">
-              Delete {deleting.name}?
-            </h2>
-            <p className="text-brand-ink/70 mt-2 text-sm">
-              This removes the dish and its photo. It can&apos;t be undone.
-            </p>
-            <div className="mt-6 flex justify-end gap-3">
-              <button
-                type="button"
-                onClick={() => setDeleting(null)}
-                className="border-brand-line text-brand-charcoal rounded-md border px-4 py-2 text-sm font-bold"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                disabled={remove.isPending}
-                onClick={() => remove.mutate(deleting)}
-                className="bg-brand-red hover:bg-brand-red/90 rounded-md px-4 py-2 text-sm font-bold text-white disabled:opacity-50"
-              >
-                Delete
-              </button>
-            </div>
+        <Modal title={`Delete ${deleting.name}?`} onClose={() => setDeleting(null)} framed>
+          <p className="text-brand-ink/70 text-center text-sm">
+            This removes the dish and its photo. It can&apos;t be undone.
+          </p>
+          <div className="mt-6 flex justify-center gap-3">
+            <button
+              type="button"
+              disabled={remove.isPending}
+              onClick={() => setDeleting(null)}
+              className="border-brand-line text-brand-charcoal rounded-md border px-4 py-2 text-sm font-bold disabled:opacity-50"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              disabled={remove.isPending}
+              aria-busy={remove.isPending}
+              onClick={() => remove.mutate(deleting)}
+              className="bg-brand-red hover:bg-brand-red/90 inline-flex items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-bold text-white disabled:opacity-50"
+            >
+              {remove.isPending && <Spinner />}
+              Delete
+            </button>
           </div>
-        </div>
+        </Modal>
       )}
     </div>
   )

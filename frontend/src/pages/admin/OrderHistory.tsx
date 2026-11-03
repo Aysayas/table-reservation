@@ -14,6 +14,7 @@ import {
 import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import LoadError from '@/components/LoadError'
+import Modal from '@/components/Modal'
 import { listOrders, type StaffOrder } from '@/services/orders'
 import type { OrderStatus } from '@/types/db'
 
@@ -327,82 +328,70 @@ export default function OrderHistory() {
       </div>
 
       {viewing && (
-        <div className="fixed inset-0 z-30 flex items-center justify-center bg-black/50 p-4">
-          <div
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="order-title"
-            className="w-full max-w-md overflow-hidden rounded-xl bg-white shadow-2xl"
+        <Modal title={`Order #${viewing.order_id}`} onClose={() => setViewing(null)}>
+          <button
+            type="button"
+            aria-label="Close"
+            onClick={() => setViewing(null)}
+            className="text-brand-ink/70 hover:text-brand-charcoal absolute top-4 right-4 transition-colors duration-200"
           >
-            <div className="bg-brand-charcoal flex items-start justify-between gap-4 px-6 py-5 text-white">
-              <div>
-                <p className="text-brand-gold text-xs font-bold tracking-[0.2em] uppercase">
-                  Order details
-                </p>
-                <h2 id="order-title" className="mt-1 font-serif text-3xl font-bold">
-                  Order #{viewing.order_id}
-                </h2>
-                <p className="mt-1 text-sm text-white/70">
-                  Table {viewing.table_number} ·{' '}
-                  {format(parseISO(viewing.created_at), 'MMMM d, yyyy h:mm a')}
-                </p>
-              </div>
-              <button
-                type="button"
-                aria-label="Close"
-                onClick={() => setViewing(null)}
-                className="text-white/60 transition-colors duration-200 hover:text-white"
-              >
-                <X className="size-5" />
-              </button>
-            </div>
-            <div className="px-6 py-5">
-              <div className="flex gap-2">
-                <PaymentBadge order={viewing} />
-                <span
-                  className={`inline-block rounded-full px-3 py-1 text-xs font-bold ${orderBadge[viewing.status]}`}
-                >
-                  {cap(viewing.status)}
-                </span>
-              </div>
-              <ul className="mt-4 space-y-3 text-sm">
-                {viewing.items.map((item) => (
-                  <li key={item.order_item_id} className="flex justify-between gap-4">
-                    <span className="text-brand-charcoal">
-                      <span className="font-bold">{item.quantity}×</span> {item.name}
-                      {item.notes && (
-                        <span className="text-brand-red block text-xs">Note: {item.notes}</span>
-                      )}
-                    </span>
-                    <span className="shrink-0 tabular-nums">
-                      {peso(item.unit_price * item.quantity)}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-              <dl className="border-brand-line mt-5 space-y-2 border-t border-dashed pt-4 text-sm">
-                <div className="flex justify-between">
-                  <dt className="text-brand-ink/70">Subtotal</dt>
-                  <dd className="tabular-nums">{peso(viewing.subtotal)}</dd>
-                </div>
-                <div className="flex justify-between">
-                  <dt className="text-brand-ink/70">Service Charge</dt>
-                  <dd className="tabular-nums">{peso(viewing.service_charge)}</dd>
-                </div>
-                <div className="flex justify-between">
-                  <dt className="text-brand-ink/70">Payment</dt>
-                  <dd>
-                    <Method method={viewing.payment_method} />
-                  </dd>
-                </div>
-                <div className="border-brand-line flex justify-between border-t pt-3 font-serif text-xl font-bold">
-                  <dt>Total</dt>
-                  <dd className="text-brand-red tabular-nums">{peso(viewing.total_amount)}</dd>
-                </div>
-              </dl>
-            </div>
+            <X className="size-5" />
+          </button>
+          <div className="text-center">
+            <p className="text-brand-gold text-xs font-bold tracking-[0.2em] uppercase">
+              Order details
+            </p>
+            <p className="text-brand-ink/70 mt-1 text-sm">
+              Table {viewing.table_number} ·{' '}
+              {format(parseISO(viewing.created_at), 'MMMM d, yyyy h:mm a')}
+            </p>
           </div>
-        </div>
+          <div className="mt-5">
+            <div className="flex gap-2">
+              <PaymentBadge order={viewing} />
+              <span
+                className={`inline-block rounded-full px-3 py-1 text-xs font-bold ${orderBadge[viewing.status]}`}
+              >
+                {cap(viewing.status)}
+              </span>
+            </div>
+            <ul className="mt-4 space-y-3 text-sm">
+              {viewing.items.map((item) => (
+                <li key={item.order_item_id} className="flex justify-between gap-4">
+                  <span className="text-brand-charcoal">
+                    <span className="font-bold">{item.quantity}×</span> {item.name}
+                    {item.notes && (
+                      <span className="text-brand-red block text-xs">Note: {item.notes}</span>
+                    )}
+                  </span>
+                  <span className="shrink-0 tabular-nums">
+                    {peso(item.unit_price * item.quantity)}
+                  </span>
+                </li>
+              ))}
+            </ul>
+            <dl className="border-brand-line mt-5 space-y-2 border-t border-dashed pt-4 text-sm">
+              <div className="flex justify-between">
+                <dt className="text-brand-ink/70">Subtotal</dt>
+                <dd className="tabular-nums">{peso(viewing.subtotal)}</dd>
+              </div>
+              <div className="flex justify-between">
+                <dt className="text-brand-ink/70">Service Charge</dt>
+                <dd className="tabular-nums">{peso(viewing.service_charge)}</dd>
+              </div>
+              <div className="flex justify-between">
+                <dt className="text-brand-ink/70">Payment</dt>
+                <dd>
+                  <Method method={viewing.payment_method} />
+                </dd>
+              </div>
+              <div className="border-brand-line flex justify-between border-t pt-3 font-serif text-xl font-bold">
+                <dt>Total</dt>
+                <dd className="text-brand-red tabular-nums">{peso(viewing.total_amount)}</dd>
+              </div>
+            </dl>
+          </div>
+        </Modal>
       )}
     </div>
   )

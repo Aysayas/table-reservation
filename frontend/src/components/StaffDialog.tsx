@@ -3,6 +3,8 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
+import Modal from '@/components/Modal'
+import Spinner from '@/components/Spinner'
 import { createUser, roleNames, updateUser } from '@/services/users'
 import type { User } from '@/types/db'
 
@@ -52,96 +54,89 @@ export default function StaffDialog({ user, isSelf, onClose }: Props) {
   }
 
   return (
-    <div className="fixed inset-0 z-30 flex items-center justify-center bg-black/40 p-4">
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="staff-dialog-title"
-        className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl"
-      >
-        <h2 id="staff-dialog-title" className="text-brand-charcoal font-serif text-2xl font-bold">
-          {user ? 'Edit Staff' : 'Add Staff'}
-        </h2>
-        <form noValidate onSubmit={handleSubmit(onSubmit)} className="mt-5 space-y-4">
-          <div>
-            <label htmlFor="full_name" className={label}>
-              Full Name
-            </label>
-            <input
-              id="full_name"
-              placeholder="Juan Dela Cruz"
-              aria-invalid={!!errors.full_name}
-              {...register('full_name')}
-              className={field}
-            />
-            {errors.full_name && <p className={error}>{errors.full_name.message}</p>}
-          </div>
-          <div>
-            <label htmlFor="email" className={label}>
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              placeholder="name@placeholder-domain.com"
-              aria-invalid={!!errors.email}
-              {...register('email')}
-              className={field}
-            />
-            {errors.email && <p className={error}>{errors.email.message}</p>}
-          </div>
-          <div>
-            <label htmlFor="role" className={label}>
-              Role
-            </label>
-            {isSelf && user ? (
-              <>
-                <input id="role" readOnly value={roleNames[user.role]} className={field} />
-                <p className="text-brand-ink/70 mt-1.5 text-xs">You can't change your own role.</p>
-              </>
-            ) : (
-              <select id="role" {...register('role')} className={field}>
-                {Object.entries(roleNames).map(([value, name]) => (
-                  <option key={value} value={value}>
-                    {name}
-                  </option>
-                ))}
-              </select>
-            )}
-          </div>
-          <div>
-            <label htmlFor="password" className={label}>
-              {user ? 'New Password' : 'Password'}
-            </label>
-            <input
-              id="password"
-              type="password"
-              autoComplete="new-password"
-              placeholder={user ? 'Leave blank to keep the current one' : '8 characters or more'}
-              aria-invalid={!!errors.password}
-              {...register('password')}
-              className={field}
-            />
-            {errors.password && <p className={error}>{errors.password.message}</p>}
-          </div>
-          <div className="flex justify-end gap-3 pt-2">
-            <button
-              type="button"
-              onClick={onClose}
-              className="border-brand-line text-brand-charcoal rounded-md border px-4 py-2 text-sm font-bold"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="bg-brand-red hover:bg-brand-red/90 rounded-md px-4 py-2 text-sm font-bold text-white transition-colors duration-200 disabled:opacity-60"
-            >
-              Save Staff
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+    <Modal title={user ? 'Edit Staff' : 'Add Staff'} onClose={onClose}>
+      <form noValidate onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <div>
+          <label htmlFor="full_name" className={label}>
+            Full Name
+          </label>
+          <input
+            id="full_name"
+            placeholder="Juan Dela Cruz"
+            aria-invalid={!!errors.full_name}
+            {...register('full_name')}
+            className={field}
+          />
+          {errors.full_name && <p className={error}>{errors.full_name.message}</p>}
+        </div>
+        <div>
+          <label htmlFor="email" className={label}>
+            Email
+          </label>
+          <input
+            id="email"
+            type="email"
+            placeholder="name@placeholder-domain.com"
+            aria-invalid={!!errors.email}
+            {...register('email')}
+            className={field}
+          />
+          {errors.email && <p className={error}>{errors.email.message}</p>}
+        </div>
+        <div>
+          <label htmlFor="role" className={label}>
+            Role
+          </label>
+          {isSelf && user ? (
+            <>
+              <input id="role" readOnly value={roleNames[user.role]} className={field} />
+              <p className="text-brand-ink/70 mt-1.5 text-xs">You can't change your own role.</p>
+            </>
+          ) : (
+            <select id="role" {...register('role')} className={field}>
+              {Object.entries(roleNames).map(([value, name]) => (
+                <option key={value} value={value}>
+                  {name}
+                </option>
+              ))}
+            </select>
+          )}
+        </div>
+        <div>
+          <label htmlFor="password" className={label}>
+            {user ? 'New Password' : 'Password'}
+          </label>
+          <input
+            id="password"
+            type="password"
+            autoComplete="new-password"
+            placeholder={user ? 'Leave blank to keep the current one' : '8 characters or more'}
+            aria-invalid={!!errors.password}
+            {...register('password')}
+            className={field}
+          />
+          {errors.password && <p className={error}>{errors.password.message}</p>}
+        </div>
+        <div className="flex justify-end gap-3 pt-2">
+          <button
+            type="button"
+            disabled={isSubmitting}
+            onClick={onClose}
+            className="border-brand-line text-brand-charcoal rounded-md border px-4 py-2 text-sm font-bold disabled:opacity-60"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            aria-busy={isSubmitting}
+            className="bg-brand-red hover:bg-brand-red/90 inline-flex items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-bold text-white transition-colors duration-200 disabled:opacity-60"
+          >
+            {isSubmitting && <Spinner />}
+            Save Staff
+          </button>
+        </div>
+      </form>
+    </Modal>
   )
 }
