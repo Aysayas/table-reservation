@@ -1,4 +1,5 @@
 import { useId, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
+import { createPortal } from 'react-dom'
 import Ornament from '@/components/Ornament'
 
 type Props = {
@@ -35,7 +36,7 @@ export default function Modal({
     else setClosing(true)
   }
 
-  return (
+  return createPortal(
     <dialog
       ref={ref}
       aria-labelledby={titleId}
@@ -64,6 +65,7 @@ export default function Modal({
         <Ornament className="mx-auto mt-2 mb-5 w-24" />
         {children}
       </div>
-    </dialog>
+    </dialog>,
+    document.body,
   )
 }

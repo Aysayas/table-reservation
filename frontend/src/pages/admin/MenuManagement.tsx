@@ -16,7 +16,11 @@ const peso = (amount: number) =>
   `₱${amount.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
 const th = 'text-brand-ink/70 px-4 py-3 text-left text-xs font-bold tracking-[0.1em] uppercase'
 const td = 'text-brand-charcoal px-4 py-3 text-sm'
-const smallButton = 'rounded-md border px-3 py-1.5 text-xs font-bold transition-colors duration-200'
+const smallButton =
+  'pointer-coarse:min-h-11 inline-flex items-center justify-center rounded-md border px-3 py-1.5 text-xs font-bold transition-colors duration-200'
+const dl = 'grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm'
+const dt = 'text-brand-ink/70'
+const dd = 'text-brand-charcoal text-right'
 
 export default function MenuManagement() {
   const queryClient = useQueryClient()
@@ -124,7 +128,67 @@ export default function MenuManagement() {
         </div>
       ) : (
         <div className="border-brand-line mt-6 overflow-x-auto rounded-lg border bg-white">
-          <table className="w-full">
+          <ul className="divide-brand-line divide-y md:hidden">
+            {rows.map((item) => (
+              <li key={item.item_id} className="space-y-3 p-4">
+                <div className="flex items-center gap-3">
+                  {item.image_url ? (
+                    <img src={item.image_url} alt="" className="size-12 rounded-md object-cover" />
+                  ) : (
+                    <span className="bg-brand-cream text-brand-gold-deep flex size-12 shrink-0 items-center justify-center rounded-md">
+                      <UtensilsCrossed className="size-5" strokeWidth={1.5} />
+                    </span>
+                  )}
+                  <p className="text-brand-charcoal min-w-0 flex-1 font-semibold">{item.name}</p>
+                  <button
+                    type="button"
+                    role="switch"
+                    aria-checked={item.is_available}
+                    aria-label={`${item.name} available`}
+                    disabled={toggle.isPending}
+                    onClick={() => toggle.mutate(item)}
+                    className={`relative h-6 w-11 shrink-0 rounded-full transition-colors duration-200 ${item.is_available ? 'bg-brand-green' : 'bg-brand-ink/20'}`}
+                  >
+                    <span
+                      className={`absolute top-0.5 left-0.5 size-5 rounded-full bg-white shadow transition-transform duration-200 ${item.is_available ? 'translate-x-5' : ''}`}
+                    />
+                  </button>
+                </div>
+                <dl className={dl}>
+                  <dt className={dt}>Category</dt>
+                  <dd className={dd}>{categoryName(item.category_id)}</dd>
+                  <dt className={dt}>Price</dt>
+                  <dd className={`${dd} tabular-nums`}>{peso(item.price)}</dd>
+                </dl>
+                <div className="flex gap-2 *:flex-1">
+                  <Link
+                    to={`/admin/menu/${item.item_id}/edit`}
+                    state={from}
+                    aria-label={`Edit ${item.name}`}
+                    className={`${smallButton} border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal hover:text-white`}
+                  >
+                    Edit
+                  </Link>
+                  <button
+                    type="button"
+                    aria-label={`Delete ${item.name}`}
+                    onClick={() => setDeleting(item)}
+                    className={`${smallButton} border-brand-red text-brand-red hover:bg-brand-red hover:text-white`}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </li>
+            ))}
+            {isPending &&
+              Array.from({ length: 5 }, (_, i) => (
+                <li key={i} className="space-y-3 p-4">
+                  <Skeleton className="h-4 w-24" />
+                  <Skeleton className="h-4 w-full" />
+                </li>
+              ))}
+          </ul>
+          <table className="hidden w-full md:table">
             <thead className="bg-brand-cream/60">
               <tr>
                 {['Image', 'Name', 'Category', 'Price', 'Available', 'Actions'].map((h) => (
@@ -200,15 +264,11 @@ export default function MenuManagement() {
                     ))}
                   </tr>
                 ))}
-              {!isPending && rows.length === 0 && (
-                <tr>
-                  <td colSpan={6}>
-                    <EmptyState icon={UtensilsCrossed} title="No menu items found." />
-                  </td>
-                </tr>
-              )}
             </tbody>
           </table>
+          {!isPending && rows.length === 0 && (
+            <EmptyState icon={UtensilsCrossed} title="No menu items found." />
+          )}
         </div>
       )}
 

@@ -13,6 +13,9 @@ import type { PublicReservation, ReservationStatus } from '@/types/db'
 
 const th = 'text-brand-ink/70 px-3 py-3 text-left text-xs font-bold tracking-[0.1em] uppercase'
 const td = 'text-brand-charcoal px-3 py-3 text-sm whitespace-nowrap'
+const dl = 'grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm'
+const dt = 'text-brand-ink/70'
+const dd = 'text-brand-charcoal text-right'
 
 const statusBadge: Record<ReservationStatus, string> = {
   pending: 'bg-brand-gold/20 text-brand-gold-deep',
@@ -79,7 +82,7 @@ export default function Reservations() {
                   setView(v.value)
                   setPage(1)
                 }}
-                className={`rounded-full border px-4 py-2 text-sm font-semibold transition-colors duration-200 ${view === v.value ? 'bg-brand-charcoal border-brand-charcoal text-white' : 'border-brand-line text-brand-charcoal hover:border-brand-gold bg-white'}`}
+                className={`rounded-full border px-4 py-2 text-sm font-semibold transition-colors duration-200 pointer-coarse:min-h-11 ${view === v.value ? 'bg-brand-charcoal border-brand-charcoal text-white' : 'border-brand-line text-brand-charcoal hover:border-brand-gold bg-white'}`}
               >
                 {v.label}
               </button>
@@ -93,7 +96,58 @@ export default function Reservations() {
           </div>
         ) : (
           <div className="border-brand-line relative mt-6 overflow-x-auto rounded-lg border bg-white">
-            <table className="w-full">
+            <ul className="divide-brand-line divide-y md:hidden">
+              {rows.map((r) => (
+                <li key={r.reservation_id} className="space-y-3 p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <p className="text-brand-charcoal font-semibold">{r.reference_code}</p>
+                    <span
+                      className={`inline-block rounded-full px-3 py-1 text-xs font-bold ${statusBadge[r.status]}`}
+                    >
+                      {statusText[r.status]}
+                    </span>
+                  </div>
+                  <dl className={dl}>
+                    <dt className={dt}>Date</dt>
+                    <dd className={dd}>
+                      {format(parseISO(r.reservation_date), 'EEE, MMM d, yyyy')}
+                    </dd>
+                    <dt className={dt}>Time</dt>
+                    <dd className={`${dd} tabular-nums`}>{formatTime(r.reservation_time)}</dd>
+                    <dt className={dt}>Name</dt>
+                    <dd className={dd}>{r.customer.full_name}</dd>
+                    <dt className={dt}>Guests</dt>
+                    <dd className={dd}>{r.pax}</dd>
+                    <dt className={dt}>Table</dt>
+                    <dd className={dd}>{r.table_number ?? '—'}</dd>
+                    <dt className={dt}>Added</dt>
+                    <dd className={dd}>
+                      {format(parseISO(r.created_at), 'MMM d, yyyy')}{' '}
+                      <span className="text-brand-ink/70 text-xs">
+                        {format(parseISO(r.created_at), 'h:mm a')}
+                      </span>
+                    </dd>
+                  </dl>
+                  <ReservationActions
+                    reservation={r}
+                    onEdit={
+                      r.status === 'pending' || r.status === 'confirmed'
+                        ? () => setEditing(r)
+                        : undefined
+                    }
+                  />
+                </li>
+              ))}
+              {isPending &&
+                Array.from({ length: 5 }, (_, i) => (
+                  <li key={i} className="space-y-3 p-4">
+                    <Skeleton className="h-4 w-32" />
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-full" />
+                  </li>
+                ))}
+            </ul>
+            <table className="hidden w-full md:table">
               <thead className="bg-brand-cream/60">
                 <tr>
                   {['Ref Code', 'Date', 'Time', 'Name', 'Guests', 'Table', 'Added', 'Status'].map(
@@ -154,15 +208,11 @@ export default function Reservations() {
                       ))}
                     </tr>
                   ))}
-                {!isPending && rows.length === 0 && (
-                  <tr>
-                    <td colSpan={9}>
-                      <EmptyState icon={CalendarX2} title="No reservations found." />
-                    </td>
-                  </tr>
-                )}
               </tbody>
             </table>
+            {!isPending && rows.length === 0 && (
+              <EmptyState icon={CalendarX2} title="No reservations found." />
+            )}
           </div>
         )}
 

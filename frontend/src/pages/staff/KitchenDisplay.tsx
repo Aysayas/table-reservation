@@ -188,7 +188,7 @@ export default function KitchenDisplay() {
         {from && (
           <Link
             to={from}
-            className="flex items-center gap-2 text-sm text-white/70 transition-colors duration-200 hover:text-white"
+            className="flex items-center gap-2 text-sm text-white/70 transition-colors duration-200 hover:text-white pointer-coarse:min-h-11"
           >
             <ArrowLeft className="size-4" />
             Back
@@ -212,7 +212,7 @@ export default function KitchenDisplay() {
           type="button"
           aria-pressed={sound}
           onClick={toggleSound}
-          className="ml-auto flex items-center gap-2 text-sm text-white/70 transition-colors duration-200 hover:text-white md:ml-0"
+          className="ml-auto flex items-center gap-2 text-sm text-white/70 transition-colors duration-200 hover:text-white md:ml-0 pointer-coarse:min-h-11"
         >
           {sound ? <Volume2 className="size-4" /> : <VolumeX className="size-4" />}
           Sound
@@ -220,7 +220,7 @@ export default function KitchenDisplay() {
         <Link
           to="/staff/login"
           onClick={signOut}
-          className="flex items-center gap-2 text-sm text-white/70 transition-colors duration-200 hover:text-white"
+          className="flex items-center gap-2 text-sm text-white/70 transition-colors duration-200 hover:text-white pointer-coarse:min-h-11"
         >
           <LogOut className="size-4" />
           Log Out

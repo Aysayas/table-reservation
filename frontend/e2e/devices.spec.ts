@@ -67,7 +67,9 @@ for (const path of dashboardPages) {
       await page.setViewportSize(flip ? { width: height, height: width } : { width, height })
       await page.goto(path)
       await expect(page.getByRole('main')).toBeVisible()
-      await expect(page.getByRole('main').locator('h2, table, ul, dl').first()).toBeVisible()
+      await expect(
+        page.getByRole('main').locator('h2, table, ul, dl').filter({ visible: true }).first(),
+      ).toBeVisible()
       const main = await page.getByRole('main').boundingBox()
       expect(main?.width).toBeGreaterThanOrEqual(flip ? 700 : 380)
       const pageWidth = await page.evaluate<number>('document.documentElement.scrollWidth')
