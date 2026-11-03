@@ -8,6 +8,7 @@ function doPost(e) {
     var options = { to: body.to, subject: body.subject, body: body.text }
     if (body.name) options.name = body.name
     if (body.reply_to) options.replyTo = body.reply_to
+    if (body.html) options.htmlBody = body.html
     MailApp.sendEmail(options)
     return reply({ ok: true })
   } catch (error) {

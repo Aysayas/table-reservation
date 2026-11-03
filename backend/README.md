@@ -168,7 +168,7 @@ Both services run in Render's **Singapore** region, next to the Aiven database (
 
 `render.yaml` sets `DB_SSL_CA=/etc/secrets/ca.pem`: add the host's CA certificate as a Secret File named `ca.pem` in the Render dashboard. The production image turns PHP `display_errors` off. Menu photos uploaded in production are lost on each deploy until cloud storage is added.
 
-Password reset email: Render's free plan blocks SMTP, so Gmail sends through a Google Apps Script. Deploy `docs/email-relay.gs` as a web app from the sending Gmail (execute as me, access anyone), add a long random `SECRET` script property, then set `MAIL_SCRIPT_URL` and `MAIL_SCRIPT_SECRET` on Render.
+Email (password reset and booking updates): Render's free plan blocks SMTP, so Gmail sends through a Google Apps Script. Deploy `docs/email-relay.gs` as a web app from the sending Gmail (execute as me, access anyone), add a long random `SECRET` script property, then set `MAIL_SCRIPT_URL` and `MAIL_SCRIPT_SECRET` on Render. The script sends `html` as the HTML body when present, so after changing it use **Deploy → Manage deployments → edit → New version** (the URL stays the same). Booking emails come from `app/libraries/Mailer.php` (`reservation($id, $kind)`), called with the SMS through `app/libraries/Notify.php`, and both are sent after the API has answered (`app/helpers/after_response_helper.php`). Gmail's Apps Script limit is about 100 emails a day on a free account.
 
 Frontend: on Vercel, set the Root Directory to `frontend`; `frontend/vercel.json` sends all routes to `index.html`. Set `VITE_API_URL` to `https://<your-service>.onrender.com/api` and `VITE_USE_SAMPLE` to `false` in Vercel, then add the production Vercel URL to `CORS_ORIGINS` and set it as `FRONTEND_URL` on Render.
 

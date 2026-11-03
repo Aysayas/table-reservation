@@ -182,7 +182,7 @@ class Diagnostics extends Controller {
 	public function latest_sms()
 	{
 		$this->api->require_role('admin');
-		$rows = $this->db->raw('SELECT n.notification_id, c.full_name, c.mobile_number, n.message, n.status, n.sent_at FROM notifications n JOIN customers c ON c.customer_id = n.customer_id ORDER BY n.notification_id DESC LIMIT 10')->fetchAll(PDO::FETCH_ASSOC);
+		$rows = $this->db->raw('SELECT n.notification_id, c.full_name, c.mobile_number, n.message, n.status, n.sent_at FROM notifications n JOIN customers c ON c.customer_id = n.customer_id WHERE n.type = "sms" ORDER BY n.notification_id DESC LIMIT 10')->fetchAll(PDO::FETCH_ASSOC);
 		$this->api->respond(['data' => array_map(function ($row) {
 			$mobile = $row['mobile_number'];
 			return [

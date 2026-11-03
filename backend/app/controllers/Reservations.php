@@ -155,8 +155,8 @@ class Reservations extends Controller {
 		}
 
 		if ($moved) {
-			$this->call->library('sms');
-			$this->sms->reservation((int) $id, 'rescheduled');
+			$this->call->library('notify');
+			$this->notify->reservation((int) $id, 'rescheduled');
 		}
 		$this->api->respond(['data' => $this->format($this->Reservation_model->find($id), true)]);
 	}
@@ -260,8 +260,8 @@ class Reservations extends Controller {
 		}
 
 		if ($next === 'cancelled') {
-			$this->call->library('sms');
-			$this->sms->reservation((int) $id, 'cancelled');
+			$this->call->library('notify');
+			$this->notify->reservation((int) $id, 'cancelled');
 		}
 		$this->api->respond(['data' => $this->format($this->Reservation_model->find($id), true)]);
 	}
@@ -283,8 +283,8 @@ class Reservations extends Controller {
 		$this->call->library('paymongo');
 		$this->paymongo->cancel_pending('reservation_id', (int) $id);
 		if ($reservation['status'] !== 'cancelled') {
-			$this->call->library('sms');
-			$this->sms->reservation((int) $id, 'cancelled');
+			$this->call->library('notify');
+			$this->notify->reservation((int) $id, 'cancelled');
 		}
 
 		$this->Reservation_model->transaction();
@@ -379,8 +379,8 @@ class Reservations extends Controller {
 			$this->api->respond_error('Could not save the reservation', 500);
 		}
 
-		$this->call->library('sms');
-		$this->sms->reservation((int) $id, 'booked');
+		$this->call->library('notify');
+		$this->notify->reservation((int) $id, 'booked');
 		$this->api->respond(['data' => $this->format($this->Reservation_model->find($id))], 201);
 	}
 
@@ -412,8 +412,8 @@ class Reservations extends Controller {
 		if ($reservation['table_id'] !== null) {
 			$this->release_table((int) $reservation['table_id']);
 		}
-		$this->call->library('sms');
-		$this->sms->reservation((int) $reservation['reservation_id'], 'cancelled');
+		$this->call->library('notify');
+		$this->notify->reservation((int) $reservation['reservation_id'], 'cancelled');
 		$this->api->respond(['data' => $this->format($this->Reservation_model->find($reservation['reservation_id']))]);
 	}
 
@@ -433,8 +433,8 @@ class Reservations extends Controller {
 			'table_id' => null,
 			'reminder_sent_at' => null,
 		]);
-		$this->call->library('sms');
-		$this->sms->reservation((int) $reservation['reservation_id'], 'rescheduled');
+		$this->call->library('notify');
+		$this->notify->reservation((int) $reservation['reservation_id'], 'rescheduled');
 		$this->api->respond(['data' => $this->format($this->Reservation_model->find($reservation['reservation_id']))]);
 	}
 

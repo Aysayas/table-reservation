@@ -24,8 +24,8 @@ class Expiry {
 				}
 				$this->_lava->call->library('paymongo');
 				$this->_lava->paymongo->cancel_pending('reservation_id', $id);
-				$this->_lava->call->library('sms');
-				$this->_lava->sms->reservation($id, 'cancelled');
+				$this->_lava->call->library('notify');
+				$this->_lava->notify->reservation($id, 'expired');
 				$expired++;
 			}
 		} catch (Throwable $e) {

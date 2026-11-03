@@ -3,7 +3,6 @@ defined('PREVENT_DIRECT_ACCESS') OR exit('No direct script access allowed');
 
 class Sms {
 	private const API = 'https://www.iprogsms.com/api/v1';
-	private static $queue = [];
 	private $_lava;
 	private $token;
 	private $last_error = null;
@@ -12,6 +11,7 @@ class Sms {
 	{
 		$this->_lava = lava_instance();
 		$this->_lava->call->model(['Reservation_model', 'Customer_model', 'Notification_model']);
+		$this->_lava->call->helper('after_response');
 		$this->token = trim(getenv('IPROG_SMS_TOKEN') ?: '');
 	}
 
@@ -29,7 +29,7 @@ class Sms {
 				return;
 			}
 			$message = $this->message($reservation, $customer, $kind);
-			$this->after_response(function () use ($customer, $message) {
+			after_response(function () use ($customer, $message) {
 				$this->deliver($customer, $message);
 			});
 		} catch (Throwable $e) {
@@ -55,27 +55,6 @@ class Sms {
 			throw new RuntimeException($data['message'] ?? 'Could not read the SMS balance');
 		}
 		return (float) $data['data']['load_balance'];
-	}
-
-	private function after_response(callable $job)
-	{
-		if (PHP_SAPI === 'cli' || !function_exists('fastcgi_finish_request')) {
-			$job();
-			return;
-		}
-		if (!self::$queue) {
-			register_shutdown_function(function () {
-				fastcgi_finish_request();
-				foreach (self::$queue as $queued) {
-					try {
-						$queued();
-					} catch (Throwable $e) {
-						error_log('SMS after response failed: ' . $e->getMessage());
-					}
-				}
-			});
-		}
-		self::$queue[] = $job;
 	}
 
 	private function deliver($customer, $message)
@@ -106,6 +85,7 @@ class Sms {
 			case 'deposit_paid':
 				return "Vencio's Garden: We received your PHP " . number_format($deposit, 2) . " deposit for {$code} on {$date} at {$time}. See you!";
 			case 'cancelled':
+			case 'expired':
 				return "Vencio's Garden: Your booking {$code} on {$date} at {$time} is cancelled.";
 			case 'rescheduled':
 				return "Vencio's Garden: Your booking {$code} is moved to {$date} at {$time}.";
