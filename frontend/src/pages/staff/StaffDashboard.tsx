@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
 import LoadError from '@/components/LoadError'
+import Ornament from '@/components/Ornament'
 import { formatTime } from '@/lib/hours'
 import { getStaffDashboard } from '@/services/dashboard'
 import type { OrderStatus, ReservationStatus } from '@/types/db'
@@ -78,6 +79,8 @@ export default function StaffDashboard() {
           </div>
         ))}
       </dl>
+
+      <Ornament className="mx-auto max-w-xs" />
 
       <div className="grid gap-8 xl:grid-cols-2">
         <Panel title="Upcoming Reservations" to="/staff/reservations">

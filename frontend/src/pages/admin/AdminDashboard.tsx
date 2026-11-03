@@ -11,6 +11,7 @@ import {
   YAxis,
 } from 'recharts'
 import LoadError from '@/components/LoadError'
+import Ornament from '@/components/Ornament'
 import { getAdminDashboard } from '@/services/dashboard'
 import type { OrderStatus } from '@/types/db'
 
@@ -63,6 +64,8 @@ export default function AdminDashboard() {
           </div>
         ))}
       </dl>
+
+      <Ornament className="mx-auto max-w-xs" />
 
       <div className="grid gap-6 xl:grid-cols-[1fr_22rem]">
         <section aria-labelledby="sales-title" className={`${card} min-w-0 p-6`}>
