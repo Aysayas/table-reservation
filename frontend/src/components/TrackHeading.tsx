@@ -19,7 +19,10 @@ export default function TrackHeading({
   return (
     <div>
       {track !== undefined && (
-        <p className="text-brand-gold-deep text-xs font-bold tracking-[0.25em] uppercase">
+        <p
+          aria-hidden="true"
+          className="text-brand-gold-deep text-xs font-bold tracking-[0.25em] uppercase"
+        >
           Track {String(track).padStart(2, '0')}
         </p>
       )}
@@ -34,10 +37,12 @@ export default function TrackHeading({
         </div>
         <h2
           id={id}
-          className={`text-brand-charcoal relative inline-block pr-3 font-serif ${surface} ${compact ? 'text-2xl' : 'text-2xl md:text-3xl'}`}
+          className={`text-brand-charcoal relative font-serif ${compact ? 'text-2xl' : 'text-2xl md:text-3xl'}`}
         >
-          {words.length > 0 && `${words.join(' ')} `}
-          <span className="text-brand-red italic">{last}</span>
+          <span className={`box-decoration-clone pr-3 ${surface}`}>
+            {words.length > 0 && `${words.join(' ')} `}
+            <span className="text-brand-red italic">{last}</span>
+          </span>
         </h2>
       </div>
     </div>
