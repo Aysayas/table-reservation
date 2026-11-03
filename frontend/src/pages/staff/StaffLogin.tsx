@@ -96,14 +96,14 @@ export default function StaffLogin() {
                 autoComplete="current-password"
                 placeholder="••••••••"
                 aria-invalid={errors.password ? true : undefined}
-                className={`${input} pr-12`}
+                className={`${input} pr-12 pointer-coarse:pr-14`}
                 {...register('password')}
               />
               <button
                 type="button"
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
                 onClick={() => setShowPassword(!showPassword)}
-                className="text-brand-ink/70 hover:text-brand-charcoal absolute top-1/2 right-3 mt-1 flex size-8 -translate-y-1/2 items-center justify-center rounded-md transition-colors duration-200"
+                className="text-brand-ink/70 hover:text-brand-charcoal absolute top-1/2 right-3 mt-1 flex size-8 -translate-y-1/2 items-center justify-center rounded-md transition-colors duration-200 pointer-coarse:right-1.5 pointer-coarse:size-11"
               >
                 {showPassword ? <EyeOff className="size-5" /> : <Eye className="size-5" />}
               </button>

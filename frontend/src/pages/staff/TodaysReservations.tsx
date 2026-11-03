@@ -12,6 +12,11 @@ import type { ReservationStatus } from '@/types/db'
 
 const th = 'text-brand-ink/70 px-4 py-3 text-left text-xs font-bold tracking-[0.1em] uppercase'
 const td = 'text-brand-charcoal px-4 py-3 text-sm'
+const card =
+  'max-md:flex max-md:flex-wrap max-md:items-center max-md:gap-x-3 max-md:gap-y-2 max-md:p-4'
+const line =
+  'max-md:order-1 max-md:flex max-md:basis-full max-md:justify-between max-md:gap-3 max-md:p-0'
+const label = 'text-brand-ink/70 text-xs font-bold tracking-[0.1em] uppercase md:hidden'
 const control =
   'border-brand-line focus:border-brand-gold rounded-md border bg-white px-3 py-2.5 text-sm outline-none'
 
@@ -62,7 +67,7 @@ export default function TodaysReservations() {
   return (
     <div>
       <div className="flex flex-wrap gap-3">
-        <label className="border-brand-line focus-within:border-brand-gold flex w-80 items-center gap-2 rounded-md border bg-white px-3">
+        <label className="border-brand-line focus-within:border-brand-gold flex w-full items-center gap-2 rounded-md border bg-white px-3 sm:w-80">
           <Search className="text-brand-ink/70 size-4 shrink-0" />
           <span className="sr-only">Search</span>
           <input
@@ -110,8 +115,8 @@ export default function TodaysReservations() {
         </div>
       ) : (
         <div className="border-brand-line mt-6 overflow-x-auto rounded-lg border bg-white">
-          <table className="w-full min-w-[60rem]">
-            <thead className="bg-brand-cream/60">
+          <table className="w-full max-md:block md:min-w-[60rem]">
+            <thead className="bg-brand-cream/60 max-md:hidden">
               <tr>
                 {[
                   'Ref Code',
@@ -131,54 +136,79 @@ export default function TodaysReservations() {
                 ))}
               </tr>
             </thead>
-            <tbody>
+            <tbody className="max-md:block">
               {rows.map((r) => (
-                <tr key={r.reservation_id} className="border-brand-line border-t">
-                  <td className={`${td} font-semibold whitespace-nowrap`}>{r.reference_code}</td>
-                  <td className={`${td} whitespace-nowrap tabular-nums`}>
-                    {view === 'today' && !search ? '' : `${r.reservation_date} `}
-                    {formatTime(r.reservation_time)}
+                <tr key={r.reservation_id} className={`border-brand-line border-t ${card}`}>
+                  <td className={`${td} font-semibold whitespace-nowrap max-md:flex-1 max-md:p-0`}>
+                    {r.reference_code}
                   </td>
-                  <td className={td}>{r.customer.full_name}</td>
-                  <td className={`${td} whitespace-nowrap tabular-nums`}>
-                    {r.customer.mobile_number.replace(/^(\d{4})(\d{3})(\d{4})$/, '$1 $2 $3')}
-                  </td>
-                  <td className={td}>{r.pax}</td>
-                  <td className={td}>{r.table_number ?? '—'}</td>
-                  <td className={td}>
-                    <span className="block whitespace-nowrap">
-                      {format(parseISO(r.created_at), 'MMM d')}
-                    </span>
-                    <span className="text-brand-ink/70 block text-xs">
-                      {format(parseISO(r.created_at), 'h:mm a')}
+                  <td className={`${td} ${line} whitespace-nowrap tabular-nums`}>
+                    <span className={label}>Time</span>
+                    <span>
+                      {view === 'today' && !search ? '' : `${r.reservation_date} `}
+                      {formatTime(r.reservation_time)}
                     </span>
                   </td>
-                  <td className={td}>{r.deposit_status === 'paid' ? 'Paid' : 'Unpaid'}</td>
-                  <td className={td}>
+                  <td className={`${td} ${line}`}>
+                    <span className={label}>Name</span>
+                    <span>{r.customer.full_name}</span>
+                  </td>
+                  <td className={`${td} ${line} whitespace-nowrap tabular-nums`}>
+                    <span className={label}>Mobile</span>
+                    <span>
+                      {r.customer.mobile_number.replace(/^(\d{4})(\d{3})(\d{4})$/, '$1 $2 $3')}
+                    </span>
+                  </td>
+                  <td className={`${td} ${line}`}>
+                    <span className={label}>Guests</span>
+                    <span>{r.pax}</span>
+                  </td>
+                  <td className={`${td} ${line}`}>
+                    <span className={label}>Table</span>
+                    <span>{r.table_number ?? '—'}</span>
+                  </td>
+                  <td className={`${td} ${line}`}>
+                    <span className={label}>Added</span>
+                    <span className="max-md:flex max-md:gap-1">
+                      <span className="block whitespace-nowrap">
+                        {format(parseISO(r.created_at), 'MMM d')}
+                      </span>
+                      <span className="text-brand-ink/70 block text-xs max-md:text-sm">
+                        {format(parseISO(r.created_at), 'h:mm a')}
+                      </span>
+                    </span>
+                  </td>
+                  <td className={`${td} ${line}`}>
+                    <span className={label}>Deposit</span>
+                    <span>{r.deposit_status === 'paid' ? 'Paid' : 'Unpaid'}</span>
+                  </td>
+                  <td className={`${td} max-md:p-0`}>
                     <span
                       className={`inline-block rounded-full px-3 py-1 text-xs font-bold whitespace-nowrap ${statusBadge[r.status]}`}
                     >
                       {statusText[r.status]}
                     </span>
                   </td>
-                  <td className={td}>
+                  <td
+                    className={`${td} max-md:order-2 max-md:basis-full max-md:p-0 max-md:pt-2 max-md:[&>div>button:not([popovertarget])]:flex-1`}
+                  >
                     <ReservationActions reservation={r} />
                   </td>
                 </tr>
               ))}
               {isPending &&
                 Array.from({ length: 5 }, (_, i) => (
-                  <tr key={i} className="border-brand-line border-t">
+                  <tr key={i} className={`border-brand-line border-t ${card}`}>
                     {Array.from({ length: 10 }, (_, j) => (
-                      <td key={j} className={td}>
+                      <td key={j} className={`${td} max-md:basis-full max-md:p-0`}>
                         <Skeleton className="h-4 w-full" />
                       </td>
                     ))}
                   </tr>
                 ))}
               {!isPending && rows.length === 0 && (
-                <tr>
-                  <td colSpan={10}>
+                <tr className="max-md:block">
+                  <td colSpan={10} className="max-md:block">
                     <EmptyState icon={CalendarX} title="No reservations found." />
                   </td>
                 </tr>

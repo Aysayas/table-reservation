@@ -20,6 +20,11 @@ const peso = (amount: number) =>
   `₱${amount.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
 const th = 'text-brand-ink/70 px-4 py-3 text-left text-xs font-bold tracking-[0.1em] uppercase'
 const td = 'text-brand-charcoal px-4 py-3 text-sm'
+const card =
+  'max-md:flex max-md:flex-wrap max-md:items-center max-md:gap-x-3 max-md:gap-y-2 max-md:p-4'
+const line =
+  'max-md:order-1 max-md:flex max-md:basis-full max-md:justify-between max-md:gap-3 max-md:p-0'
+const label = 'text-brand-ink/70 text-xs font-bold tracking-[0.1em] uppercase md:hidden'
 const orderBadge: Record<OrderStatus, string> = {
   received: 'border-brand-line border bg-white text-brand-charcoal',
   preparing: 'bg-brand-charcoal text-white',
@@ -93,7 +98,7 @@ export default function OrdersPayments() {
               type="button"
               aria-pressed={filter === f.value}
               onClick={() => setFilter(f.value)}
-              className={`rounded-full border px-4 py-2 text-sm font-semibold transition-colors duration-200 ${filter === f.value ? 'bg-brand-charcoal border-brand-charcoal text-white' : 'border-brand-line text-brand-charcoal hover:border-brand-gold bg-white'}`}
+              className={`rounded-full border px-4 py-2 text-sm font-semibold transition-colors duration-200 pointer-coarse:min-h-11 ${filter === f.value ? 'bg-brand-charcoal border-brand-charcoal text-white' : 'border-brand-line text-brand-charcoal hover:border-brand-gold bg-white'}`}
             >
               {f.label}
             </button>
@@ -106,8 +111,8 @@ export default function OrdersPayments() {
           </div>
         ) : (
           <div className="border-brand-line mt-6 overflow-x-auto rounded-lg border bg-white">
-            <table className="w-full">
-              <thead className="bg-brand-cream/60">
+            <table className="w-full max-md:block">
+              <thead className="bg-brand-cream/60 max-md:hidden">
                 <tr>
                   {['Order #', 'Table', 'Time', 'Total', 'Status', 'Payment'].map((h) => (
                     <th key={h} className={th}>
@@ -116,52 +121,64 @@ export default function OrdersPayments() {
                   ))}
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="max-md:block">
                 {orders.map((o) => (
                   <tr
                     key={o.order_id}
                     onClick={() => select(o.order_id)}
                     aria-selected={o.order_id === selectedId}
-                    className={`border-brand-line hover:bg-brand-cream/60 cursor-pointer border-t transition-colors duration-150 ${o.order_id === selectedId ? 'bg-brand-gold/10' : ''}`}
+                    className={`border-brand-line hover:bg-brand-cream/60 cursor-pointer border-t transition-colors duration-150 ${card} ${o.order_id === selectedId ? 'bg-brand-gold/10' : ''}`}
                   >
-                    <td className={`${td} font-semibold`}>
+                    <td className={`${td} font-semibold max-md:flex-1 max-md:p-0`}>
                       <button
                         type="button"
                         onClick={(e) => {
                           e.stopPropagation()
                           select(o.order_id)
                         }}
-                        className="hover:text-brand-red font-semibold"
+                        className="hover:text-brand-red font-semibold pointer-coarse:min-h-11 pointer-coarse:min-w-11 pointer-coarse:text-left"
                       >
                         #{o.order_id}
                       </button>
                     </td>
-                    <td className={td}>{o.table_number}</td>
-                    <td className={`${td} tabular-nums`}>{time(o.created_at)}</td>
-                    <td className={`${td} tabular-nums`}>{peso(o.total_amount)}</td>
-                    <td className={td}>
+                    <td className={`${td} ${line}`}>
+                      <span className={label}>Table</span>
+                      <span>{o.table_number}</span>
+                    </td>
+                    <td className={`${td} ${line} tabular-nums`}>
+                      <span className={label}>Time</span>
+                      <span>{time(o.created_at)}</span>
+                    </td>
+                    <td className={`${td} ${line} tabular-nums`}>
+                      <span className={label}>Total</span>
+                      <span>{peso(o.total_amount)}</span>
+                    </td>
+                    <td className={`${td} max-md:p-0`}>
                       <span
                         className={`inline-block rounded-full px-3 py-1 text-xs font-bold ${orderBadge[o.status]}`}
                       >
                         {cap(o.status)}
                       </span>
                     </td>
-                    <td className={td}>{o.payment_status === 'paid' ? 'Paid' : 'Unpaid'}</td>
+                    <td className={`${td} ${line}`}>
+                      <span className={label}>Payment</span>
+                      <span>{o.payment_status === 'paid' ? 'Paid' : 'Unpaid'}</span>
+                    </td>
                   </tr>
                 ))}
                 {isPending &&
                   Array.from({ length: 5 }, (_, i) => (
-                    <tr key={i} className="border-brand-line border-t">
+                    <tr key={i} className={`border-brand-line border-t ${card}`}>
                       {Array.from({ length: 6 }, (_, j) => (
-                        <td key={j} className={td}>
+                        <td key={j} className={`${td} max-md:basis-full max-md:p-0`}>
                           <Skeleton className="h-4 w-full" />
                         </td>
                       ))}
                     </tr>
                   ))}
                 {!isPending && orders.length === 0 && (
-                  <tr>
-                    <td colSpan={6}>
+                  <tr className="max-md:block">
+                    <td colSpan={6} className="max-md:block">
                       <EmptyState icon={ReceiptText} title="No orders here." />
                     </td>
                   </tr>
