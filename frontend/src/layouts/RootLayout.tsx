@@ -13,8 +13,8 @@ export default function RootLayout() {
 
   return (
     <>
-      <Outlet />
       <OfflineBanner />
+      <Outlet />
       <ScrollRestoration />
     </>
   )

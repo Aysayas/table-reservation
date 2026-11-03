@@ -42,7 +42,8 @@ export default function AdminDashboard() {
     return isLoadingError ? (
       <LoadError what="the dashboard" onRetry={() => refetch()} />
     ) : (
-      <div aria-busy="true" className="space-y-8">
+      <div role="status" aria-busy="true" className="space-y-8">
+        <span className="sr-only">Loading</span>
         <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
           {Array.from({ length: 4 }, (_, i) => (
             <div key={i} className={`${card} px-6 py-5`}>

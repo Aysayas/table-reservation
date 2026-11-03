@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { format, parseISO } from 'date-fns'
 import { Printer, ReceiptText } from 'lucide-react'
 import { useState } from 'react'
@@ -46,6 +46,7 @@ export default function OrdersPayments() {
     refetch,
   } = useQuery({
     queryKey: ['orders', filter],
+    placeholderData: keepPreviousData,
     queryFn: () =>
       listOrders({
         payment_status: filter || undefined,

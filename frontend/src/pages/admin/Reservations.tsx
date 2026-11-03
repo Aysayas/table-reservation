@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { format, parseISO } from 'date-fns'
 import { CalendarX2, ChevronLeft, ChevronRight, Search } from 'lucide-react'
 import { useState } from 'react'
@@ -41,6 +41,7 @@ export default function Reservations() {
   const [editing, setEditing] = useState<PublicReservation | null>(null)
   const { data, isPending, isLoadingError, refetch } = useQuery({
     queryKey: ['reservations', { view, status: '', search, page }],
+    placeholderData: keepPreviousData,
     queryFn: () => listReservations({ view, status: '', search, page }),
     refetchInterval: 30000,
   })

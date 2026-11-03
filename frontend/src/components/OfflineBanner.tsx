@@ -17,7 +17,7 @@ export default function OfflineBanner() {
   return (
     <p
       role="status"
-      className="bg-brand-charcoal text-brand-cream fixed inset-x-0 bottom-0 z-50 flex items-center justify-center gap-2 px-4 py-2.5 pb-[max(0.625rem,env(safe-area-inset-bottom))] text-xs font-semibold print:hidden"
+      className="bg-brand-charcoal text-brand-cream border-brand-gold/40 sticky top-0 z-50 flex items-center justify-center gap-2 border-b px-4 py-2.5 text-xs font-semibold print:hidden"
     >
       <WifiOff aria-hidden="true" className="text-brand-gold size-4" />
       You're offline. This page will update when you're back.

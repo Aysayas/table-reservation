@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { format, parseISO, subDays } from 'date-fns'
 import {
   Banknote,
@@ -52,6 +52,7 @@ export default function Payments() {
   const date_from = range ? format(subDays(today, Number(range)), 'yyyy-MM-dd') : undefined
   const { data, isPending, isLoadingError, refetch } = useQuery({
     queryKey: ['payments', { search, date_from, method, status, page }],
+    placeholderData: keepPreviousData,
     queryFn: () =>
       listPayments({
         search,

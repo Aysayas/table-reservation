@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { format, parseISO } from 'date-fns'
 import { Plus, Search, Users } from 'lucide-react'
 import { useState } from 'react'
@@ -32,6 +32,7 @@ export default function StaffAccounts() {
     error,
   } = useQuery({
     queryKey: ['users', role, search.trim()],
+    placeholderData: keepPreviousData,
     queryFn: () => listUsers({ role: role || undefined, search }),
   })
 

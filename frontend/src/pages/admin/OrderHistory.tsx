@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { format, parseISO, subDays } from 'date-fns'
 import {
   Banknote,
@@ -82,6 +82,7 @@ export default function OrderHistory() {
     refetch,
   } = useQuery({
     queryKey: ['orders', 'history', { search, date_from, status, payment }],
+    placeholderData: keepPreviousData,
     queryFn: () =>
       listOrders({
         search,
