@@ -6,10 +6,10 @@ import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { z } from 'zod'
+import Ornament from '@/components/Ornament'
 import { apiError } from '@/lib/api'
 import { login, roleHome } from '@/services/auth'
 import { getSettings } from '@/services/settings'
-import Ornament from '@/components/Ornament'
 
 const schema = z.object({
   email: z.email('Enter a valid email'),

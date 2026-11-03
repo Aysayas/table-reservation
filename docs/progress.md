@@ -82,6 +82,7 @@ These differ from the 29 approved wireframes on purpose, to remove redundant ste
 - **Dishes without photos (01, 02, 08, 09, 10):** the empty dark tile with a fork icon is now a cream card with a gold frame and the dish's first letter. On 09 the hero is shorter when there's no photo. The seed placeholder description is hidden.
 - **Admin sidebar groups:** the admin links are grouped under Today, Menu & Tables, Sales and Setup. Kitchen moved up next to Reservations. Every label and URL is the same.
 - **Gold flourishes (01, 02, 07, 08):** gold corner frames on the dark heroes and the Menu title band, an offset gold frame behind hero photos, and gold ◆ dividers. Menu categories show a decorative "Track NN" line and staff lines, playing on the menu's song-named sections (approved by the lead 2026-11-04). On Home, "Popular Dishes" is now a gold ornament heading with "View full menu" under it. A backup of the design before this is tagged `backup/pre-vamp-2026-11-04`.
+- **Dotted leader rows and light admin touches (04, 06, 09–13, 14, 19, My Reservations):** summary and total rows read like a printed menu (label, dotted gold line, value). Item Details and both dashboards get one gold divider, and Staff Login gets gold corners and a divider. All text is the same.
 - **Dish photos (sample data):** 71 more dishes have free stock photos in `frontend/public/photos/dishes/` (credits in `docs/design/brand.md`), so 73 of 93 show a photo in sample mode. Production photos are uploaded on screen 21.
 
 ## Backend progress
