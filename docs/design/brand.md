@@ -111,6 +111,16 @@ Suggested sizes:
 - The top band has a "Home / Menu" breadcrumb instead of a back button, and the title "Our Menu" with "Kain na!" above it in gold Great Vibes (approved by the lead).
 - A Filters card under Search: a red Max price slider and a Best Seller tag (gold when on), with Clear filters while one is on. No category tags, since the Categories list already does that.
 
+## Flourishes
+
+Small gold details that make the pages feel dressed up without changing the palette or fonts. They are decoration only: screen readers skip them, and they never replace a heading or a label.
+
+- **Gold corners** (`gold-corners` utility): thin gold L-brackets in the four corners of a dark band or a framed card, such as the Home and About heroes, the Menu title band and the Staff Login card. Use one framed area per screen.
+- **Framed photo** (`FramedPhoto`): an offset gold line behind a hero or story photo.
+- **Ornament** (`Ornament`): a gold rule with a small ◆, between sections. With a label, it is the section heading in spaced uppercase gold-deep (for example "Popular Dishes"); the heading text stays the same.
+- **Track headers** (`TrackHeading`): menu categories read like songs, so each one shows "Track NN" above its name, with the last word in italic red over five thin staff lines. Used on 02 Menu and 08 Table Menu. "Popular" has no number.
+- **Leader rows** (`LeaderRow`): label, a dotted gold leader, then the value, like a printed menu. Used for summaries and order lists, not for photo cards.
+
 ## Motion
 
 Gentle and slow, so it never makes anyone dizzy. Made with Tailwind only (no motion package yet).

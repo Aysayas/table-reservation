@@ -5,6 +5,8 @@ import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import DishPhoto from '@/components/DishPhoto'
 import LoadError from '@/components/LoadError'
+import Ornament from '@/components/Ornament'
+import TrackHeading from '@/components/TrackHeading'
 import { dishDescription } from '@/lib/dish'
 import { readLastOrder, readTableToken } from '@/lib/tableToken'
 import { getCategories, getMenuItems, getRecommendations } from '@/services/menu'
@@ -68,6 +70,7 @@ export default function TableMenu() {
   const matching = items.filter((item) => item.name.toLowerCase().includes(term))
   const recommended = recs.filter((i) => i.name.toLowerCase().includes(term))
   const sections = categories
+    .map((c, index) => ({ ...c, track: index + 1 }))
     .filter((c) => category === null || c.category_id === category)
     .map((c) => ({ ...c, items: matching.filter((i) => i.category_id === c.category_id) }))
     .filter((c) => c.items.length > 0)
@@ -172,6 +175,7 @@ export default function TableMenu() {
               })}
             </ul>
           </div>
+          <Ornament className="mx-4 mt-6" />
         </section>
       )}
 
@@ -191,13 +195,12 @@ export default function TableMenu() {
           aria-labelledby={`section-${section.category_id}`}
           className="mt-8 px-4"
         >
-          <h2
+          <TrackHeading
             id={`section-${section.category_id}`}
-            className="text-brand-charcoal font-serif text-2xl"
-          >
-            {section.name}
-          </h2>
-          <span aria-hidden="true" className="bg-brand-gold mt-2 block h-px w-10" />
+            name={section.name}
+            track={section.track}
+            compact
+          />
           <ul>
             {section.items.map((item) => (
               <li
