@@ -106,7 +106,7 @@ Suggested sizes:
 
 - A dark top band with the title, then a cream page.
 - Laptop: a sticky sidebar of white cards (Search, Categories), each with a spaced uppercase heading and a dashed gold rule. The active category is red with a ▸ marker and shows its dish count. Phone: the categories are one sticky sideways row.
-- Dishes are cards: a dark photo area, a gold "Best Seller" badge for recommended dishes, a red category tag, the name, two lines of description, and the price large in red Playfair.
+- Dishes are cards: a photo area, a gold "Best Seller" badge for recommended dishes, a red category tag, the name, two lines of description, and the price large in red Playfair.
 - The QR note is a dark bar at the end of the dishes.
 - The top band has a "Home / Menu" breadcrumb instead of a back button, and the title "Our Menu" with "Kain na!" above it in gold Great Vibes (approved by the lead).
 - A Filters card under Search: a red Max price slider and a Best Seller tag (gold when on), with Clear filters while one is on. No category tags, since the Categories list already does that.
@@ -154,6 +154,7 @@ Screen 18 is read from across the kitchen, so it uses bigger text and buttons th
 
 - Stock photos only from free-licence sites (Unsplash, Pexels). Nothing copied from other restaurants' or hotels' sites.
 - Real photos of Vencio's Garden only when the restaurant provides them, with permission, and with no recognisable guests.
+- **No photo is the designed default** (most dishes have none): the shared `DishPhoto` shows a cream panel with a thin gold inset frame and the dish's first letter in Playfair gold. On 09 a dish without a photo gets a shorter hero. The seed text "Short description of the dish." is hidden until real descriptions are entered.
 - Store them in `frontend/public/` and list each one below.
 
 | File | Source (link) | Licence |
@@ -162,7 +163,7 @@ Screen 18 is read from across the kitchen, so it uses bigger text and buttons th
 | `photos/vencios-dining.jpg` | Vencio's Garden Hotel & Restaurant official Facebook page ([facebook.com/venciosgardenhotel](https://www.facebook.com/venciosgardenhotel)) | The restaurant's own photo, used with its permission. No guests. Home, Our Story block |
 | `photos/stock-sisig.jpg` | [Pexels: Cooked meat on black cast iron cookware, by Eiliv Aceron](https://www.pexels.com/photo/cooked-meat-on-black-cast-iron-cookware-6896281/) | Pexels licence (free to use). Stock photo, not Vencio's Garden's own dish. Home hero; dark background to match the site |
 | `photos/stock-dish-sisig.jpg` | [Pexels: Sizzling sisig with steamed rice on hotplate, by Mark John Hilario](https://www.pexels.com/photo/sizzling-sisig-with-steamed-rice-on-hotplate-30355484/) | Pexels licence. Stock photo for Sizzling Sisig (Popular Dishes and the menus), not the restaurant's own dish |
-| `photos/stock-dish-kare-kare.jpg` | [Pexels: Kare-kare, by Aril Alejandro](https://www.pexels.com/photo/kare-kare-27313072/) | Pexels licence. Stock photo for Crispy Pork Kare-Kare (Popular Dishes and the menus), not the restaurant's own dish. Relyenong Bangus and Chicken Tinupig have no fitting Pexels or Unsplash photo, so they keep the icon |
+| `photos/stock-dish-kare-kare.jpg` | [Pexels: Kare-kare, by Aril Alejandro](https://www.pexels.com/photo/kare-kare-27313072/) | Pexels licence. Stock photo for Crispy Pork Kare-Kare (Popular Dishes and the menus), not the restaurant's own dish. Relyenong Bangus and Chicken Tinupig have no fitting Pexels or Unsplash photo, so they keep the no-photo card |
 | `photos/vencios-building.jpg` | Vencio's Garden Hotel & Restaurant official Facebook page ([facebook.com/venciosgardenhotel](https://www.facebook.com/venciosgardenhotel)) | The restaurant's own photo, used with its permission. No guests. About hero, faded on the right (1280 × 960) |
 | `photos/vencios-counter.jpg` | Vencio's Garden Hotel & Restaurant official Facebook page ([facebook.com/venciosgardenhotel](https://www.facebook.com/venciosgardenhotel)) | The restaurant's own photo, used with its permission. No recognisable guests. About, Our Story block |
 

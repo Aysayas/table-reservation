@@ -79,6 +79,7 @@ These differ from the 29 approved wireframes on purpose, to remove redundant ste
 - **Reservations (15, 24):** an Added column shows when each booking was made.
 - **Reservation row actions (15, 24):** each row shows its next step as one filled button (Arrived, Assign Table or Undo No-show). The other actions (No-show, Change Table, Edit, Cancel, Remove) are in a ⋯ menu, with Cancel and Remove in red.
 - **Diner flow (04, 06, 12, log in):** the deposit page shows one status line when there's nothing to pay (no per-guest or pay-by lines). Find My Reservation explains where the code is. Order status opens with a script "Salamat!", and guests who chose Pay at the Counter see Pay Now as a quiet outline button (Checkout adds `&pay=counter` to the link). Log in explains why an account is needed when it was opened from Reserve.
+- **Dishes without photos (01, 02, 08, 09, 10):** the empty dark tile with a fork icon is now a cream card with a gold frame and the dish's first letter. On 09 the hero is shorter when there's no photo. The seed placeholder description is hidden.
 
 ## Backend progress
 

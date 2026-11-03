@@ -1,9 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
-import { ArrowRight, Plus, Search, ShoppingBag, UtensilsCrossed } from 'lucide-react'
+import { ArrowRight, Plus, Search, ShoppingBag } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
+import DishPhoto from '@/components/DishPhoto'
 import LoadError from '@/components/LoadError'
+import { dishDescription } from '@/lib/dish'
 import { readLastOrder, readTableToken } from '@/lib/tableToken'
 import { getCategories, getMenuItems, getRecommendations } from '@/services/menu'
 import { getTable } from '@/services/tables'
@@ -12,20 +14,6 @@ import type { MenuItem } from '@/types/db'
 
 const peso = (amount: number) =>
   `₱${amount.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-
-function Photo({ item, className }: { item: MenuItem; className: string }) {
-  return item.image_url ? (
-    <img src={item.image_url} alt={`${item.name} photo`} className={`${className} object-cover`} />
-  ) : (
-    <div
-      role="img"
-      aria-label={`${item.name} photo`}
-      className={`${className} bg-brand-charcoal text-brand-gold/60 flex items-center justify-center`}
-    >
-      <UtensilsCrossed className="size-6" strokeWidth={1.25} />
-    </div>
-  )
-}
 
 export default function TableMenu() {
   const { tableId = '' } = useParams()
@@ -168,7 +156,12 @@ export default function TableMenu() {
                     className={`mr-3 w-32 shrink-0 ${copy ? 'motion-reduce:hidden' : ''}`}
                   >
                     <Link to={itemLink(item)} className="block">
-                      <Photo item={item} className="h-24 w-32 rounded-lg" />
+                      <DishPhoto
+                        name={item.name}
+                        src={item.image_url}
+                        className="h-24 w-32 rounded-lg"
+                        letter="text-4xl"
+                      />
                       <p className="text-brand-charcoal mt-2 line-clamp-2 text-xs font-semibold">
                         {item.name}
                       </p>
@@ -212,12 +205,16 @@ export default function TableMenu() {
                 className={`border-brand-line flex items-center gap-3 border-b py-3 ${item.is_available ? '' : 'opacity-50'}`}
               >
                 <Link to={itemLink(item)} className="flex min-w-0 flex-1 items-center gap-3">
-                  <Photo item={item} className="size-16 shrink-0 rounded-md" />
+                  <DishPhoto
+                    name={item.name}
+                    src={item.image_url}
+                    className="size-16 shrink-0 rounded-md"
+                  />
                   <span className="min-w-0">
                     <span className="text-brand-charcoal block text-sm font-semibold">
                       {item.name}
                     </span>
-                    {item.description && (
+                    {dishDescription(item.description) && (
                       <span className="text-brand-ink/70 mt-0.5 line-clamp-1 block text-xs">
                         {item.description}
                       </span>

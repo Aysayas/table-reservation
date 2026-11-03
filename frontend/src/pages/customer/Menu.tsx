@@ -1,8 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
-import { QrCode, Search, UtensilsCrossed } from 'lucide-react'
+import { QrCode, Search } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import DishPhoto from '@/components/DishPhoto'
 import LoadError from '@/components/LoadError'
+import { dishDescription } from '@/lib/dish'
 import { getCategories, getMenuItems } from '@/services/menu'
 import type { MenuItem } from '@/types/db'
 
@@ -20,21 +22,12 @@ function Dish({ item, category }: { item: MenuItem; category: string }) {
       className={`group border-brand-line flex flex-col overflow-hidden rounded-xl border bg-white transition duration-300 hover:shadow-md motion-safe:hover:-translate-y-1 ${item.is_available ? '' : 'opacity-50'}`}
     >
       <div className="bg-brand-charcoal relative h-28 overflow-hidden md:h-32">
-        {item.image_url ? (
-          <img
-            src={item.image_url}
-            alt={`${item.name} photo`}
-            className={`h-full w-full object-cover ${zoom}`}
-          />
-        ) : (
-          <div
-            role="img"
-            aria-label={`${item.name} photo`}
-            className="text-brand-gold/50 flex h-full items-center justify-center"
-          >
-            <UtensilsCrossed className={`size-7 ${zoom}`} strokeWidth={1.25} />
-          </div>
-        )}
+        <DishPhoto
+          name={item.name}
+          src={item.image_url}
+          className={`h-full w-full ${zoom}`}
+          letter="text-5xl"
+        />
         {item.is_recommended && (
           <span className="bg-brand-gold text-brand-charcoal absolute top-2 left-2 rounded-sm px-2 py-0.5 text-xs font-bold tracking-[0.15em] uppercase">
             Best Seller
@@ -46,7 +39,7 @@ function Dish({ item, category }: { item: MenuItem; category: string }) {
       </div>
       <div className="flex flex-1 flex-col px-3 py-3 md:px-4">
         <h3 className="text-brand-charcoal text-sm leading-5 font-bold">{item.name}</h3>
-        {item.description && (
+        {dishDescription(item.description) && (
           <p className="text-brand-ink/70 mt-1 line-clamp-2 text-xs leading-5">
             {item.description}
           </p>
