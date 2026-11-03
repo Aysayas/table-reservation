@@ -9,6 +9,7 @@ import { toast } from 'sonner'
 import { z } from 'zod'
 import LoadError from '@/components/LoadError'
 import Modal from '@/components/Modal'
+import Skeleton from '@/components/Skeleton'
 import Spinner from '@/components/Spinner'
 import { getSettings } from '@/services/settings'
 import {
@@ -50,6 +51,7 @@ export default function TablesQr() {
   const [printing, setPrinting] = useState<AdminTable[]>([])
   const {
     data: tables = [],
+    isPending,
     isLoadingError,
     refetch,
   } = useQuery({ queryKey: ['tables', 'admin'], queryFn: getAdminTables })
@@ -135,6 +137,14 @@ export default function TablesQr() {
         </div>
       ) : (
         <ul className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 print:hidden">
+          {isPending &&
+            Array.from({ length: 4 }, (_, i) => (
+              <li key={i} className="border-brand-line rounded-lg border bg-white p-5">
+                <Skeleton className="h-44" />
+                <Skeleton className="mt-4 h-6 w-28" />
+                <Skeleton className="mt-4 h-9" />
+              </li>
+            ))}
           {tables.map((t) => (
             <li
               key={t.table_id}

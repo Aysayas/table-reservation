@@ -14,6 +14,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
+import Skeleton from '@/components/Skeleton'
 import { formatTime } from '@/lib/hours'
 import { defaultRange, getReport, type ReportPeriod } from '@/services/reports'
 
@@ -46,7 +47,7 @@ const long = (iso: string) => format(parseISO(iso), 'MMM d, yyyy')
 export default function Reports() {
   const [period, setPeriod] = useState<ReportPeriod>('daily')
   const [range, setRange] = useState(() => defaultRange('daily'))
-  const { data, error } = useQuery({
+  const { data, isPending, error } = useQuery({
     queryKey: ['reports', period, range],
     queryFn: () => getReport({ period, ...range }),
   })
@@ -147,132 +148,156 @@ export default function Reports() {
           <h2 id="sales-title" className={title}>
             Sales Over Time
           </h2>
-          <div
-            role="img"
-            aria-label={`Sales over time: ${sales.map((d) => `${d.label} ${peso(d.total)}`).join(', ')}`}
-            className="mt-4 h-64"
-          >
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={sales} margin={{ top: 10, right: 16, bottom: 0, left: 0 }}>
-                <CartesianGrid
-                  stroke="var(--color-brand-line)"
-                  strokeDasharray="3 3"
-                  vertical={false}
-                />
-                <XAxis dataKey="label" tickLine={false} tick={axis} />
-                <YAxis
-                  width={64}
-                  tickLine={false}
-                  axisLine={false}
-                  tick={axis}
-                  tickFormatter={(v: number) => `₱${v.toLocaleString('en-PH')}`}
-                />
-                <Tooltip {...tip} formatter={(v) => [peso(Number(v)), 'Sales']} />
-                <Line
-                  type="monotone"
-                  dataKey="total"
-                  stroke={ink}
-                  strokeWidth={2}
-                  dot={({ cx, cy, payload }) => (
-                    <circle
-                      key={`${cx}-${cy}`}
-                      cx={cx}
-                      cy={cy}
-                      r={topSales > 0 && payload.total === topSales ? 6 : 4}
-                      fill={topSales > 0 && payload.total === topSales ? peak : ink}
-                      stroke="white"
-                      strokeWidth={2}
-                    />
-                  )}
-                  isAnimationActive={false}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
+          {isPending ? (
+            <Skeleton className="mt-4 h-64" />
+          ) : (
+            <div
+              role="img"
+              aria-label={`Sales over time: ${sales.map((d) => `${d.label} ${peso(d.total)}`).join(', ')}`}
+              className="mt-4 h-64"
+            >
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={sales} margin={{ top: 10, right: 16, bottom: 0, left: 0 }}>
+                  <CartesianGrid
+                    stroke="var(--color-brand-line)"
+                    strokeDasharray="3 3"
+                    vertical={false}
+                  />
+                  <XAxis dataKey="label" tickLine={false} tick={axis} />
+                  <YAxis
+                    width={64}
+                    tickLine={false}
+                    axisLine={false}
+                    tick={axis}
+                    tickFormatter={(v: number) => `₱${v.toLocaleString('en-PH')}`}
+                  />
+                  <Tooltip {...tip} formatter={(v) => [peso(Number(v)), 'Sales']} />
+                  <Line
+                    type="monotone"
+                    dataKey="total"
+                    stroke={ink}
+                    strokeWidth={2}
+                    dot={({ cx, cy, payload }) => (
+                      <circle
+                        key={`${cx}-${cy}`}
+                        cx={cx}
+                        cy={cy}
+                        r={topSales > 0 && payload.total === topSales ? 6 : 4}
+                        fill={topSales > 0 && payload.total === topSales ? peak : ink}
+                        stroke="white"
+                        strokeWidth={2}
+                      />
+                    )}
+                    isAnimationActive={false}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          )}
         </section>
 
         <section aria-labelledby="best-title" className={card}>
           <h2 id="best-title" className={title}>
             Best-Selling Items
           </h2>
-          <div
-            role="img"
-            aria-label={`Best-selling items: ${best.map((b) => `${b.name} ${b.quantity} sold`).join(', ') || 'none'}`}
-            className="mt-4 h-64"
-          >
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={best}
-                layout="vertical"
-                margin={{ top: 0, right: 16, bottom: 0, left: 0 }}
-              >
-                <CartesianGrid
-                  stroke="var(--color-brand-line)"
-                  strokeDasharray="3 3"
-                  horizontal={false}
-                />
-                <XAxis type="number" allowDecimals={false} tickLine={false} tick={axis} />
-                <YAxis
-                  type="category"
-                  dataKey="name"
-                  width={150}
-                  tickLine={false}
-                  axisLine={false}
-                  tick={axis}
-                />
-                <Tooltip {...tip} formatter={(v) => [`${v} sold`, 'Sold']} />
-                <Bar dataKey="quantity" fill={ink} radius={[0, 4, 4, 0]} isAnimationActive={false}>
-                  {best.map((b) => (
-                    <Cell key={b.name} fill={b.quantity === topBest ? peak : ink} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
+          {isPending ? (
+            <Skeleton className="mt-4 h-64" />
+          ) : (
+            <div
+              role="img"
+              aria-label={`Best-selling items: ${best.map((b) => `${b.name} ${b.quantity} sold`).join(', ') || 'none'}`}
+              className="mt-4 h-64"
+            >
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={best}
+                  layout="vertical"
+                  margin={{ top: 0, right: 16, bottom: 0, left: 0 }}
+                >
+                  <CartesianGrid
+                    stroke="var(--color-brand-line)"
+                    strokeDasharray="3 3"
+                    horizontal={false}
+                  />
+                  <XAxis type="number" allowDecimals={false} tickLine={false} tick={axis} />
+                  <YAxis
+                    type="category"
+                    dataKey="name"
+                    width={150}
+                    tickLine={false}
+                    axisLine={false}
+                    tick={axis}
+                  />
+                  <Tooltip {...tip} formatter={(v) => [`${v} sold`, 'Sold']} />
+                  <Bar
+                    dataKey="quantity"
+                    fill={ink}
+                    radius={[0, 4, 4, 0]}
+                    isAnimationActive={false}
+                  >
+                    {best.map((b) => (
+                      <Cell key={b.name} fill={b.quantity === topBest ? peak : ink} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          )}
         </section>
 
         <section aria-labelledby="bookings-title" className={card}>
           <h2 id="bookings-title" className={title}>
             Reservations per Day
           </h2>
-          <div
-            role="img"
-            aria-label={`Reservations per day: ${bookings.map((b) => `${b.label} ${b.count}`).join(', ')}`}
-            className="mt-4 h-64"
-          >
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={bookings} margin={{ top: 10, right: 16, bottom: 0, left: 0 }}>
-                <CartesianGrid
-                  stroke="var(--color-brand-line)"
-                  strokeDasharray="3 3"
-                  vertical={false}
-                />
-                <XAxis dataKey="label" tickLine={false} tick={axis} minTickGap={12} />
-                <YAxis
-                  width={32}
-                  allowDecimals={false}
-                  tickLine={false}
-                  axisLine={false}
-                  tick={axis}
-                />
-                <Tooltip {...tip} formatter={(v) => [String(v), 'Reservations']} />
-                <Bar dataKey="count" fill={ink} radius={[4, 4, 0, 0]} isAnimationActive={false}>
-                  {bookings.map((b) => (
-                    <Cell
-                      key={b.label}
-                      fill={topBookings > 0 && b.count === topBookings ? peak : ink}
-                    />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
+          {isPending ? (
+            <Skeleton className="mt-4 h-64" />
+          ) : (
+            <div
+              role="img"
+              aria-label={`Reservations per day: ${bookings.map((b) => `${b.label} ${b.count}`).join(', ')}`}
+              className="mt-4 h-64"
+            >
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={bookings} margin={{ top: 10, right: 16, bottom: 0, left: 0 }}>
+                  <CartesianGrid
+                    stroke="var(--color-brand-line)"
+                    strokeDasharray="3 3"
+                    vertical={false}
+                  />
+                  <XAxis dataKey="label" tickLine={false} tick={axis} minTickGap={12} />
+                  <YAxis
+                    width={32}
+                    allowDecimals={false}
+                    tickLine={false}
+                    axisLine={false}
+                    tick={axis}
+                  />
+                  <Tooltip {...tip} formatter={(v) => [String(v), 'Reservations']} />
+                  <Bar dataKey="count" fill={ink} radius={[4, 4, 0, 0]} isAnimationActive={false}>
+                    {bookings.map((b) => (
+                      <Cell
+                        key={b.label}
+                        fill={topBookings > 0 && b.count === topBookings ? peak : ink}
+                      />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          )}
         </section>
 
         <section aria-labelledby="summary-title" className={card}>
           <h2 id="summary-title" className={title}>
             Summary
           </h2>
+          {isPending && (
+            <div className="mt-4 space-y-5 py-1">
+              {Array.from({ length: 6 }, (_, i) => (
+                <Skeleton key={i} className="h-5" />
+              ))}
+            </div>
+          )}
           <dl className="mt-4">
             {summary.map(([term, value]) => (
               <div
