@@ -1,7 +1,7 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { format, parseISO } from 'date-fns'
 import { CalendarX2, ChevronLeft, ChevronRight, Search } from 'lucide-react'
-import { useState, useSyncExternalStore } from 'react'
+import { useState } from 'react'
 import EmptyState from '@/components/EmptyState'
 import LoadError from '@/components/LoadError'
 import Skeleton from '@/components/Skeleton'
@@ -16,12 +16,6 @@ const td = 'text-brand-charcoal px-3 py-3 text-sm whitespace-nowrap'
 const dl = 'grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm'
 const dt = 'text-brand-ink/70'
 const dd = 'text-brand-charcoal text-right'
-const wideQuery = '(min-width: 48rem)'
-const onWideChange = (change: () => void) => {
-  const media = window.matchMedia(wideQuery)
-  media.addEventListener('change', change)
-  return () => media.removeEventListener('change', change)
-}
 
 const statusBadge: Record<ReservationStatus, string> = {
   pending: 'bg-brand-gold/20 text-brand-gold-deep',
@@ -48,7 +42,6 @@ export default function Reservations() {
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
   const [editing, setEditing] = useState<PublicReservation | null>(null)
-  const wide = useSyncExternalStore(onWideChange, () => window.matchMedia(wideQuery).matches)
   const { data, isPending, isLoadingError, refetch } = useQuery({
     queryKey: ['reservations', { view, status: '', search, page }],
     placeholderData: keepPreviousData,
@@ -135,16 +128,14 @@ export default function Reservations() {
                       </span>
                     </dd>
                   </dl>
-                  {!wide && (
-                    <ReservationActions
-                      reservation={r}
-                      onEdit={
-                        r.status === 'pending' || r.status === 'confirmed'
-                          ? () => setEditing(r)
-                          : undefined
-                      }
-                    />
-                  )}
+                  <ReservationActions
+                    reservation={r}
+                    onEdit={
+                      r.status === 'pending' || r.status === 'confirmed'
+                        ? () => setEditing(r)
+                        : undefined
+                    }
+                  />
                 </li>
               ))}
               {isPending &&
@@ -196,16 +187,14 @@ export default function Reservations() {
                       </span>
                     </td>
                     <td className={td}>
-                      {wide && (
-                        <ReservationActions
-                          reservation={r}
-                          onEdit={
-                            r.status === 'pending' || r.status === 'confirmed'
-                              ? () => setEditing(r)
-                              : undefined
-                          }
-                        />
-                      )}
+                      <ReservationActions
+                        reservation={r}
+                        onEdit={
+                          r.status === 'pending' || r.status === 'confirmed'
+                            ? () => setEditing(r)
+                            : undefined
+                        }
+                      />
                     </td>
                   </tr>
                 ))}

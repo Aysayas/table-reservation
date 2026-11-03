@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Ellipsis, X } from 'lucide-react'
-import { useRef, useState } from 'react'
+import { useId, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import Modal from '@/components/Modal'
@@ -28,7 +28,7 @@ export default function ReservationActions({
   const queryClient = useQueryClient()
   const trigger = useRef<HTMLButtonElement>(null)
   const menu = useRef<HTMLDivElement>(null)
-  const menuId = `actions-${r.reservation_id}`
+  const menuId = useId()
   const [assigning, setAssigning] = useState(false)
   const [confirming, setConfirming] = useState<'no_show' | 'cancelled' | 'remove' | null>(null)
   const { data: tables = [] } = useQuery({
