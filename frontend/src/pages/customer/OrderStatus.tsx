@@ -4,6 +4,7 @@ import { Check } from 'lucide-react'
 import { useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
+import LeaderRow from '@/components/LeaderRow'
 import LoadError from '@/components/LoadError'
 import useOrderEvents from '@/hooks/useOrderEvents'
 import usePaymentReturn, { markPaying } from '@/hooks/usePaymentReturn'
@@ -167,10 +168,16 @@ export default function OrderStatus() {
             </li>
           ))}
         </ul>
-        <div className="border-brand-line mt-4 flex justify-between border-t pt-3">
-          <span className="text-brand-charcoal font-serif text-lg">Total</span>
-          <span className="text-brand-red font-serif text-lg">{peso(order.total_amount)}</span>
-        </div>
+        <dl>
+          <LeaderRow
+            term="Total"
+            className="border-brand-line mt-4 border-t pt-3"
+            termClassName="text-brand-charcoal font-serif text-lg"
+            valueClassName="text-brand-red font-serif text-lg"
+          >
+            {peso(order.total_amount)}
+          </LeaderRow>
+        </dl>
       </section>
 
       <div className="bg-brand-charcoal mt-4 rounded-lg px-5 py-4 text-white">
