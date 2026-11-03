@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { Menu as MenuIcon, ShoppingCart, X } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 import { toast } from 'sonner'
 import AccountMenu from '@/components/AccountMenu'
@@ -26,6 +26,8 @@ const loggedOutKey = 'logged-out'
 export default function CustomerLayout() {
   const { data: settings } = useQuery({ queryKey: ['settings'], queryFn: getSettings })
   const [open, setOpen] = useState(false)
+  const toggle = useRef<HTMLButtonElement>(null)
+  const panel = useRef<HTMLElement>(null)
   const { pathname } = useLocation()
   const wide = !pathname.startsWith('/table')
   const { data: account } = useAccount()
@@ -50,6 +52,25 @@ export default function CustomerLayout() {
       return
     }
   }, [])
+  useEffect(() => {
+    if (!open) return
+    panel.current?.querySelector('a')?.focus()
+    const closeOutside = (event: PointerEvent) => {
+      const target = event.target as Node
+      if (!panel.current?.contains(target) && !toggle.current?.contains(target)) setOpen(false)
+    }
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return
+      setOpen(false)
+      toggle.current?.focus()
+    }
+    document.addEventListener('pointerdown', closeOutside)
+    document.addEventListener('keydown', closeOnEscape)
+    return () => {
+      document.removeEventListener('pointerdown', closeOutside)
+      document.removeEventListener('keydown', closeOnEscape)
+    }
+  }, [open])
   const words = settings?.restaurant_name.split(' ') ?? []
   const lastWord = words.pop()
   const siteLinks = account ? customerLinks.slice(0, 3) : customerLinks
@@ -165,6 +186,7 @@ export default function CustomerLayout() {
             />
           )}
           <button
+            ref={toggle}
             type="button"
             aria-label={open ? 'Close menu' : 'Open menu'}
             aria-expanded={open}
@@ -176,7 +198,8 @@ export default function CustomerLayout() {
         </div>
         {open && (
           <nav
-            className={`bg-brand-charcoal text-brand-cream absolute inset-x-0 top-full z-20 border-t border-white/10 shadow-lg ${wide ? 'xl:hidden' : ''}`}
+            ref={panel}
+            className={`bg-brand-charcoal text-brand-cream absolute inset-x-0 top-full z-20 border-t border-white/10 shadow-lg motion-safe:transition-[opacity,translate] motion-safe:duration-180 motion-safe:ease-out starting:-translate-y-2 starting:opacity-0 ${wide ? 'xl:hidden' : ''}`}
           >
             {panelLinks.map((link) => (
               <Link key={link.to} to={link.to} className={navLink} onClick={() => setOpen(false)}>
