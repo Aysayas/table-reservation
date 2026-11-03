@@ -177,7 +177,7 @@ Gentle and slow, so it never makes anyone dizzy. Made with Tailwind only (no mot
 
 Screen 18 is read from across the kitchen, so it uses bigger text and buttons than the other staff screens.
 
-- **Slim charcoal header, one row:** the title, live counts ("6 open · 1 late · avg 9 min", with the late count in light red), the waiting-time key as coloured dots (On time green, 10+ min gold, 15+ min red, on wide screens), the clock, and Sound, Full screen and Log Out. On phones these show as icons only.
+- **Slim charcoal header, one row:** the title, live counts ("6 open · 1 late · avg 9 min", with the late count in light red), the waiting-time key as coloured dots (On time green, 10+ min gold, 15+ min red, from 1280 px), the clock, and Sound, Full screen and Log Out. Below 1024 px they show as icons only. Full screen is hidden where the browser can't do it (iPhone).
 - **Full height from tablet width (768 px) up:** three columns fill the screen. Each column scrolls on its own, and its title and count stay pinned, so Ready is never pushed off. Below 768 px the columns stack.
 - **Screen stays awake:** the screen won't sleep while the display is open (Wake Lock, where the browser supports it).
 - **Tickets:** the table number is large in Playfair, with the order number under it and the waiting chip on the right. A thin bar fills over 15 minutes in the age colour, and a late ticket (15+ min) gets a red left edge.

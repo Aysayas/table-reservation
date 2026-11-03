@@ -60,6 +60,7 @@ const ages = [
 const headerButton =
   'flex items-center gap-2 text-sm text-white/70 transition-colors duration-200 hover:text-white pointer-coarse:min-h-11'
 const kitchenKey = ['orders', 'kitchen']
+const moveKey = ['kitchen-move']
 const ticksKey = 'kitchen-ticks'
 
 const chime = (ctx: AudioContext) => {
@@ -173,8 +174,8 @@ export default function KitchenDisplay() {
   const toggleFullscreen = () => {
     const change = document.fullscreenElement
       ? document.exitFullscreen()
-      : document.documentElement.requestFullscreen()
-    change.catch(() => toast.error("Full screen isn't available on this device."))
+      : document.documentElement.requestFullscreen?.()
+    change?.catch(() => toast.error("Full screen isn't available on this device."))
   }
   const toggleSound = () => {
     const next = !sound
@@ -187,19 +188,21 @@ export default function KitchenDisplay() {
     }
   }
   const [ticks, setTicks] = useState(readTicks)
-  const saveTicks = (next: Set<number>) => {
-    setTicks(next)
-    try {
-      sessionStorage.setItem(ticksKey, JSON.stringify([...next]))
-    } catch {
-      return
-    }
-  }
-  const toggleTick = (id: number) => {
-    const next = new Set(ticks)
-    if (!next.delete(id)) next.add(id)
-    saveTicks(next)
-  }
+  const changeTicks = (change: (next: Set<number>) => void) =>
+    setTicks((previous) => {
+      const next = new Set(previous)
+      change(next)
+      try {
+        sessionStorage.setItem(ticksKey, JSON.stringify([...next]))
+      } catch {
+        return next
+      }
+      return next
+    })
+  const toggleTick = (id: number) =>
+    changeTicks((next) => {
+      if (!next.delete(id)) next.add(id)
+    })
   const seen = useRef<Set<number> | null>(null)
   const [fresh, setFresh] = useState<number[]>([])
   const [announcement, setAnnouncement] = useState('')
@@ -224,43 +227,59 @@ export default function KitchenDisplay() {
   }, [orders, isSuccess, sound])
   const [saving, setSaving] = useState<number[]>([])
   const move = useMutation({
+    mutationKey: moveKey,
     mutationFn: ({ order, next }: { order: StaffOrder; next: OrderStatus }) =>
       updateOrderStatus(order.order_id, next),
     onMutate: async ({ order, next }) => {
-      setSaving((list) => [...list, order.order_id])
-      const left = new Set(ticks)
-      for (const item of order.items) left.delete(item.order_item_id)
-      if (left.size !== ticks.size) saveTicks(left)
+      const itemIds = order.items.map((item) => item.order_item_id)
+      changeTicks((left) => {
+        for (const id of itemIds) left.delete(id)
+      })
       await queryClient.cancelQueries({ queryKey: kitchenKey })
-      const before = queryClient.getQueryData<StaffOrder[]>(kitchenKey)
+      const previous = queryClient
+        .getQueryData<StaffOrder[]>(kitchenKey)
+        ?.find((o) => o.order_id === order.order_id)?.status
       queryClient.setQueryData<StaffOrder[]>(kitchenKey, (list = []) =>
-        list.some((o) => o.order_id === order.order_id)
+        previous
           ? list.map((o) => (o.order_id === order.order_id ? { ...o, status: next } : o))
           : [{ ...order, status: next }, ...list],
       )
-      return { before }
+      return { previous }
     },
     onSuccess: (updated, { order }) => {
       toast.success(
         `Order #${updated.order_id} is now ${updated.status}`,
         updated.status === 'served'
-          ? { action: { label: 'Undo', onClick: () => move.mutate({ order, next: 'ready' }) } }
+          ? { action: { label: 'Undo', onClick: () => bump(order, 'ready') } }
           : undefined,
       )
     },
-    onError: (e, _variables, context) => {
-      if (context?.before) queryClient.setQueryData(kitchenKey, context.before)
+    onError: (e, { order }, context) => {
+      queryClient.setQueryData<StaffOrder[]>(kitchenKey, (list = []) =>
+        context?.previous
+          ? list.map((o) =>
+              o.order_id === order.order_id ? { ...o, status: context.previous! } : o,
+            )
+          : list.filter((o) => o.order_id !== order.order_id),
+      )
       toast.error(e.message)
     },
     onSettled: (_data, _error, { order }) => {
       setSaving((list) => list.filter((id) => id !== order.order_id))
+      if (queryClient.isMutating({ mutationKey: moveKey }) > 1) return
       for (const key of ['orders', 'tables', 'dashboard']) {
         queryClient.invalidateQueries({ queryKey: [key] })
       }
     },
   })
+  const bump = (order: StaffOrder, next: OrderStatus) => {
+    if (saving.includes(order.order_id)) return
+    setSaving((list) => [...list, order.order_id])
+    move.mutate({ order, next })
+  }
   const oldestFirst = [...orders].reverse()
-  const minutesOf = (order: StaffOrder) => differenceInMinutes(now, parseISO(order.created_at))
+  const minutesOf = (order: StaffOrder) =>
+    Math.max(0, differenceInMinutes(now, parseISO(order.created_at)))
   const late = orders.filter((o) => minutesOf(o) >= 15).length
   const average = orders.length
     ? Math.round(orders.reduce((sum, o) => sum + minutesOf(o), 0) / orders.length)
@@ -283,7 +302,7 @@ export default function KitchenDisplay() {
             {average} min
           </p>
         )}
-        <ul aria-label="Waiting time" className="hidden flex-wrap gap-3 lg:flex">
+        <ul aria-label="Waiting time" className="hidden flex-wrap gap-3 xl:flex">
           {ages.map((age) => (
             <li key={age.label} className="flex items-center gap-1.5 text-xs text-white/75">
               <span className={`size-2 rounded-full ${age.bar}`} />
@@ -294,15 +313,19 @@ export default function KitchenDisplay() {
         <p className="ml-auto font-serif text-lg tabular-nums">{format(now, 'h:mm a')}</p>
         <button type="button" aria-pressed={sound} onClick={toggleSound} className={headerButton}>
           {sound ? <Volume2 className="size-4" /> : <VolumeX className="size-4" />}
-          <span className="max-md:sr-only">Sound</span>
+          <span className="max-lg:sr-only">Sound</span>
         </button>
-        <button type="button" onClick={toggleFullscreen} className={headerButton}>
-          {fullscreen ? <Minimize className="size-4" /> : <Maximize className="size-4" />}
-          <span className="max-md:sr-only">{fullscreen ? 'Exit full screen' : 'Full screen'}</span>
-        </button>
+        {document.fullscreenEnabled && (
+          <button type="button" onClick={toggleFullscreen} className={headerButton}>
+            {fullscreen ? <Minimize className="size-4" /> : <Maximize className="size-4" />}
+            <span className="max-lg:sr-only">
+              {fullscreen ? 'Exit full screen' : 'Full screen'}
+            </span>
+          </button>
+        )}
         <Link to="/staff/login" onClick={signOut} className={headerButton}>
           <LogOut className="size-4" />
-          <span className="max-md:sr-only">Log Out</span>
+          <span className="max-lg:sr-only">Log Out</span>
         </Link>
       </header>
       <p aria-live="polite" className="sr-only">
@@ -398,7 +421,7 @@ export default function KitchenDisplay() {
                           type="button"
                           disabled={busy}
                           aria-busy={busy}
-                          onClick={() => move.mutate({ order, next: column.next })}
+                          onClick={() => bump(order, column.next)}
                           className={`mt-4 flex min-h-12 w-full items-center justify-center gap-2 rounded-lg text-base font-bold tracking-wide transition-colors duration-200 disabled:opacity-50 ${column.button}`}
                         >
                           {busy && <Spinner />}
