@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test'
+import { readCsv } from './csv.js'
 
 const url = '/admin/payments'
 
@@ -62,4 +63,48 @@ test('the pages show 8 payments at a time', async ({ page }) => {
   await expect(page.getByText('Showing 9–10 of 10')).toBeVisible()
   await expect(page.getByRole('row')).toHaveCount(3)
   await expect(page.getByRole('button', { name: 'Next page' })).toBeDisabled()
+})
+
+test('export downloads every matching payment, not just one page, with the totals', async ({
+  page,
+}) => {
+  await page.goto(url)
+  await expect(page.getByText('Showing 1–8 of 10')).toBeVisible()
+  const download = page.waitForEvent('download')
+  await page.getByRole('button', { name: 'Export' }).click()
+  const file = await download
+  expect(file.suggestedFilename()).toMatch(/^payments-\d{4}-\d{2}-\d{2}\.csv$/)
+  const rows = await readCsv(file)
+  expect(rows[0]).toEqual([
+    'Payment ID',
+    'Date',
+    'For',
+    'Method',
+    'Reference',
+    'Received By',
+    'Amount',
+    'Status',
+  ])
+  const payments = rows.slice(
+    1,
+    rows.findIndex((r) => r.length === 0),
+  )
+  expect(payments).toHaveLength(10)
+  expect(payments[0][0]).toBe('PAY-0010')
+  expect(rows.find((r) => r[0] === 'Total Collected')?.[6]).toBe('6479.00')
+  expect(rows.find((r) => r[0] === 'Deposits')?.[6]).toBe('400.00')
+})
+
+test('export follows the filters', async ({ page }) => {
+  await page.goto(url)
+  await page.getByLabel('Method').selectOption('cash')
+  const download = page.waitForEvent('download')
+  await page.getByRole('button', { name: 'Export' }).click()
+  const rows = await readCsv(await download)
+  const payments = rows.slice(
+    1,
+    rows.findIndex((r) => r.length === 0),
+  )
+  expect(payments.length).toBeGreaterThan(0)
+  expect(payments.every((r) => r[3] === 'Cash')).toBe(true)
 })

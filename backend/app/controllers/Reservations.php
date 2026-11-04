@@ -29,9 +29,11 @@ class Reservations extends Controller {
 		$search = is_string($query['search'] ?? null) ? trim($query['search']) : '';
 		$raw_page = $query['page'] ?? '1';
 		$page = is_string($raw_page) && ctype_digit($raw_page) ? (int) $raw_page : 0;
+		$raw_per_page = $query['per_page'] ?? (string) $this->per_page;
+		$per_page = is_string($raw_per_page) && ctype_digit($raw_per_page) ? (int) $raw_per_page : 0;
 
-		if (($view !== '' && !in_array($view, $this->views, true)) || !$date || ($status !== '' && !in_array($status, $this->statuses, true)) || $page < 1) {
-			$this->api->respond_error('Give a view (' . implode(', ', $this->views) . ') or reservation_date as YYYY-MM-DD, a valid status and a page of 1 or more', 422);
+		if (($view !== '' && !in_array($view, $this->views, true)) || !$date || ($status !== '' && !in_array($status, $this->statuses, true)) || $page < 1 || $per_page < 1 || $per_page > 500) {
+			$this->api->respond_error('Give a view (' . implode(', ', $this->views) . ') or reservation_date as YYYY-MM-DD, a valid status, a page of 1 or more and a per_page of 1 to 500', 422);
 		}
 
 		$customer_ids = $search !== ''
@@ -67,12 +69,12 @@ class Reservations extends Controller {
 		$total = (int) $build()->count();
 		$rows = $build()
 			->order_by('TIMESTAMP(reservation_date, reservation_time)', in_array($view, ['past', 'cancelled'], true) ? 'DESC' : 'ASC')
-			->pagination($this->per_page, $page)
+			->pagination($per_page, $page)
 			->get_all();
 
 		$this->api->respond([
 			'data' => array_map(fn($reservation) => $this->format($reservation, true), $rows),
-			'meta' => ['total' => $total, 'page' => $page, 'per_page' => $this->per_page],
+			'meta' => ['total' => $total, 'page' => $page, 'per_page' => $per_page],
 		]);
 	}
 

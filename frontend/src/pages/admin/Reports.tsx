@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { format, parseISO } from 'date-fns'
-import { Printer } from 'lucide-react'
+import { Download, Printer } from 'lucide-react'
 import { useState } from 'react'
 import {
   Bar,
@@ -15,6 +15,7 @@ import {
   YAxis,
 } from 'recharts'
 import Skeleton from '@/components/Skeleton'
+import { downloadCsv } from '@/lib/csv'
 import { formatTime } from '@/lib/hours'
 import { defaultRange, getReport, type ReportPeriod } from '@/services/reports'
 
@@ -42,6 +43,7 @@ const periods: { value: ReportPeriod; label: string }[] = [
   { value: 'weekly', label: 'Weekly' },
   { value: 'monthly', label: 'Monthly' },
 ]
+const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
 const long = (iso: string) => format(parseISO(iso), 'MMM d, yyyy')
 
 export default function Reports() {
@@ -84,6 +86,32 @@ export default function Reports() {
       ]
     : []
 
+  const exportCsv = () =>
+    downloadCsv(`vencios-report-${range.from}-to-${range.to}.csv`, [
+      ["Vencio's Garden Sales Report"],
+      ['Period', cap(period)],
+      ['From', range.from],
+      ['To', range.to],
+      [],
+      ['Summary'],
+      ...summary,
+      [],
+      ['Sales Over Time'],
+      [period === 'monthly' ? 'Month' : period === 'weekly' ? 'Week Of' : 'Date', 'Sales'],
+      ...(data?.sales_over_time ?? []).map((r) => [r.start, r.total.toFixed(2)]),
+      ['Total', (data?.sales_over_time ?? []).reduce((n, r) => n + r.total, 0).toFixed(2)],
+      [],
+      ['Best Sellers'],
+      ['Rank', 'Dish', 'Quantity'],
+      ...best.map((b, i) => [i + 1, b.name, b.quantity]),
+      ['', 'Total', best.reduce((n, b) => n + b.quantity, 0)],
+      [],
+      ['Reservations Per Day'],
+      ['Date', 'Bookings'],
+      ...(data?.reservations_per_day ?? []).map((r) => [r.date, r.count]),
+      ['Total', (data?.reservations_per_day ?? []).reduce((n, r) => n + r.count, 0)],
+    ])
+
   return (
     <div>
       <div className="flex flex-wrap items-center gap-3 print:hidden">
@@ -125,8 +153,17 @@ export default function Reports() {
         </div>
         <button
           type="button"
+          onClick={exportCsv}
+          disabled={!data}
+          className="border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal ml-auto flex items-center gap-2 rounded-lg border px-5 py-2.5 text-sm font-bold transition-colors duration-200 hover:text-white disabled:opacity-50"
+        >
+          <Download className="size-4" />
+          Download CSV
+        </button>
+        <button
+          type="button"
           onClick={() => window.print()}
-          className="border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal ml-auto flex items-center gap-2 rounded-lg border px-5 py-2.5 text-sm font-bold transition-colors duration-200 hover:text-white"
+          className="border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal flex items-center gap-2 rounded-lg border px-5 py-2.5 text-sm font-bold transition-colors duration-200 hover:text-white"
         >
           <Printer className="size-4" />
           Print
