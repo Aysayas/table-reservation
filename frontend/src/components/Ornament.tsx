@@ -29,7 +29,7 @@ export default function Ornament({
           {diamond}
           <Tag
             id={id}
-            className={`${ink} text-center text-xs font-bold tracking-[0.25em] uppercase`}
+            className={`${ink} tracking-eyebrow text-center text-xs font-bold uppercase`}
           >
             {label}
           </Tag>

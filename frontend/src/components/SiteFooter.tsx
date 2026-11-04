@@ -7,7 +7,7 @@ import { directionsUrl } from '@/lib/maps'
 import { getOpeningHours, getSettings } from '@/services/settings'
 
 const wrap = 'md:mx-auto md:max-w-6xl md:px-10'
-const goldEyebrow = 'text-brand-gold text-xs font-bold tracking-[0.25em] uppercase'
+const goldEyebrow = 'text-brand-gold text-xs font-bold tracking-eyebrow uppercase'
 const footerLink =
   'hover:text-brand-gold inline-flex min-h-11 items-center transition-colors duration-200'
 

@@ -22,10 +22,10 @@ import {
 
 const label = 'text-brand-charcoal block text-sm font-bold'
 const field =
-  'border-brand-line focus:border-brand-gold mt-2 block w-full rounded-md border bg-white px-4 py-3 text-sm font-normal outline-none placeholder:text-brand-ink/65'
+  'border-brand-line focus:border-brand-gold mt-2 block w-full rounded-lg border bg-white px-4 py-3 text-sm font-normal outline-none placeholder:text-brand-ink/65'
 const error = 'text-brand-red mt-1.5 text-xs'
 const outline =
-  'border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal rounded-md border py-2 text-sm font-bold transition-colors duration-200 hover:text-white'
+  'border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal rounded-lg border py-2 text-sm font-bold transition-colors duration-200 hover:text-white'
 
 const schema = z.object({
   table_number: z
@@ -124,7 +124,7 @@ export default function TablesQr() {
         <button
           type="button"
           onClick={() => setEditing('new')}
-          className="bg-brand-red hover:bg-brand-red/90 flex items-center gap-2 rounded-md px-5 py-2 text-sm font-bold text-white transition-colors duration-200"
+          className="bg-brand-red hover:bg-brand-red/90 flex items-center gap-2 rounded-lg px-5 py-2 text-sm font-bold text-white transition-colors duration-200"
         >
           <Plus className="size-4" />
           Add Table
@@ -151,7 +151,7 @@ export default function TablesQr() {
               aria-label={`Table ${t.table_number}`}
               className="border-brand-line rounded-lg border bg-white p-5"
             >
-              <div className="bg-brand-cream/60 flex justify-center rounded-md p-4">
+              <div className="bg-brand-cream/60 flex justify-center rounded-lg p-4">
                 <QRCodeSVG
                   value={orderLink(t)}
                   size={144}
@@ -272,7 +272,7 @@ export default function TablesQr() {
                 type="button"
                 disabled={isSubmitting}
                 onClick={() => setEditing(null)}
-                className="border-brand-line text-brand-charcoal rounded-md border px-4 py-2 text-sm font-bold disabled:opacity-50"
+                className="border-brand-line text-brand-charcoal rounded-lg border px-4 py-2 text-sm font-bold disabled:opacity-50"
               >
                 Cancel
               </button>
@@ -280,7 +280,7 @@ export default function TablesQr() {
                 type="submit"
                 disabled={isSubmitting}
                 aria-busy={isSubmitting}
-                className="bg-brand-red hover:bg-brand-red/90 inline-flex items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-bold text-white disabled:opacity-50"
+                className="bg-brand-red hover:bg-brand-red/90 inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-bold text-white disabled:opacity-50"
               >
                 {isSubmitting && <Spinner />}
                 Save Table
@@ -305,7 +305,7 @@ export default function TablesQr() {
               type="button"
               disabled={remove.isPending}
               onClick={() => setDeleting(null)}
-              className="border-brand-line text-brand-charcoal rounded-md border px-4 py-2 text-sm font-bold disabled:opacity-50"
+              className="border-brand-line text-brand-charcoal rounded-lg border px-4 py-2 text-sm font-bold disabled:opacity-50"
             >
               Cancel
             </button>
@@ -314,7 +314,7 @@ export default function TablesQr() {
               disabled={remove.isPending}
               aria-busy={remove.isPending}
               onClick={() => remove.mutate(deleting)}
-              className="bg-brand-red hover:bg-brand-red/90 inline-flex items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-bold text-white disabled:opacity-50"
+              className="bg-brand-red hover:bg-brand-red/90 inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-bold text-white disabled:opacity-50"
             >
               {remove.isPending && <Spinner />}
               Delete

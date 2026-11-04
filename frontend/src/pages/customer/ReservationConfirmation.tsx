@@ -15,10 +15,10 @@ import { getReservationByCode } from '@/services/reservations'
 import { getSettings } from '@/services/settings'
 
 const primaryButton =
-  'bg-brand-red hover:bg-brand-red/90 focus-visible:outline-brand-red block w-full rounded-sm py-4 text-center text-sm font-bold tracking-[0.15em] text-white uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2'
+  'bg-brand-red hover:bg-brand-red/90 focus-visible:outline-brand-red block w-full rounded-sm py-4 text-center text-sm font-bold tracking-label text-white uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2'
 const darkButton =
-  'bg-brand-charcoal border-brand-gold text-brand-gold hover:bg-brand-charcoal/90 focus-visible:outline-brand-red block w-full rounded-sm border py-4 text-center text-sm font-bold tracking-[0.15em] uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2'
-const smallLabel = 'text-white/60 text-xs font-bold tracking-[0.15em] uppercase'
+  'bg-brand-charcoal border-brand-gold text-brand-gold hover:bg-brand-charcoal/90 focus-visible:outline-brand-red block w-full rounded-sm border py-4 text-center text-sm font-bold tracking-label uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2'
+const smallLabel = 'text-white/60 text-xs font-bold tracking-label uppercase'
 const actionCard =
   'border-brand-gold/50 text-brand-charcoal hover:bg-brand-cream focus-visible:outline-brand-red flex flex-col items-center gap-2 rounded-xl border bg-white py-4 text-sm font-semibold transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2'
 const icsTime = "yyyyMMdd'T'HHmmss"
@@ -233,7 +233,7 @@ export default function ReservationConfirmation() {
             <div>
               <section className="bg-brand-charcoal relative mt-8 rounded-xl text-white md:mt-0">
                 <div className="px-6 pt-6 pb-6 text-center">
-                  <p className="text-brand-gold text-xs font-bold tracking-[0.3em] uppercase">
+                  <p className="text-brand-gold tracking-eyebrow text-xs font-bold uppercase">
                     Reference Code
                   </p>
                   <p className="mt-2 font-serif text-4xl font-bold tracking-wide text-white">
@@ -242,7 +242,7 @@ export default function ReservationConfirmation() {
                   <button
                     type="button"
                     onClick={copyCode}
-                    className="focus-visible:outline-brand-gold mt-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-5 py-2 text-xs font-bold tracking-[0.15em] text-white uppercase transition-colors duration-200 hover:bg-white/20 focus-visible:outline-2 focus-visible:outline-offset-2 pointer-coarse:min-h-11"
+                    className="focus-visible:outline-brand-gold tracking-label mt-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-5 py-2 text-xs font-bold text-white uppercase transition-colors duration-200 hover:bg-white/20 focus-visible:outline-2 focus-visible:outline-offset-2 pointer-coarse:min-h-11"
                   >
                     <Copy className="size-4" strokeWidth={1.75} />
                     Copy code
@@ -270,7 +270,7 @@ export default function ReservationConfirmation() {
                   <div className="mt-5 flex items-center justify-between border-t border-white/10 pt-4">
                     <p className={smallLabel}>Status</p>
                     <p
-                      className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold tracking-[0.15em] uppercase ${inactive ? 'bg-white/15 text-white' : reservation.status === 'pending' ? 'bg-brand-gold text-brand-charcoal' : 'bg-brand-green text-white'}`}
+                      className={`tracking-label flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold uppercase ${inactive ? 'bg-white/15 text-white' : reservation.status === 'pending' ? 'bg-brand-gold text-brand-charcoal' : 'bg-brand-green text-white'}`}
                     >
                       <span aria-hidden="true">●</span>
                       <span>{reservationStatuses[reservation.status].text}</span>
@@ -301,7 +301,7 @@ export default function ReservationConfirmation() {
             <div>
               {!inactive && (
                 <section className="mt-12 md:mt-2">
-                  <h2 className="text-brand-red text-xs font-bold tracking-[0.3em] uppercase">
+                  <h2 className="text-brand-red tracking-eyebrow text-xs font-bold uppercase">
                     What happens next
                   </h2>
                   <ol className="mt-6">

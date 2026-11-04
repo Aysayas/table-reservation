@@ -56,7 +56,7 @@ export default function Modal({
         if (closing && event.target === event.currentTarget) onClose()
       }}
       data-closing={closing || undefined}
-      className={`backdrop:bg-brand-charcoal/50 m-auto w-[calc(100%-2rem)] rounded-lg bg-white p-0 shadow-xl data-closing:animate-[dialog-out_150ms_ease-in_forwards] ${className}`}
+      className={`backdrop:bg-brand-charcoal/50 shadow-lift m-auto w-[calc(100%-2rem)] rounded-lg bg-white p-0 data-closing:animate-[dialog-out_150ms_ease-in_forwards] ${className}`}
     >
       <div className={`p-6 ${framed ? 'gold-corners' : ''}`}>
         <h2 id={titleId} className="text-brand-charcoal text-center font-serif text-2xl">

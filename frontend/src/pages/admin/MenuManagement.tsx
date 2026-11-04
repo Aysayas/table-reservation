@@ -14,10 +14,10 @@ import type { MenuItem } from '@/types/db'
 const perPage = 8
 const peso = (amount: number) =>
   `₱${amount.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-const th = 'text-brand-ink/70 px-4 py-3 text-left text-xs font-bold tracking-[0.1em] uppercase'
+const th = 'text-brand-ink/70 px-4 py-3 text-left text-xs font-bold tracking-label uppercase'
 const td = 'text-brand-charcoal px-4 py-3 text-sm'
 const smallButton =
-  'pointer-coarse:min-h-11 inline-flex items-center justify-center rounded-md border px-3 py-1.5 text-xs font-bold transition-colors duration-200'
+  'pointer-coarse:min-h-11 inline-flex items-center justify-center rounded-lg border px-3 py-1.5 text-xs font-bold transition-colors duration-200'
 const dl = 'grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm'
 const dt = 'text-brand-ink/70'
 const dd = 'text-brand-charcoal text-right'
@@ -84,7 +84,7 @@ export default function MenuManagement() {
   return (
     <div>
       <div className="flex flex-wrap items-center gap-3">
-        <label className="border-brand-line focus-within:border-brand-gold flex w-full max-w-sm items-center gap-2 rounded-md border bg-white px-3">
+        <label className="border-brand-line focus-within:border-brand-gold flex w-full max-w-sm items-center gap-2 rounded-lg border bg-white px-3">
           <Search className="text-brand-ink/70 size-4" />
           <span className="sr-only">Search</span>
           <input
@@ -102,7 +102,7 @@ export default function MenuManagement() {
             onChange={(e) =>
               update({ category: e.target.value === '0' ? '' : e.target.value, page: '' })
             }
-            className="border-brand-line focus:border-brand-gold rounded-md border bg-white px-3 py-2.5 text-sm outline-none"
+            className="border-brand-line focus:border-brand-gold rounded-lg border bg-white px-3 py-2.5 text-sm outline-none"
           >
             <option value={0}>All Categories</option>
             {categories.map((c) => (
@@ -115,7 +115,7 @@ export default function MenuManagement() {
         <Link
           to="/admin/menu/new"
           state={from}
-          className="bg-brand-red hover:bg-brand-red/90 ml-auto flex items-center gap-2 rounded-md px-5 py-2.5 text-sm font-bold text-white transition-colors duration-200"
+          className="bg-brand-red hover:bg-brand-red/90 ml-auto flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-bold text-white transition-colors duration-200"
         >
           <Plus className="size-4" />
           Add Menu Item
@@ -133,9 +133,9 @@ export default function MenuManagement() {
               <li key={item.item_id} className="space-y-3 p-4">
                 <div className="flex items-center gap-3">
                   {item.image_url ? (
-                    <img src={item.image_url} alt="" className="size-12 rounded-md object-cover" />
+                    <img src={item.image_url} alt="" className="size-12 rounded-lg object-cover" />
                   ) : (
-                    <span className="bg-brand-cream text-brand-gold-deep flex size-12 shrink-0 items-center justify-center rounded-md">
+                    <span className="bg-brand-cream text-brand-gold-deep flex size-12 shrink-0 items-center justify-center rounded-lg">
                       <UtensilsCrossed className="size-5" strokeWidth={1.5} />
                     </span>
                   )}
@@ -150,7 +150,7 @@ export default function MenuManagement() {
                     className={`relative h-6 w-11 shrink-0 rounded-full transition-colors duration-200 ${item.is_available ? 'bg-brand-green' : 'bg-brand-ink/20'}`}
                   >
                     <span
-                      className={`absolute top-0.5 left-0.5 size-5 rounded-full bg-white shadow transition-transform duration-200 ${item.is_available ? 'translate-x-5' : ''}`}
+                      className={`shadow-soft absolute top-0.5 left-0.5 size-5 rounded-full bg-white transition-transform duration-200 ${item.is_available ? 'translate-x-5' : ''}`}
                     />
                   </button>
                 </div>
@@ -206,10 +206,10 @@ export default function MenuManagement() {
                       <img
                         src={item.image_url}
                         alt=""
-                        className="size-12 rounded-md object-cover"
+                        className="size-12 rounded-lg object-cover"
                       />
                     ) : (
-                      <span className="bg-brand-cream text-brand-gold-deep flex size-12 items-center justify-center rounded-md">
+                      <span className="bg-brand-cream text-brand-gold-deep flex size-12 items-center justify-center rounded-lg">
                         <UtensilsCrossed className="size-5" strokeWidth={1.5} />
                       </span>
                     )}
@@ -228,7 +228,7 @@ export default function MenuManagement() {
                       className={`relative h-6 w-11 rounded-full transition-colors duration-200 ${item.is_available ? 'bg-brand-green' : 'bg-brand-ink/20'}`}
                     >
                       <span
-                        className={`absolute top-0.5 left-0.5 size-5 rounded-full bg-white shadow transition-transform duration-200 ${item.is_available ? 'translate-x-5' : ''}`}
+                        className={`shadow-soft absolute top-0.5 left-0.5 size-5 rounded-full bg-white transition-transform duration-200 ${item.is_available ? 'translate-x-5' : ''}`}
                       />
                     </button>
                   </td>
@@ -282,7 +282,7 @@ export default function MenuManagement() {
             aria-label="Previous page"
             disabled={current <= 1}
             onClick={() => setPage(current - 1)}
-            className="border-brand-line flex size-9 items-center justify-center rounded-md border bg-white disabled:opacity-40"
+            className="border-brand-line flex size-9 items-center justify-center rounded-lg border bg-white disabled:opacity-40 pointer-coarse:size-11"
           >
             <ChevronLeft className="size-4" />
           </button>
@@ -292,7 +292,7 @@ export default function MenuManagement() {
               type="button"
               aria-current={n === current ? 'page' : undefined}
               onClick={() => setPage(n)}
-              className={`flex size-9 items-center justify-center rounded-md border text-sm font-semibold ${n === current ? 'bg-brand-charcoal border-brand-charcoal text-white' : 'border-brand-line bg-white'}`}
+              className={`flex size-9 items-center justify-center rounded-lg border text-sm font-semibold pointer-coarse:size-11 ${n === current ? 'bg-brand-charcoal border-brand-charcoal text-white' : 'border-brand-line bg-white'}`}
             >
               {n}
             </button>
@@ -302,7 +302,7 @@ export default function MenuManagement() {
             aria-label="Next page"
             disabled={current >= pages}
             onClick={() => setPage(current + 1)}
-            className="border-brand-line flex size-9 items-center justify-center rounded-md border bg-white disabled:opacity-40"
+            className="border-brand-line flex size-9 items-center justify-center rounded-lg border bg-white disabled:opacity-40 pointer-coarse:size-11"
           >
             <ChevronRight className="size-4" />
           </button>
@@ -319,7 +319,7 @@ export default function MenuManagement() {
               type="button"
               disabled={remove.isPending}
               onClick={() => setDeleting(null)}
-              className="border-brand-line text-brand-charcoal rounded-md border px-4 py-2 text-sm font-bold disabled:opacity-50"
+              className="border-brand-line text-brand-charcoal rounded-lg border px-4 py-2 text-sm font-bold disabled:opacity-50"
             >
               Cancel
             </button>
@@ -328,7 +328,7 @@ export default function MenuManagement() {
               disabled={remove.isPending}
               aria-busy={remove.isPending}
               onClick={() => remove.mutate(deleting)}
-              className="bg-brand-red hover:bg-brand-red/90 inline-flex items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-bold text-white disabled:opacity-50"
+              className="bg-brand-red hover:bg-brand-red/90 inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-bold text-white disabled:opacity-50"
             >
               {remove.isPending && <Spinner />}
               Delete

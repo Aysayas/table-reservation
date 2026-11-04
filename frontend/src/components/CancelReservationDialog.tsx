@@ -31,7 +31,7 @@ export default function CancelReservationDialog({ reservation, busy, onKeep, onC
           autoFocus
           disabled={busy}
           onClick={onKeep}
-          className="border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal rounded-sm border px-3 py-3 text-xs font-bold tracking-[0.1em] uppercase transition-colors duration-200 hover:text-white disabled:opacity-60"
+          className="border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal tracking-label rounded-sm border px-3 py-3 text-xs font-bold uppercase transition-colors duration-200 hover:text-white disabled:opacity-60"
         >
           Keep Reservation
         </button>
@@ -40,7 +40,7 @@ export default function CancelReservationDialog({ reservation, busy, onKeep, onC
           disabled={busy}
           aria-busy={busy}
           onClick={onCancel}
-          className="bg-brand-red hover:bg-brand-red/90 inline-flex items-center justify-center gap-2 rounded-sm px-3 py-3 text-xs font-bold tracking-[0.1em] text-white uppercase transition-colors duration-200 disabled:opacity-60"
+          className="bg-brand-red hover:bg-brand-red/90 tracking-label inline-flex items-center justify-center gap-2 rounded-sm px-3 py-3 text-xs font-bold text-white uppercase transition-colors duration-200 disabled:opacity-60"
         >
           {busy && <Spinner />}
           Cancel Reservation

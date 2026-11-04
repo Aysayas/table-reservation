@@ -99,7 +99,7 @@ export default function Checkout() {
           action={
             <Link
               to={`/table/${table}/menu`}
-              className="bg-brand-red hover:bg-brand-red/90 inline-block rounded-lg px-8 py-3 text-sm font-bold tracking-[0.1em] text-white uppercase transition-colors duration-200"
+              className="bg-brand-red hover:bg-brand-red/90 tracking-label inline-block rounded-lg px-8 py-3 text-sm font-bold text-white uppercase transition-colors duration-200"
             >
               Browse the menu
             </Link>
@@ -176,7 +176,7 @@ export default function Checkout() {
               onChange={(e) => setName(e.target.value)}
               placeholder="Juan"
               autoComplete="given-name"
-              className="border-brand-line focus:border-brand-gold placeholder:text-brand-ink/65 mt-2 block w-full rounded-md border bg-white px-4 py-3 text-sm font-normal outline-none"
+              className="border-brand-line focus:border-brand-gold placeholder:text-brand-ink/65 mt-2 block w-full rounded-lg border bg-white px-4 py-3 text-sm font-normal outline-none"
             />
           </label>
 
@@ -203,7 +203,7 @@ export default function Checkout() {
               type="button"
               disabled={!token || placing || unavailable.length > 0}
               onClick={placeOrder}
-              className="bg-brand-red hover:bg-brand-red/90 block w-full rounded-lg py-4 text-sm font-bold tracking-[0.1em] text-white uppercase shadow-lg transition-colors duration-200 disabled:opacity-60"
+              className="bg-brand-red hover:bg-brand-red/90 tracking-label shadow-lift block w-full rounded-lg py-4 text-sm font-bold text-white uppercase transition-colors duration-200 disabled:opacity-60"
             >
               Place Order
             </button>

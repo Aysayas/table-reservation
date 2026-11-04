@@ -20,7 +20,7 @@ import type { PublicReservation } from '@/types/db'
 const peso = (amount: number) =>
   `₱${amount.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
 const outlineButton =
-  'border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal rounded-sm border px-3 py-3 text-center text-xs font-bold tracking-[0.1em] uppercase transition-colors duration-200 hover:text-white disabled:opacity-50'
+  'border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal rounded-sm border px-3 py-3 text-center text-xs font-bold tracking-label uppercase transition-colors duration-200 hover:text-white disabled:opacity-50'
 
 export default function MyReservations() {
   const navigate = useNavigate()
@@ -108,7 +108,7 @@ export default function MyReservations() {
                     {r.reference_code}
                   </h2>
                   <span
-                    className={`shrink-0 rounded-full px-3 py-1 text-xs font-bold tracking-[0.1em] uppercase ${status.className}`}
+                    className={`tracking-label shrink-0 rounded-full px-3 py-1 text-xs font-bold uppercase ${status.className}`}
                   >
                     {status.text}
                   </span>

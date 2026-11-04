@@ -14,7 +14,7 @@ import { getSettings } from '@/services/settings'
 
 const card = 'border-brand-line rounded-lg border bg-white p-5 md:p-6'
 const redButton =
-  'bg-brand-red hover:bg-brand-red/90 focus-visible:outline-brand-gold block w-full rounded-sm py-4 text-center text-sm font-bold tracking-[0.15em] text-white uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2'
+  'bg-brand-red hover:bg-brand-red/90 focus-visible:outline-brand-gold block w-full rounded-sm py-4 text-center text-sm font-bold tracking-label text-white uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2'
 
 const peso = (amount: number) =>
   `₱${amount.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
@@ -120,7 +120,7 @@ export default function DepositPayment() {
             </section>
 
             <section className="bg-brand-charcoal rounded-lg px-5 py-6 text-white md:px-6">
-              <h2 className="text-brand-gold text-xs font-bold tracking-[0.2em] uppercase">
+              <h2 className="text-brand-gold tracking-eyebrow text-xs font-bold uppercase">
                 Deposit Amount
               </h2>
               <p className="mt-2 font-serif text-4xl">{amount}</p>

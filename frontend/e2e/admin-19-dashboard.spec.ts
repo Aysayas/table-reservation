@@ -45,3 +45,18 @@ test('an order number on the dashboard opens that order in the history', async (
   await expect(page).toHaveURL('/admin/orders?order=1')
   await expect(page.getByRole('searchbox')).toHaveValue('1')
 })
+
+test('on a phone, recent orders are cards and the page does not scroll sideways', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto(url)
+  const recent = page.getByRole('region', { name: 'Recent Orders' })
+  await expect(recent.getByRole('listitem')).toHaveCount(5)
+  await expect(recent.getByRole('listitem').first()).toContainText('#4')
+  await expect(recent.getByRole('table')).toBeHidden()
+  const wide = await page.evaluate(
+    'document.documentElement.scrollWidth > document.documentElement.clientWidth',
+  )
+  expect(wide).toBe(false)
+})

@@ -18,16 +18,16 @@ import {
   type CategoryWithCount,
 } from '@/services/menu'
 
-const th = 'text-brand-ink/70 px-4 py-3 text-left text-xs font-bold tracking-[0.1em] uppercase'
+const th = 'text-brand-ink/70 px-4 py-3 text-left text-xs font-bold tracking-label uppercase'
 const td = 'text-brand-charcoal px-4 py-3 text-sm'
 const smallButton =
-  'pointer-coarse:min-h-11 inline-flex items-center justify-center rounded-md border px-3 py-1.5 text-xs font-bold transition-colors duration-200'
+  'pointer-coarse:min-h-11 inline-flex items-center justify-center rounded-lg border px-3 py-1.5 text-xs font-bold transition-colors duration-200'
 const dl = 'grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm'
 const dt = 'text-brand-ink/70'
 const dd = 'text-brand-charcoal text-right'
 const label = 'text-brand-charcoal block text-sm font-bold'
 const field =
-  'border-brand-line focus:border-brand-gold mt-2 block w-full rounded-md border bg-white px-4 py-3 text-sm font-normal outline-none placeholder:text-brand-ink/65'
+  'border-brand-line focus:border-brand-gold mt-2 block w-full rounded-lg border bg-white px-4 py-3 text-sm font-normal outline-none placeholder:text-brand-ink/65'
 const error = 'text-brand-red mt-1.5 text-xs'
 
 const schema = z.object({
@@ -242,7 +242,7 @@ export default function Categories() {
             type="submit"
             disabled={isSubmitting}
             aria-busy={isSubmitting}
-            className="bg-brand-red hover:bg-brand-red/90 flex w-full items-center justify-center gap-2 rounded-md py-3 text-sm font-bold text-white transition-colors duration-200 disabled:opacity-60"
+            className="bg-brand-red hover:bg-brand-red/90 flex w-full items-center justify-center gap-2 rounded-lg py-3 text-sm font-bold text-white transition-colors duration-200 disabled:opacity-60"
           >
             {isSubmitting && <Spinner />}
             Save Category
@@ -251,7 +251,7 @@ export default function Categories() {
             <button
               type="button"
               onClick={() => setEditing(null)}
-              className="border-brand-line text-brand-charcoal block w-full rounded-md border py-3 text-sm font-bold"
+              className="border-brand-line text-brand-charcoal block w-full rounded-lg border py-3 text-sm font-bold"
             >
               Cancel Edit
             </button>
@@ -271,7 +271,7 @@ export default function Categories() {
               type="button"
               disabled={remove.isPending}
               onClick={() => setDeleting(null)}
-              className="border-brand-line text-brand-charcoal rounded-md border px-4 py-2 text-sm font-bold disabled:opacity-50"
+              className="border-brand-line text-brand-charcoal rounded-lg border px-4 py-2 text-sm font-bold disabled:opacity-50"
             >
               {deleting.item_count ? 'Close' : 'Cancel'}
             </button>
@@ -281,7 +281,7 @@ export default function Categories() {
                 disabled={remove.isPending}
                 aria-busy={remove.isPending}
                 onClick={() => remove.mutate(deleting)}
-                className="bg-brand-red hover:bg-brand-red/90 inline-flex items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-bold text-white disabled:opacity-50"
+                className="bg-brand-red hover:bg-brand-red/90 inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-bold text-white disabled:opacity-50"
               >
                 {remove.isPending && <Spinner />}
                 Delete

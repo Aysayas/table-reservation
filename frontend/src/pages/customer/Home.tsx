@@ -14,12 +14,12 @@ import { getMenuItems } from '@/services/menu'
 import { getOpeningHours, getSettings } from '@/services/settings'
 
 const wrap = 'md:mx-auto md:max-w-6xl md:px-10'
-const eyebrow = 'text-brand-red text-xs font-bold tracking-[0.25em] uppercase'
+const eyebrow = 'text-brand-red text-xs font-bold tracking-eyebrow uppercase'
 const button =
-  'focus-visible:outline-brand-gold block rounded-sm px-3 py-4 text-center whitespace-nowrap md:px-6 text-xs font-bold tracking-[0.12em] uppercase transition duration-200 motion-safe:hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 md:text-sm md:tracking-[0.15em]'
+  'focus-visible:outline-brand-gold block rounded-sm px-3 py-4 text-center whitespace-nowrap md:px-6 text-xs font-bold tracking-label uppercase transition duration-200 motion-safe:hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 md:text-sm md:tracking-label'
 const field =
   'mt-2 h-12 w-full rounded-sm border border-white/40 bg-transparent px-3 text-sm font-normal tracking-normal text-white normal-case outline-none [color-scheme:dark] focus:border-brand-gold'
-const fieldLabel = 'text-xs font-bold tracking-[0.2em] uppercase'
+const fieldLabel = 'text-xs font-bold tracking-eyebrow uppercase'
 const zoom =
   'motion-safe:transition-transform motion-safe:duration-700 motion-safe:group-hover:scale-105'
 
@@ -91,7 +91,7 @@ export default function Home() {
             </FramedPhoto>
             {badge && (
               <div className="bg-brand-cream border-brand-gold absolute -right-2 -bottom-6 flex size-32 flex-col items-center justify-center rounded-full border border-dashed text-center md:-right-6 md:size-36">
-                <p className="text-brand-red text-xs font-bold tracking-[0.2em] uppercase">
+                <p className="text-brand-red tracking-eyebrow text-xs font-bold uppercase">
                   {hourGroups.length === 1 ? 'Open daily' : badge.days}
                 </p>
                 <p className="text-brand-charcoal mt-1 font-serif text-lg leading-tight">
@@ -114,7 +114,7 @@ export default function Home() {
                 {index + 1}
               </span>
               <div>
-                <p className="text-xs font-bold tracking-[0.15em] uppercase">{feature.title}</p>
+                <p className="tracking-label text-xs font-bold uppercase">{feature.title}</p>
                 <p className="mt-1 text-xs text-white/70">{feature.text}</p>
               </div>
             </li>
@@ -138,7 +138,7 @@ export default function Home() {
           </p>
           <Link
             to="/about"
-            className="text-brand-red mt-6 inline-flex items-center gap-1 text-xs font-bold tracking-[0.2em] uppercase hover:underline pointer-coarse:min-h-11"
+            className="text-brand-red tracking-eyebrow mt-6 inline-flex items-center gap-1 text-xs font-bold uppercase hover:underline pointer-coarse:min-h-11"
           >
             Read our story
             <ArrowRight className="size-4" />
@@ -159,7 +159,7 @@ export default function Home() {
           <div className="mt-4 flex justify-center">
             <Link
               to="/menu"
-              className="text-brand-gold flex items-center gap-1 text-xs font-bold tracking-[0.15em] whitespace-nowrap uppercase hover:underline pointer-coarse:min-h-11"
+              className="text-brand-gold tracking-label flex items-center gap-1 text-xs font-bold whitespace-nowrap uppercase hover:underline pointer-coarse:min-h-11"
             >
               View full menu
               <ArrowRight className="size-4" />

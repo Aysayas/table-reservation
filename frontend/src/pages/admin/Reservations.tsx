@@ -13,7 +13,7 @@ import EditReservationDialog from '@/components/EditReservationDialog'
 import ReservationActions from '@/components/ReservationActions'
 import type { PublicReservation, ReservationStatus } from '@/types/db'
 
-const th = 'text-brand-ink/70 px-3 py-3 text-left text-xs font-bold tracking-[0.1em] uppercase'
+const th = 'text-brand-ink/70 px-3 py-3 text-left text-xs font-bold tracking-label uppercase'
 const td = 'text-brand-charcoal px-3 py-3 text-sm whitespace-nowrap'
 const dl = 'grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm'
 const dt = 'text-brand-ink/70'
@@ -102,7 +102,7 @@ export default function Reservations() {
     <div>
       <div className="min-w-0">
         <div className="flex flex-wrap items-center gap-3">
-          <label className="border-brand-line focus-within:border-brand-gold flex w-full max-w-80 items-center gap-2 rounded-md border bg-white px-3">
+          <label className="border-brand-line focus-within:border-brand-gold flex w-full max-w-80 items-center gap-2 rounded-lg border bg-white px-3">
             <Search className="text-brand-ink/70 size-4 shrink-0" />
             <span className="sr-only">Search</span>
             <input
@@ -280,7 +280,7 @@ export default function Reservations() {
               aria-label="Previous page"
               disabled={page <= 1}
               onClick={() => setPage(page - 1)}
-              className="border-brand-line flex size-9 items-center justify-center rounded-md border bg-white disabled:opacity-40"
+              className="border-brand-line flex size-9 items-center justify-center rounded-lg border bg-white disabled:opacity-40 pointer-coarse:size-11"
             >
               <ChevronLeft className="size-4" />
             </button>
@@ -290,7 +290,7 @@ export default function Reservations() {
                 type="button"
                 aria-current={n === page ? 'page' : undefined}
                 onClick={() => setPage(n)}
-                className={`flex size-9 items-center justify-center rounded-md border text-sm font-semibold ${n === page ? 'bg-brand-charcoal border-brand-charcoal text-white' : 'border-brand-line bg-white'}`}
+                className={`flex size-9 items-center justify-center rounded-lg border text-sm font-semibold pointer-coarse:size-11 ${n === page ? 'bg-brand-charcoal border-brand-charcoal text-white' : 'border-brand-line bg-white'}`}
               >
                 {n}
               </button>
@@ -300,7 +300,7 @@ export default function Reservations() {
               aria-label="Next page"
               disabled={page >= pages}
               onClick={() => setPage(page + 1)}
-              className="border-brand-line flex size-9 items-center justify-center rounded-md border bg-white disabled:opacity-40"
+              className="border-brand-line flex size-9 items-center justify-center rounded-lg border bg-white disabled:opacity-40 pointer-coarse:size-11"
             >
               <ChevronRight className="size-4" />
             </button>

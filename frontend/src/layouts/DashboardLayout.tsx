@@ -114,7 +114,7 @@ export default function DashboardLayout({ title, items }: Props) {
             <span className="font-display text-brand-gold text-2xl">{lastWord}</span>
           </span>
         </Link>
-        <p className="text-brand-gold mt-2 px-2 text-xs font-bold tracking-[0.3em] uppercase">
+        <p className="text-brand-gold tracking-eyebrow mt-2 px-2 text-xs font-bold uppercase">
           {title}
         </p>
         <nav aria-label={`${title} menu`} className="mt-8 flex flex-1 flex-col gap-1">
@@ -122,7 +122,7 @@ export default function DashboardLayout({ title, items }: Props) {
             <Fragment key={item.to}>
               {item.group && item.group !== items[index - 1]?.group && (
                 <p
-                  className={`text-brand-gold px-3 pb-1 text-xs font-bold tracking-[0.25em] uppercase ${index > 0 ? 'pt-5' : ''}`}
+                  className={`text-brand-gold tracking-eyebrow px-3 pb-1 text-xs font-bold uppercase ${index > 0 ? 'pt-5' : ''}`}
                 >
                   {item.group}
                 </p>
@@ -133,7 +133,7 @@ export default function DashboardLayout({ title, items }: Props) {
                 state={item.to === '/kitchen' ? { from: pathname } : undefined}
                 onClick={() => setOpen(false)}
                 className={({ isActive }) =>
-                  `rounded-md px-3 py-2.5 text-sm font-semibold transition-colors duration-200 ${isActive ? 'bg-brand-red text-white shadow-[inset_3px_0_0_var(--color-brand-gold)]' : 'text-white/75 hover:bg-white/10 hover:text-white'}`
+                  `rounded-lg px-3 py-2.5 text-sm font-semibold transition-colors duration-200 ${isActive ? 'bg-brand-red text-white shadow-[inset_3px_0_0_var(--color-brand-gold)]' : 'text-white/75 hover:bg-white/10 hover:text-white'}`
                 }
               >
                 {item.label}

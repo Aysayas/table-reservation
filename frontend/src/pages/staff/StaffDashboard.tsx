@@ -11,7 +11,7 @@ import type { OrderStatus, ReservationStatus } from '@/types/db'
 
 const peso = (amount: number) =>
   `₱${amount.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-const th = 'text-brand-ink/70 px-4 py-3 text-left text-xs font-bold tracking-[0.1em] uppercase'
+const th = 'text-brand-ink/70 px-4 py-3 text-left text-xs font-bold tracking-label uppercase'
 const td = 'text-brand-charcoal px-4 py-3 text-sm'
 const badge = 'inline-block rounded-full px-3 py-1 text-xs font-bold whitespace-nowrap'
 
@@ -41,7 +41,7 @@ function Panel({ title, to, children }: { title: string; to: string; children: R
         </h2>
         <Link
           to={to}
-          className="text-brand-red text-xs font-bold tracking-[0.15em] uppercase hover:underline pointer-coarse:inline-flex pointer-coarse:min-h-11 pointer-coarse:items-center"
+          className="text-brand-red tracking-label text-xs font-bold uppercase hover:underline pointer-coarse:inline-flex pointer-coarse:min-h-11 pointer-coarse:items-center"
         >
           View all
         </Link>
@@ -86,7 +86,7 @@ export default function StaffDashboard() {
       <dl className="grid grid-cols-2 gap-4 xl:grid-cols-4">
         {stats.map((stat) => (
           <div key={stat.label} className="border-brand-line rounded-lg border bg-white px-6 py-5">
-            <dt className="text-brand-ink/70 text-xs font-bold tracking-[0.15em] uppercase">
+            <dt className="text-brand-ink/70 tracking-label text-xs font-bold uppercase">
               {stat.label}
             </dt>
             <dd className="text-brand-charcoal mt-2 font-serif text-4xl">{stat.value}</dd>

@@ -24,7 +24,7 @@ import type { PaymentMethod, PaymentStatus } from '@/types/db'
 const perPage = 8
 const peso = (amount: number) =>
   `₱${amount.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-const th = 'px-5 py-3.5 text-left text-xs font-bold tracking-[0.14em] text-white/70 uppercase'
+const th = 'px-5 py-3.5 text-left text-xs font-bold tracking-label text-white/70 uppercase'
 const td = 'text-brand-charcoal px-5 py-4 text-sm'
 const dl = 'grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm'
 const dt = 'text-brand-ink/70'
@@ -137,7 +137,7 @@ export default function Payments() {
             className={`rounded-xl border px-6 py-5 ${s.dark ? 'bg-brand-charcoal border-brand-charcoal text-white' : 'border-brand-line text-brand-charcoal bg-white'}`}
           >
             <dt
-              className={`flex items-center gap-2 text-xs font-bold tracking-[0.15em] uppercase ${s.dark ? 'text-brand-gold' : 'text-brand-ink/70'}`}
+              className={`tracking-label flex items-center gap-2 text-xs font-bold uppercase ${s.dark ? 'text-brand-gold' : 'text-brand-ink/70'}`}
             >
               <s.icon className="size-4" />
               {s.label}
@@ -226,7 +226,7 @@ export default function Payments() {
           <LoadError what="the payments" onRetry={() => refetch()} />
         </div>
       ) : (
-        <div className="border-brand-line mt-5 overflow-x-auto rounded-xl border bg-white shadow-sm">
+        <div className="border-brand-line shadow-soft mt-5 overflow-x-auto rounded-xl border bg-white">
           <ul className="divide-brand-line divide-y md:hidden">
             {rows.map((p) => {
               const Icon = p.method === 'cash' ? Banknote : Smartphone
@@ -331,7 +331,7 @@ export default function Payments() {
                     </td>
                     <td className={td}>
                       <span
-                        className={`inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-bold ${p.for.type === 'deposit' ? 'bg-brand-gold/15 text-brand-gold-deep' : 'bg-brand-cream text-brand-charcoal'}`}
+                        className={`inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs font-bold ${p.for.type === 'deposit' ? 'bg-brand-gold/15 text-brand-gold-deep' : 'bg-brand-cream text-brand-charcoal'}`}
                       >
                         {p.for.type === 'deposit' ? (
                           <Ticket className="size-3.5" />
@@ -401,7 +401,7 @@ export default function Payments() {
             aria-label="Previous page"
             disabled={current <= 1}
             onClick={() => setPage(current - 1)}
-            className="border-brand-line flex size-9 items-center justify-center rounded-lg border bg-white disabled:opacity-40"
+            className="border-brand-line flex size-9 items-center justify-center rounded-lg border bg-white disabled:opacity-40 pointer-coarse:size-11"
           >
             <ChevronLeft className="size-4" />
           </button>
@@ -411,7 +411,7 @@ export default function Payments() {
               type="button"
               aria-current={n === current ? 'page' : undefined}
               onClick={() => setPage(n)}
-              className={`flex size-9 items-center justify-center rounded-lg border text-sm font-semibold ${n === current ? 'bg-brand-charcoal border-brand-charcoal text-white' : 'border-brand-line bg-white'}`}
+              className={`flex size-9 items-center justify-center rounded-lg border text-sm font-semibold pointer-coarse:size-11 ${n === current ? 'bg-brand-charcoal border-brand-charcoal text-white' : 'border-brand-line bg-white'}`}
             >
               {n}
             </button>
@@ -421,7 +421,7 @@ export default function Payments() {
             aria-label="Next page"
             disabled={current >= pages}
             onClick={() => setPage(current + 1)}
-            className="border-brand-line flex size-9 items-center justify-center rounded-lg border bg-white disabled:opacity-40"
+            className="border-brand-line flex size-9 items-center justify-center rounded-lg border bg-white disabled:opacity-40 pointer-coarse:size-11"
           >
             <ChevronRight className="size-4" />
           </button>
