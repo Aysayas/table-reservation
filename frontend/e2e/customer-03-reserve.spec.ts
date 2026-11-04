@@ -163,3 +163,22 @@ test('6 guests can book, because T9 seats 8', async ({ page }) => {
   await expect(page.getByRole('button', { name: '7:00 PM' })).toBeEnabled()
   await expect(page.getByText(/We can't seat/)).toHaveCount(0)
 })
+
+test('the dark fill slides to the chosen time', async ({ page }) => {
+  await page.goto(`/reserve?date=${date}&time=18:00&pax=2`)
+  const six = page.getByRole('button', { name: '6:00 PM' })
+  const seven = page.getByRole('button', { name: '7:00 PM' })
+  await expect(six).toHaveAttribute('aria-pressed', 'true')
+  const fill = page.locator('span.bg-brand-charcoal.absolute[aria-hidden="true"]')
+  const sameBox = async (target: typeof six) => {
+    const [a, b] = [await fill.boundingBox(), await target.boundingBox()]
+    return !!a && !!b && Math.abs(a.x - b.x) < 1 && Math.abs(a.y - b.y) < 1
+  }
+  await expect.poll(() => sameBox(six)).toBe(true)
+  await seven.click()
+  await expect(seven).toHaveAttribute('aria-pressed', 'true')
+  await expect.poll(() => sameBox(seven)).toBe(true)
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await expect(fill).toBeHidden()
+  await expect(seven).toHaveCSS('background-color', 'rgb(28, 25, 23)')
+})

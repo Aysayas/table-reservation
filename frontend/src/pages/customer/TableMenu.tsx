@@ -14,6 +14,7 @@ import { dishDescription } from '@/lib/dish'
 import { readLastOrder, readTableToken } from '@/lib/tableToken'
 import { getCategories, getMenuItems, getRecommendations } from '@/services/menu'
 import { getTable } from '@/services/tables'
+import { flyToCart } from '@/lib/flyToCart'
 import { cartCount, cartTotal, useCart } from '@/stores/cart'
 import type { MenuItem } from '@/types/db'
 
@@ -84,7 +85,8 @@ export default function TableMenu() {
   const canOrder = !!token || !!readTableToken(id)
   const itemLink = (item: MenuItem) => `/table/${id}/menu/${item.item_id}`
 
-  const addOne = (item: MenuItem) => {
+  const addOne = (item: MenuItem, from: Element) => {
+    flyToCart(from)
     add(id, { item_id: item.item_id, name: item.name, price: item.price, quantity: 1, notes: '' })
     toast.success(`${item.name} added to cart`)
   }
@@ -231,7 +233,7 @@ export default function TableMenu() {
             {section.items.map((item) => (
               <li
                 key={item.item_id}
-                className={`border-brand-line flex items-center gap-3 border-b py-3 ${item.is_available ? '' : 'opacity-50'}`}
+                className={`border-brand-line scroll-rise flex items-center gap-3 border-b py-3 ${item.is_available ? '' : 'opacity-50'}`}
               >
                 <Link to={itemLink(item)} className="flex min-w-0 flex-1 items-center gap-3">
                   <DishPhoto
@@ -257,7 +259,7 @@ export default function TableMenu() {
                   <button
                     type="button"
                     aria-label={`Add ${item.name}`}
-                    onClick={() => addOne(item)}
+                    onClick={(e) => addOne(item, e.currentTarget)}
                     className="border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal tracking-label flex min-h-11 shrink-0 items-center gap-1 rounded-lg border px-3 py-2 text-xs font-bold uppercase transition-colors duration-200 hover:text-white"
                   >
                     <Plus className="size-3.5" />
@@ -275,14 +277,18 @@ export default function TableMenu() {
       ))}
 
       {count > 0 && (
-        <div className="short:static short:mt-4 short:pb-0 bg-brand-cream short:pt-0 fixed inset-x-0 bottom-0 z-20 mx-auto max-w-[390px] px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))]">
+        <div className="short:static short:mt-4 short:pb-0 bg-brand-cream short:pt-0 fixed inset-x-0 bottom-0 z-20 mx-auto max-w-[390px] px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] motion-safe:animate-[rise_300ms_cubic-bezier(0.16,1,0.3,1)]">
           <Link
             to={`/table/${id}/cart`}
             className="bg-brand-charcoal hover:bg-brand-charcoal/90 shadow-lift flex items-center justify-between gap-3 rounded-lg px-5 py-4 text-sm font-bold text-white transition-colors duration-200"
           >
             <span className="flex items-center gap-2">
-              <ShoppingBag className="text-brand-gold size-4" />
-              View Cart · {count} {count === 1 ? 'item' : 'items'}
+              <ShoppingBag data-cart-target className="text-brand-gold size-4" />
+              View Cart ·{' '}
+              <span key={count} className="motion-safe:animate-pop inline-block">
+                {count}
+              </span>{' '}
+              {count === 1 ? 'item' : 'items'}
             </span>
             <span className="text-brand-gold font-serif text-base">{peso(cartTotal(lines))}</span>
           </Link>

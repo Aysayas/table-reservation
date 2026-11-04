@@ -1,3 +1,5 @@
+import type { CSSProperties } from 'react'
+
 type Props = {
   id: string
   name: string
@@ -32,7 +34,11 @@ export default function TrackHeading({
           className="absolute inset-x-0 inset-y-1.5 flex flex-col justify-between"
         >
           {[0, 1, 2, 3, 4].map((line) => (
-            <span key={line} className="bg-brand-line/70 h-px" />
+            <span
+              key={line}
+              style={{ '--stagger': line } as CSSProperties}
+              className="bg-brand-line/70 scroll-draw h-px"
+            />
           ))}
         </div>
         <h2

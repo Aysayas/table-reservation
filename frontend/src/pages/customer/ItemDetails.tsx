@@ -9,6 +9,7 @@ import Ornament from '@/components/Ornament'
 import PageLoader from '@/components/PageLoader'
 import { dishDescription } from '@/lib/dish'
 import { getMenuItem, getRecommendations } from '@/services/menu'
+import { flyToCart } from '@/lib/flyToCart'
 import { useCart } from '@/stores/cart'
 import type { MenuItem } from '@/types/db'
 
@@ -175,7 +176,8 @@ export default function ItemDetails() {
                   <button
                     type="button"
                     aria-label={`Add ${dish.name}`}
-                    onClick={() => {
+                    onClick={(e) => {
+                      flyToCart(e.currentTarget)
                       add(table, line(dish, 1, ''))
                       toast.success(`${dish.name} added to cart`)
                     }}

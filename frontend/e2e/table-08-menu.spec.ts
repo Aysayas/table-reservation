@@ -62,3 +62,18 @@ test('a missing table does not warn about undefined query data', async ({ page }
   await expect(page.getByRole('heading', { name: 'Table not found' })).toBeVisible()
   expect(warnings.filter((w) => w.includes('Query data cannot be undefined'))).toEqual([])
 })
+
+test('add sends a gold dot to the cart, and not with reduced motion', async ({ page }) => {
+  await page.goto(url)
+  const add = page.getByRole('button', { name: 'Add Hungarian Sausage with Bread and Egg' })
+  const dots = page.locator('body > span[aria-hidden="true"].fixed')
+  await add.click()
+  await expect(page.getByRole('link', { name: /View Cart · 1 item/ })).toBeVisible()
+  await add.click()
+  await expect(dots).toHaveCount(1)
+  await expect(dots).toHaveCount(0)
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await add.click()
+  await expect(page.getByRole('link', { name: /View Cart · 3 items/ })).toBeVisible()
+  await expect(dots).toHaveCount(0)
+})

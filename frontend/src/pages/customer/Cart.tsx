@@ -8,6 +8,7 @@ import LeaderRow from '@/components/LeaderRow'
 import { getMenuItems, getRecommendations } from '@/services/menu'
 import { getSettings } from '@/services/settings'
 import { cartTotal, useCart } from '@/stores/cart'
+import useCountUp from '@/hooks/useCountUp'
 
 const peso = (amount: number) =>
   `₱${amount.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
@@ -26,6 +27,8 @@ export default function Cart() {
 
   const subtotal = cartTotal(lines)
   const serviceCharge = Math.round(subtotal * (settings?.service_charge_percent ?? 0)) / 100
+  const shownSubtotal = useCountUp(subtotal)
+  const shownTotal = useCountUp(subtotal + serviceCharge)
   const cartIds = lines.map((l) => l.item_id)
   const { data: suggestions = [] } = useQuery({
     queryKey: ['recommendations', cartIds],
@@ -189,7 +192,7 @@ export default function Cart() {
 
           <dl className="mt-6 space-y-2 text-sm">
             <LeaderRow term="Subtotal" valueClassName="text-brand-charcoal">
-              {peso(subtotal)}
+              {peso(shownSubtotal)}
             </LeaderRow>
             <LeaderRow
               term={`Service Charge (${settings?.service_charge_percent ?? 0}%)`}
@@ -203,7 +206,7 @@ export default function Cart() {
               termClassName="text-brand-charcoal font-serif text-xl"
               valueClassName="text-brand-red font-serif text-xl"
             >
-              {peso(subtotal + serviceCharge)}
+              {peso(shownTotal)}
             </LeaderRow>
           </dl>
 

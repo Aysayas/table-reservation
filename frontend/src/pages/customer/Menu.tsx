@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { QrCode, Search, SearchX } from 'lucide-react'
-import { useState } from 'react'
+import { useState, type CSSProperties } from 'react'
 import { Link } from 'react-router-dom'
 import DishPhoto from '@/components/DishPhoto'
 import EmptyState from '@/components/EmptyState'
@@ -20,10 +20,11 @@ const panelTitle =
 const zoom =
   'motion-safe:transition-transform motion-safe:duration-700 motion-safe:group-hover:scale-105'
 
-function Dish({ item, category }: { item: MenuItem; category: string }) {
+function Dish({ item, category, index }: { item: MenuItem; category: string; index: number }) {
   return (
     <li
-      className={`group border-brand-line hover:shadow-lift flex flex-col overflow-hidden rounded-xl border bg-white transition duration-300 motion-safe:hover:-translate-y-1 ${item.is_available ? '' : 'opacity-50'}`}
+      style={{ '--stagger': index % 3 } as CSSProperties}
+      className={`group scroll-rise border-brand-line hover:shadow-lift flex flex-col overflow-hidden rounded-xl border bg-white transition duration-300 motion-safe:hover:-translate-y-1 ${item.is_available ? '' : 'opacity-50'}`}
     >
       <div className="bg-brand-charcoal relative h-28 overflow-hidden md:h-32">
         <DishPhoto
@@ -293,9 +294,10 @@ export default function Menu() {
                 track={section.track}
               />
               <ul className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4">
-                {section.items.map((item) => (
+                {section.items.map((item, index) => (
                   <Dish
                     key={`${section.id}-${item.item_id}`}
+                    index={index}
                     item={item}
                     category={categoryName(item.category_id)}
                   />

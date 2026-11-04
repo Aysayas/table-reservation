@@ -14,7 +14,7 @@ export default function Ornament({
   className = '',
 }: Props) {
   const ink = tone === 'dark' ? 'text-brand-gold' : 'text-brand-gold-deep'
-  const rule = `h-px flex-1 ${tone === 'dark' ? 'bg-brand-gold/50' : 'bg-brand-gold-deep/35'}`
+  const rule = `relative h-px flex-1 overflow-hidden ${tone === 'dark' ? 'bg-brand-gold/50' : 'bg-brand-gold-deep/35'}`
   const diamond = (
     <span aria-hidden="true" className={`${ink} text-xs leading-none`}>
       ◆
@@ -23,7 +23,9 @@ export default function Ornament({
 
   return (
     <div aria-hidden={label ? undefined : true} className={`flex items-center gap-3 ${className}`}>
-      <span aria-hidden="true" className={rule} />
+      <span aria-hidden="true" className={rule}>
+        <span className="via-brand-gold shimmer-once absolute inset-y-0 left-0 w-2/5 -translate-x-[120%] bg-linear-to-r from-transparent to-transparent motion-reduce:hidden" />
+      </span>
       {label ? (
         <>
           {diamond}
@@ -38,7 +40,9 @@ export default function Ornament({
       ) : (
         diamond
       )}
-      <span aria-hidden="true" className={rule} />
+      <span aria-hidden="true" className={rule}>
+        <span className="via-brand-gold shimmer-once absolute inset-y-0 left-0 w-2/5 -translate-x-[120%] bg-linear-to-r from-transparent to-transparent motion-reduce:hidden" />
+      </span>
     </div>
   )
 }
