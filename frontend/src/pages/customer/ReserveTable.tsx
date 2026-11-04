@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useQuery } from '@tanstack/react-query'
 import { format, parseISO } from 'date-fns'
 import { ArrowLeft, Minus, Plus } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import { Link, Navigate, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
@@ -133,6 +133,34 @@ export default function ReserveTable() {
       setValue('reservation_time', '')
     }
   }, [slots, isFetched, slotsFailed, time, setValue])
+
+  const slotGrid = useRef<HTMLDivElement>(null)
+  const [pill, setPill] = useState<{ x: number; y: number; w: number; h: number; moved: boolean }>()
+  useLayoutEffect(() => {
+    const grid = slotGrid.current
+    if (!grid) {
+      setPill(undefined)
+      return
+    }
+    const place = () => {
+      const on = grid.querySelector<HTMLElement>('[aria-pressed="true"]')
+      setPill((old) =>
+        on
+          ? {
+              x: on.offsetLeft,
+              y: on.offsetTop,
+              w: on.offsetWidth,
+              h: on.offsetHeight,
+              moved: !!old,
+            }
+          : undefined,
+      )
+    }
+    place()
+    const observer = new ResizeObserver(place)
+    observer.observe(grid)
+    return () => observer.disconnect()
+  }, [time, slots, slotsLoading, slotsFailed, isFetched])
 
   useEffect(() => {
     if (code) return
@@ -370,7 +398,18 @@ export default function ReserveTable() {
                 ) : isFetched && slots.length === 0 ? (
                   <p className="text-brand-ink/70 mt-2 text-sm">No times left on this day.</p>
                 ) : (
-                  <div className="mt-2 grid grid-cols-3 gap-2">
+                  <div ref={slotGrid} className="relative isolate mt-2 grid grid-cols-3 gap-2">
+                    {pill && (
+                      <span
+                        aria-hidden="true"
+                        style={{
+                          width: pill.w,
+                          height: pill.h,
+                          translate: `${pill.x}px ${pill.y}px`,
+                        }}
+                        className={`bg-brand-charcoal pointer-events-none absolute top-0 left-0 z-[5] rounded-sm motion-reduce:hidden ${pill.moved ? 'transition-[translate,width] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]' : ''}`}
+                      />
+                    )}
                     {slots.map((slot) => {
                       const selected = slot.time === time
                       return (
@@ -382,9 +421,9 @@ export default function ReserveTable() {
                           onClick={() =>
                             setValue('reservation_time', slot.time, { shouldValidate: true })
                           }
-                          className={`rounded-sm border py-3 text-sm font-semibold transition-colors duration-200 ${selected ? 'bg-brand-charcoal border-brand-charcoal text-white' : 'border-brand-line text-brand-charcoal hover:border-brand-gold bg-white'} disabled:text-brand-ink/40 disabled:border-dashed disabled:bg-transparent`}
+                          className={`rounded-sm border py-3 text-sm font-semibold transition-colors duration-200 ${selected ? `border-brand-charcoal motion-reduce:bg-brand-charcoal text-white ${pill ? 'bg-white' : 'bg-brand-charcoal'}` : 'border-brand-line text-brand-charcoal hover:border-brand-gold bg-white'} disabled:text-brand-ink/40 disabled:border-dashed disabled:bg-transparent`}
                         >
-                          {formatTime(slot.time)}
+                          <span className="relative z-10">{formatTime(slot.time)}</span>
                         </button>
                       )
                     })}

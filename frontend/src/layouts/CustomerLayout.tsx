@@ -156,9 +156,12 @@ export default function CustomerLayout() {
                 aria-label={`Cart, ${count} ${count === 1 ? 'item' : 'items'}`}
                 className="text-brand-cream hover:text-brand-gold relative flex size-11 items-center justify-center transition-colors duration-200"
               >
-                <ShoppingCart className="size-5" />
+                <ShoppingCart data-cart-target className="size-5" />
                 {count > 0 && (
-                  <span className="bg-brand-red absolute -top-0.5 -right-0.5 flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-xs leading-none font-bold text-white">
+                  <span
+                    key={count}
+                    className="bg-brand-red motion-safe:animate-pop absolute -top-0.5 -right-0.5 flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-xs leading-none font-bold text-white"
+                  >
                     {count}
                   </span>
                 )}
