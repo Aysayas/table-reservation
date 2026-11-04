@@ -16,9 +16,15 @@ createRoot(document.getElementById('root')!).render(
         position="top-center"
         className="print:hidden"
         icons={{
-          success: <CircleCheck className="text-brand-gold size-5" />,
-          error: <CircleAlert className="text-brand-red size-5" />,
-          info: <Bell className="text-brand-gold size-5" />,
+          success: (
+            <CircleCheck className="text-brand-gold size-5 motion-safe:animate-[moment-pop_400ms_both]" />
+          ),
+          error: (
+            <CircleAlert className="text-brand-red size-5 motion-safe:animate-[moment-shake_450ms_150ms]" />
+          ),
+          info: (
+            <Bell className="text-brand-gold size-5 origin-top motion-safe:animate-[moment-ring_1s_ease-in-out]" />
+          ),
         }}
         toastOptions={{
           unstyled: true,

@@ -378,7 +378,7 @@ export default function KitchenDisplay() {
                         data-slide-id={order.order_id}
                         data-slide-group={column.status}
                         aria-label={`Order #${order.order_id}`}
-                        className={`border-brand-line/60 rounded-xl border bg-white p-4 ${minutes >= 15 ? 'border-l-brand-red border-l-4' : ''} ${fresh.includes(order.order_id) ? 'ring-brand-gold ring-2 motion-safe:animate-pulse' : ''}`}
+                        className={`border-brand-line/60 rounded-xl border bg-white p-4 ${minutes >= 15 ? 'border-l-brand-red border-l-4' : ''} ${fresh.includes(order.order_id) ? 'ring-brand-gold ring-2 motion-safe:animate-[moment-drop_500ms_cubic-bezier(0.16,1,0.3,1),pulse_2s_500ms_ease-in-out_infinite]' : ''}`}
                       >
                         <div className="flex items-start justify-between gap-3">
                           <div>

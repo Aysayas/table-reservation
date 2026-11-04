@@ -14,6 +14,7 @@ import { apiError } from '@/lib/api'
 import { readLastOrder, readTableToken } from '@/lib/tableToken'
 import { getOrder, payOrder } from '@/services/orders'
 import type { OrderStatus as Status } from '@/types/db'
+import Moment, { type MomentKind } from '@/components/Moment'
 
 const peso = (amount: number) =>
   `₱${amount.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
@@ -68,7 +69,10 @@ export default function OrderStatus() {
     toast.info(line)
     setUpdate(line)
   }, [status, orderId])
-  const { confirming } = usePaymentReturn(`order:${orderId}`, order?.payment_status === 'paid')
+  const { confirming, paidOnReturn, timedOut } = usePaymentReturn(
+    `order:${orderId}`,
+    order?.payment_status === 'paid',
+  )
   const payNow = async () => {
     setPaying(true)
     try {
@@ -119,9 +123,22 @@ export default function OrderStatus() {
   }
 
   const current = steps.findIndex((s) => s.status === order.status)
+  const moment: [MomentKind, string] = confirming
+    ? ['verifying', 'Checking your payment']
+    : paidOnReturn
+      ? ['paid', 'Payment received']
+      : timedOut
+        ? ['failed', 'Payment not confirmed yet']
+        : {
+            received: ['received', 'Your order is on the kitchen rail'] as [MomentKind, string],
+            preparing: ['preparing', 'Your order is cooking'] as [MomentKind, string],
+            ready: ['ready', 'Your order is ready'] as [MomentKind, string],
+            served: ['served', 'Your meal is served'] as [MomentKind, string],
+          }[order.status]
 
   return (
     <div className="bg-brand-cream short:pb-6 min-h-[calc(100dvh-4rem)] px-4 pt-6 pb-28">
+      <Moment kind={moment[0]} label={moment[1]} className="mx-auto mb-2 size-28" />
       <p className="font-display text-brand-gold-deep text-3xl motion-safe:animate-[dialog-in_700ms_ease-out]">
         Salamat!
       </p>

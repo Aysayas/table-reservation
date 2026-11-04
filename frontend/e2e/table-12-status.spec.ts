@@ -96,3 +96,20 @@ test('a missing QR code is explained on the menu, before building a cart', async
   await scan(page, 6)
   await expect(page.getByRole('alert')).toHaveCount(0)
 })
+
+test('the order shows a cooking scene while preparing, and stays still with reduced motion', async ({
+  page,
+}) => {
+  await scan(page, 2)
+  await page.goto('/table/2/orders?order=1')
+  const scene = page.getByRole('img', { name: 'Your order is cooking' })
+  await expect(scene).toBeVisible()
+  const moving = () =>
+    scene.evaluate((el: { getAnimations(o: object): { playState: string }[] }) =>
+      el.getAnimations({ subtree: true }).some((a) => a.playState === 'running'),
+    )
+  expect(await moving()).toBe(true)
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await expect.poll(moving).toBe(false)
+  await expect(scene).toBeVisible()
+})

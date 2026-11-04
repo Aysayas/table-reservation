@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { ArrowLeft, Minus, Plus, ShoppingBag } from 'lucide-react'
+import { ArrowLeft, Minus, Plus } from 'lucide-react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import DishPhoto from '@/components/DishPhoto'
@@ -55,7 +55,7 @@ export default function Cart() {
 
       {lines.length === 0 ? (
         <EmptyState
-          icon={ShoppingBag}
+          moment="empty"
           title="Your cart is empty"
           text="Add a few dishes from the menu first."
           className="mt-10"

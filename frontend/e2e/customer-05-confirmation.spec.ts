@@ -9,6 +9,7 @@ test('confirmation shows the reservation', async ({ page }) => {
   await page.goto(url)
   await expect(page.getByRole('heading', { name: 'Your table is reserved' })).toBeVisible()
   await expect(page.getByText('Salamat!')).toBeVisible()
+  await expect(page.getByRole('img', { name: 'Your table is set' })).toBeVisible()
   await expect(page.getByText(/SMS/)).toHaveCount(0)
   await expect(page.getByText('RSV-000001', { exact: true })).toBeVisible()
   await expect(page.getByRole('heading', { name: 'Details' })).toBeVisible()

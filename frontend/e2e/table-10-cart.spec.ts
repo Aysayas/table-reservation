@@ -14,6 +14,9 @@ test('an empty cart links back to the menu', async ({ page }) => {
   await page.goto('/table/5/cart')
   await expect(page.getByRole('heading', { name: 'Your Cart' })).toBeVisible()
   await expect(page.getByText('Your cart is empty')).toBeVisible()
+  await expect(
+    page.locator('svg[aria-hidden="true"]').filter({ has: page.locator('ellipse') }),
+  ).toBeVisible()
   await page.getByRole('link', { name: 'Browse the menu' }).click()
   await expect(page).toHaveURL('/table/5/menu')
 })

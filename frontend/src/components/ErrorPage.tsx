@@ -1,10 +1,12 @@
 import { Link } from 'react-router-dom'
 import Ornament from '@/components/Ornament'
+import Moment from '@/components/Moment'
 
 export default function ErrorPage() {
   return (
     <main className="bg-brand-cream flex min-h-dvh items-center justify-center px-4 py-16">
       <div className="gold-corners shadow-soft w-full max-w-md rounded-lg bg-white p-8 text-center">
+        <Moment kind="lost" className="mx-auto mb-2 size-28" />
         <h1 className="text-brand-charcoal font-serif text-3xl">Something went wrong</h1>
         <Ornament className="mx-auto mt-3 w-24" />
         <p className="text-brand-ink/75 mt-4 text-sm">

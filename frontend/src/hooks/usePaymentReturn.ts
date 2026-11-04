@@ -44,5 +44,9 @@ export default function usePaymentReturn(key: string, settled: boolean) {
     return () => clearTimeout(timer)
   }, [key, settled, waiting])
 
-  return { confirming: waiting && !settled, timedOut: timedOut && !settled }
+  return {
+    confirming: waiting && !settled,
+    paidOnReturn: waiting && settled,
+    timedOut: timedOut && !settled,
+  }
 }

@@ -107,6 +107,9 @@ test('a tall dialog scrolls so its buttons can be reached sideways', async ({ pa
   await page.goto('/admin/users')
   await page.getByRole('button', { name: /Add Staff/ }).click()
   const dialog = page.getByRole('dialog')
+  await dialog.evaluate((el: { getAnimations(): { finished: Promise<unknown> }[] }) =>
+    Promise.all(el.getAnimations().map((a) => a.finished)),
+  )
   const box = await dialog.boundingBox()
   expect(box?.y).toBeGreaterThanOrEqual(0)
   expect((box?.y ?? 0) + (box?.height ?? 0)).toBeLessThanOrEqual(width)
