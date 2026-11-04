@@ -40,7 +40,7 @@ export default function CancelReservationDialog({ reservation, busy, onKeep, onC
           disabled={busy}
           aria-busy={busy}
           onClick={onCancel}
-          className="bg-brand-red hover:bg-brand-red/90 lift tracking-label inline-flex items-center justify-center gap-2 rounded-sm px-3 py-3 text-xs font-bold text-white uppercase transition-colors duration-200 disabled:opacity-60"
+          className="bg-brand-red hover:bg-brand-red/90 lift tracking-label inline-flex items-center justify-center gap-2 rounded-sm px-3 py-3 text-xs font-bold text-white uppercase duration-200 disabled:opacity-60"
         >
           {busy && <Spinner />}
           Cancel Reservation

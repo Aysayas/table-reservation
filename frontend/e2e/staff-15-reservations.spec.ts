@@ -124,4 +124,8 @@ test('the row menu opens on its first action and arrow keys move through it', as
   await expect(items.last()).toBeFocused()
   await page.keyboard.press('Escape')
   await expect(menu).toBeHidden()
+  await page.getByRole('button', { name: 'More actions for RSV-000005' }).click()
+  await expect(items.first()).toBeFocused()
+  await page.keyboard.press('Tab')
+  await expect(menu).toBeHidden()
 })

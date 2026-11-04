@@ -242,7 +242,7 @@ export default function Categories() {
             type="submit"
             disabled={isSubmitting}
             aria-busy={isSubmitting}
-            className="bg-brand-red hover:bg-brand-red/90 lift flex w-full items-center justify-center gap-2 rounded-lg py-3 text-sm font-bold text-white transition-colors duration-200 disabled:opacity-60"
+            className="bg-brand-red hover:bg-brand-red/90 lift flex w-full items-center justify-center gap-2 rounded-lg py-3 text-sm font-bold text-white duration-200 disabled:opacity-60"
           >
             {isSubmitting && <Spinner />}
             Save Category

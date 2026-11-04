@@ -15,7 +15,7 @@ import { getReservationByCode } from '@/services/reservations'
 import { getSettings } from '@/services/settings'
 
 const primaryButton =
-  'bg-brand-red hover:bg-brand-red/90 lift focus-visible:outline-brand-red block w-full rounded-sm py-4 text-center text-sm font-bold tracking-label text-white uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2'
+  'bg-brand-red hover:bg-brand-red/90 lift focus-visible:outline-brand-red block w-full rounded-sm py-4 text-center text-sm font-bold tracking-label text-white uppercase duration-200 focus-visible:outline-2 focus-visible:outline-offset-2'
 const darkButton =
   'bg-brand-charcoal border-brand-gold text-brand-gold hover:bg-brand-charcoal/90 focus-visible:outline-brand-red block w-full rounded-sm border py-4 text-center text-sm font-bold tracking-label uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2'
 const smallLabel = 'text-white/60 text-xs font-bold tracking-label uppercase'

@@ -32,6 +32,7 @@ export default function useSlidingPill<T extends HTMLElement = HTMLDivElement>(
     place()
     const observer = new ResizeObserver(place)
     observer.observe(group)
+    group.querySelectorAll('[aria-pressed]').forEach((button) => observer.observe(button))
     return () => observer.disconnect()
   }, [watch])
 

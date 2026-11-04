@@ -88,7 +88,7 @@ export default function StaffAccounts() {
         <button
           type="button"
           onClick={() => setDialog({ user: null })}
-          className="bg-brand-red hover:bg-brand-red/90 lift ml-auto flex h-11 items-center gap-2 rounded-lg px-5 text-sm font-bold text-white transition-colors duration-200"
+          className="bg-brand-red hover:bg-brand-red/90 lift ml-auto flex h-11 items-center gap-2 rounded-lg px-5 text-sm font-bold text-white duration-200"
         >
           <Plus className="size-4" />
           Add Staff

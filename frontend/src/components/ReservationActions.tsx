@@ -167,6 +167,7 @@ export default function ReservationActions({
               ref={trigger}
               type="button"
               popoverTarget={menuId}
+              aria-haspopup="menu"
               aria-label={`More actions for ${ref}`}
               className={more}
             >
@@ -181,16 +182,19 @@ export default function ReservationActions({
               onToggle={(event) => {
                 if (event.newState !== 'open') return
                 placeMenu()
-                menu.current?.querySelector<HTMLElement>('[role="menuitem"]')?.focus()
               }}
               onKeyDown={(event) => {
+                if (event.key === 'Tab') {
+                  menu.current?.hidePopover()
+                  return
+                }
                 const items = [
                   ...(menu.current?.querySelectorAll<HTMLElement>('[role="menuitem"]') ?? []),
                 ]
                 const at = items.indexOf(document.activeElement as HTMLElement)
                 const go = {
                   ArrowDown: (at + 1) % items.length,
-                  ArrowUp: (at - 1 + items.length) % items.length,
+                  ArrowUp: at <= 0 ? items.length - 1 : at - 1,
                   Home: 0,
                   End: items.length - 1,
                 }[event.key]

@@ -244,7 +244,7 @@ export default function ReserveTable() {
           </p>
           <Link
             to="/reservation"
-            className="bg-brand-red hover:bg-brand-red/90 lift focus-visible:outline-brand-gold tracking-label mt-6 block w-full rounded-sm py-4 text-center text-sm font-bold text-white uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2"
+            className="bg-brand-red hover:bg-brand-red/90 lift focus-visible:outline-brand-gold tracking-label mt-6 block w-full rounded-sm py-4 text-center text-sm font-bold text-white uppercase duration-200 focus-visible:outline-2 focus-visible:outline-offset-2"
           >
             Find My Reservation
           </Link>
@@ -261,7 +261,7 @@ export default function ReserveTable() {
             type="button"
             aria-label="Back"
             onClick={() => navigate(-1)}
-            className="border-brand-line text-brand-charcoal hover:border-brand-gold flex size-10 shrink-0 items-center justify-center rounded-full border bg-white transition-colors duration-200"
+            className="border-brand-line text-brand-charcoal hover:border-brand-gold flex size-10 shrink-0 items-center justify-center rounded-full border bg-white duration-200"
           >
             <ArrowLeft className="size-5" />
           </button>
@@ -478,7 +478,7 @@ export default function ReserveTable() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="bg-brand-red hover:bg-brand-red/90 lift focus-visible:outline-brand-gold tracking-label block w-full rounded-sm py-4 text-sm font-bold text-white uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-60 md:ml-auto md:w-auto md:px-12"
+              className="bg-brand-red hover:bg-brand-red/90 lift focus-visible:outline-brand-gold tracking-label block w-full rounded-sm py-4 text-sm font-bold text-white uppercase duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-60 md:ml-auto md:w-auto md:px-12"
             >
               {code ? 'Confirm New Time' : 'Continue to Deposit'}
             </button>

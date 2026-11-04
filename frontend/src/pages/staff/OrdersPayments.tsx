@@ -308,7 +308,7 @@ export default function OrdersPayments() {
                 disabled={received < selected.total_amount || pay.isPending}
                 aria-busy={pay.isPending}
                 onClick={() => pay.mutate()}
-                className="bg-brand-red hover:bg-brand-red/90 lift tracking-label mt-5 flex w-full items-center justify-center gap-2 rounded-lg py-3.5 text-sm font-bold text-white uppercase transition-colors duration-200 disabled:opacity-50"
+                className="bg-brand-red hover:bg-brand-red/90 lift tracking-label mt-5 flex w-full items-center justify-center gap-2 rounded-lg py-3.5 text-sm font-bold text-white uppercase duration-200 disabled:opacity-50"
               >
                 {pay.isPending && <Spinner />}
                 Mark Order #{selected.order_id} Paid (Cash)

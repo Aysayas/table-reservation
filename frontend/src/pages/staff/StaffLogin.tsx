@@ -127,7 +127,7 @@ export default function StaffLogin() {
             type="submit"
             disabled={isSubmitting}
             aria-busy={isSubmitting}
-            className="bg-brand-red hover:bg-brand-red/90 lift focus-visible:outline-brand-red tracking-label inline-flex w-full items-center justify-center gap-2 rounded-lg py-4 text-sm font-bold text-white uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-60"
+            className="bg-brand-red hover:bg-brand-red/90 lift focus-visible:outline-brand-red tracking-label inline-flex w-full items-center justify-center gap-2 rounded-lg py-4 text-sm font-bold text-white uppercase duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-60"
           >
             {isSubmitting && <Spinner />}
             Log In

@@ -124,7 +124,7 @@ export default function TablesQr() {
         <button
           type="button"
           onClick={() => setEditing('new')}
-          className="bg-brand-red hover:bg-brand-red/90 lift flex items-center gap-2 rounded-lg px-5 py-2 text-sm font-bold text-white transition-colors duration-200"
+          className="bg-brand-red hover:bg-brand-red/90 lift flex items-center gap-2 rounded-lg px-5 py-2 text-sm font-bold text-white duration-200"
         >
           <Plus className="size-4" />
           Add Table

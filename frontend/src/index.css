@@ -222,11 +222,11 @@ dialog {
       transition: translate 200ms cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    :is(a, button):hover > svg:is(.lucide-arrow-right, .lucide-chevron-right) {
+    :is(a, button):not(:disabled):hover > svg:is(.lucide-arrow-right, .lucide-chevron-right) {
       translate: 3px 0;
     }
 
-    :is(a, button):hover > svg:is(.lucide-arrow-left, .lucide-chevron-left) {
+    :is(a, button):not(:disabled):hover > svg:is(.lucide-arrow-left, .lucide-chevron-left) {
       translate: -3px 0;
     }
 

@@ -445,7 +445,7 @@ export default function Settings() {
           type="submit"
           disabled={isSubmitting || !settings}
           aria-busy={isSubmitting}
-          className="bg-brand-red hover:bg-brand-red/90 lift inline-flex items-center justify-center gap-2 rounded-lg px-6 py-3 text-sm font-bold text-white transition-colors duration-200 disabled:opacity-60"
+          className="bg-brand-red hover:bg-brand-red/90 lift inline-flex items-center justify-center gap-2 rounded-lg px-6 py-3 text-sm font-bold text-white duration-200 disabled:opacity-60"
         >
           {isSubmitting && <Spinner />}
           Save Changes

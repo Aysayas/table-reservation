@@ -171,7 +171,7 @@ export default function CustomerLayout() {
             <Link
               to="/reserve"
               onClick={() => setOpen(false)}
-              className={`bg-brand-red hover:bg-brand-red/90 lift tracking-label flex min-h-11 items-center rounded-lg px-3 text-xs font-bold text-white uppercase transition-colors duration-200 ${wide ? 'md:px-5' : ''}`}
+              className={`bg-brand-red hover:bg-brand-red/90 lift tracking-label flex min-h-11 items-center rounded-lg px-3 text-xs font-bold text-white uppercase duration-200 ${wide ? 'md:px-5' : ''}`}
             >
               <span>
                 Reserve

@@ -115,7 +115,7 @@ export default function MenuManagement() {
         <Link
           to="/admin/menu/new"
           state={from}
-          className="bg-brand-red hover:bg-brand-red/90 lift ml-auto flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-bold text-white transition-colors duration-200"
+          className="bg-brand-red hover:bg-brand-red/90 lift ml-auto flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-bold text-white duration-200"
         >
           <Plus className="size-4" />
           Add Menu Item
