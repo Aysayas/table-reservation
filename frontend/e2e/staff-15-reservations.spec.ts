@@ -97,3 +97,13 @@ test('status filter, search across days and an empty view', async ({ page }) => 
   await page.getByLabel('Day').selectOption('cancelled')
   await expect(page.getByText('No reservations found.')).toBeVisible()
 })
+
+test('a booking that changes status flashes gold once', async ({ page }) => {
+  await page.goto(url)
+  const row = page.getByRole('row', { name: /RSV-000004/ })
+  await expect(row).not.toHaveClass(/animate-flash/)
+  await page.getByRole('button', { name: 'Mark RSV-000004 arrived' }).click()
+  await expect(row).toHaveClass(/animate-flash/)
+  await expect(row).not.toHaveClass(/animate-flash/)
+  await expect(page.getByRole('row', { name: /RSV-000005/ })).not.toHaveClass(/animate-flash/)
+})

@@ -8,6 +8,7 @@ import Skeleton from '@/components/Skeleton'
 import { formatTime } from '@/lib/hours'
 import { getStaffDashboard } from '@/services/dashboard'
 import type { OrderStatus, ReservationStatus } from '@/types/db'
+import CountUp from '@/components/CountUp'
 
 const peso = (amount: number) =>
   `₱${amount.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
@@ -75,10 +76,18 @@ export default function StaffDashboard() {
     )
 
   const stats = [
-    { label: 'Reservations Today', value: String(data.reservations_today) },
-    { label: 'Guests Arrived', value: String(data.guests_arrived) },
-    { label: 'Active Orders', value: String(data.active_orders) },
-    { label: 'Available Tables', value: `${data.available_tables} / ${data.total_tables}` },
+    { label: 'Reservations Today', value: <CountUp value={data.reservations_today} /> },
+    { label: 'Guests Arrived', value: <CountUp value={data.guests_arrived} /> },
+    { label: 'Active Orders', value: <CountUp value={data.active_orders} /> },
+    {
+      label: 'Available Tables',
+      value: (
+        <CountUp
+          value={data.available_tables}
+          format={(n) => `${Math.round(n)} / ${data.total_tables}`}
+        />
+      ),
+    },
   ]
 
   return (
@@ -89,7 +98,9 @@ export default function StaffDashboard() {
             <dt className="text-brand-ink/70 tracking-label text-xs font-bold uppercase">
               {stat.label}
             </dt>
-            <dd className="text-brand-charcoal mt-2 font-serif text-4xl">{stat.value}</dd>
+            <dd className="text-brand-charcoal mt-2 font-serif text-4xl tabular-nums">
+              {stat.value}
+            </dd>
           </div>
         ))}
       </dl>

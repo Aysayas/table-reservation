@@ -1,8 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
 
-export default function useCountUp(value: number, duration = 600) {
-  const [shown, setShown] = useState(value)
-  const current = useRef(value)
+export default function useCountUp(value: number, duration = 600, from = value) {
+  const [start] = useState(() =>
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches ? value : from,
+  )
+  const [shown, setShown] = useState(start)
+  const current = useRef(start)
 
   useEffect(() => {
     const start = current.current

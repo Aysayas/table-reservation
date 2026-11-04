@@ -88,3 +88,24 @@ test('cooks can tick items off, and the ticks survive a reload', async ({ page }
   await page.reload()
   await expect(item).toHaveAttribute('aria-pressed', 'true')
 })
+
+test('a bumped ticket slides into its new column, and not with reduced motion', async ({
+  page,
+}) => {
+  await page.goto(url)
+  const moving = () =>
+    page
+      .getByRole('listitem', { name: 'Order #3' })
+      .evaluate((el: { getAnimations(): { playState: string }[] }) =>
+        el.getAnimations().some((a) => a.playState === 'running'),
+      )
+  await page.getByRole('button', { name: 'Start Preparing' }).click()
+  await expect.poll(moving).toBe(true)
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page
+    .getByRole('listitem', { name: 'Order #3' })
+    .getByRole('button', { name: 'Mark Ready' })
+    .click()
+  await expect(page.getByRole('heading', { name: 'Ready (2)' })).toBeVisible()
+  expect(await moving()).toBe(false)
+})
