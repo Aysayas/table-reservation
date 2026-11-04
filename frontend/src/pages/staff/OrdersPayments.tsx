@@ -16,6 +16,7 @@ import { getMe } from '@/services/auth'
 import { getSettings } from '@/services/settings'
 import type { OrderStatus } from '@/types/db'
 import useStatusFlash from '@/hooks/useStatusFlash'
+import useSlidingPill from '@/hooks/useSlidingPill'
 
 const peso = (amount: number) =>
   `₱${amount.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
@@ -44,6 +45,7 @@ export default function OrdersPayments() {
   const queryClient = useQueryClient()
   const [params, setParams] = useSearchParams()
   const [filter, setFilter] = useState<'' | 'paid' | 'unpaid'>('')
+  const [pillsRef, pills, pillsOn] = useSlidingPill(filter)
   const [cash, setCash] = useState('')
   const {
     data: orders = [],
@@ -95,16 +97,22 @@ export default function OrdersPayments() {
   return (
     <div className="grid grid-cols-[minmax(0,1fr)] items-start gap-6 xl:grid-cols-[minmax(0,1fr)_24rem]">
       <div className="print:hidden">
-        <div role="group" aria-label="Filter orders" className="flex flex-wrap gap-2">
+        <div
+          role="group"
+          aria-label="Filter orders"
+          ref={pillsRef}
+          className="relative isolate flex flex-wrap gap-2"
+        >
+          {pills}
           {filters.map((f) => (
             <button
               key={f.value}
               type="button"
               aria-pressed={filter === f.value}
               onClick={() => setFilter(f.value)}
-              className={`rounded-full border px-4 py-2 text-sm font-semibold transition-colors duration-200 pointer-coarse:min-h-11 ${filter === f.value ? 'bg-brand-charcoal border-brand-charcoal text-white' : 'border-brand-line text-brand-charcoal hover:border-brand-gold bg-white'}`}
+              className={`rounded-full border px-4 py-2 text-sm font-semibold transition-colors duration-200 pointer-coarse:min-h-11 ${filter === f.value ? `border-brand-charcoal motion-reduce:bg-brand-charcoal text-white ${pillsOn ? 'bg-white' : 'bg-brand-charcoal'}` : 'border-brand-line text-brand-charcoal hover:border-brand-gold bg-white'}`}
             >
-              {f.label}
+              <span className="relative z-10">{f.label}</span>
             </button>
           ))}
         </div>
@@ -300,7 +308,7 @@ export default function OrdersPayments() {
                 disabled={received < selected.total_amount || pay.isPending}
                 aria-busy={pay.isPending}
                 onClick={() => pay.mutate()}
-                className="bg-brand-red hover:bg-brand-red/90 tracking-label mt-5 flex w-full items-center justify-center gap-2 rounded-lg py-3.5 text-sm font-bold text-white uppercase transition-colors duration-200 disabled:opacity-50"
+                className="bg-brand-red hover:bg-brand-red/90 lift tracking-label mt-5 flex w-full items-center justify-center gap-2 rounded-lg py-3.5 text-sm font-bold text-white uppercase transition-colors duration-200 disabled:opacity-50"
               >
                 {pay.isPending && <Spinner />}
                 Mark Order #{selected.order_id} Paid (Cash)

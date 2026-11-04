@@ -14,7 +14,7 @@ export default function ErrorPage() {
           <button
             type="button"
             onClick={() => window.location.reload()}
-            className="bg-brand-red hover:bg-brand-red/90 tracking-label rounded-sm py-3 text-xs font-bold text-white uppercase transition-colors duration-200"
+            className="bg-brand-red hover:bg-brand-red/90 lift tracking-label rounded-sm py-3 text-xs font-bold text-white uppercase transition-colors duration-200"
           >
             Try Again
           </button>

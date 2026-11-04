@@ -226,7 +226,7 @@ export default function OrderStatus() {
             type="button"
             disabled={paying}
             onClick={payNow}
-            className={`focus-visible:outline-brand-gold tracking-label mt-3 block min-h-11 w-full rounded-lg py-3 text-sm font-bold uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-60 ${counter ? 'border border-white/40 hover:bg-white/10' : 'bg-brand-red hover:bg-brand-red/90'}`}
+            className={`focus-visible:outline-brand-gold tracking-label mt-3 block min-h-11 w-full rounded-lg py-3 text-sm font-bold uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-60 ${counter ? 'border border-white/40 hover:bg-white/10' : 'bg-brand-red hover:bg-brand-red/90 lift'}`}
           >
             Pay Now
           </button>

@@ -14,7 +14,7 @@ import { getSettings } from '@/services/settings'
 
 const card = 'border-brand-line rounded-lg border bg-white p-5 md:p-6'
 const redButton =
-  'bg-brand-red hover:bg-brand-red/90 focus-visible:outline-brand-gold block w-full rounded-sm py-4 text-center text-sm font-bold tracking-label text-white uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2'
+  'bg-brand-red hover:bg-brand-red/90 lift focus-visible:outline-brand-gold block w-full rounded-sm py-4 text-center text-sm font-bold tracking-label text-white uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2'
 
 const peso = (amount: number) =>
   `₱${amount.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`

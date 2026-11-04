@@ -69,7 +69,7 @@ export default function Home() {
             <div className="mt-8 grid grid-cols-2 gap-3 md:flex md:gap-4">
               <Link
                 to="/reserve"
-                className={`${button} bg-brand-red hover:bg-brand-red/90 text-white`}
+                className={`${button} bg-brand-red hover:bg-brand-red/90 lift text-white`}
               >
                 Reserve a Table
               </Link>
@@ -217,7 +217,7 @@ export default function Home() {
                         <Link
                           to="/menu"
                           aria-label={`See ${item.name} on the menu`}
-                          className="bg-brand-red hover:bg-brand-red/90 flex size-11 shrink-0 items-center justify-center rounded-full transition-colors duration-200"
+                          className="bg-brand-red hover:bg-brand-red/90 lift flex size-11 shrink-0 items-center justify-center rounded-full transition-colors duration-200"
                         >
                           <ArrowRight className="size-4" />
                         </Link>

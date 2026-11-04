@@ -23,6 +23,7 @@ import { listPayments } from '@/services/payments'
 import { defaultRange, getReport, type ReportPeriod } from '@/services/reports'
 import { getSettings } from '@/services/settings'
 import { motionOk } from '@/lib/motion'
+import useSlidingPill from '@/hooks/useSlidingPill'
 
 const peso = (amount: number) =>
   `₱${amount.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
@@ -53,6 +54,7 @@ const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
 export default function Reports() {
   const [period, setPeriod] = useState<ReportPeriod>('daily')
   const [range, setRange] = useState(() => defaultRange('daily'))
+  const [pillsRef, pills, pillsOn] = useSlidingPill(period)
   const { data, isPending, error } = useQuery({
     queryKey: ['reports', period, range],
     queryFn: () => getReport({ period, ...range }),
@@ -150,16 +152,22 @@ export default function Reports() {
       )}
       <div className="print:hidden">
         <div className="flex flex-wrap items-center gap-3">
-          <div role="group" aria-label="Report period" className="flex flex-wrap gap-2">
+          <div
+            role="group"
+            aria-label="Report period"
+            ref={pillsRef}
+            className="relative isolate flex flex-wrap gap-2"
+          >
+            {pills}
             {periods.map((p) => (
               <button
                 key={p.value}
                 type="button"
                 aria-pressed={period === p.value}
                 onClick={() => choose(p.value)}
-                className={`rounded-full border px-4 py-2 text-sm font-semibold transition-colors duration-200 pointer-coarse:min-h-11 ${period === p.value ? 'bg-brand-charcoal border-brand-charcoal text-white' : 'border-brand-line text-brand-charcoal hover:border-brand-gold bg-white'}`}
+                className={`rounded-full border px-4 py-2 text-sm font-semibold transition-colors duration-200 pointer-coarse:min-h-11 ${period === p.value ? `border-brand-charcoal motion-reduce:bg-brand-charcoal text-white ${pillsOn ? 'bg-white' : 'bg-brand-charcoal'}` : 'border-brand-line text-brand-charcoal hover:border-brand-gold bg-white'}`}
               >
-                {p.label}
+                <span className="relative z-10">{p.label}</span>
               </button>
             ))}
           </div>

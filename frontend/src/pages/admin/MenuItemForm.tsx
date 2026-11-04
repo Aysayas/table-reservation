@@ -64,7 +64,7 @@ function Toggle({
           className={`relative h-6 w-11 shrink-0 rounded-full transition-colors duration-200 ${on ? 'bg-brand-green' : 'bg-brand-ink/20'}`}
         >
           <span
-            className={`shadow-soft absolute top-0.5 left-0.5 size-5 rounded-full bg-white transition-transform duration-200 ${on ? 'translate-x-5' : ''}`}
+            className={`shadow-soft absolute top-0.5 left-0.5 size-5 rounded-full bg-white transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${on ? 'translate-x-5' : ''}`}
           />
         </button>
         <span className="text-brand-ink/70 text-sm">{hint}</span>
@@ -276,7 +276,7 @@ export default function MenuItemForm() {
               type="submit"
               disabled={isSubmitting}
               aria-busy={isSubmitting}
-              className="bg-brand-red hover:bg-brand-red/90 inline-flex items-center justify-center gap-2 rounded-lg px-8 py-3 text-sm font-bold text-white transition-colors duration-200 disabled:opacity-60"
+              className="bg-brand-red hover:bg-brand-red/90 lift inline-flex items-center justify-center gap-2 rounded-lg px-8 py-3 text-sm font-bold text-white transition-colors duration-200 disabled:opacity-60"
             >
               {isSubmitting && <Spinner />}
               Save Item

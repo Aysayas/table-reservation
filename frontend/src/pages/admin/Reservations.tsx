@@ -13,6 +13,7 @@ import EditReservationDialog from '@/components/EditReservationDialog'
 import ReservationActions from '@/components/ReservationActions'
 import type { PublicReservation, ReservationStatus } from '@/types/db'
 import useStatusFlash from '@/hooks/useStatusFlash'
+import useSlidingPill from '@/hooks/useSlidingPill'
 
 const th = 'text-brand-ink/70 px-3 py-3 text-left text-xs font-bold tracking-label uppercase'
 const td = 'text-brand-charcoal px-3 py-3 text-sm whitespace-nowrap'
@@ -42,6 +43,7 @@ const views: { value: ReservationView; label: string }[] = [
 ]
 export default function Reservations() {
   const [view, setView] = useState<ReservationView>('upcoming')
+  const [pillsRef, pills, pillsOn] = useSlidingPill(view)
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
   const [editing, setEditing] = useState<PublicReservation | null>(null)
@@ -118,7 +120,13 @@ export default function Reservations() {
               className="placeholder:text-brand-ink/65 w-full py-2.5 text-sm outline-none"
             />
           </label>
-          <div role="group" aria-label="Reservation view" className="flex flex-wrap gap-2">
+          <div
+            role="group"
+            aria-label="Reservation view"
+            ref={pillsRef}
+            className="relative isolate flex flex-wrap gap-2"
+          >
+            {pills}
             {views.map((v) => (
               <button
                 key={v.value}
@@ -128,9 +136,9 @@ export default function Reservations() {
                   setView(v.value)
                   setPage(1)
                 }}
-                className={`rounded-full border px-4 py-2 text-sm font-semibold transition-colors duration-200 pointer-coarse:min-h-11 ${view === v.value ? 'bg-brand-charcoal border-brand-charcoal text-white' : 'border-brand-line text-brand-charcoal hover:border-brand-gold bg-white'}`}
+                className={`rounded-full border px-4 py-2 text-sm font-semibold transition-colors duration-200 pointer-coarse:min-h-11 ${view === v.value ? `border-brand-charcoal motion-reduce:bg-brand-charcoal text-white ${pillsOn ? 'bg-white' : 'bg-brand-charcoal'}` : 'border-brand-line text-brand-charcoal hover:border-brand-gold bg-white'}`}
               >
-                {v.label}
+                <span className="relative z-10">{v.label}</span>
               </button>
             ))}
           </div>

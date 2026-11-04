@@ -38,7 +38,7 @@ test('search finds a booking, and status actions work from this page', async ({ 
   await page.getByRole('button', { name: 'Mark RSV-000004 arrived' }).click()
   await expect(page.getByRole('row', { name: /RSV-000004/ })).toContainText('Arrived')
   await page.getByRole('button', { name: 'More actions for RSV-000005' }).click()
-  await page.getByRole('button', { name: 'Cancel RSV-000005' }).click()
+  await page.getByRole('menuitem', { name: 'Cancel RSV-000005' }).click()
   await page.getByRole('dialog').getByRole('button', { name: 'Keep Reservation' }).click()
   await expect(page.getByRole('row', { name: /RSV-000005/ })).toContainText('Confirmed')
 })
@@ -47,7 +47,7 @@ test('a confirmed booking can move to another table', async ({ page }) => {
   await page.goto(url)
   await page.getByRole('button', { name: 'Today' }).click()
   await page.getByRole('button', { name: 'More actions for RSV-000005' }).click()
-  await page.getByRole('button', { name: 'Change the table for RSV-000005' }).click()
+  await page.getByRole('menuitem', { name: 'Change the table for RSV-000005' }).click()
   const dialog = page.getByRole('dialog', { name: 'Assign a table' })
   await expect(dialog.getByRole('button', { name: /^T5/ })).toHaveCount(0)
   await dialog.getByRole('button', { name: /^T7/ }).click()
@@ -58,17 +58,17 @@ test('a confirmed booking can move to another table', async ({ page }) => {
 test('edit shows only for pending or confirmed bookings', async ({ page }) => {
   await page.goto(url)
   await page.getByRole('button', { name: 'More actions for RSV-000008' }).click()
-  await expect(page.getByRole('button', { name: 'Edit RSV-000008' })).toBeVisible()
+  await expect(page.getByRole('menuitem', { name: 'Edit RSV-000008' })).toBeVisible()
   await page.getByRole('button', { name: 'Today' }).click()
-  await expect(page.getByRole('button', { name: 'Edit RSV-000003' })).toHaveCount(0)
+  await expect(page.getByRole('menuitem', { name: 'Edit RSV-000003' })).toHaveCount(0)
   await page.getByRole('button', { name: 'More actions for RSV-000004' }).click()
-  await expect(page.getByRole('button', { name: 'Edit RSV-000004' })).toBeVisible()
+  await expect(page.getByRole('menuitem', { name: 'Edit RSV-000004' })).toBeVisible()
 })
 
 test('editing a booking saves the new guests and table', async ({ page }) => {
   await page.goto(url)
   await page.getByRole('button', { name: 'More actions for RSV-000009' }).click()
-  await page.getByRole('button', { name: 'Edit RSV-000009' }).click()
+  await page.getByRole('menuitem', { name: 'Edit RSV-000009' }).click()
   const dialog = page.getByRole('dialog', { name: 'Edit RSV-000009' })
   await expect(dialog.getByLabel('Guests')).toHaveValue('4')
   await expect(dialog.getByLabel('Time')).toHaveValue('19:00:00')
@@ -83,7 +83,7 @@ test('editing a booking saves the new guests and table', async ({ page }) => {
 test('a small table and a table booked at that time cannot be picked', async ({ page }) => {
   await page.goto(url)
   await page.getByRole('button', { name: 'More actions for RSV-000009' }).click()
-  await page.getByRole('button', { name: 'Edit RSV-000009' }).click()
+  await page.getByRole('menuitem', { name: 'Edit RSV-000009' }).click()
   const dialog = page.getByRole('dialog', { name: 'Edit RSV-000009' })
   await expect(dialog.getByRole('option', { name: 'T1 · 2 seats' })).toBeDisabled()
   await dialog.getByLabel('Table').selectOption({ label: 'T6 · 4 seats' })
@@ -91,7 +91,7 @@ test('a small table and a table booked at that time cannot be picked', async ({ 
   await expect(page.getByText('RSV-000009 updated')).toBeVisible()
 
   await page.getByRole('button', { name: 'More actions for RSV-000010' }).click()
-  await page.getByRole('button', { name: 'Edit RSV-000010' }).click()
+  await page.getByRole('menuitem', { name: 'Edit RSV-000010' }).click()
   const second = page.getByRole('dialog', { name: 'Edit RSV-000010' })
   const date = await page
     .getByRole('row', { name: /RSV-000009/ })
@@ -107,7 +107,7 @@ test('a small table and a table booked at that time cannot be picked', async ({ 
 test('guests above the limit are refused', async ({ page }) => {
   await page.goto(url)
   await page.getByRole('button', { name: 'More actions for RSV-000008' }).click()
-  await page.getByRole('button', { name: 'Edit RSV-000008' }).click()
+  await page.getByRole('menuitem', { name: 'Edit RSV-000008' }).click()
   const dialog = page.getByRole('dialog', { name: 'Edit RSV-000008' })
   await dialog.getByLabel('Guests').fill('11')
   await dialog.getByRole('button', { name: 'Save Changes' }).click()

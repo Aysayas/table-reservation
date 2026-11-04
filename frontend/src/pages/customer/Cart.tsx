@@ -62,7 +62,7 @@ export default function Cart() {
           action={
             <Link
               to={menuLink}
-              className="bg-brand-red hover:bg-brand-red/90 tracking-label inline-block rounded-lg px-8 py-3 text-sm font-bold text-white uppercase transition-colors duration-200"
+              className="bg-brand-red hover:bg-brand-red/90 lift tracking-label inline-block rounded-lg px-8 py-3 text-sm font-bold text-white uppercase transition-colors duration-200"
             >
               Browse the menu
             </Link>
@@ -222,7 +222,7 @@ export default function Cart() {
             ) : (
               <Link
                 to={`/table/${table}/checkout`}
-                className="bg-brand-red hover:bg-brand-red/90 tracking-label shadow-lift block w-full rounded-lg py-4 text-center text-sm font-bold text-white uppercase transition-colors duration-200"
+                className="bg-brand-red hover:bg-brand-red/90 lift tracking-label shadow-lift block w-full rounded-lg py-4 text-center text-sm font-bold text-white uppercase transition-colors duration-200"
               >
                 Proceed to Checkout
               </Link>

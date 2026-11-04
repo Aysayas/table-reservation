@@ -14,7 +14,7 @@ import { cartCount, useCart } from '@/stores/cart'
 const navLink =
   'hover:text-brand-gold block border-b border-white/10 px-4 py-3.5 text-sm font-semibold tracking-label uppercase transition-colors duration-200 last:border-b-0'
 const wideNavLink = ({ isActive }: { isActive: boolean }) =>
-  `hover:text-brand-gold border-b pb-1 text-xs font-semibold tracking-label uppercase transition-colors duration-200 ${isActive ? 'text-brand-gold border-brand-gold' : 'border-transparent'}`
+  `hover:text-brand-gold after:bg-brand-gold relative pb-1 text-xs font-semibold tracking-label uppercase transition-colors duration-200 after:absolute after:inset-x-0 after:bottom-0 after:h-px after:transition-transform after:duration-300 after:ease-[cubic-bezier(0.16,1,0.3,1)] ${isActive ? 'text-brand-gold' : 'after:scale-x-0 hover:after:scale-x-100 focus-visible:after:scale-x-100'}`
 const customerLinks = [
   { to: '/', label: 'Home' },
   { to: '/menu', label: 'Menu' },
@@ -171,7 +171,7 @@ export default function CustomerLayout() {
             <Link
               to="/reserve"
               onClick={() => setOpen(false)}
-              className={`bg-brand-red hover:bg-brand-red/90 tracking-label flex min-h-11 items-center rounded-lg px-3 text-xs font-bold text-white uppercase transition-colors duration-200 ${wide ? 'md:px-5' : ''}`}
+              className={`bg-brand-red hover:bg-brand-red/90 lift tracking-label flex min-h-11 items-center rounded-lg px-3 text-xs font-bold text-white uppercase transition-colors duration-200 ${wide ? 'md:px-5' : ''}`}
             >
               <span>
                 Reserve

@@ -204,7 +204,7 @@ export default function ItemDetails() {
               action: { label: 'View Cart', onClick: () => navigate(`/table/${table}/cart`) },
             })
           }}
-          className="bg-brand-red hover:bg-brand-red/90 tracking-label shadow-lift block w-full rounded-lg py-4 text-sm font-bold text-white uppercase transition-colors duration-200 disabled:opacity-60"
+          className="bg-brand-red hover:bg-brand-red/90 lift tracking-label shadow-lift block w-full rounded-lg py-4 text-sm font-bold text-white uppercase transition-colors duration-200 disabled:opacity-60"
         >
           {item.is_available ? `Add to Cart · ${peso(item.price * quantity)}` : 'Not available'}
         </button>
