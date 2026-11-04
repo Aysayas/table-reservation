@@ -187,7 +187,11 @@ export default function DashboardLayout({ title, items }: Props) {
           </div>
           <RefreshBar />
         </header>
-        <main id="main" tabIndex={-1} className="px-4 py-6 outline-none sm:px-6 lg:px-8 lg:py-8">
+        <main
+          id="main"
+          tabIndex={-1}
+          className="px-4 py-6 outline-none sm:px-6 lg:px-8 lg:py-8 print:p-0"
+        >
           <Outlet />
         </main>
       </div>
