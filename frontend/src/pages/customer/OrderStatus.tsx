@@ -125,9 +125,9 @@ export default function OrderStatus() {
   const current = steps.findIndex((s) => s.status === order.status)
   const moment: [MomentKind, string] = confirming
     ? ['verifying', 'Checking your payment']
-    : paidOnReturn
+    : paidOnReturn && order.status === 'received'
       ? ['paid', 'Payment received']
-      : timedOut
+      : timedOut && order.status === 'received'
         ? ['failed', 'Payment not confirmed yet']
         : {
             received: ['received', 'Your order is on the kitchen rail'] as [MomentKind, string],

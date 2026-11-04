@@ -24,7 +24,7 @@ const steam = (x: number, delay: number) => (
     strokeWidth={3}
     strokeLinecap="round"
     style={{ animationDelay: `${delay}s` }}
-    className={`stroke-brand-gold fill-none opacity-70 ${box} motion-safe:animate-[moment-steam_2.2s_ease-out_infinite]`}
+    className={`stroke-brand-gold fill-none opacity-70 ${box} motion-safe:animate-[moment-steam_2.2s_ease-out_infinite_backwards]`}
   />
 )
 
@@ -259,9 +259,11 @@ const scenes: Record<MomentKind, ReactNode> = {
   lost: (
     <>
       <path d="M25 140h120" strokeWidth={3} strokeLinecap="round" className={line} />
-      <g className="origin-[60px_140px] motion-safe:animate-[moment-tip_900ms_200ms_cubic-bezier(0.5,0,0.75,0)_both]">
-        <ellipse cx="60" cy="58" rx="14" ry="20" strokeWidth={3} className={solid} />
-        <path d="M60 78v62" strokeWidth={4} strokeLinecap="round" className={line} />
+      <g transform="rotate(80 60 140)">
+        <g className="origin-[60px_140px] motion-safe:animate-[moment-tip_900ms_200ms_cubic-bezier(0.5,0,0.75,0)_both]">
+          <ellipse cx="60" cy="58" rx="14" ry="20" strokeWidth={3} className={solid} />
+          <path d="M60 78v62" strokeWidth={4} strokeLinecap="round" className={line} />
+        </g>
       </g>
       <ellipse
         cx="118"

@@ -166,7 +166,7 @@ export default function ReservationConfirmation() {
         <div className="md:mx-auto md:max-w-5xl">
           <div className="text-center">
             {confirming ? (
-              <Moment kind="verifying" label="Checking your payment" className="mx-auto size-32" />
+              <Moment kind="verifying" className="mx-auto size-32" />
             ) : timedOut && needsDeposit ? (
               <Moment kind="failed" label="Payment not confirmed yet" className="mx-auto size-32" />
             ) : (

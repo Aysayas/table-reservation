@@ -433,9 +433,6 @@ input::-webkit-date-and-time-value {
 }
 @keyframes moment-tip {
   from {
-    transform: none;
-  }
-  to {
-    transform: rotate(80deg);
+    transform: rotate(-80deg);
   }
 }
