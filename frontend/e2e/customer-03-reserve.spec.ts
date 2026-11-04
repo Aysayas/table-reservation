@@ -182,3 +182,15 @@ test('the dark fill slides to the chosen time', async ({ page }) => {
   await expect(fill).toBeHidden()
   await expect(seven).toHaveCSS('background-color', 'rgb(28, 25, 23)')
 })
+
+test('the main button lifts on hover, and stays put with reduced motion', async ({ page }) => {
+  await page.goto(`/reserve?date=${date}&time=18:00&pax=2`)
+  const go = page.getByRole('button', { name: /Continue/ })
+  await expect(go).toHaveCSS('transition-property', /translate/)
+  await go.hover()
+  await expect(go).toHaveCSS('translate', '0px -2px')
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.mouse.move(0, 0)
+  await go.hover()
+  await expect(go).not.toHaveCSS('translate', '0px -2px')
+})

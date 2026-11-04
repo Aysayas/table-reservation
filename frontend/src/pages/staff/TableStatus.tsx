@@ -11,6 +11,7 @@ import { updateReservationStatus } from '@/services/reservations'
 import { getTables, setTableStatus } from '@/services/tables'
 import type { TableStatus as Status } from '@/types/db'
 import useStatusFlash from '@/hooks/useStatusFlash'
+import useSlidingPill from '@/hooks/useSlidingPill'
 
 const peso = (amount: number) =>
   `₱${amount.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
@@ -39,6 +40,7 @@ const filters: (Status | 'all')[] = ['all', 'available', 'occupied', 'reserved']
 export default function TableStatus() {
   const queryClient = useQueryClient()
   const [filter, setFilter] = useState<Status | 'all'>('all')
+  const [pillsRef, pills, pillsOn] = useSlidingPill(filter)
   const {
     data = [],
     isPending,
@@ -91,16 +93,24 @@ export default function TableStatus() {
 
   return (
     <div>
-      <div role="group" aria-label="Filter tables" className="flex flex-wrap gap-2">
+      <div
+        role="group"
+        aria-label="Filter tables"
+        ref={pillsRef}
+        className="relative isolate flex flex-wrap gap-2"
+      >
+        {pills}
         {filters.map((f) => (
           <button
             key={f}
             type="button"
             aria-pressed={filter === f}
             onClick={() => setFilter(f)}
-            className={`rounded-full border px-4 py-2 text-sm font-semibold transition-colors duration-200 pointer-coarse:min-h-11 ${filter === f ? 'bg-brand-charcoal border-brand-charcoal text-white' : 'border-brand-line text-brand-charcoal hover:border-brand-gold bg-white'}`}
+            className={`rounded-full border px-4 py-2 text-sm font-semibold transition-colors duration-200 pointer-coarse:min-h-11 ${filter === f ? `border-brand-charcoal motion-reduce:bg-brand-charcoal text-white ${pillsOn ? 'bg-white' : 'bg-brand-charcoal'}` : 'border-brand-line text-brand-charcoal hover:border-brand-gold bg-white'}`}
           >
-            {f === 'all' ? 'All' : look[f].text} ({count(f)})
+            <span className="relative z-10">
+              {f === 'all' ? 'All' : look[f].text} ({count(f)})
+            </span>
           </button>
         ))}
       </div>

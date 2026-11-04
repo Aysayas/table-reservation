@@ -89,7 +89,7 @@ export default function About() {
             <div className="mt-8 grid grid-cols-2 gap-3 md:flex md:gap-4">
               <Link
                 to="/reserve"
-                className={`${button} bg-brand-red hover:bg-brand-red/90 text-white`}
+                className={`${button} bg-brand-red hover:bg-brand-red/90 lift text-white`}
               >
                 Reserve a Table
               </Link>

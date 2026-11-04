@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useQuery } from '@tanstack/react-query'
 import { format, parseISO } from 'date-fns'
 import { ArrowLeft, Minus, Plus } from 'lucide-react'
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import { Link, Navigate, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
@@ -20,6 +20,7 @@ import {
   rescheduleReservation,
 } from '@/services/reservations'
 import { getSettings } from '@/services/settings'
+import useSlidingPill from '@/hooks/useSlidingPill'
 
 const label = 'text-brand-charcoal text-xs font-bold tracking-label uppercase'
 const field =
@@ -134,33 +135,10 @@ export default function ReserveTable() {
     }
   }, [slots, isFetched, slotsFailed, time, setValue])
 
-  const slotGrid = useRef<HTMLDivElement>(null)
-  const [pill, setPill] = useState<{ x: number; y: number; w: number; h: number; moved: boolean }>()
-  useLayoutEffect(() => {
-    const grid = slotGrid.current
-    if (!grid) {
-      setPill(undefined)
-      return
-    }
-    const place = () => {
-      const on = grid.querySelector<HTMLElement>('[aria-pressed="true"]')
-      setPill((old) =>
-        on
-          ? {
-              x: on.offsetLeft,
-              y: on.offsetTop,
-              w: on.offsetWidth,
-              h: on.offsetHeight,
-              moved: !!old,
-            }
-          : undefined,
-      )
-    }
-    place()
-    const observer = new ResizeObserver(place)
-    observer.observe(grid)
-    return () => observer.disconnect()
-  }, [time, slots, slotsLoading, slotsFailed, isFetched])
+  const [slotPillRef, slotPill, slotPillOn] = useSlidingPill(
+    [time, slotsLoading, slotsFailed, isFetched, slots.map((s) => s.time)].join('|'),
+    'rounded-sm',
+  )
 
   useEffect(() => {
     if (code) return
@@ -266,7 +244,7 @@ export default function ReserveTable() {
           </p>
           <Link
             to="/reservation"
-            className="bg-brand-red hover:bg-brand-red/90 focus-visible:outline-brand-gold tracking-label mt-6 block w-full rounded-sm py-4 text-center text-sm font-bold text-white uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2"
+            className="bg-brand-red hover:bg-brand-red/90 lift focus-visible:outline-brand-gold tracking-label mt-6 block w-full rounded-sm py-4 text-center text-sm font-bold text-white uppercase duration-200 focus-visible:outline-2 focus-visible:outline-offset-2"
           >
             Find My Reservation
           </Link>
@@ -283,7 +261,7 @@ export default function ReserveTable() {
             type="button"
             aria-label="Back"
             onClick={() => navigate(-1)}
-            className="border-brand-line text-brand-charcoal hover:border-brand-gold flex size-10 shrink-0 items-center justify-center rounded-full border bg-white transition-colors duration-200"
+            className="border-brand-line text-brand-charcoal hover:border-brand-gold flex size-10 shrink-0 items-center justify-center rounded-full border bg-white duration-200"
           >
             <ArrowLeft className="size-5" />
           </button>
@@ -398,18 +376,8 @@ export default function ReserveTable() {
                 ) : isFetched && slots.length === 0 ? (
                   <p className="text-brand-ink/70 mt-2 text-sm">No times left on this day.</p>
                 ) : (
-                  <div ref={slotGrid} className="relative isolate mt-2 grid grid-cols-3 gap-2">
-                    {pill && (
-                      <span
-                        aria-hidden="true"
-                        style={{
-                          width: pill.w,
-                          height: pill.h,
-                          translate: `${pill.x}px ${pill.y}px`,
-                        }}
-                        className={`bg-brand-charcoal pointer-events-none absolute top-0 left-0 z-[5] rounded-sm motion-reduce:hidden ${pill.moved ? 'transition-[translate,width] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]' : ''}`}
-                      />
-                    )}
+                  <div ref={slotPillRef} className="relative isolate mt-2 grid grid-cols-3 gap-2">
+                    {slotPill}
                     {slots.map((slot) => {
                       const selected = slot.time === time
                       return (
@@ -421,7 +389,7 @@ export default function ReserveTable() {
                           onClick={() =>
                             setValue('reservation_time', slot.time, { shouldValidate: true })
                           }
-                          className={`rounded-sm border py-3 text-sm font-semibold transition-colors duration-200 ${selected ? `border-brand-charcoal motion-reduce:bg-brand-charcoal text-white ${pill ? 'bg-white' : 'bg-brand-charcoal'}` : 'border-brand-line text-brand-charcoal hover:border-brand-gold bg-white'} disabled:text-brand-ink/40 disabled:border-dashed disabled:bg-transparent`}
+                          className={`rounded-sm border py-3 text-sm font-semibold transition-colors duration-200 ${selected ? `border-brand-charcoal motion-reduce:bg-brand-charcoal text-white ${slotPillOn ? 'bg-white' : 'bg-brand-charcoal'}` : 'border-brand-line text-brand-charcoal hover:border-brand-gold bg-white'} disabled:text-brand-ink/40 disabled:border-dashed disabled:bg-transparent`}
                         >
                           <span className="relative z-10">{formatTime(slot.time)}</span>
                         </button>
@@ -510,7 +478,7 @@ export default function ReserveTable() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="bg-brand-red hover:bg-brand-red/90 focus-visible:outline-brand-gold tracking-label block w-full rounded-sm py-4 text-sm font-bold text-white uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-60 md:ml-auto md:w-auto md:px-12"
+              className="bg-brand-red hover:bg-brand-red/90 lift focus-visible:outline-brand-gold tracking-label block w-full rounded-sm py-4 text-sm font-bold text-white uppercase duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-60 md:ml-auto md:w-auto md:px-12"
             >
               {code ? 'Confirm New Time' : 'Continue to Deposit'}
             </button>

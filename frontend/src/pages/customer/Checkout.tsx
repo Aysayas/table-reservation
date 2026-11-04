@@ -99,7 +99,7 @@ export default function Checkout() {
           action={
             <Link
               to={`/table/${table}/menu`}
-              className="bg-brand-red hover:bg-brand-red/90 tracking-label inline-block rounded-lg px-8 py-3 text-sm font-bold text-white uppercase transition-colors duration-200"
+              className="bg-brand-red hover:bg-brand-red/90 lift tracking-label inline-block rounded-lg px-8 py-3 text-sm font-bold text-white uppercase duration-200"
             >
               Browse the menu
             </Link>
@@ -203,7 +203,7 @@ export default function Checkout() {
               type="button"
               disabled={!token || placing || unavailable.length > 0}
               onClick={placeOrder}
-              className="bg-brand-red hover:bg-brand-red/90 tracking-label shadow-lift block w-full rounded-lg py-4 text-sm font-bold text-white uppercase transition-colors duration-200 disabled:opacity-60"
+              className="bg-brand-red hover:bg-brand-red/90 lift tracking-label shadow-lift block w-full rounded-lg py-4 text-sm font-bold text-white uppercase duration-200 disabled:opacity-60"
             >
               Place Order
             </button>

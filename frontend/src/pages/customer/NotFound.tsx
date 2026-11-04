@@ -10,7 +10,7 @@ export default function NotFound({ home = '/' }: { home?: string }) {
         </p>
         <Link
           to={home}
-          className="bg-brand-red hover:bg-brand-red/90 focus-visible:outline-brand-gold tracking-label mt-8 block w-full rounded-sm py-4 text-center text-sm font-bold text-white uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2"
+          className="bg-brand-red hover:bg-brand-red/90 lift focus-visible:outline-brand-gold tracking-label mt-8 block w-full rounded-sm py-4 text-center text-sm font-bold text-white uppercase duration-200 focus-visible:outline-2 focus-visible:outline-offset-2"
         >
           {home === '/' ? 'Back to Home' : 'Back to Dashboard'}
         </Link>

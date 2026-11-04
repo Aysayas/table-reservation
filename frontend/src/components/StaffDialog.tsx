@@ -130,7 +130,7 @@ export default function StaffDialog({ user, isSelf, onClose }: Props) {
             type="submit"
             disabled={isSubmitting}
             aria-busy={isSubmitting}
-            className="bg-brand-red hover:bg-brand-red/90 inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-bold text-white transition-colors duration-200 disabled:opacity-60"
+            className="bg-brand-red hover:bg-brand-red/90 lift inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-bold text-white duration-200 disabled:opacity-60"
           >
             {isSubmitting && <Spinner />}
             Save Staff

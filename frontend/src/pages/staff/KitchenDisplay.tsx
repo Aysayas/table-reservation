@@ -41,7 +41,7 @@ const columns = [
     action: 'Mark Served',
     top: 'border-t-brand-red',
     count: 'bg-brand-red text-white',
-    button: 'bg-brand-red hover:bg-brand-red/90 text-white',
+    button: 'bg-brand-red hover:bg-brand-red/90 lift text-white',
   },
 ] as const satisfies {
   status: OrderStatus

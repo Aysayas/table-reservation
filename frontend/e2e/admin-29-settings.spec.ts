@@ -94,7 +94,7 @@ test('opening time for booking is saved and limits the times in the edit dialog'
 
   await page.getByRole('link', { name: 'Reservations' }).click()
   await page.getByRole('button', { name: 'More actions for RSV-000009' }).click()
-  await page.getByRole('button', { name: 'Edit RSV-000009' }).click()
+  await page.getByRole('menuitem', { name: 'Edit RSV-000009' }).click()
   const time = page.getByRole('dialog', { name: 'Edit RSV-000009' }).getByLabel('Time')
   await expect(time).toHaveValue('19:00:00')
   const times = await time

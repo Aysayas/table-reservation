@@ -167,6 +167,7 @@ export default function ReservationActions({
               ref={trigger}
               type="button"
               popoverTarget={menuId}
+              aria-haspopup="menu"
               aria-label={`More actions for ${ref}`}
               className={more}
             >
@@ -176,8 +177,30 @@ export default function ReservationActions({
               ref={menu}
               id={menuId}
               popover="auto"
+              role="menu"
+              aria-label={`Actions for ${ref}`}
               onToggle={(event) => {
-                if (event.newState === 'open') placeMenu()
+                if (event.newState !== 'open') return
+                placeMenu()
+              }}
+              onKeyDown={(event) => {
+                if (event.key === 'Tab') {
+                  menu.current?.hidePopover()
+                  return
+                }
+                const items = [
+                  ...(menu.current?.querySelectorAll<HTMLElement>('[role="menuitem"]') ?? []),
+                ]
+                const at = items.indexOf(document.activeElement as HTMLElement)
+                const go = {
+                  ArrowDown: (at + 1) % items.length,
+                  ArrowUp: at <= 0 ? items.length - 1 : at - 1,
+                  Home: 0,
+                  End: items.length - 1,
+                }[event.key]
+                if (go === undefined) return
+                event.preventDefault()
+                items[go]?.focus()
               }}
               className="border-brand-line shadow-lift inset-auto m-0 w-44 origin-top-right rounded-lg border bg-white py-1 motion-safe:transition-[opacity,scale] motion-safe:duration-150 motion-safe:ease-out starting:scale-95 starting:opacity-0"
             >
@@ -185,6 +208,7 @@ export default function ReservationActions({
                 <button
                   key={a.label}
                   type="button"
+                  role="menuitem"
                   aria-label={a.aria}
                   onClick={() => {
                     menu.current?.hidePopover()
