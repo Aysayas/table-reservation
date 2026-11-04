@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 
-export default function useCountUp(value: number, duration = 600) {
-  const [shown, setShown] = useState(value)
-  const current = useRef(value)
+export default function useCountUp(value: number, duration = 600, from = value) {
+  const [shown, setShown] = useState(from)
+  const current = useRef(from)
 
   useEffect(() => {
     const start = current.current

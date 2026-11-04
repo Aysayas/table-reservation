@@ -12,6 +12,7 @@ import { listReservations, type ReservationView } from '@/services/reservations'
 import EditReservationDialog from '@/components/EditReservationDialog'
 import ReservationActions from '@/components/ReservationActions'
 import type { PublicReservation, ReservationStatus } from '@/types/db'
+import useStatusFlash from '@/hooks/useStatusFlash'
 
 const th = 'text-brand-ink/70 px-3 py-3 text-left text-xs font-bold tracking-label uppercase'
 const td = 'text-brand-charcoal px-3 py-3 text-sm whitespace-nowrap'
@@ -52,6 +53,7 @@ export default function Reservations() {
   })
 
   const rows = data?.data ?? []
+  const flash = useStatusFlash(rows.map((r) => ({ id: r.reservation_id, status: r.status })))
   const total = data?.meta.total ?? 0
   const pages = Math.max(1, Math.ceil(total / 8))
   const first = total ? (page - 1) * 8 + 1 : 0
@@ -152,7 +154,7 @@ export default function Reservations() {
           <div className="border-brand-line relative mt-6 overflow-x-auto rounded-lg border bg-white">
             <ul className="divide-brand-line divide-y md:hidden">
               {rows.map((r) => (
-                <li key={r.reservation_id} className="space-y-3 p-4">
+                <li key={r.reservation_id} className={`space-y-3 p-4 ${flash(r.reservation_id)}`}>
                   <div className="flex items-start justify-between gap-3">
                     <p className="text-brand-charcoal font-semibold">{r.reference_code}</p>
                     <span
@@ -218,7 +220,10 @@ export default function Reservations() {
               </thead>
               <tbody>
                 {rows.map((r) => (
-                  <tr key={r.reservation_id} className="border-brand-line border-t">
+                  <tr
+                    key={r.reservation_id}
+                    className={`border-brand-line border-t ${flash(r.reservation_id)}`}
+                  >
                     <td className={`${td} font-semibold`}>{r.reference_code}</td>
                     <td className={`${td} whitespace-nowrap`}>
                       {format(parseISO(r.reservation_date), 'EEE, MMM d, yyyy')}

@@ -10,6 +10,7 @@ import { formatTime } from '@/lib/hours'
 import { updateReservationStatus } from '@/services/reservations'
 import { getTables, setTableStatus } from '@/services/tables'
 import type { TableStatus as Status } from '@/types/db'
+import useStatusFlash from '@/hooks/useStatusFlash'
 
 const peso = (amount: number) =>
   `₱${amount.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
@@ -85,6 +86,7 @@ export default function TableStatus() {
     setStatus.isPending && setStatus.variables?.table_id === table_id
   const count = (f: Status | 'all') =>
     f === 'all' ? tables.length : tables.filter((t) => t.status === f).length
+  const flash = useStatusFlash(tables.map((t) => ({ id: t.table_id, status: t.status })))
   const shown = filter === 'all' ? tables : tables.filter((t) => t.status === filter)
 
   return (
@@ -134,7 +136,7 @@ export default function TableStatus() {
             <li
               key={t.table_id}
               aria-label={`Table ${t.table_number}`}
-              className={`flex min-h-52 flex-col rounded-lg p-5 ${look[t.status].card}`}
+              className={`flex min-h-52 flex-col rounded-lg p-5 transition-colors duration-500 ${look[t.status].card} ${flash(t.table_id)}`}
             >
               <div className="flex items-start justify-between gap-3">
                 <div>

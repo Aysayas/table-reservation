@@ -17,6 +17,8 @@ import Ornament from '@/components/Ornament'
 import Skeleton from '@/components/Skeleton'
 import { getAdminDashboard } from '@/services/dashboard'
 import type { OrderStatus } from '@/types/db'
+import CountUp from '@/components/CountUp'
+import { motionOk } from '@/lib/motion'
 
 const peso = (amount: number) =>
   `₱${amount.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
@@ -60,10 +62,13 @@ export default function AdminDashboard() {
     )
 
   const stats = [
-    { label: 'Sales Today', value: peso(data.sales_today) },
-    { label: 'Orders Today', value: String(data.orders_today) },
-    { label: 'Reservations Today', value: String(data.reservations_today) },
-    { label: 'No-show Rate', value: `${data.no_show_rate}%` },
+    { label: 'Sales Today', value: <CountUp value={data.sales_today} format={peso} /> },
+    { label: 'Orders Today', value: <CountUp value={data.orders_today} /> },
+    { label: 'Reservations Today', value: <CountUp value={data.reservations_today} /> },
+    {
+      label: 'No-show Rate',
+      value: <CountUp value={data.no_show_rate} format={(n) => `${Math.round(n)}%`} />,
+    },
   ]
   const chart = data.sales_last_7_days.map((d) => ({
     day: format(parseISO(d.date), 'EEE'),
@@ -130,6 +135,8 @@ export default function AdminDashboard() {
                   strokeWidth={2.5}
                   dot={{ r: 4, fill: 'var(--color-brand-red)' }}
                   activeDot={{ r: 6 }}
+                  isAnimationActive={motionOk()}
+                  animationDuration={700}
                 />
               </LineChart>
             </ResponsiveContainer>

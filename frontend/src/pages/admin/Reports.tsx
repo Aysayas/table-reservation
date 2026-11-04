@@ -22,6 +22,7 @@ import { getMe } from '@/services/auth'
 import { listPayments } from '@/services/payments'
 import { defaultRange, getReport, type ReportPeriod } from '@/services/reports'
 import { getSettings } from '@/services/settings'
+import { motionOk } from '@/lib/motion'
 
 const peso = (amount: number) =>
   `₱${amount.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
@@ -256,7 +257,8 @@ export default function Reports() {
                           strokeWidth={2}
                         />
                       )}
-                      isAnimationActive={false}
+                      isAnimationActive={motionOk()}
+                      animationDuration={700}
                     />
                   </LineChart>
                 </ResponsiveContainer>
@@ -301,7 +303,8 @@ export default function Reports() {
                       dataKey="quantity"
                       fill={ink}
                       radius={[0, 4, 4, 0]}
-                      isAnimationActive={false}
+                      isAnimationActive={motionOk()}
+                      animationDuration={700}
                     >
                       {best.map((b) => (
                         <Cell key={b.name} fill={b.quantity === topBest ? peak : ink} />
@@ -341,7 +344,13 @@ export default function Reports() {
                       tick={axis}
                     />
                     <Tooltip {...tip} formatter={(v) => [String(v), 'Reservations']} />
-                    <Bar dataKey="count" fill={ink} radius={[4, 4, 0, 0]} isAnimationActive={false}>
+                    <Bar
+                      dataKey="count"
+                      fill={ink}
+                      radius={[4, 4, 0, 0]}
+                      isAnimationActive={motionOk()}
+                      animationDuration={700}
+                    >
                       {bookings.map((b) => (
                         <Cell
                           key={b.label}

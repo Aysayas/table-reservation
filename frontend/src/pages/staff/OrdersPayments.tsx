@@ -15,6 +15,7 @@ import { listOrders, recordPayment } from '@/services/orders'
 import { getMe } from '@/services/auth'
 import { getSettings } from '@/services/settings'
 import type { OrderStatus } from '@/types/db'
+import useStatusFlash from '@/hooks/useStatusFlash'
 
 const peso = (amount: number) =>
   `₱${amount.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
@@ -59,6 +60,9 @@ export default function OrdersPayments() {
       }),
     refetchInterval: 15000,
   })
+  const flash = useStatusFlash(
+    orders.map((o) => ({ id: o.order_id, status: `${o.status}/${o.payment_status}` })),
+  )
   useOrderEvents(STAFF_CHANNEL, ['orders'])
   const { data: settings } = useQuery({ queryKey: ['settings'], queryFn: getSettings })
   const { data: me } = useQuery({ queryKey: ['me', 'staff'], queryFn: () => getMe('staff') })
@@ -127,7 +131,7 @@ export default function OrdersPayments() {
                     key={o.order_id}
                     onClick={() => select(o.order_id)}
                     aria-selected={o.order_id === selectedId}
-                    className={`border-brand-line hover:bg-brand-cream/60 cursor-pointer border-t transition-colors duration-150 ${card} ${o.order_id === selectedId ? 'bg-brand-gold/10' : ''}`}
+                    className={`border-brand-line hover:bg-brand-cream/60 cursor-pointer border-t transition-colors duration-150 ${card} ${o.order_id === selectedId ? 'bg-brand-gold/10' : ''} ${flash(o.order_id)}`}
                   >
                     <td className={`${td} font-semibold max-md:flex-1 max-md:p-0`}>
                       <button

@@ -9,6 +9,7 @@ import LoadError from '@/components/LoadError'
 import Skeleton from '@/components/Skeleton'
 import Spinner from '@/components/Spinner'
 import useOrderEvents, { STAFF_CHANNEL } from '@/hooks/useOrderEvents'
+import useSlideOnMove from '@/hooks/useSlideOnMove'
 import { logout } from '@/services/auth'
 import { listOrders, updateOrderStatus, type StaffOrder } from '@/services/orders'
 import type { OrderStatus } from '@/types/db'
@@ -227,6 +228,8 @@ export default function KitchenDisplay() {
   }, [orders, isSuccess, sound])
   const [saving, setSaving] = useState<number[]>([])
   const savingIds = useRef(new Set<number>())
+  const board = useRef<HTMLElement>(null)
+  useSlideOnMove(board)
   const move = useMutation({
     mutationKey: moveKey,
     mutationFn: ({ order, next }: { order: StaffOrder; next: OrderStatus }) =>
@@ -335,7 +338,7 @@ export default function KitchenDisplay() {
         {announcement}
       </p>
 
-      <main className="grid flex-1 gap-4 p-4 md:min-h-0 md:grid-cols-3 md:p-5">
+      <main ref={board} className="grid flex-1 gap-4 p-4 md:min-h-0 md:grid-cols-3 md:p-5">
         {isLoadingError ? (
           <div className="mx-auto mt-8 w-full max-w-md md:col-span-3">
             <LoadError what="the kitchen orders" onRetry={() => refetch()} />
@@ -369,6 +372,8 @@ export default function KitchenDisplay() {
                     return (
                       <li
                         key={order.order_id}
+                        data-slide-id={order.order_id}
+                        data-slide-group={column.status}
                         aria-label={`Order #${order.order_id}`}
                         className={`border-brand-line/60 rounded-xl border bg-white p-4 ${minutes >= 15 ? 'border-l-brand-red border-l-4' : ''} ${fresh.includes(order.order_id) ? 'ring-brand-gold ring-2 motion-safe:animate-pulse' : ''}`}
                       >

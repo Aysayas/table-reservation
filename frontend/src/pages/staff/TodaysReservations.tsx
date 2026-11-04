@@ -9,6 +9,7 @@ import Skeleton from '@/components/Skeleton'
 import { formatTime } from '@/lib/hours'
 import { listReservations, type ReservationView } from '@/services/reservations'
 import type { ReservationStatus } from '@/types/db'
+import useStatusFlash from '@/hooks/useStatusFlash'
 
 const th = 'text-brand-ink/70 px-4 py-3 text-left text-xs font-bold tracking-label uppercase'
 const td = 'text-brand-charcoal px-4 py-3 text-sm'
@@ -54,6 +55,7 @@ export default function TodaysReservations() {
   })
 
   const rows = data?.data ?? []
+  const flash = useStatusFlash(rows.map((r) => ({ id: r.reservation_id, status: r.status })))
   const total = data?.meta.total ?? 0
   const pages = Math.max(1, Math.ceil(total / 8))
   const first = total === 0 ? 0 : (page - 1) * 8 + 1
@@ -138,7 +140,10 @@ export default function TodaysReservations() {
             </thead>
             <tbody className="max-md:block">
               {rows.map((r) => (
-                <tr key={r.reservation_id} className={`border-brand-line border-t ${card}`}>
+                <tr
+                  key={r.reservation_id}
+                  className={`border-brand-line border-t ${card} ${flash(r.reservation_id)}`}
+                >
                   <td className={`${td} font-semibold whitespace-nowrap max-md:flex-1 max-md:p-0`}>
                     {r.reference_code}
                   </td>
