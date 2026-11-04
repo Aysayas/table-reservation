@@ -98,7 +98,9 @@ export default function StaffDashboard() {
             <dt className="text-brand-ink/70 tracking-label text-xs font-bold uppercase">
               {stat.label}
             </dt>
-            <dd className="text-brand-charcoal mt-2 font-serif text-4xl">{stat.value}</dd>
+            <dd className="text-brand-charcoal mt-2 font-serif text-4xl tabular-nums">
+              {stat.value}
+            </dd>
           </div>
         ))}
       </dl>

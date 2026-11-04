@@ -229,7 +229,10 @@ export default function KitchenDisplay() {
   const [saving, setSaving] = useState<number[]>([])
   const savingIds = useRef(new Set<number>())
   const board = useRef<HTMLElement>(null)
-  useSlideOnMove(board)
+  useSlideOnMove(
+    board,
+    columns.map((c) => c.status),
+  )
   const move = useMutation({
     mutationKey: moveKey,
     mutationFn: ({ order, next }: { order: StaffOrder; next: OrderStatus }) =>
