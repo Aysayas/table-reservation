@@ -18,7 +18,7 @@ import { apiError } from '@/lib/api'
 
 const label = 'text-brand-charcoal block text-sm font-bold'
 const field =
-  'border-brand-line focus:border-brand-gold mt-2 block w-full rounded-md border bg-white px-4 py-3 text-sm font-normal outline-none placeholder:text-brand-ink/65'
+  'border-brand-line focus:border-brand-gold mt-2 block w-full rounded-lg border bg-white px-4 py-3 text-sm font-normal outline-none placeholder:text-brand-ink/65'
 const error = 'text-brand-red mt-1.5 text-xs'
 
 const schema = z.object({
@@ -64,7 +64,7 @@ function Toggle({
           className={`relative h-6 w-11 shrink-0 rounded-full transition-colors duration-200 ${on ? 'bg-brand-green' : 'bg-brand-ink/20'}`}
         >
           <span
-            className={`absolute top-0.5 left-0.5 size-5 rounded-full bg-white shadow transition-transform duration-200 ${on ? 'translate-x-5' : ''}`}
+            className={`shadow-soft absolute top-0.5 left-0.5 size-5 rounded-full bg-white transition-transform duration-200 ${on ? 'translate-x-5' : ''}`}
           />
         </button>
         <span className="text-brand-ink/70 text-sm">{hint}</span>
@@ -276,14 +276,14 @@ export default function MenuItemForm() {
               type="submit"
               disabled={isSubmitting}
               aria-busy={isSubmitting}
-              className="bg-brand-red hover:bg-brand-red/90 inline-flex items-center justify-center gap-2 rounded-md px-8 py-3 text-sm font-bold text-white transition-colors duration-200 disabled:opacity-60"
+              className="bg-brand-red hover:bg-brand-red/90 inline-flex items-center justify-center gap-2 rounded-lg px-8 py-3 text-sm font-bold text-white transition-colors duration-200 disabled:opacity-60"
             >
               {isSubmitting && <Spinner />}
               Save Item
             </button>
             <Link
               to={backTo}
-              className="border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal rounded-md border px-8 py-3 text-sm font-bold transition-colors duration-200 hover:text-white"
+              className="border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal rounded-lg border px-8 py-3 text-sm font-bold transition-colors duration-200 hover:text-white"
             >
               Cancel
             </Link>
@@ -331,7 +331,7 @@ export default function MenuItemForm() {
           <button
             type="button"
             onClick={() => fileInput.current?.click()}
-            className="border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal mt-4 block w-full rounded-md border py-3 text-sm font-bold transition-colors duration-200 hover:text-white"
+            className="border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal mt-4 block w-full rounded-lg border py-3 text-sm font-bold transition-colors duration-200 hover:text-white"
           >
             Upload Photo
           </button>

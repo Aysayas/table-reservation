@@ -138,7 +138,7 @@ export default function TableMenu() {
                 type="button"
                 aria-pressed={active}
                 onClick={() => setCategory(c.category_id)}
-                className={`inline-flex shrink-0 items-center rounded-full border px-4 py-2 text-xs font-bold tracking-[0.08em] whitespace-nowrap transition-colors duration-200 pointer-coarse:min-h-11 ${active ? 'bg-brand-charcoal border-brand-charcoal text-white' : 'border-brand-line text-brand-charcoal bg-white'}`}
+                className={`tracking-label inline-flex shrink-0 items-center rounded-full border px-4 py-2 text-xs font-bold whitespace-nowrap transition-colors duration-200 pointer-coarse:min-h-11 ${active ? 'bg-brand-charcoal border-brand-charcoal text-white' : 'border-brand-line text-brand-charcoal bg-white'}`}
               >
                 {c.name}
               </button>
@@ -237,7 +237,7 @@ export default function TableMenu() {
                   <DishPhoto
                     name={item.name}
                     src={item.image_url}
-                    className="size-16 shrink-0 rounded-md"
+                    className="size-16 shrink-0 rounded-lg"
                   />
                   <span className="min-w-0">
                     <span className="text-brand-charcoal block text-sm font-semibold wrap-break-word">
@@ -258,13 +258,13 @@ export default function TableMenu() {
                     type="button"
                     aria-label={`Add ${item.name}`}
                     onClick={() => addOne(item)}
-                    className="border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal flex min-h-11 shrink-0 items-center gap-1 rounded-md border px-3 py-2 text-xs font-bold tracking-[0.08em] uppercase transition-colors duration-200 hover:text-white"
+                    className="border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal tracking-label flex min-h-11 shrink-0 items-center gap-1 rounded-lg border px-3 py-2 text-xs font-bold uppercase transition-colors duration-200 hover:text-white"
                   >
                     <Plus className="size-3.5" />
                     Add
                   </button>
                 ) : (
-                  <span className="text-brand-ink/70 shrink-0 text-xs font-bold tracking-[0.1em] uppercase">
+                  <span className="text-brand-ink/70 tracking-label shrink-0 text-xs font-bold uppercase">
                     Not available
                   </span>
                 )}
@@ -278,7 +278,7 @@ export default function TableMenu() {
         <div className="short:static short:mt-4 short:pb-0 bg-brand-cream short:pt-0 fixed inset-x-0 bottom-0 z-20 mx-auto max-w-[390px] px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))]">
           <Link
             to={`/table/${id}/cart`}
-            className="bg-brand-charcoal hover:bg-brand-charcoal/90 flex items-center justify-between gap-3 rounded-lg px-5 py-4 text-sm font-bold text-white shadow-lg transition-colors duration-200"
+            className="bg-brand-charcoal hover:bg-brand-charcoal/90 shadow-lift flex items-center justify-between gap-3 rounded-lg px-5 py-4 text-sm font-bold text-white transition-colors duration-200"
           >
             <span className="flex items-center gap-2">
               <ShoppingBag className="text-brand-gold size-4" />

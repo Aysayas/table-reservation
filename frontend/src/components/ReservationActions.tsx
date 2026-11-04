@@ -11,9 +11,9 @@ import { getTables, getTakenTables } from '@/services/tables'
 import type { PublicReservation, ReservationStatus } from '@/types/db'
 
 const primary =
-  'bg-brand-charcoal hover:bg-brand-charcoal/85 pointer-coarse:min-h-11 rounded-md px-3 py-1.5 text-xs font-bold whitespace-nowrap text-white transition-colors duration-200'
+  'bg-brand-charcoal hover:bg-brand-charcoal/85 pointer-coarse:min-h-11 rounded-lg px-3 py-1.5 text-xs font-bold whitespace-nowrap text-white transition-colors duration-200'
 const more =
-  'border-brand-line text-brand-charcoal hover:border-brand-charcoal pointer-coarse:min-h-11 pointer-coarse:min-w-11 flex items-center justify-center rounded-md border px-2 py-1.5 transition-colors duration-200'
+  'border-brand-line text-brand-charcoal hover:border-brand-charcoal pointer-coarse:min-h-11 pointer-coarse:min-w-11 flex items-center justify-center rounded-lg border px-2 py-1.5 transition-colors duration-200'
 const item =
   'hover:bg-brand-cream focus-visible:bg-brand-cream pointer-coarse:py-3.5 block w-full px-4 py-2.5 text-left text-sm font-semibold outline-none'
 type Action = { label: string; aria: string; run: () => void; danger?: boolean }
@@ -179,7 +179,7 @@ export default function ReservationActions({
               onToggle={(event) => {
                 if (event.newState === 'open') placeMenu()
               }}
-              className="border-brand-line inset-auto m-0 w-44 origin-top-right rounded-md border bg-white py-1 shadow-lg motion-safe:transition-[opacity,scale] motion-safe:duration-150 motion-safe:ease-out starting:scale-95 starting:opacity-0"
+              className="border-brand-line shadow-lift inset-auto m-0 w-44 origin-top-right rounded-lg border bg-white py-1 motion-safe:transition-[opacity,scale] motion-safe:duration-150 motion-safe:ease-out starting:scale-95 starting:opacity-0"
             >
               {others.map((a) => (
                 <button
@@ -249,7 +249,7 @@ export default function ReservationActions({
                     type="button"
                     disabled={change.isPending || isTaken}
                     onClick={() => change.mutate({ table_id: t.table_id })}
-                    className="border-brand-line hover:border-brand-red disabled:hover:border-brand-line disabled:bg-brand-line/30 w-full rounded-md border px-2 py-3 text-center transition-colors duration-200 disabled:cursor-not-allowed"
+                    className="border-brand-line hover:border-brand-red disabled:hover:border-brand-line disabled:bg-brand-line/30 w-full rounded-lg border px-2 py-3 text-center transition-colors duration-200 disabled:cursor-not-allowed"
                   >
                     <span className="text-brand-charcoal block text-sm font-bold">
                       {t.table_number}

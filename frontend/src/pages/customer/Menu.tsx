@@ -16,14 +16,14 @@ const peso = (amount: number) =>
   `₱${amount.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
 const panel = 'lg:border-brand-line lg:rounded-xl lg:border lg:bg-white lg:p-6'
 const panelTitle =
-  'text-brand-charcoal border-brand-gold/60 hidden border-b border-dashed pb-3 text-xs font-bold tracking-[0.25em] uppercase lg:block'
+  'text-brand-charcoal border-brand-gold/60 hidden border-b border-dashed pb-3 text-xs font-bold tracking-eyebrow uppercase lg:block'
 const zoom =
   'motion-safe:transition-transform motion-safe:duration-700 motion-safe:group-hover:scale-105'
 
 function Dish({ item, category }: { item: MenuItem; category: string }) {
   return (
     <li
-      className={`group border-brand-line flex flex-col overflow-hidden rounded-xl border bg-white transition duration-300 hover:shadow-md motion-safe:hover:-translate-y-1 ${item.is_available ? '' : 'opacity-50'}`}
+      className={`group border-brand-line hover:shadow-lift flex flex-col overflow-hidden rounded-xl border bg-white transition duration-300 motion-safe:hover:-translate-y-1 ${item.is_available ? '' : 'opacity-50'}`}
     >
       <div className="bg-brand-charcoal relative h-28 overflow-hidden md:h-32">
         <DishPhoto
@@ -33,11 +33,11 @@ function Dish({ item, category }: { item: MenuItem; category: string }) {
           letter="text-5xl"
         />
         {item.is_recommended && (
-          <span className="bg-brand-gold text-brand-charcoal absolute top-2 left-2 rounded-sm px-2 py-0.5 text-xs font-bold tracking-[0.15em] uppercase">
+          <span className="bg-brand-gold text-brand-charcoal tracking-label absolute top-2 left-2 rounded-sm px-2 py-0.5 text-xs font-bold uppercase">
             Best Seller
           </span>
         )}
-        <span className="bg-brand-red absolute right-2 bottom-0 max-w-[80%] truncate rounded-t-sm px-2 py-0.5 text-xs font-bold tracking-[0.1em] text-white uppercase">
+        <span className="bg-brand-red tracking-label absolute right-2 bottom-0 max-w-[80%] truncate rounded-t-sm px-2 py-0.5 text-xs font-bold text-white uppercase">
           {category}
         </span>
       </div>
@@ -52,7 +52,7 @@ function Dish({ item, category }: { item: MenuItem; category: string }) {
           {item.is_available ? (
             <span />
           ) : (
-            <span className="bg-brand-ink/10 text-brand-ink rounded-full px-2 py-0.5 text-xs font-bold tracking-[0.1em] uppercase">
+            <span className="bg-brand-ink/10 text-brand-ink tracking-label rounded-full px-2 py-0.5 text-xs font-bold uppercase">
               Not available
             </span>
           )}
@@ -129,10 +129,7 @@ export default function Menu() {
     <div className="bg-brand-cream min-h-[calc(100dvh-4rem)] pb-16">
       <section className="bg-brand-charcoal gold-corners px-4 py-8 text-white md:py-14">
         <div className="md:mx-auto md:max-w-6xl md:px-10">
-          <nav
-            aria-label="Breadcrumb"
-            className="text-xs tracking-[0.15em] text-white/60 uppercase"
-          >
+          <nav aria-label="Breadcrumb" className="tracking-label text-xs text-white/60 uppercase">
             <Link
               to="/"
               className="hover:text-brand-gold inline-flex items-center transition-colors duration-200 pointer-coarse:min-h-11"
@@ -157,7 +154,7 @@ export default function Menu() {
         <aside className="max-lg:contents lg:sticky lg:top-6 lg:max-h-[calc(100dvh-3rem)] lg:[scrollbar-width:thin] lg:space-y-6 lg:overflow-y-auto">
           <div className={`px-4 pt-6 lg:px-6 ${panel}`}>
             <p className={panelTitle}>Search</p>
-            <label className="border-brand-line focus-within:border-brand-gold flex items-center overflow-hidden rounded-md border bg-white lg:mt-4">
+            <label className="border-brand-line focus-within:border-brand-gold flex items-center overflow-hidden rounded-lg border bg-white lg:mt-4">
               <span className="sr-only">Search menu</span>
               <input
                 type="search"
@@ -213,7 +210,7 @@ export default function Menu() {
                 type="button"
                 aria-pressed={bestOnly}
                 onClick={() => setBestOnly(!bestOnly)}
-                className={`rounded-full border px-4 py-2 text-xs font-bold tracking-[0.08em] transition-colors duration-200 pointer-coarse:min-h-11 ${bestOnly ? 'bg-brand-gold border-brand-gold text-brand-charcoal' : 'border-brand-line text-brand-charcoal hover:border-brand-gold bg-white'}`}
+                className={`tracking-label rounded-full border px-4 py-2 text-xs font-bold transition-colors duration-200 pointer-coarse:min-h-11 ${bestOnly ? 'bg-brand-gold border-brand-gold text-brand-charcoal' : 'border-brand-line text-brand-charcoal hover:border-brand-gold bg-white'}`}
               >
                 Best Seller
               </button>
@@ -234,7 +231,7 @@ export default function Menu() {
                     type="button"
                     aria-pressed={active}
                     onClick={() => setCategory(c.category_id)}
-                    className={`flex shrink-0 items-center justify-between gap-3 rounded-full border px-4 py-2 text-xs font-bold tracking-[0.08em] whitespace-nowrap transition-colors duration-200 lg:rounded-none lg:border-0 lg:border-b lg:border-dashed lg:px-0 lg:py-2.5 lg:text-sm lg:font-medium lg:tracking-normal lg:last:border-b-0 pointer-coarse:min-h-11 ${active ? 'bg-brand-charcoal border-brand-charcoal lg:text-brand-red lg:border-brand-line/70 text-white lg:bg-transparent lg:font-bold' : 'border-brand-line text-brand-charcoal hover:border-brand-gold lg:border-brand-line/70 lg:hover:text-brand-red bg-white lg:bg-transparent'}`}
+                    className={`tracking-label flex shrink-0 items-center justify-between gap-3 rounded-full border px-4 py-2 text-xs font-bold whitespace-nowrap transition-colors duration-200 lg:rounded-none lg:border-0 lg:border-b lg:border-dashed lg:px-0 lg:py-2.5 lg:text-sm lg:font-medium lg:tracking-normal lg:last:border-b-0 pointer-coarse:min-h-11 ${active ? 'bg-brand-charcoal border-brand-charcoal lg:text-brand-red lg:border-brand-line/70 text-white lg:bg-transparent lg:font-bold' : 'border-brand-line text-brand-charcoal hover:border-brand-gold lg:border-brand-line/70 lg:hover:text-brand-red bg-white lg:bg-transparent'}`}
                   >
                     <span>
                       <span aria-hidden="true" className="mr-2 hidden text-xs lg:inline">

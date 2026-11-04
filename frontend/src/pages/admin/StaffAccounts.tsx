@@ -11,10 +11,10 @@ import { getMe } from '@/services/auth'
 import { listUsers, roleNames, updateUser } from '@/services/users'
 import type { User, UserRole } from '@/types/db'
 
-const th = 'px-5 py-3.5 text-left text-xs font-bold tracking-[0.14em] text-white/70 uppercase'
+const th = 'px-5 py-3.5 text-left text-xs font-bold tracking-label text-white/70 uppercase'
 const td = 'text-brand-charcoal px-5 py-4 text-sm'
 const smallButton =
-  'pointer-coarse:min-h-11 inline-flex items-center justify-center rounded-md border px-3 py-1.5 text-xs font-bold transition-colors duration-200'
+  'pointer-coarse:min-h-11 inline-flex items-center justify-center rounded-lg border px-3 py-1.5 text-xs font-bold transition-colors duration-200'
 const dl = 'grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm'
 const dt = 'text-brand-ink/70'
 const dd = 'text-brand-charcoal text-right'
@@ -97,7 +97,7 @@ export default function StaffAccounts() {
 
       {error && <p className="text-brand-red mt-4 text-sm">{error.message}</p>}
 
-      <div className="border-brand-line mt-5 overflow-x-auto rounded-xl border bg-white shadow-sm">
+      <div className="border-brand-line shadow-soft mt-5 overflow-x-auto rounded-xl border bg-white">
         <ul className="divide-brand-line divide-y md:hidden">
           {users.map((u) => {
             const isSelf = u.user_id === me?.user_id

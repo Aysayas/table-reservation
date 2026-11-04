@@ -59,7 +59,7 @@ export default function Cart() {
           action={
             <Link
               to={menuLink}
-              className="bg-brand-red hover:bg-brand-red/90 inline-block rounded-lg px-8 py-3 text-sm font-bold tracking-[0.1em] text-white uppercase transition-colors duration-200"
+              className="bg-brand-red hover:bg-brand-red/90 tracking-label inline-block rounded-lg px-8 py-3 text-sm font-bold text-white uppercase transition-colors duration-200"
             >
               Browse the menu
             </Link>
@@ -76,7 +76,7 @@ export default function Cart() {
                 <DishPhoto
                   name={line.name}
                   src={itemFor(line.item_id)?.image_url}
-                  className="size-16 shrink-0 rounded-md"
+                  className="size-16 shrink-0 rounded-lg"
                 />
                 <div className="min-w-0 flex-1">
                   <div className="flex items-start justify-between gap-3">
@@ -99,7 +99,7 @@ export default function Cart() {
                     <div
                       role="group"
                       aria-label={`${line.name} quantity`}
-                      className="border-brand-line inline-flex items-center rounded-md border bg-white"
+                      className="border-brand-line inline-flex items-center rounded-lg border bg-white"
                     >
                       <button
                         type="button"
@@ -156,7 +156,7 @@ export default function Cart() {
                     <DishPhoto
                       name={dish.name}
                       src={dish.image_url}
-                      className="size-14 shrink-0 rounded-md"
+                      className="size-14 shrink-0 rounded-lg"
                     />
                     <div className="min-w-0">
                       <p className="text-brand-charcoal line-clamp-2 text-xs font-semibold">
@@ -177,7 +177,7 @@ export default function Cart() {
                         })
                         toast.success(`${dish.name} added to cart`)
                       }}
-                      className="border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal col-span-2 flex min-h-11 w-full items-center justify-center rounded-md border text-xs font-bold transition-colors duration-200 hover:text-white"
+                      className="border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal col-span-2 flex min-h-11 w-full items-center justify-center rounded-lg border text-xs font-bold transition-colors duration-200 hover:text-white"
                     >
                       + Add
                     </button>
@@ -212,14 +212,14 @@ export default function Cart() {
               <button
                 type="button"
                 disabled
-                className="bg-brand-red block w-full rounded-lg py-4 text-center text-sm font-bold tracking-[0.1em] text-white uppercase opacity-60 shadow-lg"
+                className="bg-brand-red tracking-label shadow-lift block w-full rounded-lg py-4 text-center text-sm font-bold text-white uppercase opacity-60"
               >
                 Proceed to Checkout
               </button>
             ) : (
               <Link
                 to={`/table/${table}/checkout`}
-                className="bg-brand-red hover:bg-brand-red/90 block w-full rounded-lg py-4 text-center text-sm font-bold tracking-[0.1em] text-white uppercase shadow-lg transition-colors duration-200"
+                className="bg-brand-red hover:bg-brand-red/90 tracking-label shadow-lift block w-full rounded-lg py-4 text-center text-sm font-bold text-white uppercase transition-colors duration-200"
               >
                 Proceed to Checkout
               </Link>

@@ -9,7 +9,7 @@ export default function LoadError({ what, onRetry }: { what: string; onRetry: ()
       <button
         type="button"
         onClick={onRetry}
-        className="border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal mt-5 rounded-sm border px-5 py-3 text-xs font-bold tracking-[0.1em] uppercase transition-colors duration-200 hover:text-white"
+        className="border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal tracking-label mt-5 rounded-sm border px-5 py-3 text-xs font-bold uppercase transition-colors duration-200 hover:text-white"
       >
         Try Again
       </button>

@@ -4,7 +4,7 @@ import Ornament from '@/components/Ornament'
 export default function ErrorPage() {
   return (
     <main className="bg-brand-cream flex min-h-dvh items-center justify-center px-4 py-16">
-      <div className="gold-corners w-full max-w-md rounded-lg bg-white p-8 text-center shadow-sm">
+      <div className="gold-corners shadow-soft w-full max-w-md rounded-lg bg-white p-8 text-center">
         <h1 className="text-brand-charcoal font-serif text-3xl">Something went wrong</h1>
         <Ornament className="mx-auto mt-3 w-24" />
         <p className="text-brand-ink/75 mt-4 text-sm">
@@ -14,13 +14,13 @@ export default function ErrorPage() {
           <button
             type="button"
             onClick={() => window.location.reload()}
-            className="bg-brand-red hover:bg-brand-red/90 rounded-sm py-3 text-xs font-bold tracking-[0.1em] text-white uppercase transition-colors duration-200"
+            className="bg-brand-red hover:bg-brand-red/90 tracking-label rounded-sm py-3 text-xs font-bold text-white uppercase transition-colors duration-200"
           >
             Try Again
           </button>
           <Link
             to="/"
-            className="border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal rounded-sm border py-3 text-xs font-bold tracking-[0.1em] uppercase transition-colors duration-200 hover:text-white"
+            className="border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal tracking-label rounded-sm border py-3 text-xs font-bold uppercase transition-colors duration-200 hover:text-white"
           >
             Go Home
           </Link>

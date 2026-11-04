@@ -33,9 +33,7 @@ export default function Receipt({ order, settings, cashReceived, servedBy, print
     <div className="mx-auto w-[72mm] font-mono text-xs leading-relaxed text-black">
       <style>{'@page { size: 80mm 297mm; margin: 4mm; }'}</style>
       <div className="text-center">
-        <p className="text-base font-bold tracking-[0.15em] uppercase">
-          {settings?.restaurant_name}
-        </p>
+        <p className="tracking-label text-base font-bold uppercase">{settings?.restaurant_name}</p>
         <p>{parts.slice(0, 2).join(', ')}</p>
         <p>{parts.slice(2).join(', ')}</p>
         <p>Tel. {settings?.contact_number}</p>

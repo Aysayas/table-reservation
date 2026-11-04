@@ -21,7 +21,7 @@ import {
 } from '@/services/reservations'
 import { getSettings } from '@/services/settings'
 
-const label = 'text-brand-charcoal text-xs font-bold tracking-[0.15em] uppercase'
+const label = 'text-brand-charcoal text-xs font-bold tracking-label uppercase'
 const field =
   'border-brand-line focus:border-brand-gold mt-2 w-full rounded-sm border bg-white px-4 py-3 text-sm font-normal tracking-normal normal-case outline-none placeholder:text-brand-ink/65'
 const error = 'text-brand-red mt-1.5 text-xs'
@@ -238,7 +238,7 @@ export default function ReserveTable() {
           </p>
           <Link
             to="/reservation"
-            className="bg-brand-red hover:bg-brand-red/90 focus-visible:outline-brand-gold mt-6 block w-full rounded-sm py-4 text-center text-sm font-bold tracking-[0.15em] text-white uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2"
+            className="bg-brand-red hover:bg-brand-red/90 focus-visible:outline-brand-gold tracking-label mt-6 block w-full rounded-sm py-4 text-center text-sm font-bold text-white uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2"
           >
             Find My Reservation
           </Link>
@@ -471,7 +471,7 @@ export default function ReserveTable() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="bg-brand-red hover:bg-brand-red/90 focus-visible:outline-brand-gold block w-full rounded-sm py-4 text-sm font-bold tracking-[0.15em] text-white uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-60 md:ml-auto md:w-auto md:px-12"
+              className="bg-brand-red hover:bg-brand-red/90 focus-visible:outline-brand-gold tracking-label block w-full rounded-sm py-4 text-sm font-bold text-white uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-60 md:ml-auto md:w-auto md:px-12"
             >
               {code ? 'Confirm New Time' : 'Continue to Deposit'}
             </button>

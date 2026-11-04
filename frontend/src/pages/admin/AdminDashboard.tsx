@@ -20,7 +20,7 @@ import type { OrderStatus } from '@/types/db'
 
 const peso = (amount: number) =>
   `₱${amount.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-const th = 'text-brand-ink/70 px-4 py-3 text-left text-xs font-bold tracking-[0.1em] uppercase'
+const th = 'text-brand-ink/70 px-4 py-3 text-left text-xs font-bold tracking-label uppercase'
 const td = 'text-brand-charcoal px-4 py-3 text-sm'
 const card = 'border-brand-line rounded-lg border bg-white'
 const orderBadge: Record<OrderStatus, string> = {
@@ -76,7 +76,7 @@ export default function AdminDashboard() {
       <dl className="grid grid-cols-2 gap-4 xl:grid-cols-4">
         {stats.map((stat) => (
           <div key={stat.label} className={`${card} px-6 py-5`}>
-            <dt className="text-brand-ink/70 text-xs font-bold tracking-[0.15em] uppercase">
+            <dt className="text-brand-ink/70 tracking-label text-xs font-bold uppercase">
               {stat.label}
             </dt>
             <dd className="text-brand-charcoal mt-2 font-serif text-4xl tabular-nums">
@@ -168,13 +168,45 @@ export default function AdminDashboard() {
           </h2>
           <Link
             to="/admin/orders"
-            className="text-brand-red text-xs font-bold tracking-[0.15em] uppercase hover:underline pointer-coarse:inline-flex pointer-coarse:min-h-11 pointer-coarse:items-center"
+            className="text-brand-red tracking-label text-xs font-bold uppercase hover:underline pointer-coarse:inline-flex pointer-coarse:min-h-11 pointer-coarse:items-center"
           >
             View all
           </Link>
         </div>
         <div className={`${card} mt-3 overflow-x-auto`}>
-          <table className="w-full">
+          <ul className="divide-brand-line divide-y md:hidden">
+            {data.recent_orders.map((o) => (
+              <li key={o.order_id} className="flex items-start justify-between gap-3 p-4">
+                <div className="min-w-0">
+                  <Link
+                    to={`/admin/orders?order=${o.order_id}`}
+                    className="text-brand-charcoal hover:text-brand-red font-bold pointer-coarse:inline-flex pointer-coarse:min-h-11 pointer-coarse:items-center"
+                  >
+                    #{o.order_id} · Table {o.table_number}
+                  </Link>
+                  <p className="text-brand-ink/70 text-sm">
+                    {format(parseISO(o.created_at), 'MMM d, h:mm a')} · {o.item_count} items
+                  </p>
+                  <p className="text-brand-ink/70 text-sm">
+                    {o.payment_status === 'paid'
+                      ? `Paid${o.payment_method ? ` · ${cap(o.payment_method)}` : ''}`
+                      : 'Unpaid'}
+                  </p>
+                </div>
+                <div className="flex shrink-0 flex-col items-end gap-2">
+                  <span className="text-brand-charcoal font-semibold tabular-nums">
+                    {peso(o.total_amount)}
+                  </span>
+                  <span
+                    className={`inline-block rounded-full px-3 py-1 text-xs font-bold ${orderBadge[o.status]}`}
+                  >
+                    {cap(o.status)}
+                  </span>
+                </div>
+              </li>
+            ))}
+          </ul>
+          <table className="hidden w-full md:table">
             <thead className="bg-brand-cream/60">
               <tr>
                 {['Order #', 'Date', 'Table', 'Items', 'Total', 'Payment', 'Status'].map((h) => (

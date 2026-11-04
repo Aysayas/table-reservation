@@ -4,7 +4,7 @@ import { accountLinks } from '@/lib/accountLinks'
 import type { CustomerAccount } from '@/types/db'
 
 const item =
-  'hover:text-brand-gold block w-full border-t border-white/10 px-4 py-3.5 text-left text-sm font-semibold tracking-[0.15em] uppercase transition-colors duration-200'
+  'hover:text-brand-gold block w-full border-t border-white/10 px-4 py-3.5 text-left text-sm font-semibold tracking-label uppercase transition-colors duration-200'
 
 type Props = {
   account: CustomerAccount
@@ -55,7 +55,7 @@ export default function AccountMenu({ account, showName, onOpen, onLogOut }: Pro
           {firstName.charAt(0).toUpperCase()}
         </span>
         {showName && (
-          <span className="hidden text-xs font-semibold tracking-[0.15em] uppercase xl:inline">
+          <span className="tracking-label hidden text-xs font-semibold uppercase xl:inline">
             {firstName}
           </span>
         )}
@@ -63,7 +63,7 @@ export default function AccountMenu({ account, showName, onOpen, onLogOut }: Pro
       {open && (
         <nav
           aria-label="Account"
-          className="bg-brand-charcoal text-brand-cream absolute top-full right-0 z-20 mt-3 w-64 rounded-md border border-white/10 shadow-lg motion-safe:transition-[opacity,translate] motion-safe:duration-180 motion-safe:ease-out starting:-translate-y-2 starting:opacity-0"
+          className="bg-brand-charcoal text-brand-cream shadow-lift absolute top-full right-0 z-20 mt-3 w-64 rounded-lg border border-white/10 motion-safe:transition-[opacity,translate] motion-safe:duration-180 motion-safe:ease-out starting:-translate-y-2 starting:opacity-0"
         >
           <p className="px-4 py-3 text-sm">
             Logged in as <strong className="text-brand-gold">{account.full_name}</strong>

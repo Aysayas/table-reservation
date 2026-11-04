@@ -14,7 +14,7 @@ import type { PublicReservation } from '@/types/db'
 
 const label = 'text-brand-charcoal block text-sm font-bold'
 const field =
-  'border-brand-line focus:border-brand-gold mt-2 block w-full rounded-md border bg-white px-4 py-3 text-sm font-normal outline-none'
+  'border-brand-line focus:border-brand-gold mt-2 block w-full rounded-lg border bg-white px-4 py-3 text-sm font-normal outline-none'
 const error = 'text-brand-red mt-1.5 text-xs'
 
 const schema = z.object({
@@ -167,7 +167,7 @@ export default function EditReservationDialog({ reservation, onClose }: Props) {
             type="button"
             disabled={isSubmitting}
             onClick={onClose}
-            className="border-brand-line text-brand-charcoal rounded-md border px-4 py-2 text-sm font-bold disabled:opacity-50"
+            className="border-brand-line text-brand-charcoal rounded-lg border px-4 py-2 text-sm font-bold disabled:opacity-50"
           >
             Cancel
           </button>
@@ -175,7 +175,7 @@ export default function EditReservationDialog({ reservation, onClose }: Props) {
             type="submit"
             disabled={isSubmitting}
             aria-busy={isSubmitting}
-            className="bg-brand-red hover:bg-brand-red/90 inline-flex items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-bold text-white disabled:opacity-50"
+            className="bg-brand-red hover:bg-brand-red/90 inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-bold text-white disabled:opacity-50"
           >
             {isSubmitting && <Spinner />}
             Save Changes

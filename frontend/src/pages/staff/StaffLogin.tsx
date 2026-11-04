@@ -21,7 +21,7 @@ type LoginForm = z.infer<typeof schema>
 
 const input =
   'border-brand-gold/50 focus:border-brand-gold focus:ring-brand-gold/30 aria-invalid:border-brand-red mt-2 w-full rounded-lg border bg-white px-4 py-3.5 text-sm outline-none focus:ring-2'
-const label = 'text-brand-charcoal text-xs font-bold tracking-[0.15em] uppercase'
+const label = 'text-brand-charcoal text-xs font-bold tracking-label uppercase'
 
 export default function StaffLogin() {
   const navigate = useNavigate()
@@ -47,7 +47,7 @@ export default function StaffLogin() {
 
   return (
     <div className="bg-brand-cream flex min-h-dvh items-center justify-center px-4 py-16">
-      <div className="border-brand-gold/40 gold-corners relative w-full max-w-[420px] rounded-2xl border bg-white px-8 pt-20 pb-10 shadow-sm sm:px-10">
+      <div className="border-brand-gold/40 gold-corners shadow-soft relative w-full max-w-[420px] rounded-2xl border bg-white px-8 pt-20 pb-10 sm:px-10">
         <div className="text-center">
           <span className="border-brand-gold/60 bg-brand-cream absolute -top-14 left-1/2 block size-28 -translate-x-1/2 rounded-full border p-2">
             <span className="block size-full overflow-hidden rounded-full">
@@ -58,7 +58,7 @@ export default function StaffLogin() {
               />
             </span>
           </span>
-          <p className="text-brand-red text-xs font-bold tracking-[0.3em] uppercase">
+          <p className="text-brand-red tracking-eyebrow text-xs font-bold uppercase">
             Staff portal
           </p>
           <h1 className="text-brand-charcoal mt-3 font-serif text-5xl">Staff Login</h1>
@@ -103,7 +103,7 @@ export default function StaffLogin() {
                 type="button"
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
                 onClick={() => setShowPassword(!showPassword)}
-                className="text-brand-ink/70 hover:text-brand-charcoal absolute top-1/2 right-3 mt-1 flex size-8 -translate-y-1/2 items-center justify-center rounded-md transition-colors duration-200 pointer-coarse:right-1.5 pointer-coarse:size-11"
+                className="text-brand-ink/70 hover:text-brand-charcoal absolute top-1/2 right-3 mt-1 flex size-8 -translate-y-1/2 items-center justify-center rounded-lg transition-colors duration-200 pointer-coarse:right-1.5 pointer-coarse:size-11"
               >
                 {showPassword ? <EyeOff className="size-5" /> : <Eye className="size-5" />}
               </button>
@@ -127,7 +127,7 @@ export default function StaffLogin() {
             type="submit"
             disabled={isSubmitting}
             aria-busy={isSubmitting}
-            className="bg-brand-red hover:bg-brand-red/90 focus-visible:outline-brand-red inline-flex w-full items-center justify-center gap-2 rounded-lg py-4 text-sm font-bold tracking-[0.15em] text-white uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-60"
+            className="bg-brand-red hover:bg-brand-red/90 focus-visible:outline-brand-red tracking-label inline-flex w-full items-center justify-center gap-2 rounded-lg py-4 text-sm font-bold text-white uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-60"
           >
             {isSubmitting && <Spinner />}
             Log In

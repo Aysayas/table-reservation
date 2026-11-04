@@ -10,7 +10,7 @@ const peso = (amount: number) =>
   `₱${amount.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
 const pct = (part: number, whole: number) => (whole ? `${((part / whole) * 100).toFixed(1)}%` : '—')
 const long = (iso: string) => format(parseISO(iso), 'MMM d, yyyy')
-const th = 'bg-brand-cream px-2 py-1.5 text-left text-[9pt] font-bold tracking-[0.14em] uppercase'
+const th = 'bg-brand-cream px-2 py-1.5 text-left text-[9pt] font-bold tracking-label uppercase'
 const num = 'px-2 py-1 text-right tabular-nums'
 const cell = 'px-2 py-1'
 const zebra = 'even:bg-brand-cream/40 break-inside-avoid'

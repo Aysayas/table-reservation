@@ -88,7 +88,7 @@ export default function OrderStatus() {
   const orderMore = (
     <Link
       to={menuLink}
-      className="border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal block w-full rounded-lg border bg-white py-4 text-center text-sm font-bold tracking-[0.1em] uppercase transition-colors duration-200 hover:text-white"
+      className="border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal tracking-label block w-full rounded-lg border bg-white py-4 text-center text-sm font-bold uppercase transition-colors duration-200 hover:text-white"
     >
       Order More
     </Link>
@@ -210,7 +210,7 @@ export default function OrderStatus() {
       </section>
 
       <div className="bg-brand-charcoal mt-4 rounded-lg px-5 py-4 text-white">
-        <p className="text-brand-gold text-xs font-bold tracking-[0.15em] uppercase">Payment</p>
+        <p className="text-brand-gold tracking-label text-xs font-bold uppercase">Payment</p>
         <p className="mt-1 flex items-center gap-2 text-sm font-semibold">
           {confirming && order.payment_status !== 'paid' && <Spinner />}
           {order.payment_status === 'paid'
@@ -226,7 +226,7 @@ export default function OrderStatus() {
             type="button"
             disabled={paying}
             onClick={payNow}
-            className={`focus-visible:outline-brand-gold mt-3 block min-h-11 w-full rounded-lg py-3 text-sm font-bold tracking-[0.1em] uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-60 ${counter ? 'border border-white/40 hover:bg-white/10' : 'bg-brand-red hover:bg-brand-red/90'}`}
+            className={`focus-visible:outline-brand-gold tracking-label mt-3 block min-h-11 w-full rounded-lg py-3 text-sm font-bold uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-60 ${counter ? 'border border-white/40 hover:bg-white/10' : 'bg-brand-red hover:bg-brand-red/90'}`}
           >
             Pay Now
           </button>

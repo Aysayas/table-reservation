@@ -18,13 +18,13 @@ import type { OrderStatus } from '@/types/db'
 
 const peso = (amount: number) =>
   `₱${amount.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-const th = 'text-brand-ink/70 px-4 py-3 text-left text-xs font-bold tracking-[0.1em] uppercase'
+const th = 'text-brand-ink/70 px-4 py-3 text-left text-xs font-bold tracking-label uppercase'
 const td = 'text-brand-charcoal px-4 py-3 text-sm'
 const card =
   'max-md:flex max-md:flex-wrap max-md:items-center max-md:gap-x-3 max-md:gap-y-2 max-md:p-4'
 const line =
   'max-md:order-1 max-md:flex max-md:basis-full max-md:justify-between max-md:gap-3 max-md:p-0'
-const label = 'text-brand-ink/70 text-xs font-bold tracking-[0.1em] uppercase md:hidden'
+const label = 'text-brand-ink/70 text-xs font-bold tracking-label uppercase md:hidden'
 const orderBadge: Record<OrderStatus, string> = {
   received: 'border-brand-line border bg-white text-brand-charcoal',
   preparing: 'bg-brand-charcoal text-white',
@@ -277,7 +277,7 @@ export default function OrdersPayments() {
                   value={cash}
                   onChange={(e) => setCash(e.target.value)}
                   placeholder="₱0.00"
-                  className="border-brand-line focus:border-brand-gold mt-2 block w-full rounded-md border px-4 py-3 text-sm font-normal outline-none"
+                  className="border-brand-line focus:border-brand-gold mt-2 block w-full rounded-lg border px-4 py-3 text-sm font-normal outline-none"
                 />
               </label>
               <p className="mt-2 flex justify-between text-sm">
@@ -296,7 +296,7 @@ export default function OrdersPayments() {
                 disabled={received < selected.total_amount || pay.isPending}
                 aria-busy={pay.isPending}
                 onClick={() => pay.mutate()}
-                className="bg-brand-red hover:bg-brand-red/90 mt-5 flex w-full items-center justify-center gap-2 rounded-md py-3.5 text-sm font-bold tracking-[0.08em] text-white uppercase transition-colors duration-200 disabled:opacity-50"
+                className="bg-brand-red hover:bg-brand-red/90 tracking-label mt-5 flex w-full items-center justify-center gap-2 rounded-lg py-3.5 text-sm font-bold text-white uppercase transition-colors duration-200 disabled:opacity-50"
               >
                 {pay.isPending && <Spinner />}
                 Mark Order #{selected.order_id} Paid (Cash)
@@ -310,7 +310,7 @@ export default function OrdersPayments() {
               flushSync(() => setPrintedAt(new Date()))
               window.print()
             }}
-            className="border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal mt-3 flex w-full items-center justify-center gap-2 rounded-md border py-3 text-sm font-bold transition-colors duration-200 hover:text-white print:hidden"
+            className="border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal mt-3 flex w-full items-center justify-center gap-2 rounded-lg border py-3 text-sm font-bold transition-colors duration-200 hover:text-white print:hidden"
           >
             <Printer className="size-4" />
             Print Receipt

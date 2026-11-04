@@ -17,12 +17,12 @@ import type { PublicReservation } from '@/types/db'
 
 const peso = (amount: number) =>
   `₱${amount.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-const label = 'text-brand-charcoal text-xs font-bold tracking-[0.15em] uppercase'
+const label = 'text-brand-charcoal text-xs font-bold tracking-label uppercase'
 const field =
   'border-brand-line focus:border-brand-gold mt-2 w-full rounded-sm border bg-white px-4 py-3 text-sm outline-none placeholder:text-brand-ink/65'
 const error = 'text-brand-red mt-1.5 text-xs'
 const outlineButton =
-  'border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal rounded-sm border py-3 text-sm font-bold tracking-[0.1em] uppercase transition-colors duration-200 hover:text-white disabled:pointer-events-none disabled:opacity-40'
+  'border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal rounded-sm border py-3 text-sm font-bold tracking-label uppercase transition-colors duration-200 hover:text-white disabled:pointer-events-none disabled:opacity-40'
 
 const schema = z.object({
   reference_code: z.string().trim().min(1, 'Enter your reference code'),
@@ -151,7 +151,7 @@ export default function FindReservation() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="bg-brand-red hover:bg-brand-red/90 focus-visible:outline-brand-gold block w-full rounded-sm py-4 text-sm font-bold tracking-[0.15em] text-white uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-60"
+            className="bg-brand-red hover:bg-brand-red/90 focus-visible:outline-brand-gold tracking-label block w-full rounded-sm py-4 text-sm font-bold text-white uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-60"
           >
             Find Reservation
           </button>
@@ -173,7 +173,7 @@ export default function FindReservation() {
                 Reservation <span className="whitespace-nowrap">{result.reference_code}</span>
               </h2>
               <span
-                className={`shrink-0 rounded-full px-3 py-1 text-xs font-bold tracking-[0.1em] uppercase ${status.className}`}
+                className={`tracking-label shrink-0 rounded-full px-3 py-1 text-xs font-bold uppercase ${status.className}`}
               >
                 {status.text}
               </span>
@@ -206,7 +206,7 @@ export default function FindReservation() {
             {canPay && (
               <Link
                 to={`/reserve/payment?code=${result.reference_code}`}
-                className="bg-brand-red hover:bg-brand-red/90 focus-visible:outline-brand-gold mt-6 block w-full rounded-sm py-4 text-center text-sm font-bold tracking-[0.15em] text-white uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2"
+                className="bg-brand-red hover:bg-brand-red/90 focus-visible:outline-brand-gold tracking-label mt-6 block w-full rounded-sm py-4 text-center text-sm font-bold text-white uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2"
               >
                 Pay Deposit
               </Link>

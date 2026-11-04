@@ -17,13 +17,13 @@ import {
   uploadLogo,
 } from '@/services/settings'
 
-const card = 'border-brand-line rounded-xl border bg-white p-6 shadow-sm'
+const card = 'border-brand-line rounded-xl border bg-white p-6 shadow-soft'
 const heading = 'text-brand-charcoal font-serif text-xl font-bold'
 const label = 'text-brand-charcoal block text-sm font-bold'
 const field =
-  'border-brand-line focus:border-brand-gold mt-2 block w-full rounded-md border bg-white px-4 py-3 text-sm font-normal outline-none placeholder:text-brand-ink/65'
+  'border-brand-line focus:border-brand-gold mt-2 block w-full rounded-lg border bg-white px-4 py-3 text-sm font-normal outline-none placeholder:text-brand-ink/65'
 const timeField =
-  'border-brand-line focus:border-brand-gold min-w-0 flex-1 rounded-md border bg-white px-2.5 py-2 text-sm outline-none'
+  'border-brand-line focus:border-brand-gold min-w-0 flex-1 rounded-lg border bg-white px-2.5 py-2 text-sm outline-none'
 const error = 'text-brand-red mt-1.5 text-xs'
 
 const day = z
@@ -225,7 +225,7 @@ export default function Settings() {
                 id="contact_number"
                 invalid={!!errors.contact_number}
                 {...register('contact_number')}
-                className="rounded-md"
+                className="rounded-lg"
               />
               {errors.contact_number && <p className={error}>{errors.contact_number.message}</p>}
             </div>
@@ -267,7 +267,7 @@ export default function Settings() {
                 <button
                   type="button"
                   onClick={() => fileInput.current?.click()}
-                  className="border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal rounded-md border px-5 py-2.5 text-sm font-bold transition-colors duration-200 hover:text-white"
+                  className="border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal rounded-lg border px-5 py-2.5 text-sm font-bold transition-colors duration-200 hover:text-white"
                 >
                   Upload Logo
                 </button>
@@ -332,7 +332,7 @@ export default function Settings() {
                     className={`relative h-6 w-11 shrink-0 rounded-full transition-colors duration-200 ${d.is_open ? 'bg-brand-green' : 'bg-brand-ink/20'}`}
                   >
                     <span
-                      className={`absolute top-0.5 left-0.5 size-5 rounded-full bg-white shadow transition-transform duration-200 ${d.is_open ? 'translate-x-5' : ''}`}
+                      className={`shadow-soft absolute top-0.5 left-0.5 size-5 rounded-full bg-white transition-transform duration-200 ${d.is_open ? 'translate-x-5' : ''}`}
                     />
                   </button>
                 </div>
@@ -415,7 +415,7 @@ export default function Settings() {
               className={`relative h-6 w-11 shrink-0 rounded-full transition-colors duration-200 ${depositOn ? 'bg-brand-green' : 'bg-brand-ink/20'}`}
             >
               <span
-                className={`absolute top-0.5 left-0.5 size-5 rounded-full bg-white shadow transition-transform duration-200 ${depositOn ? 'translate-x-5' : ''}`}
+                className={`shadow-soft absolute top-0.5 left-0.5 size-5 rounded-full bg-white transition-transform duration-200 ${depositOn ? 'translate-x-5' : ''}`}
               />
             </button>
           </div>
@@ -445,7 +445,7 @@ export default function Settings() {
           type="submit"
           disabled={isSubmitting || !settings}
           aria-busy={isSubmitting}
-          className="bg-brand-red hover:bg-brand-red/90 inline-flex items-center justify-center gap-2 rounded-md px-6 py-3 text-sm font-bold text-white transition-colors duration-200 disabled:opacity-60"
+          className="bg-brand-red hover:bg-brand-red/90 inline-flex items-center justify-center gap-2 rounded-lg px-6 py-3 text-sm font-bold text-white transition-colors duration-200 disabled:opacity-60"
         >
           {isSubmitting && <Spinner />}
           Save Changes

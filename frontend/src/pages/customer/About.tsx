@@ -12,10 +12,10 @@ import { directionsUrl } from '@/lib/maps'
 import { getOpeningHours, getSettings } from '@/services/settings'
 
 const wrap = 'md:mx-auto md:max-w-6xl md:px-10'
-const eyebrow = 'text-brand-red text-xs font-bold tracking-[0.25em] uppercase'
-const goldEyebrow = 'text-brand-gold text-xs font-bold tracking-[0.25em] uppercase'
+const eyebrow = 'text-brand-red text-xs font-bold tracking-eyebrow uppercase'
+const goldEyebrow = 'text-brand-gold text-xs font-bold tracking-eyebrow uppercase'
 const button =
-  'focus-visible:outline-brand-gold block rounded-sm px-3 py-4 text-center whitespace-nowrap md:px-6 text-xs font-bold tracking-[0.12em] uppercase transition duration-200 motion-safe:hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 md:text-sm md:tracking-[0.15em]'
+  'focus-visible:outline-brand-gold block rounded-sm px-3 py-4 text-center whitespace-nowrap md:px-6 text-xs font-bold tracking-label uppercase transition duration-200 motion-safe:hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 md:text-sm md:tracking-label'
 const card = 'rounded-lg border border-white/10 bg-white/5 p-4 md:p-6'
 const cardTitle = 'font-serif text-2xl'
 
@@ -116,7 +116,7 @@ export default function About() {
                   {index + 1}
                 </span>
                 <div>
-                  <p className="text-xs font-bold tracking-[0.15em] uppercase">{value.title}</p>
+                  <p className="tracking-label text-xs font-bold uppercase">{value.title}</p>
                   <p className="mt-1 text-xs text-white/70">{value.text}</p>
                 </div>
               </li>
@@ -174,7 +174,7 @@ export default function About() {
                       <span className="flex items-center gap-2.5">
                         <span>{dayNames[day]}</span>
                         {isToday && (
-                          <span className="bg-brand-red rounded-full px-2 py-0.5 text-xs font-bold tracking-[0.15em] uppercase">
+                          <span className="bg-brand-red tracking-label rounded-full px-2 py-0.5 text-xs font-bold uppercase">
                             Today
                           </span>
                         )}
@@ -198,7 +198,7 @@ export default function About() {
                 href={directionsUrl(settings?.restaurant_name)}
                 target="_blank"
                 rel="noreferrer"
-                className="border-brand-gold text-brand-gold hover:bg-brand-gold/10 mt-auto block rounded-sm border py-4 text-center text-xs font-bold tracking-[0.2em] uppercase transition-colors duration-200"
+                className="border-brand-gold text-brand-gold hover:bg-brand-gold/10 tracking-eyebrow mt-auto block rounded-sm border py-4 text-center text-xs font-bold uppercase transition-colors duration-200"
               >
                 Get Directions
               </a>
@@ -214,7 +214,7 @@ export default function About() {
                   >
                     <Icon className="text-brand-gold size-5 shrink-0" strokeWidth={1.5} />
                     <div className="min-w-0">
-                      <dt className="text-xs font-semibold tracking-[0.15em] text-white/60 uppercase">
+                      <dt className="tracking-label text-xs font-semibold text-white/60 uppercase">
                         {label}
                       </dt>
                       <dd className="mt-0.5 text-sm">

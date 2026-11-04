@@ -21,7 +21,7 @@ export default function TrackHeading({
       {track !== undefined && (
         <p
           aria-hidden="true"
-          className="text-brand-gold-deep text-xs font-bold tracking-[0.25em] uppercase"
+          className="text-brand-gold-deep tracking-eyebrow text-xs font-bold uppercase"
         >
           Track {String(track).padStart(2, '0')}
         </p>

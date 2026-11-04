@@ -12,9 +12,9 @@ import { getTable } from '@/services/tables'
 import { cartCount, useCart } from '@/stores/cart'
 
 const navLink =
-  'hover:text-brand-gold block border-b border-white/10 px-4 py-3.5 text-sm font-semibold tracking-[0.15em] uppercase transition-colors duration-200 last:border-b-0'
+  'hover:text-brand-gold block border-b border-white/10 px-4 py-3.5 text-sm font-semibold tracking-label uppercase transition-colors duration-200 last:border-b-0'
 const wideNavLink = ({ isActive }: { isActive: boolean }) =>
-  `hover:text-brand-gold border-b pb-1 text-xs font-semibold tracking-[0.15em] uppercase transition-colors duration-200 ${isActive ? 'text-brand-gold border-brand-gold' : 'border-transparent'}`
+  `hover:text-brand-gold border-b pb-1 text-xs font-semibold tracking-label uppercase transition-colors duration-200 ${isActive ? 'text-brand-gold border-brand-gold' : 'border-transparent'}`
 const customerLinks = [
   { to: '/', label: 'Home' },
   { to: '/menu', label: 'Menu' },
@@ -158,7 +158,7 @@ export default function CustomerLayout() {
               >
                 <ShoppingCart className="size-5" />
                 {count > 0 && (
-                  <span className="bg-brand-red absolute -top-0.5 -right-0.5 flex size-4.5 items-center justify-center rounded-full text-[10px] font-bold text-white">
+                  <span className="bg-brand-red absolute -top-0.5 -right-0.5 flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-xs leading-none font-bold text-white">
                     {count}
                   </span>
                 )}
@@ -168,7 +168,7 @@ export default function CustomerLayout() {
             <Link
               to="/reserve"
               onClick={() => setOpen(false)}
-              className={`bg-brand-red hover:bg-brand-red/90 flex min-h-11 items-center rounded-md px-3 text-xs font-bold tracking-[0.12em] text-white uppercase transition-colors duration-200 ${wide ? 'md:px-5' : ''}`}
+              className={`bg-brand-red hover:bg-brand-red/90 tracking-label flex min-h-11 items-center rounded-lg px-3 text-xs font-bold text-white uppercase transition-colors duration-200 ${wide ? 'md:px-5' : ''}`}
             >
               <span>
                 Reserve
@@ -192,7 +192,7 @@ export default function CustomerLayout() {
             aria-label={open ? 'Close menu' : 'Open menu'}
             aria-expanded={open}
             onClick={() => setOpen(!open)}
-            className={`text-brand-cream hover:text-brand-gold flex size-11 items-center justify-center rounded-md border border-white/20 transition-colors duration-200 ${wide ? 'xl:hidden' : ''}`}
+            className={`text-brand-cream hover:text-brand-gold flex size-11 items-center justify-center rounded-lg border border-white/20 transition-colors duration-200 ${wide ? 'xl:hidden' : ''}`}
           >
             {open ? <X className="size-5" /> : <MenuIcon className="size-5" />}
           </button>
@@ -200,7 +200,7 @@ export default function CustomerLayout() {
         {open && (
           <nav
             ref={panel}
-            className={`bg-brand-charcoal text-brand-cream absolute inset-x-0 top-full z-20 border-t border-white/10 shadow-lg motion-safe:transition-[opacity,translate] motion-safe:duration-180 motion-safe:ease-out starting:-translate-y-2 starting:opacity-0 ${wide ? 'xl:hidden' : ''}`}
+            className={`bg-brand-charcoal text-brand-cream shadow-lift absolute inset-x-0 top-full z-20 border-t border-white/10 motion-safe:transition-[opacity,translate] motion-safe:duration-180 motion-safe:ease-out starting:-translate-y-2 starting:opacity-0 ${wide ? 'xl:hidden' : ''}`}
           >
             {account && (
               <div className="border-b border-white/10 px-4 py-4">
@@ -226,7 +226,7 @@ export default function CustomerLayout() {
                       key={link.to}
                       to={link.to}
                       onClick={() => setOpen(false)}
-                      className="hover:border-brand-gold hover:text-brand-gold flex min-h-11 items-center justify-center rounded-md border border-white/20 px-2 text-center text-xs font-bold tracking-[0.1em] uppercase transition-colors duration-200"
+                      className="hover:border-brand-gold hover:text-brand-gold tracking-label flex min-h-11 items-center justify-center rounded-lg border border-white/20 px-2 text-center text-xs font-bold uppercase transition-colors duration-200"
                     >
                       {link.label}
                     </Link>

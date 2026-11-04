@@ -67,6 +67,16 @@ Checked with the WCAG contrast formula. 4.5:1 or more is fine for any text; 3:1 
 | `brand-charcoal` | `brand-gold` | 7.1 | Any text (gold buttons) |
 | `brand-gold` | white / cream | 2.5 / 2.2 | Never |
 
+## Tokens for spacing, corners and depth
+
+So hover lifts, sliding pills and focus rings look the same everywhere (since 2026-11-05):
+
+- **Letter-spacing:** `tracking-label` (0.14em) for small caps labels, table headers and chips, and `tracking-eyebrow` (0.25em) for eyebrows and Track headers. No `tracking-[…]` values.
+- **Corners:** `rounded-lg` for buttons, inputs and selects. `rounded-xl` for cards and dialogs. `rounded-full` for pills, badges and avatars. `rounded-sm` only for the gold inset frames.
+- **Shadows:** `shadow-soft` for resting cards and toggles, and `shadow-lift` for popovers, dialogs and hover lifts. Both are tinted with charcoal.
+- **Focus:** every link and button shows a 2px `brand-gold-deep` outline on keyboard focus (fields keep the inset one).
+- **Status colours:** green (`brand-green`) means paid, active or done, gold means pending, and red means failed or cancelled.
+
 ## Fonts
 
 Installed with `@fontsource` (they work offline) and already set in `index.css`.

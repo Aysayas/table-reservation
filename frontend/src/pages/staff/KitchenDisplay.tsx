@@ -406,13 +406,13 @@ export default function KitchenDisplay() {
                                   type="button"
                                   aria-pressed={done}
                                   onClick={() => toggleTick(item.order_item_id)}
-                                  className={`hover:bg-brand-cream grid min-h-11 w-full grid-cols-[2.5rem_1fr] items-center rounded-md px-1 text-left text-lg transition-colors duration-200 ${done ? 'text-brand-ink/50 line-through' : 'text-brand-charcoal'}`}
+                                  className={`hover:bg-brand-cream grid min-h-11 w-full grid-cols-[2.5rem_1fr] items-center rounded-lg px-1 text-left text-lg transition-colors duration-200 ${done ? 'text-brand-ink/50 line-through' : 'text-brand-charcoal'}`}
                                 >
                                   <span className="font-bold">{item.quantity}×</span>
                                   {item.name}
                                 </button>
                                 {item.notes && (
-                                  <p className="bg-brand-red/10 text-brand-red mt-1 ml-11 inline-block rounded-md px-3 py-1 text-base font-bold">
+                                  <p className="bg-brand-red/10 text-brand-red mt-1 ml-11 inline-block rounded-lg px-3 py-1 text-base font-bold">
                                     {item.notes}
                                   </p>
                                 )}

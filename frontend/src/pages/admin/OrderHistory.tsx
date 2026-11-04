@@ -24,7 +24,7 @@ import type { OrderStatus } from '@/types/db'
 const perPage = 8
 const peso = (amount: number) =>
   `₱${amount.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-const th = 'text-brand-ink/70 px-5 py-3.5 text-left text-xs font-bold tracking-[0.14em] uppercase'
+const th = 'text-brand-ink/70 px-5 py-3.5 text-left text-xs font-bold tracking-label uppercase'
 const td = 'text-brand-charcoal px-5 py-4 text-sm'
 const dl = 'grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm'
 const dt = 'text-brand-ink/70'
@@ -211,7 +211,7 @@ export default function OrderHistory() {
           <LoadError what="the orders" onRetry={() => refetch()} />
         </div>
       ) : (
-        <div className="border-brand-line relative mt-5 overflow-x-auto rounded-xl border bg-white shadow-sm">
+        <div className="border-brand-line shadow-soft relative mt-5 overflow-x-auto rounded-xl border bg-white">
           <ul className="divide-brand-line divide-y md:hidden">
             {rows.map((o) => (
               <li key={o.order_id} className="space-y-3 p-4">
@@ -233,7 +233,7 @@ export default function OrderHistory() {
                   </dd>
                   <dt className={dt}>Table</dt>
                   <dd className={dd}>
-                    <span className="border-brand-line bg-brand-cream/60 rounded-md border px-2 py-1 text-xs font-bold">
+                    <span className="border-brand-line bg-brand-cream/60 rounded-lg border px-2 py-1 text-xs font-bold">
                       {o.table_number}
                     </span>
                   </dd>
@@ -302,7 +302,7 @@ export default function OrderHistory() {
                     </span>
                   </td>
                   <td className={td}>
-                    <span className="border-brand-line bg-brand-cream/60 rounded-md border px-2 py-1 text-xs font-bold">
+                    <span className="border-brand-line bg-brand-cream/60 rounded-lg border px-2 py-1 text-xs font-bold">
                       {o.table_number}
                     </span>
                   </td>
@@ -364,7 +364,7 @@ export default function OrderHistory() {
             aria-label="Previous page"
             disabled={current <= 1}
             onClick={() => setPage(current - 1)}
-            className="border-brand-line flex size-9 items-center justify-center rounded-lg border bg-white disabled:opacity-40"
+            className="border-brand-line flex size-9 items-center justify-center rounded-lg border bg-white disabled:opacity-40 pointer-coarse:size-11"
           >
             <ChevronLeft className="size-4" />
           </button>
@@ -374,7 +374,7 @@ export default function OrderHistory() {
               type="button"
               aria-current={n === current ? 'page' : undefined}
               onClick={() => setPage(n)}
-              className={`flex size-9 items-center justify-center rounded-lg border text-sm font-semibold ${n === current ? 'bg-brand-charcoal border-brand-charcoal text-white' : 'border-brand-line bg-white'}`}
+              className={`flex size-9 items-center justify-center rounded-lg border text-sm font-semibold pointer-coarse:size-11 ${n === current ? 'bg-brand-charcoal border-brand-charcoal text-white' : 'border-brand-line bg-white'}`}
             >
               {n}
             </button>
@@ -384,7 +384,7 @@ export default function OrderHistory() {
             aria-label="Next page"
             disabled={current >= pages}
             onClick={() => setPage(current + 1)}
-            className="border-brand-line flex size-9 items-center justify-center rounded-lg border bg-white disabled:opacity-40"
+            className="border-brand-line flex size-9 items-center justify-center rounded-lg border bg-white disabled:opacity-40 pointer-coarse:size-11"
           >
             <ChevronRight className="size-4" />
           </button>
@@ -402,7 +402,7 @@ export default function OrderHistory() {
             <X className="size-5" />
           </button>
           <div className="text-center">
-            <p className="text-brand-gold text-xs font-bold tracking-[0.2em] uppercase">
+            <p className="text-brand-gold tracking-eyebrow text-xs font-bold uppercase">
               Order details
             </p>
             <p className="text-brand-ink/70 mt-1 text-sm">

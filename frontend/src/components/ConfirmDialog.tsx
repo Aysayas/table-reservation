@@ -29,7 +29,7 @@ export default function ConfirmDialog({
           autoFocus
           disabled={busy}
           onClick={onClose}
-          className="border-brand-line text-brand-charcoal rounded-md border px-4 py-2 text-sm font-bold disabled:opacity-50"
+          className="border-brand-line text-brand-charcoal rounded-lg border px-4 py-2 text-sm font-bold disabled:opacity-50"
         >
           {closeLabel}
         </button>
@@ -38,7 +38,7 @@ export default function ConfirmDialog({
           disabled={busy}
           aria-busy={busy}
           onClick={onConfirm}
-          className="bg-brand-red hover:bg-brand-red/90 inline-flex items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-bold text-white disabled:opacity-50"
+          className="bg-brand-red hover:bg-brand-red/90 inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-bold text-white disabled:opacity-50"
         >
           {busy && <Spinner />}
           {confirmLabel}

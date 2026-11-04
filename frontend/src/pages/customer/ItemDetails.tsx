@@ -84,7 +84,7 @@ export default function ItemDetails() {
           type="button"
           aria-label="Back"
           onClick={() => navigate(-1)}
-          className="text-brand-charcoal hover:bg-brand-cream absolute top-4 left-4 flex size-11 items-center justify-center rounded-full bg-white/90 shadow transition-colors duration-200"
+          className="text-brand-charcoal hover:bg-brand-cream shadow-soft absolute top-4 left-4 flex size-11 items-center justify-center rounded-full bg-white/90 transition-colors duration-200"
         >
           <ArrowLeft className="size-5" />
         </button>
@@ -109,7 +109,7 @@ export default function ItemDetails() {
           <p id="quantity-label" className="text-brand-charcoal text-sm font-bold">
             Quantity
           </p>
-          <div className="border-brand-line inline-flex items-center rounded-md border bg-white">
+          <div className="border-brand-line inline-flex items-center rounded-lg border bg-white">
             <button
               type="button"
               aria-label="Less"
@@ -145,7 +145,7 @@ export default function ItemDetails() {
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             placeholder="e.g. less spicy"
-            className="border-brand-line focus:border-brand-gold placeholder:text-brand-ink/65 mt-2 block w-full resize-none rounded-md border bg-white px-4 py-3 text-sm font-normal outline-none"
+            className="border-brand-line focus:border-brand-gold placeholder:text-brand-ink/65 mt-2 block w-full resize-none rounded-lg border bg-white px-4 py-3 text-sm font-normal outline-none"
           />
         </label>
 
@@ -164,7 +164,7 @@ export default function ItemDetails() {
                   <DishPhoto
                     name={dish.name}
                     src={dish.image_url}
-                    className="size-14 shrink-0 rounded-md"
+                    className="size-14 shrink-0 rounded-lg"
                   />
                   <div className="min-w-0">
                     <p className="text-brand-charcoal line-clamp-2 text-xs font-semibold">
@@ -179,7 +179,7 @@ export default function ItemDetails() {
                       add(table, line(dish, 1, ''))
                       toast.success(`${dish.name} added to cart`)
                     }}
-                    className="border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal col-span-2 flex min-h-11 w-full items-center justify-center rounded-md border text-xs font-bold transition-colors duration-200 hover:text-white"
+                    className="border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal col-span-2 flex min-h-11 w-full items-center justify-center rounded-lg border text-xs font-bold transition-colors duration-200 hover:text-white"
                   >
                     + Add
                   </button>
@@ -202,7 +202,7 @@ export default function ItemDetails() {
               action: { label: 'View Cart', onClick: () => navigate(`/table/${table}/cart`) },
             })
           }}
-          className="bg-brand-red hover:bg-brand-red/90 block w-full rounded-lg py-4 text-sm font-bold tracking-[0.1em] text-white uppercase shadow-lg transition-colors duration-200 disabled:opacity-60"
+          className="bg-brand-red hover:bg-brand-red/90 tracking-label shadow-lift block w-full rounded-lg py-4 text-sm font-bold text-white uppercase transition-colors duration-200 disabled:opacity-60"
         >
           {item.is_available ? `Add to Cart · ${peso(item.price * quantity)}` : 'Not available'}
         </button>
