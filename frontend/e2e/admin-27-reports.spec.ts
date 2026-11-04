@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test'
+import { readCsv } from './csv.js'
 
 const url = '/admin/reports'
 const day = (offset: number) => {
@@ -68,4 +69,23 @@ test('print prints only the report', async ({ page }) => {
   await expect(page.getByRole('button', { name: 'Print' })).toBeHidden()
   await expect(page.getByRole('navigation', { name: 'Admin menu' })).toBeHidden()
   await expect(page.getByRole('heading', { name: 'Summary' })).toBeVisible()
+})
+
+test('download CSV has every report section with totals', async ({ page }) => {
+  await page.goto(url)
+  await expect(page.getByText('Total Sales')).toBeVisible()
+  const download = page.waitForEvent('download')
+  await page.getByRole('button', { name: 'Download CSV' }).click()
+  const file = await download
+  expect(file.suggestedFilename()).toMatch(
+    /^vencios-report-\d{4}-\d{2}-\d{2}-to-\d{4}-\d{2}-\d{2}\.csv$/,
+  )
+  const rows = await readCsv(file)
+  const first = rows.map((r) => r[0])
+  for (const section of ['Summary', 'Sales Over Time', 'Best Sellers', 'Reservations Per Day']) {
+    expect(first).toContain(section)
+  }
+  expect(rows.find((r) => r[0] === 'Period')?.[1]).toBe('Daily')
+  expect(first.filter((c) => c === 'Total').length).toBe(2)
+  expect(rows.some((r) => r[1] === 'Total')).toBe(true)
 })

@@ -1,10 +1,12 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { format, parseISO } from 'date-fns'
-import { CalendarX2, ChevronLeft, ChevronRight, Search } from 'lucide-react'
+import { CalendarX2, ChevronLeft, ChevronRight, Download, Search } from 'lucide-react'
 import { useState } from 'react'
+import { toast } from 'sonner'
 import EmptyState from '@/components/EmptyState'
 import LoadError from '@/components/LoadError'
 import Skeleton from '@/components/Skeleton'
+import { allPages, downloadCsv } from '@/lib/csv'
 import { formatTime } from '@/lib/hours'
 import { listReservations, type ReservationView } from '@/services/reservations'
 import EditReservationDialog from '@/components/EditReservationDialog'
@@ -54,6 +56,48 @@ export default function Reservations() {
   const pages = Math.max(1, Math.ceil(total / 8))
   const first = total ? (page - 1) * 8 + 1 : 0
 
+  const [exporting, setExporting] = useState(false)
+  const exportCsv = async () => {
+    setExporting(true)
+    try {
+      const all = await allPages((p, per_page) =>
+        listReservations({ view, status: '', search, page: p, per_page }),
+      )
+      downloadCsv(`reservations-${view}-${format(new Date(), 'yyyy-MM-dd')}.csv`, [
+        [
+          'Ref Code',
+          'Date',
+          'Time',
+          'Guests',
+          'Name',
+          'Mobile',
+          'Table',
+          'Status',
+          'Deposit',
+          'Deposit Status',
+          'Special Request',
+        ],
+        ...all.map((r) => [
+          r.reference_code,
+          r.reservation_date,
+          formatTime(r.reservation_time),
+          r.pax,
+          r.customer.full_name,
+          r.customer.mobile_number,
+          r.table_number ?? '',
+          statusText[r.status],
+          r.deposit_amount.toFixed(2),
+          r.deposit_status === 'paid' ? 'Paid' : 'Unpaid',
+          r.special_request ?? '',
+        ]),
+      ])
+    } catch {
+      toast.error("Couldn't export the reservations. Try again.")
+    } finally {
+      setExporting(false)
+    }
+  }
+
   return (
     <div>
       <div className="min-w-0">
@@ -88,6 +132,16 @@ export default function Reservations() {
               </button>
             ))}
           </div>
+          <button
+            type="button"
+            onClick={exportCsv}
+            disabled={!total || exporting}
+            aria-busy={exporting}
+            className="bg-brand-charcoal hover:bg-brand-charcoal/90 ml-auto flex h-11 items-center gap-2 rounded-lg px-5 text-sm font-bold text-white transition-colors duration-200 disabled:opacity-50"
+          >
+            <Download className="size-4" />
+            Export
+          </button>
         </div>
 
         {isLoadingError ? (

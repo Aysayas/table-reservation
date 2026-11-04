@@ -19,6 +19,7 @@ class Payments extends Controller {
 		$method = $query['method'] ?? '';
 		$status = $query['status'] ?? '';
 		$page = $query['page'] ?? '1';
+		$per_page = $query['per_page'] ?? (string) $this->per_page;
 		$search = is_string($query['search'] ?? null) ? trim($query['search']) : '';
 
 		$errors = [];
@@ -30,6 +31,9 @@ class Payments extends Controller {
 		}
 		if (!(is_string($page) && ctype_digit($page) && (int) $page >= 1)) {
 			$errors[] = '"page" must be 1 or more.';
+		}
+		if (!(is_string($per_page) && ctype_digit($per_page) && (int) $per_page >= 1 && (int) $per_page <= 500)) {
+			$errors[] = '"per_page" must be 1 to 500.';
 		}
 		$range = [];
 		foreach (['date_from', 'date_to'] as $field) {
@@ -82,7 +86,7 @@ class Payments extends Controller {
 		};
 
 		$total = (int) $build(true)->count();
-		$rows = $build(true)->order_by('payment_id', 'DESC')->pagination($this->per_page, (int) $page)->get_all();
+		$rows = $build(true)->order_by('payment_id', 'DESC')->pagination((int) $per_page, (int) $page)->get_all();
 
 		$totals = ['total_collected' => 0.0, 'online' => 0.0, 'cash' => 0.0, 'deposits' => 0.0];
 		foreach ($build(false)->where('status', 'paid')->get_all() as $payment) {
@@ -97,7 +101,7 @@ class Payments extends Controller {
 		$this->api->respond([
 			'data' => array_map([$this, 'format'], $rows),
 			'totals' => array_map(fn($value) => round($value, 2), $totals),
-			'meta' => ['total' => $total, 'page' => (int) $page, 'per_page' => $this->per_page],
+			'meta' => ['total' => $total, 'page' => (int) $page, 'per_page' => (int) $per_page],
 		]);
 	}
 

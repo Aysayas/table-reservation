@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test'
+import { readCsv } from './csv.js'
 
 const url = '/admin/orders'
 
@@ -73,8 +74,19 @@ test('export downloads the shown orders as a CSV', async ({ page }) => {
   await page.getByRole('button', { name: 'Export' }).click()
   const file = await download
   expect(file.suggestedFilename()).toMatch(/^order-history-\d{4}-\d{2}-\d{2}\.csv$/)
-  const text = await (await file.createReadStream()).toArray()
-  const lines = Buffer.concat(text).toString().trim().split('\n')
-  expect(lines[0]).toBe('Order #,Date,Table,Items,Total,Payment,Method,Status')
-  expect(lines).toHaveLength(3)
+  const rows = await readCsv(file)
+  expect(rows[0]).toEqual([
+    'Order #',
+    'Date',
+    'Table',
+    'Items',
+    'Item List',
+    'Total',
+    'Payment',
+    'Method',
+    'Status',
+  ])
+  expect(rows).toHaveLength(3)
+  expect(rows[1][4]).toMatch(/^\d+× .+/)
+  expect(rows.slice(1).every((r) => r[6] === 'Unpaid')).toBe(true)
 })

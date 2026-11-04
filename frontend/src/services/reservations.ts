@@ -206,6 +206,7 @@ export type ReservationFilter = {
   status: ReservationStatus | ''
   search: string
   page: number
+  per_page?: number
 }
 
 const perPage = 8
@@ -235,6 +236,7 @@ export async function listReservations(filter: ReservationFilter) {
         status: filter.status || undefined,
         search: filter.search.trim() || undefined,
         page: filter.page,
+        per_page: filter.per_page,
       },
     })
     return res.data as {
@@ -265,10 +267,11 @@ export async function listReservations(filter: ReservationFilter) {
         ? when(b).localeCompare(when(a))
         : when(a).localeCompare(when(b)),
     )
-  const start = (filter.page - 1) * perPage
+  const size = filter.per_page ?? perPage
+  const start = (filter.page - 1) * size
   return {
-    data: matches.slice(start, start + perPage).map(toStaff),
-    meta: { total: matches.length, page: filter.page, per_page: perPage },
+    data: matches.slice(start, start + size).map(toStaff),
+    meta: { total: matches.length, page: filter.page, per_page: size },
   }
 }
 

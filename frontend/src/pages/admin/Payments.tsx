@@ -5,16 +5,19 @@ import {
   ChevronLeft,
   ChevronRight,
   CreditCard,
+  Download,
   Search,
   Smartphone,
   Ticket,
   Wallet,
 } from 'lucide-react'
 import { useState } from 'react'
+import { toast } from 'sonner'
 import { Link } from 'react-router-dom'
 import EmptyState from '@/components/EmptyState'
 import LoadError from '@/components/LoadError'
 import Skeleton from '@/components/Skeleton'
+import { allPages, downloadCsv } from '@/lib/csv'
 import { listPayments, type AdminPayment } from '@/services/payments'
 import type { PaymentMethod, PaymentStatus } from '@/types/db'
 
@@ -85,6 +88,37 @@ export default function Payments() {
     setMethod('')
     setStatus('')
     setPage(1)
+  }
+
+  const [exporting, setExporting] = useState(false)
+  const exportCsv = async () => {
+    setExporting(true)
+    try {
+      const filter = { search, date_from, method: method || undefined, status: status || undefined }
+      const all = await allPages((page, per_page) => listPayments({ ...filter, page, per_page }))
+      downloadCsv(`payments-${format(today, 'yyyy-MM-dd')}.csv`, [
+        ['Payment ID', 'Date', 'For', 'Method', 'Reference', 'Received By', 'Amount', 'Status'],
+        ...all.map((p) => [
+          payId(p.payment_id),
+          p.paid_at ? format(parseISO(p.paid_at), 'yyyy-MM-dd HH:mm') : '',
+          forText(p),
+          cap(p.method),
+          p.provider_reference ?? '',
+          p.received_by?.full_name ?? '',
+          p.amount.toFixed(2),
+          cap(p.status),
+        ]),
+        [],
+        ['Total Collected', '', '', '', '', '', (totals?.total_collected ?? 0).toFixed(2)],
+        ['Online', '', '', '', '', '', (totals?.online ?? 0).toFixed(2)],
+        ['Cash', '', '', '', '', '', (totals?.cash ?? 0).toFixed(2)],
+        ['Deposits', '', '', '', '', '', (totals?.deposits ?? 0).toFixed(2)],
+      ])
+    } catch {
+      toast.error("Couldn't export the payments. Try again.")
+    } finally {
+      setExporting(false)
+    }
   }
 
   const stats = [
@@ -175,6 +209,16 @@ export default function Payments() {
             Clear filters
           </button>
         )}
+        <button
+          type="button"
+          onClick={exportCsv}
+          disabled={!total || exporting}
+          aria-busy={exporting}
+          className="bg-brand-charcoal hover:bg-brand-charcoal/90 ml-auto flex h-11 items-center gap-2 rounded-lg px-5 text-sm font-bold text-white transition-colors duration-200 disabled:opacity-50"
+        >
+          <Download className="size-4" />
+          Export
+        </button>
       </div>
 
       {isLoadingError ? (

@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test'
+import { readCsv } from './csv.js'
 
 const url = '/admin/reservations'
 
@@ -113,4 +114,20 @@ test('guests above the limit are refused', async ({ page }) => {
   await expect(page.getByText(/^Guests must be 1 to \d+$/)).toBeVisible()
   await dialog.getByRole('button', { name: 'Cancel' }).click()
   await expect(dialog).toHaveCount(0)
+})
+
+test('export downloads every booking in the chosen view', async ({ page }) => {
+  await page.goto(url)
+  await page.getByRole('button', { name: 'Past', exact: true }).click()
+  const shown = Number(
+    (await page.getByText(/^Showing \d+–\d+ of \d+$/).textContent())?.split(' of ')[1],
+  )
+  const download = page.waitForEvent('download')
+  await page.getByRole('button', { name: 'Export' }).click()
+  const file = await download
+  expect(file.suggestedFilename()).toMatch(/^reservations-past-\d{4}-\d{2}-\d{2}\.csv$/)
+  const rows = await readCsv(file)
+  expect(rows[0].slice(0, 4)).toEqual(['Ref Code', 'Date', 'Time', 'Guests'])
+  expect(rows.slice(1)).toHaveLength(shown)
+  expect(rows[1][0]).toMatch(/^RSV-\d{6}$/)
 })

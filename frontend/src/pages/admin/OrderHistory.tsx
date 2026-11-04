@@ -17,6 +17,7 @@ import EmptyState from '@/components/EmptyState'
 import LoadError from '@/components/LoadError'
 import Modal from '@/components/Modal'
 import Skeleton from '@/components/Skeleton'
+import { downloadCsv } from '@/lib/csv'
 import { listOrders, type StaffOrder } from '@/services/orders'
 import type { OrderStatus } from '@/types/db'
 
@@ -114,28 +115,21 @@ export default function OrderHistory() {
     setPage(1)
   }
 
-  const exportCsv = () => {
-    const header = ['Order #', 'Date', 'Table', 'Items', 'Total', 'Payment', 'Method', 'Status']
-    const lines = orders.map((o) =>
-      [
+  const exportCsv = () =>
+    downloadCsv(`order-history-${format(today, 'yyyy-MM-dd')}.csv`, [
+      ['Order #', 'Date', 'Table', 'Items', 'Item List', 'Total', 'Payment', 'Method', 'Status'],
+      ...orders.map((o) => [
         o.order_id,
         format(parseISO(o.created_at), 'yyyy-MM-dd HH:mm'),
         o.table_number,
         itemCount(o),
+        o.items.map((i) => `${i.quantity}× ${i.name}`).join('; '),
         o.total_amount.toFixed(2),
         o.payment_status === 'paid' ? 'Paid' : 'Unpaid',
         o.payment_method ? cap(o.payment_method) : '',
         cap(o.status),
-      ].join(','),
-    )
-    const link = document.createElement('a')
-    link.href = URL.createObjectURL(
-      new Blob([[header.join(','), ...lines].join('\n')], { type: 'text/csv' }),
-    )
-    link.download = `order-history-${format(today, 'yyyy-MM-dd')}.csv`
-    link.click()
-    URL.revokeObjectURL(link.href)
-  }
+      ]),
+    ])
 
   return (
     <div>

@@ -16,6 +16,7 @@ export type PaymentFilter = {
   date_to?: string
   search?: string
   page: number
+  per_page?: number
 }
 
 const toAdmin = (p: Payment): AdminPayment => {
@@ -81,10 +82,11 @@ export async function listPayments(filter: PaymentFilter): Promise<PaymentPage> 
     .sort((a, b) => (b.paid_at ?? '9999').localeCompare(a.paid_at ?? '9999'))
   const paid = samplePayments.filter((p) => p.status === 'paid' && inRange(p))
   const sum = (list: Payment[]) => list.reduce((n, p) => n + p.amount, 0)
-  const start = (filter.page - 1) * perPage
+  const size = filter.per_page ?? perPage
+  const start = (filter.page - 1) * size
   return {
-    data: data.slice(start, start + perPage),
-    meta: { total: data.length, page: filter.page, per_page: perPage },
+    data: data.slice(start, start + size),
+    meta: { total: data.length, page: filter.page, per_page: size },
     totals: {
       total_collected: sum(paid),
       online: sum(paid.filter((p) => p.method === 'online')),
