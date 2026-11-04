@@ -160,7 +160,7 @@ export default function ReserveTable() {
     const observer = new ResizeObserver(place)
     observer.observe(grid)
     return () => observer.disconnect()
-  }, [time, slots])
+  }, [time, slots, slotsLoading, slotsFailed, isFetched])
 
   useEffect(() => {
     if (code) return
@@ -421,7 +421,7 @@ export default function ReserveTable() {
                           onClick={() =>
                             setValue('reservation_time', slot.time, { shouldValidate: true })
                           }
-                          className={`rounded-sm border py-3 text-sm font-semibold transition-colors duration-200 ${selected ? 'border-brand-charcoal motion-reduce:bg-brand-charcoal bg-white text-white' : 'border-brand-line text-brand-charcoal hover:border-brand-gold bg-white'} disabled:text-brand-ink/40 disabled:border-dashed disabled:bg-transparent`}
+                          className={`rounded-sm border py-3 text-sm font-semibold transition-colors duration-200 ${selected ? `border-brand-charcoal motion-reduce:bg-brand-charcoal text-white ${pill ? 'bg-white' : 'bg-brand-charcoal'}` : 'border-brand-line text-brand-charcoal hover:border-brand-gold bg-white'} disabled:text-brand-ink/40 disabled:border-dashed disabled:bg-transparent`}
                         >
                           <span className="relative z-10">{formatTime(slot.time)}</span>
                         </button>

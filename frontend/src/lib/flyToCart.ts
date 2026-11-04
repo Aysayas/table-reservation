@@ -23,5 +23,6 @@ export function flyToCart(from: Element) {
       ],
       { duration: 550, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' },
     )
-    .finished.finally(() => dot.remove())
+    .finished.catch(() => undefined)
+    .finally(() => dot.remove())
 }
