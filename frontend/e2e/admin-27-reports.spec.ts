@@ -60,20 +60,38 @@ test('monthly covers six months, and a custom from date changes the summary', as
   await expect(summary.getByRole('definition').nth(1)).toHaveText('3')
 })
 
-test('print prints only the report', async ({ page }) => {
+test('download PDF prints a branded report, not the dashboard', async ({ page }) => {
   await page.goto(url)
-  await page.getByRole('button', { name: 'Print' }).click()
-  expect(await page.evaluate('window.__printed')).toBe(true)
-  await page.emulateMedia({ media: 'print' })
-  await expect(page.getByText(/^Report: /)).toBeVisible()
-  await expect(page.getByRole('button', { name: 'Print' })).toBeHidden()
-  await expect(page.getByRole('navigation', { name: 'Admin menu' })).toBeHidden()
   await expect(page.getByRole('heading', { name: 'Summary' })).toBeVisible()
+  await page.getByRole('button', { name: 'Download PDF' }).click()
+  await expect.poll(() => page.evaluate('window.__printed')).toBe(true)
+  await page.emulateMedia({ media: 'print' })
+  const doc = page.getByRole('article', { name: 'Printable sales report' })
+  await expect(doc).toBeVisible()
+  await expect(doc.getByRole('img', { name: "Vencio's Garden logo" })).toBeVisible()
+  await expect(doc.getByRole('heading', { name: 'Sales Report' })).toBeVisible()
+  await expect(doc.getByText(/^Daily · \w{3} \d+, \d{4} – \w{3} \d+, \d{4}$/)).toBeVisible()
+  await expect(doc.getByText(/^Generated .+ by .+/)).toBeVisible()
+  for (const section of [
+    'Collections',
+    'Sales Over Time',
+    'Best Sellers',
+    'Reservations per Day',
+  ]) {
+    await expect(doc.getByRole('heading', { name: section })).toBeVisible()
+  }
+  await expect(doc.getByRole('row', { name: /^Total collected/ })).toBeVisible()
+  await expect(doc.getByRole('row', { name: /^Total ₱/ })).toBeVisible()
+  await expect(doc.getByRole('row', { name: /^Total \d+$/ })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Download PDF' })).toBeHidden()
+  await expect(page.getByRole('navigation', { name: 'Admin menu' })).toBeHidden()
+  await page.emulateMedia({ media: 'screen' })
+  await expect(doc).toBeHidden()
 })
 
 test('download CSV has every report section with totals', async ({ page }) => {
   await page.goto(url)
-  await expect(page.getByText('Total Sales')).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Summary' })).toBeVisible()
   const download = page.waitForEvent('download')
   await page.getByRole('button', { name: 'Download CSV' }).click()
   const file = await download

@@ -163,3 +163,28 @@ input::-webkit-date-and-time-value {
     font-size: 1rem;
   }
 }
+
+@page report {
+  size: A4;
+  margin: 16mm 16mm 18mm;
+
+  @bottom-left {
+    content: "Vencio's Garden · Sales Report";
+    font-family: Montserrat, sans-serif;
+    font-size: 8pt;
+    color: #2b2522;
+  }
+
+  @bottom-right {
+    content: 'Page ' counter(page) ' of ' counter(pages);
+    font-family: Montserrat, sans-serif;
+    font-size: 8pt;
+    color: #2b2522;
+  }
+}
+
+@media print {
+  body:has([data-print='report']) {
+    page: report;
+  }
+}
