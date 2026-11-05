@@ -1,9 +1,11 @@
 import { Link } from 'react-router-dom'
+import Moment from '@/components/Moment'
 
 export default function NotFound({ home = '/' }: { home?: string }) {
   return (
     <div className="bg-brand-cream min-h-[calc(100dvh-4rem)] px-4 py-16 text-center md:py-24">
       <div className="md:mx-auto md:max-w-md">
+        <Moment kind="lost" className="mx-auto mb-4 size-32" />
         <h1 className="text-brand-charcoal font-serif text-4xl leading-tight">Page not found</h1>
         <p className="text-brand-ink/75 mt-3 text-sm">
           We couldn't find that page. It may have moved, or the link may be wrong.

@@ -167,7 +167,10 @@ export default function FindReservation() {
         )}
 
         {result && status && (
-          <section className="border-brand-line mt-8 rounded-lg border bg-white p-5 md:p-6">
+          <section
+            key={result.reference_code}
+            className="border-brand-line mt-8 rounded-lg border bg-white p-5 motion-safe:animate-[rise_500ms_cubic-bezier(0.16,1,0.3,1)] md:p-6"
+          >
             <div className="flex items-center justify-between gap-3">
               <h2 className="text-brand-charcoal font-serif text-xl md:text-2xl">
                 Reservation <span className="whitespace-nowrap">{result.reference_code}</span>

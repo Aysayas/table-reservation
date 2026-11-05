@@ -1,9 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
 import { addHours, format, parseISO } from 'date-fns'
-import { CalendarDays, Copy, LoaderCircle, MapPin } from 'lucide-react'
+import { CalendarDays, Copy, MapPin } from 'lucide-react'
 import { Link, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
-import DrawnCheck from '@/components/DrawnCheck'
 import LoadError from '@/components/LoadError'
 import PageLoader from '@/components/PageLoader'
 import SiteFooter from '@/components/SiteFooter'
@@ -13,6 +12,7 @@ import { directionsUrl } from '@/lib/maps'
 import { reservationStatuses } from '@/lib/reservationStatus'
 import { getReservationByCode } from '@/services/reservations'
 import { getSettings } from '@/services/settings'
+import Moment from '@/components/Moment'
 
 const primaryButton =
   'bg-brand-red hover:bg-brand-red/90 lift focus-visible:outline-brand-red block w-full rounded-sm py-4 text-center text-sm font-bold tracking-label text-white uppercase duration-200 focus-visible:outline-2 focus-visible:outline-offset-2'
@@ -49,7 +49,10 @@ export default function ReservationConfirmation() {
     !inactive &&
     reservation.deposit_amount > 0 &&
     reservation.deposit_status === 'unpaid'
-  const { confirming, timedOut } = usePaymentReturn(code, !!reservation && !needsDeposit)
+  const { confirming, paidOnReturn, timedOut } = usePaymentReturn(
+    code,
+    !!reservation && !needsDeposit,
+  )
 
   if (isLoading) return <PageLoader />
 
@@ -163,19 +166,17 @@ export default function ReservationConfirmation() {
         <div className="md:mx-auto md:max-w-5xl">
           <div className="text-center">
             {confirming ? (
-              <div className="border-brand-gold text-brand-red mx-auto flex size-24 items-center justify-center rounded-full border bg-white">
-                <LoaderCircle
-                  aria-hidden="true"
-                  className="size-11 motion-safe:animate-spin"
-                  strokeWidth={1.5}
-                />
-              </div>
+              <Moment kind="verifying" className="mx-auto size-32" />
+            ) : timedOut && needsDeposit ? (
+              <Moment kind="failed" label="Payment not confirmed yet" className="mx-auto size-32" />
             ) : (
               !inactive &&
               !needsDeposit && (
-                <div className="bg-brand-red text-brand-gold mx-auto flex size-24 items-center justify-center rounded-full">
-                  <DrawnCheck className="size-11" />
-                </div>
+                <Moment
+                  kind={paidOnReturn ? 'paid' : 'booked'}
+                  label={paidOnReturn ? 'Payment received' : 'Your table is set'}
+                  className="mx-auto size-32"
+                />
               )
             )}
             {!inactive && !confirming && (

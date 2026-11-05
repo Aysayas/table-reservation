@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import Ornament from '@/components/Ornament'
+import Moment from '@/components/Moment'
 
 export default function PageLoader({ tone = 'light' }: { tone?: 'light' | 'dark' }) {
   const [shown, setShown] = useState(false)
@@ -20,16 +21,7 @@ export default function PageLoader({ tone = 'light' }: { tone?: 'light' | 'dark'
           aria-hidden="true"
           className="flex flex-col items-center gap-3 motion-safe:animate-[dialog-in_300ms_ease-out]"
         >
-          <span className="relative block size-16">
-            <span className="border-brand-gold/25 border-t-brand-gold absolute inset-0 rounded-full border-2 motion-safe:animate-spin motion-safe:[animation-duration:1.4s]" />
-            <span className="absolute inset-2 overflow-hidden rounded-full">
-              <img
-                src="/logo.png"
-                alt=""
-                className="size-full scale-[2.2] object-cover object-top"
-              />
-            </span>
-          </span>
+          <Moment kind="loading" className="size-24" />
           <span
             className={`font-display text-2xl leading-none ${tone === 'dark' ? 'text-brand-gold' : 'text-brand-gold-deep'}`}
           >
