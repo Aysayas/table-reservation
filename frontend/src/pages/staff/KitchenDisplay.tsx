@@ -304,11 +304,18 @@ export default function KitchenDisplay() {
           </Link>
         )}
         <h1 className="font-serif text-xl">Kitchen Display</h1>
-        {!isPending && !isLoadingError && (
-          <p className="text-sm text-white/75 tabular-nums">
+        {!isPending && !isLoadingError ? (
+          <p className="order-last basis-full text-sm text-white/75 tabular-nums md:order-none md:basis-auto">
             {orders.length} open ·{' '}
             <span className={late ? 'text-brand-red-light font-bold' : ''}>{late} late</span> · avg{' '}
             {average} min
+          </p>
+        ) : (
+          <p
+            aria-hidden="true"
+            className="invisible order-last basis-full text-sm md:order-none md:basis-auto"
+          >
+            0 open · 0 late · avg 0 min
           </p>
         )}
         <ul aria-label="Waiting time" className="hidden flex-wrap gap-3 xl:flex">
@@ -442,7 +449,7 @@ export default function KitchenDisplay() {
                     )
                   })}
                   {isPending &&
-                    Array.from({ length: 2 }, (_, i) => (
+                    Array.from({ length: 1 }, (_, i) => (
                       <li key={i} className="border-brand-line/60 rounded-xl border bg-white p-4">
                         <Skeleton className="h-9 w-16" />
                         <Skeleton className="mt-2 h-4 w-20" />

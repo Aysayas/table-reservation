@@ -59,7 +59,10 @@ api.interceptors.response.use(undefined, async (error: AxiosError) => {
 export const fileUrl = (url: string | null) =>
   url?.startsWith('/uploads')
     ? `${import.meta.env.VITE_API_URL.replace(/\/api\/?$/, '')}${url}`
-    : url
+    : (url?.replace(
+        /^(https:\/\/res\.cloudinary\.com\/[^/]+\/image\/upload\/)(?=v\d+\/)/,
+        '$1f_auto,q_auto,c_limit,w_800/',
+      ) ?? url)
 
 export const getToken = () => localStorage.getItem(TOKEN_KEY)
 

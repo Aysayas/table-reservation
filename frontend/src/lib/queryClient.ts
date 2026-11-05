@@ -20,3 +20,7 @@ export const queryClient = new QueryClient({
     },
   },
 })
+
+for (const key of ['settings', 'opening-hours', 'categories', 'menu-items']) {
+  queryClient.setQueryDefaults([key], { staleTime: 5 * 60_000 })
+}
