@@ -9,6 +9,7 @@ type Props = {
   busy: boolean
   onConfirm: () => void
   onClose: () => void
+  error?: string | null
 }
 
 export default function ConfirmDialog({
@@ -19,9 +20,10 @@ export default function ConfirmDialog({
   busy,
   onConfirm,
   onClose,
+  error = null,
 }: Props) {
   return (
-    <Modal title={title} onClose={onClose} framed dismissible={!busy}>
+    <Modal title={title} onClose={onClose} framed dismissible={!busy} error={error}>
       <p className="text-brand-ink/70 text-center text-sm">{body}</p>
       <div className="mt-6 flex justify-center gap-3">
         <button

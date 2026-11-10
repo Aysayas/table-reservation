@@ -5,8 +5,10 @@ import { useState } from 'react'
 import { flushSync } from 'react-dom'
 import { useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
+import CountUp from '@/components/CountUp'
 import EmptyState from '@/components/EmptyState'
 import LoadError from '@/components/LoadError'
+import Moment from '@/components/Moment'
 import Receipt from '@/components/Receipt'
 import Skeleton from '@/components/Skeleton'
 import Spinner from '@/components/Spinner'
@@ -243,6 +245,19 @@ export default function OrdersPayments() {
                 : 'Unpaid'}
             </span>
           </div>
+
+          {paidCash[selected.order_id] !== undefined && (
+            <div className="mt-4 text-center">
+              <Moment kind="paid" label="Paid in cash" className="mx-auto size-24" />
+              <p className="text-brand-charcoal font-serif text-2xl font-bold tabular-nums">
+                <CountUp
+                  value={Math.max(0, paidCash[selected.order_id] - selected.total_amount)}
+                  format={peso}
+                />
+              </p>
+              <p className="text-brand-ink/70 text-xs">Change</p>
+            </div>
+          )}
 
           <ul className="mt-5 space-y-2 text-sm">
             {selected.items.map((item) => (

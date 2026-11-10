@@ -62,12 +62,15 @@ export default function MenuManagement() {
   const remove = useMutation({
     mutationFn: (item: MenuItem) => deleteMenuItem(item.item_id),
     onSuccess: (_, item) => {
+      setDeleting(null)
       toast.success(`${item.name} deleted`)
       refresh()
     },
-    onError: (e) => toast.error(e.message),
-    onSettled: () => setDeleting(null),
   })
+  const closeDelete = () => {
+    setDeleting(null)
+    remove.reset()
+  }
 
   const term = search.trim().toLowerCase()
   const matches = items.filter(
@@ -310,7 +313,13 @@ export default function MenuManagement() {
       </div>
 
       {deleting && (
-        <Modal title={`Delete ${deleting.name}?`} onClose={() => setDeleting(null)} framed>
+        <Modal
+          title={`Delete ${deleting.name}?`}
+          onClose={closeDelete}
+          dismissible={!remove.isPending}
+          framed
+          error={remove.error?.message}
+        >
           <p className="text-brand-ink/70 text-center text-sm">
             This removes the dish and its photo. It can&apos;t be undone.
           </p>
@@ -318,7 +327,7 @@ export default function MenuManagement() {
             <button
               type="button"
               disabled={remove.isPending}
-              onClick={() => setDeleting(null)}
+              onClick={closeDelete}
               className="border-brand-line text-brand-charcoal rounded-lg border px-4 py-2 text-sm font-bold disabled:opacity-50"
             >
               Cancel

@@ -69,3 +69,17 @@ test('an unknown dish shows not found with a way back', async ({ page }) => {
   await page.getByRole('link', { name: 'Back to the menu' }).click()
   await expect(page).toHaveURL('/table/5/menu')
 })
+
+test('add to cart flies a gold dot to the cart, except with reduced motion', async ({ page }) => {
+  await page.goto('/table/5?t=sample-qr-token-5')
+  await page.goto(url)
+  const dot = page.locator('span.fixed.bg-brand-gold')
+  await page.getByRole('button', { name: /^Add to Cart/ }).click()
+  await expect(dot).toHaveCount(1)
+  await expect(dot).toHaveCount(0)
+
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.getByRole('button', { name: /^Add to Cart/ }).click()
+  await expect(page.getByLabel('Cart, 2 items')).toBeVisible()
+  await expect(dot).toHaveCount(0)
+})

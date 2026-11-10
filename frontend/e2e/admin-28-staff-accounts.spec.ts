@@ -45,7 +45,9 @@ test('add staff checks the fields and adds the new account', async ({ page }) =>
   await dialog.getByLabel('Role').selectOption('kitchen')
   await dialog.getByLabel('Password').fill('password123')
   await dialog.getByRole('button', { name: 'Save Staff' }).click()
-  await expect(page.getByText('That email is already used by another account')).toBeVisible()
+  await expect(dialog.getByRole('alert')).toHaveText(
+    'That email is already used by another account',
+  )
 
   await dialog.getByLabel('Email').fill('juan@placeholder-domain.com')
   await dialog.getByRole('button', { name: 'Save Staff' }).click()

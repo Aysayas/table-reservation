@@ -8,6 +8,7 @@ import { toast } from 'sonner'
 import { z } from 'zod'
 import CancelReservationDialog from '@/components/CancelReservationDialog'
 import LeaderRow from '@/components/LeaderRow'
+import Moment from '@/components/Moment'
 import MobileInput from '@/components/MobileInput'
 import { apiError } from '@/lib/api'
 import { cleanMobile, mobileSchema, toLocalMobile } from '@/lib/mobile'
@@ -157,7 +158,18 @@ export default function FindReservation() {
           </button>
         </form>
 
-        {result === null && (
+        {isSubmitting && (
+          <div role="status" className="mt-8 text-center">
+            <Moment
+              kind="search"
+              label="Looking for your reservation"
+              className="mx-auto size-32"
+            />
+            <p className="text-brand-ink/75 mt-2 text-sm">Looking for your reservation…</p>
+          </div>
+        )}
+
+        {!isSubmitting && result === null && (
           <p
             role="alert"
             className="border-brand-red/30 bg-brand-red/5 text-brand-red mt-8 rounded-lg border px-4 py-3 text-sm"
@@ -166,10 +178,10 @@ export default function FindReservation() {
           </p>
         )}
 
-        {result && status && (
+        {!isSubmitting && result && status && (
           <section
             key={result.reference_code}
-            className="border-brand-line mt-8 rounded-lg border bg-white p-5 motion-safe:animate-[rise_500ms_cubic-bezier(0.16,1,0.3,1)] md:p-6"
+            className="border-brand-line mt-8 origin-top rounded-lg border bg-white p-5 motion-safe:animate-[flip-up_500ms_cubic-bezier(0.16,1,0.3,1)] md:p-6"
           >
             <div className="flex items-center justify-between gap-3">
               <h2 className="text-brand-charcoal font-serif text-xl md:text-2xl">

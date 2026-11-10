@@ -53,7 +53,9 @@ export default function StaffAccounts() {
       setDisabling(null)
       queryClient.invalidateQueries({ queryKey: ['users'] })
     },
-    onError: (e) => toast.error(e.message),
+    onError: (e) => {
+      if (!disabling) toast.error(e.message)
+    },
   })
 
   return (
@@ -241,7 +243,11 @@ export default function StaffAccounts() {
           closeLabel="Cancel"
           busy={toggle.isPending}
           onConfirm={() => toggle.mutate(disabling)}
-          onClose={() => setDisabling(null)}
+          onClose={() => {
+            setDisabling(null)
+            toggle.reset()
+          }}
+          error={toggle.variables?.user_id === disabling.user_id ? toggle.error?.message : null}
         />
       )}
 

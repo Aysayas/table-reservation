@@ -71,7 +71,14 @@ export default function TablesQr() {
 
   const refresh = () => queryClient.invalidateQueries({ queryKey: ['tables'] })
 
+  const [saveError, setSaveError] = useState<string | null>(null)
+  const closeEdit = () => {
+    setEditing(null)
+    setSaveError(null)
+  }
+
   const onSubmit = async (values: FormValues) => {
+    setSaveError(null)
     try {
       const saved =
         editing && editing !== 'new'
@@ -81,19 +88,22 @@ export default function TablesQr() {
       setEditing(null)
       refresh()
     } catch (e) {
-      toast.error((e as Error).message)
+      setSaveError((e as Error).message)
     }
   }
 
   const remove = useMutation({
     mutationFn: (t: AdminTable) => deleteTable(t.table_id),
     onSuccess: (_, t) => {
+      setDeleting(null)
       toast.success(`Table ${t.table_number} deleted`)
       refresh()
     },
-    onError: (e) => toast.error(e.message),
-    onSettled: () => setDeleting(null),
   })
+  const closeDelete = () => {
+    setDeleting(null)
+    remove.reset()
+  }
 
   const download = (t: AdminTable) => {
     const canvas = document.getElementById(`qr-${t.table_id}`) as HTMLCanvasElement | null
@@ -234,7 +244,9 @@ export default function TablesQr() {
       {editing && (
         <Modal
           title={editing === 'new' ? 'Add Table' : `Edit Table ${editing.table_number}`}
-          onClose={() => setEditing(null)}
+          onClose={closeEdit}
+          dismissible={!isSubmitting}
+          error={saveError}
           className="max-w-md print:hidden"
         >
           <form noValidate onSubmit={handleSubmit(onSubmit)} className="space-y-5">
@@ -271,7 +283,7 @@ export default function TablesQr() {
               <button
                 type="button"
                 disabled={isSubmitting}
-                onClick={() => setEditing(null)}
+                onClick={closeEdit}
                 className="border-brand-line text-brand-charcoal rounded-lg border px-4 py-2 text-sm font-bold disabled:opacity-50"
               >
                 Cancel
@@ -293,7 +305,9 @@ export default function TablesQr() {
       {deleting && (
         <Modal
           title={`Delete Table ${deleting.table_number}?`}
-          onClose={() => setDeleting(null)}
+          onClose={closeDelete}
+          dismissible={!remove.isPending}
+          error={remove.error?.message}
           framed
           className="max-w-md print:hidden"
         >
@@ -304,7 +318,7 @@ export default function TablesQr() {
             <button
               type="button"
               disabled={remove.isPending}
-              onClick={() => setDeleting(null)}
+              onClick={closeDelete}
               className="border-brand-line text-brand-charcoal rounded-lg border px-4 py-2 text-sm font-bold disabled:opacity-50"
             >
               Cancel

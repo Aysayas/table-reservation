@@ -436,3 +436,18 @@ input::-webkit-date-and-time-value {
     transform: rotate(-80deg);
   }
 }
+@keyframes moment-sweep {
+  0%,
+  100% {
+    transform: translateX(-26px);
+  }
+  50% {
+    transform: translateX(26px);
+  }
+}
+@keyframes flip-up {
+  from {
+    opacity: 0;
+    transform: perspective(800px) rotateX(-80deg);
+  }
+}

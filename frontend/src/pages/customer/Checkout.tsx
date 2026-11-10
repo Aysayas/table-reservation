@@ -5,6 +5,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import EmptyState from '@/components/EmptyState'
 import LeaderRow from '@/components/LeaderRow'
+import useCountUp from '@/hooks/useCountUp'
 import { markPaying } from '@/hooks/usePaymentReturn'
 import { apiError } from '@/lib/api'
 import { readTableToken, rememberLastOrder } from '@/lib/tableToken'
@@ -15,6 +16,13 @@ import { cartTotal, useCart } from '@/stores/cart'
 
 const peso = (amount: number) =>
   `₱${amount.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+
+const rise = [
+  'motion-safe:animate-[rise_500ms_cubic-bezier(0.16,1,0.3,1)_both]',
+  'motion-safe:animate-[rise_500ms_cubic-bezier(0.16,1,0.3,1)_80ms_both]',
+  'motion-safe:animate-[rise_500ms_cubic-bezier(0.16,1,0.3,1)_160ms_both]',
+  'motion-safe:animate-[rise_500ms_cubic-bezier(0.16,1,0.3,1)_240ms_both]',
+]
 
 const methods = [
   { value: 'now', title: 'Pay Now', text: 'GCash, Maya or Card' },
@@ -41,6 +49,7 @@ export default function Checkout() {
   const token = readTableToken(table)
   const subtotal = cartTotal(lines)
   const total = subtotal + Math.round(subtotal * (settings?.service_charge_percent ?? 0)) / 100
+  const shownTotal = useCountUp(total)
 
   const placeOrder = async () => {
     if (!token) return
@@ -109,7 +118,7 @@ export default function Checkout() {
         <>
           <section
             aria-labelledby="summary"
-            className="border-brand-line mt-6 rounded-lg border bg-white p-5"
+            className={`border-brand-line mt-6 rounded-lg border bg-white p-5 ${rise[0]}`}
           >
             <h2 id="summary" className="text-brand-charcoal font-serif text-xl">
               Order Summary
@@ -136,12 +145,12 @@ export default function Checkout() {
                 termClassName="text-brand-charcoal font-serif text-lg"
                 valueClassName="text-brand-red font-serif text-lg"
               >
-                {peso(total)}
+                {peso(shownTotal)}
               </LeaderRow>
             </dl>
           </section>
 
-          <fieldset className="mt-8">
+          <fieldset className={`mt-8 ${rise[1]}`}>
             <legend className="text-brand-charcoal font-serif text-xl">
               How would you like to pay?
             </legend>
@@ -168,7 +177,7 @@ export default function Checkout() {
             </div>
           </fieldset>
 
-          <label className="text-brand-charcoal mt-8 block text-sm font-bold">
+          <label className={`text-brand-charcoal mt-8 block text-sm font-bold ${rise[2]}`}>
             Name for the Order (optional)
             <input
               value={name}
@@ -198,7 +207,9 @@ export default function Checkout() {
             </p>
           )}
 
-          <div className="short:static short:mt-4 short:pb-0 short:px-0 bg-brand-cream short:pt-0 fixed inset-x-0 bottom-0 z-20 mx-auto max-w-[390px] px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))]">
+          <div
+            className={`short:static short:mt-4 short:pb-0 short:px-0 bg-brand-cream short:pt-0 fixed inset-x-0 bottom-0 z-20 mx-auto max-w-[390px] px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] ${rise[3]}`}
+          >
             <button
               type="button"
               disabled={!token || placing || unavailable.length > 0}

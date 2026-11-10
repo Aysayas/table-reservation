@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useQueryClient } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
@@ -40,7 +41,10 @@ export default function StaffDialog({ user, isSelf, onClose }: Props) {
       : { full_name: '', email: '', role: 'staff', password: '' },
   })
 
+  const [serverError, setServerError] = useState<string | null>(null)
+
   const onSubmit = async ({ password, ...values }: FormValues) => {
+    setServerError(null)
     try {
       const body = { ...values, password: password || undefined }
       const saved = user ? await updateUser(user.user_id, body) : await createUser(body)
@@ -49,12 +53,12 @@ export default function StaffDialog({ user, isSelf, onClose }: Props) {
       queryClient.invalidateQueries({ queryKey: ['me'] })
       onClose()
     } catch (e) {
-      toast.error((e as Error).message)
+      setServerError((e as Error).message)
     }
   }
 
   return (
-    <Modal title={user ? 'Edit Staff' : 'Add Staff'} onClose={onClose}>
+    <Modal title={user ? 'Edit Staff' : 'Add Staff'} onClose={onClose} error={serverError}>
       <form noValidate onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
           <label htmlFor="full_name" className={label}>
