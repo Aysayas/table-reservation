@@ -33,7 +33,11 @@ test('cash received works out the change and marks the order paid', async ({ pag
   await expect(page.getByRole('region', { name: 'Order #1' })).toContainText('₱74.00')
   await pay.click()
   await expect(page.getByText('Order #1 paid in cash. Change: ₱74.00')).toBeVisible()
-  await expect(page.getByRole('region', { name: 'Order #1' })).toContainText('Paid · Cash')
+  const order = page.getByRole('region', { name: 'Order #1' })
+  await expect(order).toContainText('Paid · Cash')
+  await expect(order.getByRole('img', { name: 'Paid in cash' })).toBeVisible()
+  await expect(order.getByText('Change', { exact: true })).toBeVisible()
+  await expect(order).toContainText('₱74.00')
   await expect(pay).toHaveCount(0)
 })
 

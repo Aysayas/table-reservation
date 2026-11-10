@@ -111,6 +111,12 @@ These differ from the 29 approved wireframes on purpose, to remove redundant ste
   - Tickets have a waiting bar and a red edge when late.
   - Cooks can tap items to tick them off (kept on that screen only).
   - The backup before this change is tagged `backup/pre-kitchen-2026-11-04`.
+- **Motion gaps (2026-11-10):** the last motion pieces from the plan.
+  - Item Details' main Add to Cart flies a gold dot to the cart. On all add buttons, the "added" toast now waits until the dot lands, so it no longer covers the cart.
+  - Checkout's total counts up and its sections rise in one after another. Reserve's columns and time slots rise in, and the Reports summary numbers count up.
+  - Find Reservation shows a magnifier scene while searching, and the result card flips up. After a cash payment, staff Orders and Payments shows the paid receipt scene with the change counting up.
+  - A server error inside a dialog now shows inside it and shakes it once, instead of a toast. Delete dialogs stay open on an error and can't be closed mid-request.
+  - The backup before this round is tagged `backup/pre-motion-gaps-2026-11-10`.
 - **Dish photos (sample data):** 71 more dishes have free stock photos in `frontend/public/photos/dishes/` (credits in `docs/design/brand.md`), so 73 of 93 show a photo in sample mode. Production photos are uploaded on screen 21.
 
 ## Backend progress

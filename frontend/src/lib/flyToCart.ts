@@ -1,9 +1,9 @@
-export function flyToCart(from: Element) {
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+export function flyToCart(from: Element): Promise<void> {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return Promise.resolve()
   const to = [...document.querySelectorAll('[data-cart-target]')]
     .filter((el) => el.getClientRects().length)
     .at(-1)
-  if (!to) return
+  if (!to) return Promise.resolve()
   const a = from.getBoundingClientRect()
   const b = to.getBoundingClientRect()
   const dx = b.left + b.width / 2 - (a.left + a.width / 2)
@@ -14,7 +14,7 @@ export function flyToCart(from: Element) {
   dot.style.left = `${a.left + a.width / 2 - 6}px`
   dot.style.top = `${a.top + a.height / 2 - 6}px`
   document.body.append(dot)
-  dot
+  return dot
     .animate(
       [
         { transform: 'none' },
@@ -24,5 +24,5 @@ export function flyToCart(from: Element) {
       { duration: 550, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' },
     )
     .finished.catch(() => undefined)
-    .finally(() => dot.remove())
+    .then(() => dot.remove())
 }

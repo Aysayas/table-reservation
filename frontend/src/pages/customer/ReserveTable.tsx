@@ -71,6 +71,9 @@ function writeDraft(draft: Draft | null) {
 
 const telHref = (number: string) => `tel:${number.replace(/\s/g, '')}`
 
+const rise = 'motion-safe:animate-[rise_500ms_cubic-bezier(0.16,1,0.3,1)_both]'
+const riseLater = 'motion-safe:animate-[rise_500ms_cubic-bezier(0.16,1,0.3,1)_120ms_both]'
+
 export default function ReserveTable() {
   const navigate = useNavigate()
   const [params, setParams] = useSearchParams()
@@ -295,7 +298,7 @@ export default function ReserveTable() {
           className="md:border-brand-line mt-8 md:rounded-lg md:border md:bg-white md:p-10"
         >
           <div className="space-y-6 md:grid md:grid-cols-2 md:gap-10 md:space-y-0">
-            <div className="space-y-6">
+            <div className={`space-y-6 ${rise}`}>
               <div>
                 <label htmlFor="reservation_date" className={label}>
                   Date
@@ -376,7 +379,10 @@ export default function ReserveTable() {
                 ) : isFetched && slots.length === 0 ? (
                   <p className="text-brand-ink/70 mt-2 text-sm">No times left on this day.</p>
                 ) : (
-                  <div ref={slotPillRef} className="relative isolate mt-2 grid grid-cols-3 gap-2">
+                  <div
+                    ref={slotPillRef}
+                    className={`relative isolate mt-2 grid grid-cols-3 gap-2 ${rise}`}
+                  >
                     {slotPill}
                     {slots.map((slot) => {
                       const selected = slot.time === time
@@ -409,7 +415,7 @@ export default function ReserveTable() {
               </div>
             </div>
 
-            <div className="space-y-6">
+            <div className={`space-y-6 ${riseLater}`}>
               {!code && account && (
                 <p className="text-brand-charcoal text-sm">
                   Booking as <span className="font-bold">{account.full_name}</span>,{' '}

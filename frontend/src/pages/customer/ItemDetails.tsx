@@ -177,9 +177,10 @@ export default function ItemDetails() {
                     type="button"
                     aria-label={`Add ${dish.name}`}
                     onClick={(e) => {
-                      flyToCart(e.currentTarget)
                       add(table, line(dish, 1, ''))
-                      toast.success(`${dish.name} added to cart`)
+                      flyToCart(e.currentTarget).then(() =>
+                        toast.success(`${dish.name} added to cart`),
+                      )
                     }}
                     className="border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal col-span-2 flex min-h-11 w-full items-center justify-center rounded-lg border text-xs font-bold transition-colors duration-200 hover:text-white"
                   >
@@ -196,13 +197,15 @@ export default function ItemDetails() {
         <button
           type="button"
           disabled={!item.is_available}
-          onClick={() => {
+          onClick={(e) => {
             add(table, line(item, quantity, notes.trim()))
             setQuantity(1)
             setNotes('')
-            toast.success(`${item.name} added to cart`, {
-              action: { label: 'View Cart', onClick: () => navigate(`/table/${table}/cart`) },
-            })
+            flyToCart(e.currentTarget).then(() =>
+              toast.success(`${item.name} added to cart`, {
+                action: { label: 'View Cart', onClick: () => navigate(`/table/${table}/cart`) },
+              }),
+            )
           }}
           className="bg-brand-red hover:bg-brand-red/90 lift tracking-label shadow-lift block w-full rounded-lg py-4 text-sm font-bold text-white uppercase duration-200 disabled:opacity-60"
         >

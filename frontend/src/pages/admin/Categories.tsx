@@ -86,13 +86,16 @@ export default function Categories() {
   const remove = useMutation({
     mutationFn: (c: CategoryWithCount) => deleteCategory(c.category_id),
     onSuccess: (_, c) => {
+      setDeleting(null)
       toast.success(`${c.name} deleted`)
       if (editing?.category_id === c.category_id) setEditing(null)
       refresh()
     },
-    onError: (e) => toast.error(e.message),
-    onSettled: () => setDeleting(null),
   })
+  const closeDelete = () => {
+    setDeleting(null)
+    remove.reset()
+  }
 
   return (
     <div className="grid items-start gap-6 xl:grid-cols-[1fr_24rem]">
@@ -260,7 +263,13 @@ export default function Categories() {
       </section>
 
       {deleting && (
-        <Modal title={`Delete ${deleting.name}?`} onClose={() => setDeleting(null)} framed>
+        <Modal
+          title={`Delete ${deleting.name}?`}
+          onClose={closeDelete}
+          dismissible={!remove.isPending}
+          framed
+          error={remove.error?.message}
+        >
           <p className="text-brand-ink/70 text-center text-sm">
             {deleting.item_count
               ? `It still has ${deleting.item_count} dishes, so it can't be deleted yet.`
@@ -270,7 +279,7 @@ export default function Categories() {
             <button
               type="button"
               disabled={remove.isPending}
-              onClick={() => setDeleting(null)}
+              onClick={closeDelete}
               className="border-brand-line text-brand-charcoal rounded-lg border px-4 py-2 text-sm font-bold disabled:opacity-50"
             >
               {deleting.item_count ? 'Close' : 'Cancel'}

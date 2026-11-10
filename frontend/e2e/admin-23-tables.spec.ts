@@ -66,7 +66,8 @@ test('adding a table makes a new card, and table numbers are unique', async ({ p
   await page.getByRole('button', { name: 'Add Table' }).click()
   await dialog.getByLabel('Table Number').fill('t1')
   await dialog.getByRole('button', { name: 'Save Table' }).click()
-  await expect(page.getByText('A table with that number already exists')).toBeVisible()
+  await expect(dialog.getByRole('alert')).toHaveText('A table with that number already exists')
+  await expect(dialog).toBeVisible()
 })
 
 test('editing changes the seats, but not below a booking', async ({ page }) => {
@@ -91,13 +92,13 @@ test('editing changes the seats, but not below a booking', async ({ page }) => {
 test('delete asks first and keeps a table with orders', async ({ page }) => {
   await page.goto(url)
   await page.getByRole('button', { name: 'Delete Table T2' }).click()
-  await page
-    .getByRole('dialog', { name: 'Delete Table T2?' })
-    .getByRole('button', { name: 'Delete' })
-    .click()
-  await expect(
-    page.getByText("This table has orders or upcoming bookings. It can't be deleted."),
-  ).toBeVisible()
+  const confirm = page.getByRole('dialog', { name: 'Delete Table T2?' })
+  await confirm.getByRole('button', { name: 'Delete' }).click()
+  await expect(confirm.getByRole('alert')).toHaveText(
+    "This table has orders or upcoming bookings. It can't be deleted.",
+  )
+  await confirm.getByRole('button', { name: 'Cancel' }).click()
+  await expect(confirm).toBeHidden()
   await expect(page.getByRole('listitem', { name: 'Table T2' })).toBeVisible()
 
   await page.getByRole('button', { name: 'Add Table' }).click()

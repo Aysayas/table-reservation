@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { format, parseISO } from 'date-fns'
 import { Download, FileText } from 'lucide-react'
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import {
   Bar,
   BarChart,
@@ -14,6 +14,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
+import CountUp from '@/components/CountUp'
 import ReportDocument from '@/components/ReportDocument'
 import Skeleton from '@/components/Skeleton'
 import { downloadCsv } from '@/lib/csv'
@@ -112,6 +113,17 @@ export default function Reports() {
         ['Busiest Hour', s.busiest_hour ? formatTime(s.busiest_hour) : '—'],
       ]
     : []
+  const counted: Record<string, ReactNode> = s
+    ? {
+        'Total Sales': <CountUp value={s.total_sales} format={peso} />,
+        'Total Orders': <CountUp value={s.total_orders} />,
+        'Average Order Value': <CountUp value={s.average_order_value} format={peso} />,
+        Reservations: <CountUp value={s.reservations} />,
+        'No-shows': (
+          <CountUp value={s.no_shows} format={(n) => `${Math.round(n)} (${s.no_show_rate}%)`} />
+        ),
+      }
+    : {}
 
   const exportCsv = () =>
     downloadCsv(`vencios-report-${range.from}-to-${range.to}.csv`, [
@@ -391,7 +403,7 @@ export default function Reports() {
                 >
                   <dt className="text-brand-ink/70 text-sm">{term}</dt>
                   <dd className="text-brand-charcoal font-serif text-lg font-bold tabular-nums">
-                    {value}
+                    {counted[term] ?? value}
                   </dd>
                 </div>
               ))}

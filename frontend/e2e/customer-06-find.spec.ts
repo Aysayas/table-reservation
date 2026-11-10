@@ -100,3 +100,15 @@ test('manage reservation fills in the code for a logged-out guest', async ({ pag
   await expect(page).toHaveURL('/reservation?code=RSV-000001')
   await expect(page.getByLabel('Reference Code')).toHaveValue('RSV-000001')
 })
+
+test('the found reservation flips up, and stays still with reduced motion', async ({ page }) => {
+  await find(page, 'RSV-000001', '09000000000')
+  const card = page
+    .getByRole('heading', { name: 'Reservation RSV-000001' })
+    .locator('xpath=ancestor::section[1]')
+  await expect(card).toHaveCSS('animation-name', 'flip-up')
+
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await find(page, 'RSV-000001', '09000000000')
+  await expect(card).toHaveCSS('animation-name', 'none')
+})

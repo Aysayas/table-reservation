@@ -12,6 +12,7 @@ export type MomentKind =
   | 'empty'
   | 'loading'
   | 'lost'
+  | 'search'
 
 const line = 'stroke-brand-charcoal fill-none'
 const solid = 'stroke-brand-charcoal fill-white'
@@ -29,6 +30,23 @@ const steam = (x: number, delay: number) => (
 )
 
 const scenes: Record<MomentKind, ReactNode> = {
+  search: (
+    <>
+      <rect x="40" y="40" width="90" height="100" rx="4" strokeWidth={3} className={solid} />
+      <rect x="40" y="40" width="90" height="16" rx="4" className="fill-brand-gold" />
+      <path d="M54 76h62M54 92h48M54 108h56M54 124h36" strokeWidth={2} className={line} />
+      <g className="motion-safe:animate-[moment-sweep_1.6s_ease-in-out_infinite]">
+        <circle
+          cx="85"
+          cy="92"
+          r="20"
+          strokeWidth={4}
+          className="stroke-brand-charcoal fill-brand-gold/20"
+        />
+        <path d="M100 107l18 18" strokeWidth={6} strokeLinecap="round" className={line} />
+      </g>
+    </>
+  ),
   received: (
     <>
       <line x1="20" y1="40" x2="150" y2="40" strokeWidth={3} className={line} />

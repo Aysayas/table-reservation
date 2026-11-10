@@ -57,7 +57,7 @@ test('monthly covers six months, and a custom from date changes the summary', as
   await page.getByLabel('From').fill(day(0))
   const summary = page.getByRole('region', { name: 'Summary' })
   await expect(summary).toContainText('₱775.00')
-  await expect(summary.getByRole('definition').nth(1)).toHaveText('3')
+  await expect(summary.getByRole('definition').nth(1).locator('.sr-only')).toHaveText('3')
 })
 
 test('download PDF prints a branded report, not the dashboard', async ({ page }) => {

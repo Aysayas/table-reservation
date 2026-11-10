@@ -86,9 +86,8 @@ export default function TableMenu() {
   const itemLink = (item: MenuItem) => `/table/${id}/menu/${item.item_id}`
 
   const addOne = (item: MenuItem, from: Element) => {
-    flyToCart(from)
     add(id, { item_id: item.item_id, name: item.name, price: item.price, quantity: 1, notes: '' })
-    toast.success(`${item.name} added to cart`)
+    flyToCart(from).then(() => toast.success(`${item.name} added to cart`))
   }
 
   return (

@@ -66,7 +66,10 @@ export default function EditReservationDialog({ reservation, onClose }: Props) {
   const times =
     slots.some((s) => s.time === time) || !time ? slots : [...slots, { time, available: true }]
 
+  const [serverError, setServerError] = useState<string | null>(null)
+
   const onSubmit = async (values: FormValues) => {
+    setServerError(null)
     try {
       const saved = await updateReservation(reservation.reservation_id, {
         ...values,
@@ -78,12 +81,12 @@ export default function EditReservationDialog({ reservation, onClose }: Props) {
       }
       onClose()
     } catch (e) {
-      toast.error((e as Error).message)
+      setServerError((e as Error).message)
     }
   }
 
   return (
-    <Modal title={`Edit ${reservation.reference_code}`} onClose={onClose}>
+    <Modal title={`Edit ${reservation.reference_code}`} onClose={onClose} error={serverError}>
       <p className="text-brand-ink/70 -mt-2 text-center text-sm">
         {reservation.customer.full_name}
       </p>

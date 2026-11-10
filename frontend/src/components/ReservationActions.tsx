@@ -31,6 +31,14 @@ export default function ReservationActions({
   const menuId = useId()
   const [assigning, setAssigning] = useState(false)
   const [confirming, setConfirming] = useState<'no_show' | 'cancelled' | 'remove' | null>(null)
+  const [dialogError, setDialogError] = useState<string | null>(null)
+  const failed = (e: Error) =>
+    confirming || assigning ? setDialogError(e.message) : toast.error(e.message)
+  const closeDialog = () => {
+    setConfirming(null)
+    setAssigning(false)
+    setDialogError(null)
+  }
   const { data: tables = [] } = useQuery({
     queryKey: ['tables'],
     queryFn: () => getTables(),
@@ -54,7 +62,8 @@ export default function ReservationActions({
         queryClient.invalidateQueries({ queryKey: [key] })
       }
     },
-    onError: (e) => toast.error(e.message),
+    onMutate: () => setDialogError(null),
+    onError: failed,
   })
   const remove = useMutation({
     mutationFn: () => removeReservation(r.reservation_id),
@@ -65,7 +74,8 @@ export default function ReservationActions({
         queryClient.invalidateQueries({ queryKey: [key] })
       }
     },
-    onError: (e) => toast.error(e.message),
+    onMutate: () => setDialogError(null),
+    onError: failed,
   })
   const removable =
     r.deposit_status === 'unpaid' &&
@@ -232,20 +242,23 @@ export default function ReservationActions({
           onConfirm={() =>
             confirming === 'remove' ? remove.mutate() : change.mutate({ status: confirming })
           }
-          onClose={() => setConfirming(null)}
+          onClose={closeDialog}
+          error={dialogError}
         />
       )}
 
       {assigning && (
         <Modal
           title="Assign a table"
-          onClose={() => setAssigning(false)}
+          onClose={closeDialog}
+          dismissible={!change.isPending}
+          error={dialogError}
           className="max-w-md text-left whitespace-normal"
         >
           <button
             type="button"
             aria-label="Close"
-            onClick={() => setAssigning(false)}
+            onClick={closeDialog}
             className="text-brand-ink/70 hover:text-brand-charcoal absolute top-4 right-4"
           >
             <X className="size-5" />
