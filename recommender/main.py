@@ -72,7 +72,7 @@ def recommend_items(body: Request, x_recommender_secret: str = Header(default=""
     if not secret or not hmac.compare_digest(x_recommender_secret, secret):
         raise HTTPException(status_code=401, detail="Invalid secret")
     data = load()
-    item_ids, source = recommend(
+    item_ids, source, reasons = recommend(
         data["orders"], data["candidates"], body.item_ids, body.limit, data["weights"], data["categories"]
     )
-    return {"item_ids": item_ids, "source": source}
+    return {"item_ids": item_ids, "source": source, "reasons": reasons}

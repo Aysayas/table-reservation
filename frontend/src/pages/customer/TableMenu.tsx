@@ -7,6 +7,7 @@ import DishPhoto from '@/components/DishPhoto'
 import EmptyState from '@/components/EmptyState'
 import LoadError from '@/components/LoadError'
 import Ornament from '@/components/Ornament'
+import WhyLine from '@/components/WhyLine'
 import PageLoader from '@/components/PageLoader'
 import Skeleton from '@/components/Skeleton'
 import TrackHeading from '@/components/TrackHeading'
@@ -175,6 +176,7 @@ export default function TableMenu() {
                         {item.name}
                       </p>
                       <p className="text-brand-red mt-0.5 font-serif text-sm">{peso(item.price)}</p>
+                      <WhyLine reason={item.reason} names={lines} />
                     </Link>
                   </li>
                 )

@@ -14,11 +14,14 @@ def recommend(orders, candidates, item_ids, limit, weights=None, categories=None
             popularity[item] += weight
 
     together = Counter()
+    pairs = Counter()
     for order, weight in zip(orders, weights):
         if chosen & order:
             for item in order - chosen:
                 for base in chosen & order:
-                    together[item] += weight / sqrt(popularity[base] * popularity[item])
+                    score = weight / sqrt(popularity[base] * popularity[item])
+                    together[item] += score
+                    pairs[item, base] += score
 
     ranked = sorted(allowed, key=lambda item: (-together[item], -popularity[item], item))
     seen = {categories.get(item) for item in chosen} - {None}
@@ -36,4 +39,11 @@ def recommend(orders, candidates, item_ids, limit, weights=None, categories=None
         source = "popular"
     else:
         source = "flagged"
-    return picks, source
+
+    def reason(item):
+        if together[item] > 0:
+            base = max(chosen, key=lambda b: (pairs[item, b], -b))
+            return {"type": "together", "with_item_id": base}
+        return {"type": "popular" if popularity[item] > 0 else "pick"}
+
+    return picks, source, [reason(item) for item in picks]

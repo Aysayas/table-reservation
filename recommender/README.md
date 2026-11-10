@@ -15,7 +15,7 @@ A small Python service (FastAPI) that suggests dishes. The backend calls it from
 ## API
 
 - `GET /health`: `{"status": "ok"}`
-- `POST /recommend` with header `X-Recommender-Secret` and body `{"item_ids": [1, 10], "limit": 4}` (up to 50 IDs, limit 1–12): `{"item_ids": [...], "source": "together" | "popular" | "flagged"}`. 401 without the right secret, 422 for bad input.
+- `POST /recommend` with header `X-Recommender-Secret` and body `{"item_ids": [1, 10], "limit": 4}` (up to 50 IDs, limit 1–12): `{"item_ids": [...], "source": "together" | "popular" | "flagged", "reasons": [...]}`, with one reason per item: `{"type": "together", "with_item_id": n}` (the sent dish it scores highest with), `{"type": "popular"}` or `{"type": "pick"}`. 401 without the right secret, 422 for bad input.
 
 ## Environment
 

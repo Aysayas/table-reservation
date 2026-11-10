@@ -84,3 +84,13 @@ test('a dish that became unavailable is flagged and blocks checkout', async ({ p
   await expect(page.getByText("Bulalo isn't available right now.")).toBeVisible()
   await expect(page.getByRole('button', { name: 'Place Order' })).toBeDisabled()
 })
+
+test('you might also like says which cart dish each one goes with', async ({ page }) => {
+  await fill(page)
+  await expect(
+    page
+      .getByRole('region', { name: 'You Might Also Like' })
+      .getByText(/^Goes with /)
+      .first(),
+  ).toBeVisible()
+})
