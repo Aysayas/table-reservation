@@ -34,8 +34,8 @@ class Dashboard extends Controller {
 			'reservations_today' => count($reservations),
 			'guests_arrived' => array_sum(array_map(fn($reservation) => (int) $reservation['pax'], $arrived)),
 			'active_orders' => count($orders),
-			'available_tables' => count(array_filter($tables, fn($table) => $table['status'] === 'available')),
-			'total_tables' => count($tables),
+			'available_tables' => count(array_filter($tables, fn($table) => $table['is_active'] && $table['status'] === 'available')),
+			'total_tables' => count(array_filter($tables, fn($table) => (bool) $table['is_active'])),
 			'upcoming_reservations' => array_map(fn($reservation) => [
 				'reservation_id' => (int) $reservation['reservation_id'],
 				'reference_code' => $reservation['reference_code'],

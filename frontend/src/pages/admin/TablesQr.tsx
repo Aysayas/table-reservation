@@ -16,6 +16,7 @@ import {
   createTable,
   deleteTable,
   getAdminTables,
+  setTableActive,
   updateTable,
   type AdminTable,
 } from '@/services/tables'
@@ -48,14 +49,18 @@ export default function TablesQr() {
   const queryClient = useQueryClient()
   const [editing, setEditing] = useState<AdminTable | 'new' | null>(null)
   const [deleting, setDeleting] = useState<AdminTable | null>(null)
+  const [retiring, setRetiring] = useState<AdminTable | null>(null)
   const [printing, setPrinting] = useState<AdminTable[]>([])
   const {
-    data: tables = [],
+    data: allTables = [],
     isPending,
     isLoadingError,
     refetch,
   } = useQuery({ queryKey: ['tables', 'admin'], queryFn: getAdminTables })
   const { data: settings } = useQuery({ queryKey: ['settings'], queryFn: getSettings })
+  const active = allTables.filter((t) => t.is_active)
+  const retired = allTables.filter((t) => !t.is_active)
+  const tables = [...active, ...retired]
 
   const {
     register,
@@ -105,6 +110,22 @@ export default function TablesQr() {
     remove.reset()
   }
 
+  const activate = useMutation({
+    mutationFn: ({ t, on }: { t: AdminTable; on: boolean }) => setTableActive(t.table_id, on),
+    onSuccess: (_, { t, on }) => {
+      setRetiring(null)
+      toast.success(`Table ${t.table_number} ${on ? 'restored' : 'retired'}`)
+      refresh()
+    },
+    onError: (e, { on }) => {
+      if (on) toast.error(e.message)
+    },
+  })
+  const closeRetire = () => {
+    setRetiring(null)
+    activate.reset()
+  }
+
   const download = (t: AdminTable) => {
     const canvas = document.getElementById(`qr-${t.table_id}`) as HTMLCanvasElement | null
     if (!canvas) return
@@ -122,10 +143,12 @@ export default function TablesQr() {
   return (
     <div>
       <div className="flex flex-wrap items-center gap-3 print:hidden">
-        <p className="text-brand-ink/70 text-sm">{tables.length} tables</p>
+        <p className="text-brand-ink/70 text-sm">
+          {active.length} tables{retired.length > 0 && ` · ${retired.length} retired`}
+        </p>
         <button
           type="button"
-          onClick={() => print(tables)}
+          onClick={() => print(active)}
           className={`${outline} ml-auto flex items-center gap-2 px-5`}
         >
           <Printer className="size-4" />
@@ -161,7 +184,14 @@ export default function TablesQr() {
               aria-label={`Table ${t.table_number}`}
               className="border-brand-line rounded-lg border bg-white p-5"
             >
-              <div className="bg-brand-cream/60 flex justify-center rounded-lg p-4">
+              <div
+                className={`bg-brand-cream/60 relative flex justify-center rounded-lg p-4 ${t.is_active ? '' : '[&>svg]:opacity-30'}`}
+              >
+                {!t.is_active && (
+                  <span className="bg-brand-ink/80 tracking-label absolute top-1/2 left-1/2 z-10 -translate-x-1/2 -translate-y-1/2 rounded-full px-3 py-1 text-xs font-bold text-white uppercase">
+                    Retired
+                  </span>
+                )}
                 <QRCodeSVG
                   value={orderLink(t)}
                   size={144}
@@ -185,24 +215,30 @@ export default function TablesQr() {
                 </p>
                 <p className="text-brand-ink/70 text-xs">{t.capacity} seats</p>
               </div>
-              <div className="mt-4 grid grid-cols-2 gap-2">
-                <button
-                  type="button"
-                  aria-label={`Download Table ${t.table_number} QR`}
-                  onClick={() => download(t)}
-                  className={outline}
-                >
-                  Download
-                </button>
-                <button
-                  type="button"
-                  aria-label={`Print Table ${t.table_number} QR`}
-                  onClick={() => print([t])}
-                  className={outline}
-                >
-                  Print
-                </button>
-              </div>
+              {t.is_active ? (
+                <div className="mt-4 grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    aria-label={`Download Table ${t.table_number} QR`}
+                    onClick={() => download(t)}
+                    className={outline}
+                  >
+                    Download
+                  </button>
+                  <button
+                    type="button"
+                    aria-label={`Print Table ${t.table_number} QR`}
+                    onClick={() => print([t])}
+                    className={outline}
+                  >
+                    Print
+                  </button>
+                </div>
+              ) : (
+                <p className="text-brand-ink/70 mt-4 flex min-h-9 items-center justify-center text-sm">
+                  QR turned off
+                </p>
+              )}
               <div className="mt-4 flex justify-between text-sm font-bold">
                 <button
                   type="button"
@@ -211,6 +247,19 @@ export default function TablesQr() {
                   className="text-brand-charcoal hover:text-brand-red pointer-coarse:min-h-11 pointer-coarse:min-w-11"
                 >
                   Edit
+                </button>
+                <button
+                  type="button"
+                  aria-label={`${t.is_active ? 'Retire' : 'Restore'} Table ${t.table_number}`}
+                  disabled={activate.isPending}
+                  onClick={() => {
+                    activate.reset()
+                    if (t.is_active) setRetiring(t)
+                    else activate.mutate({ t, on: true })
+                  }}
+                  className="text-brand-charcoal hover:text-brand-red disabled:opacity-50 pointer-coarse:min-h-11 pointer-coarse:min-w-11"
+                >
+                  {t.is_active ? 'Retire' : 'Restore'}
                 </button>
                 <button
                   type="button"
@@ -299,6 +348,42 @@ export default function TablesQr() {
               </button>
             </div>
           </form>
+        </Modal>
+      )}
+
+      {retiring && (
+        <Modal
+          title={`Retire Table ${retiring.table_number}?`}
+          onClose={closeRetire}
+          dismissible={!activate.isPending}
+          error={activate.error?.message}
+          framed
+          className="max-w-md print:hidden"
+        >
+          <p className="text-brand-ink/70 text-center text-sm">
+            Its QR code stops working and it&apos;s hidden from staff screens and new bookings. Past
+            orders stay in the history. You can restore it anytime.
+          </p>
+          <div className="mt-6 flex justify-center gap-3">
+            <button
+              type="button"
+              disabled={activate.isPending}
+              onClick={closeRetire}
+              className="border-brand-line text-brand-charcoal rounded-lg border px-4 py-2 text-sm font-bold disabled:opacity-50"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              disabled={activate.isPending}
+              aria-busy={activate.isPending}
+              onClick={() => activate.mutate({ t: retiring, on: false })}
+              className="bg-brand-red hover:bg-brand-red/90 inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-bold text-white disabled:opacity-50"
+            >
+              {activate.isPending && <Spinner />}
+              Retire Table
+            </button>
+          </div>
         </Modal>
       )}
 

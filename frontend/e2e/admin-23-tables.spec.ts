@@ -20,6 +20,7 @@ test('tables and QR codes shows a card per table with its order link', async ({ 
     'Download Table T1 QR',
     'Print Table T1 QR',
     'Edit Table T1',
+    'Retire Table T1',
     'Delete Table T1',
   ]) {
     await expect(t1.getByRole('button', { name })).toBeVisible()
@@ -95,7 +96,7 @@ test('delete asks first and keeps a table with orders', async ({ page }) => {
   const confirm = page.getByRole('dialog', { name: 'Delete Table T2?' })
   await confirm.getByRole('button', { name: 'Delete' }).click()
   await expect(confirm.getByRole('alert')).toHaveText(
-    "This table has orders or upcoming bookings. It can't be deleted.",
+    "This table has past orders, so it can't be deleted. Retire it instead.",
   )
   await confirm.getByRole('button', { name: 'Cancel' }).click()
   await expect(confirm).toBeHidden()
@@ -111,4 +112,32 @@ test('delete asks first and keeps a table with orders', async ({ page }) => {
   await page.getByRole('dialog').getByRole('button', { name: 'Delete' }).click()
   await expect(page.getByText('Table T10 deleted')).toBeVisible()
   await expect(page.getByRole('listitem', { name: 'Table T10' })).toHaveCount(0)
+})
+
+test('retiring hides the QR until it is restored, and a busy table cannot retire', async ({
+  page,
+}) => {
+  await page.goto(url)
+  await page.getByRole('button', { name: 'Retire Table T2' }).click()
+  const busy = page.getByRole('dialog', { name: 'Retire Table T2?' })
+  await busy.getByRole('button', { name: 'Retire Table' }).click()
+  await expect(busy.getByRole('alert')).toHaveText('Table T2 has an open order; finish it first')
+  await busy.getByRole('button', { name: 'Cancel' }).click()
+
+  await page.getByRole('button', { name: 'Retire Table T9' }).click()
+  await page
+    .getByRole('dialog', { name: 'Retire Table T9?' })
+    .getByRole('button', { name: 'Retire Table' })
+    .click()
+  await expect(page.getByText('Table T9 retired')).toBeVisible()
+  await expect(page.getByText('8 tables · 1 retired')).toBeVisible()
+  const t9 = page.getByRole('listitem', { name: 'Table T9' })
+  await expect(t9).toContainText('Retired')
+  await expect(t9).toContainText('QR turned off')
+  await expect(t9.getByRole('button', { name: 'Download Table T9 QR' })).toHaveCount(0)
+
+  await t9.getByRole('button', { name: 'Restore Table T9' }).click()
+  await expect(page.getByText('Table T9 restored')).toBeVisible()
+  await expect(page.getByText('9 tables')).toBeVisible()
+  await expect(t9.getByRole('button', { name: 'Download Table T9 QR' })).toBeVisible()
 })

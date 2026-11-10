@@ -34,6 +34,7 @@ export async function createOrder(body: NewOrder): Promise<PublicOrder> {
     if (!table || table.qr_token !== body.qr_token) {
       throw new Error('Please scan the QR code on your table again.')
     }
+    if (!table.is_active) throw new Error('This table is no longer in use')
     if (body.items.length < 1 || body.items.length > 50) {
       throw new Error('An order needs 1 to 50 dishes.')
     }
