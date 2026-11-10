@@ -36,3 +36,23 @@ def test_no_orders_falls_back_to_flagged_items():
 def test_limit_is_respected():
     picks, _ = recommend(ORDERS, CANDIDATES, [], 1)
     assert len(picks) == 1
+
+
+def test_recent_orders_count_more():
+    orders = [{1}, {1}, {2}, {2}]
+    picks, _ = recommend(orders, [1, 2], [], 2, weights=[0.1, 0.1, 1, 1])
+    assert picks == [2, 1]
+
+
+def test_picks_mix_categories():
+    categories = {2: "main", 3: "main", 4: "drink", 5: "dessert"}
+    orders = [{1, 2, 3}, {1, 2, 3}, {1, 4}, {1, 5}]
+    picks, _ = recommend(orders, [2, 3, 4, 5], [1], 3, categories=categories)
+    assert picks == [2, 4, 5]
+
+
+def test_cart_category_is_used_last():
+    categories = {1: "main", 2: "main", 3: "drink"}
+    orders = [{1, 2}, {1, 2}, {1, 3}]
+    picks, _ = recommend(orders, [2, 3], [1], 2, categories=categories)
+    assert picks == [3, 2]

@@ -111,6 +111,7 @@ These differ from the 29 approved wireframes on purpose, to remove redundant ste
   - Tickets have a waiting bar and a red edge when late.
   - Cooks can tap items to tick them off (kept on that screen only).
   - The backup before this change is tagged `backup/pre-kitchen-2026-11-04`.
+- **Recommender signals (2026-11-10):** recent orders count more (weight halves every 30 days), and suggestions mix categories before repeating one, including the categories already in the cart. Same API, so the backend and screens are unchanged.
 - **Motion gaps (2026-11-10):** the last motion pieces from the plan.
   - Item Details' main Add to Cart flies a gold dot to the cart. On all add buttons, the "added" toast now waits until the dot lands, so it no longer covers the cart.
   - Checkout's total counts up and its sections rise in one after another. Reserve's columns and time slots rise in, and the Reports summary numbers count up.

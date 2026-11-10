@@ -4,8 +4,10 @@ A small Python service (FastAPI) that suggests dishes. The backend calls it from
 
 ## How it picks dishes
 
-- It reads the last 180 days of orders (`orders`, `order_items`) and the menu (`menu_items`), and keeps them in memory for 5 minutes.
+- It reads the last 180 days of orders (`orders`, `order_items`) and the menu (`menu_items`, with each dish's category), and keeps them in memory for 5 minutes.
 - **Often ordered together:** for each dish in the request, it counts the orders that also had another dish, weighted by how popular both dishes are (cosine similarity), and adds the scores up.
+- **Recent orders count more:** each order's weight halves every 30 days, so what guests order now outranks what sold months ago.
+- **Variety:** the list skips a category it already has, or one already in the guest's dishes (a pizza in the cart brings a drink or a dessert first). Same-category dishes fill the list only when nothing else is left.
 - The rest of the list is filled with the most-ordered dishes, then with the other flagged dishes by ID.
 - Only dishes that are available and have "Show in Recommendations" (`is_recommended`) on are suggested, never the dishes sent in.
 - The logic is in `engine.py`, with tests in `test_engine.py`.
