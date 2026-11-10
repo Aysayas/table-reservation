@@ -27,12 +27,13 @@ export type StaffTable = PublicTable & {
 export async function getTable(tableId: number): Promise<PublicTable | null> {
   if (USE_SAMPLE) {
     const table = sampleTables.find((t) => t.table_id === tableId)
-    if (!table) return null
+    if (!table?.is_active) return null
     return {
       table_id: table.table_id,
       table_number: table.table_number,
       capacity: table.capacity,
       status: table.status,
+      is_active: table.is_active,
     }
   }
   try {
@@ -44,12 +45,12 @@ export async function getTable(tableId: number): Promise<PublicTable | null> {
   }
 }
 
-export async function getTables(status?: TableStatus): Promise<StaffTable[]> {
+export async function getTables(status?: TableStatus, retired = false): Promise<StaffTable[]> {
   if (USE_SAMPLE) {
     const today = new Date().toLocaleDateString('en-CA')
     return sampleTables
-      .filter((t) => !status || t.status === status)
-      .map(({ table_id, table_number, capacity, status }) => {
+      .filter((t) => (retired || t.is_active) && (!status || t.status === status))
+      .map(({ table_id, table_number, capacity, status, is_active }) => {
         const order = sampleOrders
           .filter(
             (o) =>
@@ -69,6 +70,7 @@ export async function getTables(status?: TableStatus): Promise<StaffTable[]> {
           table_number,
           capacity,
           status,
+          is_active,
           current_order: order
             ? {
                 order_id: order.order_id,
@@ -93,7 +95,7 @@ export async function getTables(status?: TableStatus): Promise<StaffTable[]> {
         }
       })
   }
-  const res = await api.get('/tables', { params: { status } })
+  const res = await api.get('/tables', { params: { status, retired: retired ? 1 : undefined } })
   return res.data.data
 }
 
@@ -124,13 +126,13 @@ export type AdminTable = StaffTable & { qr_token: string }
 
 export async function getAdminTables(): Promise<AdminTable[]> {
   if (USE_SAMPLE) {
-    const tables = await getTables()
+    const tables = await getTables(undefined, true)
     return tables.map((t) => ({
       ...t,
       qr_token: sampleTables.find((s) => s.table_id === t.table_id)?.qr_token ?? '',
     }))
   }
-  const res = await api.get('/tables')
+  const res = await api.get('/tables', { params: { retired: 1 } })
   return res.data.data
 }
 
@@ -169,6 +171,7 @@ export async function createTable(body: TableInput): Promise<RestaurantTable> {
       capacity: body.capacity,
       qr_token: Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join(''),
       status: 'available',
+      is_active: true,
     }
     sampleTables.push(table)
     return { ...table }
@@ -196,7 +199,11 @@ export async function deleteTable(table_id: number): Promise<void> {
   if (USE_SAMPLE) {
     findTable(table_id)
     if (sampleOrders.some((o) => o.table_id === table_id) || upcoming(table_id).length) {
-      throw new Error("This table has orders or upcoming bookings. It can't be deleted.")
+      throw new Error(
+        sampleOrders.some((o) => o.table_id === table_id)
+          ? "This table has past orders, so it can't be deleted. Retire it instead."
+          : 'This table has upcoming bookings; move them first',
+      )
     }
     sampleTables.splice(
       sampleTables.findIndex((t) => t.table_id === table_id),
@@ -215,5 +222,25 @@ export async function setTableStatus(table_id: number, status: TableStatus): Pro
     return { ...table }
   }
   const res = await api.patch(`/tables/${table_id}/status`, { status })
+  return res.data.data
+}
+
+export async function setTableActive(table_id: number, is_active: boolean): Promise<AdminTable> {
+  if (USE_SAMPLE) {
+    const table = findTable(table_id)
+    if (!is_active) {
+      const open = sampleOrders.some(
+        (o) => o.table_id === table_id && (o.status !== 'served' || o.payment_status !== 'paid'),
+      )
+      if (open) throw new Error(`Table ${table.table_number} has an open order; finish it first`)
+      if (upcoming(table_id).length) {
+        throw new Error(`Table ${table.table_number} has upcoming bookings; move them first`)
+      }
+      table.status = 'available'
+    }
+    table.is_active = is_active
+    return (await getAdminTables()).find((t) => t.table_id === table_id) as AdminTable
+  }
+  const res = await api.patch(`/tables/${table_id}/active`, { is_active })
   return res.data.data
 }

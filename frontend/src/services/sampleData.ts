@@ -342,6 +342,7 @@ export const sampleTables: RestaurantTable[] = Array.from({ length: 9 }, (_, i) 
       'available',
     ] as const
   )[i],
+  is_active: true,
 }))
 
 export const sampleCustomers: Customer[] = [

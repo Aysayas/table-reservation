@@ -154,6 +154,9 @@ class Orders extends Controller {
 		if (!$this->token_matches($table_id, $input['qr_token'] ?? '')) {
 			$this->api->respond_error('This QR code is not valid for that table', 403);
 		}
+		if (!(int) $this->Table_model->find((int) $table_id)['is_active']) {
+			$this->api->respond_error('This table is no longer in use', 409);
+		}
 
 		$ids = array_values(array_unique(array_column($lines, 'item_id')));
 		$menu = array_column($this->Menu_item_model->query()->in('item_id', $ids)->get_all(), null, 'item_id');

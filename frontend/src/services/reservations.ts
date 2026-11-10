@@ -46,7 +46,7 @@ export async function getAvailability(date: string, pax: number): Promise<TimeSl
   const now = new Date()
   const isToday = date === format(now, 'yyyy-MM-dd')
   const nowMinutes = now.getHours() * 60 + now.getMinutes()
-  const tables = sampleTables.filter((t) => t.capacity >= pax).length
+  const tables = sampleTables.filter((t) => t.is_active && t.capacity >= pax).length
   const slots: TimeSlot[] = []
   for (
     let m = Math.max(
@@ -294,7 +294,7 @@ export async function updateReservationStatus(
   if (!moves[r.status]) throw new Error('This reservation can no longer be changed')
 
   if (change.table_id !== undefined) {
-    const table = sampleTables.find((t) => t.table_id === change.table_id)
+    const table = sampleTables.find((t) => t.table_id === change.table_id && t.is_active)
     if (!table || table.capacity < r.pax)
       throw new Error('That table is too small for this booking')
     const taken = sampleReservations.some(
@@ -375,7 +375,7 @@ export async function updateReservation(
   if (body.reservation_date < format(new Date(), 'yyyy-MM-dd')) {
     throw new Error('Choose today or a later date')
   }
-  const biggest = Math.max(...sampleTables.map((t) => t.capacity))
+  const biggest = Math.max(...sampleTables.filter((t) => t.is_active).map((t) => t.capacity))
   if (body.pax < 1 || body.pax > Math.min(sampleSettings.max_pax, biggest)) {
     throw new Error(`Guests must be 1 to ${Math.min(sampleSettings.max_pax, biggest)}`)
   }
@@ -390,11 +390,13 @@ export async function updateReservation(
       x.reservation_time === body.reservation_time &&
       (x.status === 'pending' || x.status === 'confirmed'),
   )
-  if (others.length >= sampleTables.filter((t) => t.capacity >= body.pax).length) {
+  if (others.length >= sampleTables.filter((t) => t.is_active && t.capacity >= body.pax).length) {
     throw new Error('That time is fully booked')
   }
   const table =
-    body.table_id === null ? null : sampleTables.find((t) => t.table_id === body.table_id)
+    body.table_id === null
+      ? null
+      : sampleTables.find((t) => t.table_id === body.table_id && t.is_active)
   if (body.table_id !== null && !table) throw new Error('Table not found')
   if (table && table.capacity < body.pax)
     throw new Error('That table is too small for this booking')

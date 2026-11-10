@@ -39,6 +39,7 @@ export type RestaurantTable = {
   capacity: number
   qr_token: string
   status: TableStatus
+  is_active: boolean
 }
 
 export type Reservation = {

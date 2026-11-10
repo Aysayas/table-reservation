@@ -85,6 +85,7 @@ $router->group(['prefix' => 'api'], function ($router) {
     $router->post('/tables', 'Tables::store');
     $router->put('/tables/{id}', 'Tables::update')->where_number('id');
     $router->patch('/tables/{id}/status', 'Tables::status')->where_number('id');
+    $router->patch('/tables/{id}/active', 'Tables::active')->where_number('id');
     $router->delete('/tables/{id}', 'Tables::destroy')->where_number('id');
 
     $router->get('/reservations/availability', 'Reservations::availability');

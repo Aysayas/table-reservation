@@ -113,8 +113,8 @@ class Reservations extends Controller {
 		}
 		if ($new_table !== null) {
 			$table = $this->Table_model->find($new_table);
-			if (!$table) {
-				$this->api->respond(['error' => 'Invalid input', 'status' => 422, 'errors' => ['That table does not exist.']], 422);
+			if (!$table || !(int) $table['is_active']) {
+				$this->api->respond(['error' => 'Invalid input', 'status' => 422, 'errors' => ['That table does not exist or is retired.']], 422);
 			}
 			if ((int) $table['capacity'] < $input['pax']) {
 				$this->api->respond(['error' => 'Invalid input', 'status' => 422, 'errors' => ["Table {$table['table_number']} seats only {$table['capacity']}."]], 422);
@@ -197,8 +197,8 @@ class Reservations extends Controller {
 
 		if ($has_table) {
 			$table = $this->Table_model->find($table_id);
-			if (!$table) {
-				$this->api->respond(['error' => 'Invalid input', 'status' => 422, 'errors' => ['That table does not exist.']], 422);
+			if (!$table || !(int) $table['is_active']) {
+				$this->api->respond(['error' => 'Invalid input', 'status' => 422, 'errors' => ['That table does not exist or is retired.']], 422);
 			}
 			if ((int) $table['capacity'] < (int) $reservation['pax']) {
 				$this->api->respond(['error' => 'Invalid input', 'status' => 422, 'errors' => ["Table {$table['table_number']} seats only {$table['capacity']}."]], 422);
@@ -522,7 +522,7 @@ class Reservations extends Controller {
 			$errors[] = '"mobile_number" must be 11 digits starting with 09.';
 		}
 
-		$max_capacity = min($this->settings()['max_pax'], max(array_column($this->Table_model->all(), 'capacity') ?: [0]));
+		$max_capacity = min($this->settings()['max_pax'], max(array_column($this->Table_model->active(), 'capacity') ?: [0]));
 		if (is_numeric($input['pax'] ?? null) && (int) $input['pax'] > $max_capacity) {
 			$errors[] = "\"pax\" can be at most {$max_capacity}.";
 		}
@@ -589,7 +589,7 @@ class Reservations extends Controller {
 
 	private function fitting_tables($pax)
 	{
-		return count(array_filter($this->Table_model->all(), fn($table) => (int) $table['capacity'] >= $pax));
+		return count(array_filter($this->Table_model->active(), fn($table) => (int) $table['capacity'] >= $pax));
 	}
 
 	private function is_open($date, $time, $pax, $except_id = null)

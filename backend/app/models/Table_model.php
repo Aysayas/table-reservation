@@ -4,8 +4,13 @@ defined('PREVENT_DIRECT_ACCESS') OR exit('No direct script access allowed');
 class Table_model extends Model {
 	protected $table = 'restaurant_tables';
 	protected $primary_key = 'table_id';
-	protected $fillable = ['table_number', 'capacity', 'qr_token', 'status'];
+	protected $fillable = ['table_number', 'capacity', 'qr_token', 'status', 'is_active'];
 	private $arrived_hours = 3;
+
+	public function active()
+	{
+		return $this->filter(['is_active' => 1])->order_by('table_id')->get_all();
+	}
 
 	public function occupy($table_id)
 	{

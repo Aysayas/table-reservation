@@ -20,9 +20,10 @@ class Tables extends Controller {
 			$this->api->respond_error('"status" must be one of ' . implode(', ', $this->statuses), 422);
 		}
 
+		$retired = $user['role'] === 'admin' && ($this->api->get_query_params()['retired'] ?? '') === '1';
 		$tables = $status !== ''
-			? $this->Table_model->filter(['status' => $status])->order_by('table_id')->get_all()
-			: $this->Table_model->order_by('table_id');
+			? $this->Table_model->filter(['status' => $status, 'is_active' => 1])->order_by('table_id')->get_all()
+			: ($retired ? $this->Table_model->order_by('table_id') : $this->Table_model->active());
 
 		$this->api->respond(['data' => $this->with_activity($tables, $user['role'] === 'admin')]);
 	}
@@ -52,7 +53,7 @@ class Tables extends Controller {
 	public function show($id)
 	{
 		$table = $this->Table_model->find($id);
-		if (!$table) {
+		if (!$table || !(int) $table['is_active']) {
 			$this->api->respond_error('Table not found', 404);
 		}
 
@@ -101,6 +102,31 @@ class Tables extends Controller {
 		$this->api->respond(['data' => $this->with_activity([$this->Table_model->find($id)])[0]]);
 	}
 
+	public function active($id)
+	{
+		$this->api->require_role('admin');
+		$table = $this->Table_model->find($id);
+		if (!$table) {
+			$this->api->respond_error('Table not found', 404);
+		}
+		$active = $this->api->body()['is_active'] ?? null;
+		if (!is_bool($active)) {
+			$this->api->respond(['error' => 'Invalid input', 'status' => 422, 'errors' => ['"is_active" must be true or false.']], 422);
+		}
+		if (!$active) {
+			$orders = $this->Order_model->find_all_by('table_id', (int) $id);
+			if (array_filter($orders, fn($order) => $order['status'] !== 'served' || $order['payment_status'] !== 'paid')) {
+				$this->api->respond_error("Table {$table['table_number']} has an open order; finish it first", 409);
+			}
+			if ($this->upcoming($id)->count()) {
+				$this->api->respond_error("Table {$table['table_number']} has upcoming bookings; move them first", 409);
+			}
+		}
+
+		$this->Table_model->update($id, ['is_active' => $active ? 1 : 0] + ($active ? [] : ['status' => 'available']));
+		$this->api->respond(['data' => $this->with_activity([$this->Table_model->find($id)], true)[0]]);
+	}
+
 	public function destroy($id)
 	{
 		$this->api->require_role('admin');
@@ -108,7 +134,7 @@ class Tables extends Controller {
 			$this->api->respond_error('Table not found', 404);
 		}
 		if ($this->Order_model->exists(['table_id' => $id])) {
-			$this->api->respond_error("This table has orders and can't be deleted", 409);
+			$this->api->respond_error("This table has past orders, so it can't be deleted. Retire it instead.", 409);
 		}
 		if ($this->upcoming($id)->count()) {
 			$this->api->respond_error('This table has upcoming bookings; move them first', 409);
@@ -161,6 +187,7 @@ class Tables extends Controller {
 			'table_number' => $table['table_number'],
 			'capacity' => (int) $table['capacity'],
 			'status' => $table['status'],
+			'is_active' => (bool) $table['is_active'],
 		];
 	}
 

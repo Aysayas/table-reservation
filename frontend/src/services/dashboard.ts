@@ -50,8 +50,8 @@ export async function getStaffDashboard(): Promise<StaffDashboard> {
       reservations_today: todays.length,
       guests_arrived: todays.filter((r) => r.status === 'arrived').reduce((n, r) => n + r.pax, 0),
       active_orders: notServed.length,
-      available_tables: sampleTables.filter((t) => t.status === 'available').length,
-      total_tables: sampleTables.length,
+      available_tables: sampleTables.filter((t) => t.is_active && t.status === 'available').length,
+      total_tables: sampleTables.filter((t) => t.is_active).length,
       upcoming_reservations: todays
         .filter((r) => r.status !== 'arrived' && r.reservation_time >= time)
         .sort((a, b) => a.reservation_time.localeCompare(b.reservation_time))
