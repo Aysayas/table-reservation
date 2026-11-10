@@ -2,20 +2,33 @@ from collections import Counter
 from math import sqrt
 
 
-def recommend(orders, candidates, item_ids, limit):
+def recommend(orders, candidates, item_ids, limit, weights=None, categories=None):
     chosen = set(item_ids)
     allowed = [item for item in candidates if item not in chosen]
-    popularity = Counter(item for order in orders for item in order)
+    weights = weights or [1] * len(orders)
+    categories = categories or {}
+
+    popularity = Counter()
+    for order, weight in zip(orders, weights):
+        for item in order:
+            popularity[item] += weight
 
     together = Counter()
-    for order in orders:
+    for order, weight in zip(orders, weights):
         if chosen & order:
             for item in order - chosen:
                 for base in chosen & order:
-                    together[item] += 1 / sqrt(popularity[base] * popularity[item])
+                    together[item] += weight / sqrt(popularity[base] * popularity[item])
 
     ranked = sorted(allowed, key=lambda item: (-together[item], -popularity[item], item))
-    picks = ranked[:limit]
+    seen = {categories.get(item) for item in chosen} - {None}
+    picks = []
+    for item in ranked:
+        category = categories.get(item)
+        if len(picks) < limit and (category is None or category not in seen):
+            picks.append(item)
+            seen.add(category)
+    picks += [item for item in ranked if item not in picks][: limit - len(picks)]
 
     if any(together[item] > 0 for item in picks):
         source = "together"
