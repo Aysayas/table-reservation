@@ -111,6 +111,7 @@ These differ from the 29 approved wireframes on purpose, to remove redundant ste
   - Tickets have a waiting bar and a red edge when late.
   - Cooks can tap items to tick them off (kept on that screen only).
   - The backup before this change is tagged `backup/pre-kitchen-2026-11-04`.
+- **Touch targets and password eye (2026-11-11):** from the Impeccable audit (16/20). The toggle switches (Menu Management, Menu Item, Settings) get a 44px tap area on touch, without changing how they look; the kitchen's icon-only Log Out, Add Menu Item and Table Status' View Order reach 44px on touch. Edge's built-in password reveal button is hidden, so password fields show only our eye button.
 - **Recommender signals (2026-11-10):** recent orders count more (weight halves every 30 days), and suggestions mix categories before repeating one, including the categories already in the cart. Same API, so the backend and screens are unchanged.
 - **Motion gaps (2026-11-10):** the last motion pieces from the plan.
   - Item Details' main Add to Cart flies a gold dot to the cart. On all add buttons, the "added" toast now waits until the dot lands, so it no longer covers the cart.

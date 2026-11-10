@@ -16,7 +16,7 @@ import useSlidingPill from '@/hooks/useSlidingPill'
 const peso = (amount: number) =>
   `₱${amount.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
 const cardButton =
-  'border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal mt-4 flex w-full items-center justify-center gap-2 rounded-lg border bg-white py-2.5 text-center text-sm font-bold transition-colors duration-200 hover:text-white'
+  'border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal mt-4 flex w-full items-center justify-center gap-2 rounded-lg border bg-white py-2.5 text-center pointer-coarse:min-h-11 text-sm font-bold transition-colors duration-200 hover:text-white'
 
 const look: Record<Status, { card: string; badge: string; text: string }> = {
   available: {

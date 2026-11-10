@@ -118,7 +118,7 @@ export default function MenuManagement() {
         <Link
           to="/admin/menu/new"
           state={from}
-          className="bg-brand-red hover:bg-brand-red/90 lift ml-auto flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-bold text-white duration-200"
+          className="bg-brand-red hover:bg-brand-red/90 lift ml-auto flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-bold text-white duration-200 pointer-coarse:min-h-11"
         >
           <Plus className="size-4" />
           Add Menu Item
@@ -150,7 +150,7 @@ export default function MenuManagement() {
                     aria-label={`${item.name} available`}
                     disabled={toggle.isPending}
                     onClick={() => toggle.mutate(item)}
-                    className={`relative h-6 w-11 shrink-0 rounded-full transition-colors duration-200 ${item.is_available ? 'bg-brand-green' : 'bg-brand-ink/20'}`}
+                    className={`relative h-6 w-11 shrink-0 rounded-full transition-colors duration-200 pointer-coarse:before:absolute pointer-coarse:before:inset-x-0 pointer-coarse:before:-inset-y-2.5 ${item.is_available ? 'bg-brand-green' : 'bg-brand-ink/20'}`}
                   >
                     <span
                       className={`shadow-soft absolute top-0.5 left-0.5 size-5 rounded-full bg-white transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${item.is_available ? 'translate-x-5' : ''}`}
@@ -228,7 +228,7 @@ export default function MenuManagement() {
                       aria-label={`${item.name} available`}
                       disabled={toggle.isPending}
                       onClick={() => toggle.mutate(item)}
-                      className={`relative h-6 w-11 rounded-full transition-colors duration-200 ${item.is_available ? 'bg-brand-green' : 'bg-brand-ink/20'}`}
+                      className={`relative h-6 w-11 rounded-full transition-colors duration-200 pointer-coarse:before:absolute pointer-coarse:before:inset-x-0 pointer-coarse:before:-inset-y-2.5 ${item.is_available ? 'bg-brand-green' : 'bg-brand-ink/20'}`}
                     >
                       <span
                         className={`shadow-soft absolute top-0.5 left-0.5 size-5 rounded-full bg-white transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${item.is_available ? 'translate-x-5' : ''}`}
