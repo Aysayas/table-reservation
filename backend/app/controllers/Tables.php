@@ -121,6 +121,9 @@ class Tables extends Controller {
 			if ($this->upcoming($id)->count()) {
 				$this->api->respond_error("Table {$table['table_number']} has upcoming bookings; move them first", 409);
 			}
+			if ($this->Reservation_model->filter(['table_id' => $id, 'status' => 'arrived', 'reservation_date' => date('Y-m-d')])->count()) {
+				$this->api->respond_error("Table {$table['table_number']} has seated guests today", 409);
+			}
 		}
 
 		$this->Table_model->update($id, ['is_active' => $active ? 1 : 0] + ($active ? [] : ['status' => 'available']));

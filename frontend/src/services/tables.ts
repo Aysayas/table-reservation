@@ -236,6 +236,14 @@ export async function setTableActive(table_id: number, is_active: boolean): Prom
       if (upcoming(table_id).length) {
         throw new Error(`Table ${table.table_number} has upcoming bookings; move them first`)
       }
+      const today = new Date().toLocaleDateString('en-CA')
+      if (
+        sampleReservations.some(
+          (r) => r.table_id === table_id && r.status === 'arrived' && r.reservation_date === today,
+        )
+      ) {
+        throw new Error(`Table ${table.table_number} has seated guests today`)
+      }
       table.status = 'available'
     }
     table.is_active = is_active

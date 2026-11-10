@@ -252,7 +252,11 @@ export default function TablesQr() {
                   type="button"
                   aria-label={`${t.is_active ? 'Retire' : 'Restore'} Table ${t.table_number}`}
                   disabled={activate.isPending}
-                  onClick={() => (t.is_active ? setRetiring(t) : activate.mutate({ t, on: true }))}
+                  onClick={() => {
+                    activate.reset()
+                    if (t.is_active) setRetiring(t)
+                    else activate.mutate({ t, on: true })
+                  }}
                   className="text-brand-charcoal hover:text-brand-red disabled:opacity-50 pointer-coarse:min-h-11 pointer-coarse:min-w-11"
                 >
                   {t.is_active ? 'Retire' : 'Restore'}

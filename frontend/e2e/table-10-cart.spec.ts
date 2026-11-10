@@ -23,7 +23,9 @@ test('an empty cart links back to the menu', async ({ page }) => {
 
 test('the cart shows each line with its note, the totals and checkout', async ({ page }) => {
   await fill(page)
-  await expect(page.getByText('Tapa with Dilis and Banana Garlic Oleo')).toBeVisible()
+  await expect(
+    page.getByText('Tapa with Dilis and Banana Garlic Oleo', { exact: true }),
+  ).toBeVisible()
   await expect(page.getByText('Note: less salty')).toBeVisible()
   await expect(page.getByText('₱500.00')).toBeVisible()
   await expect(page.getByText('Bulalo', { exact: true })).toBeVisible()

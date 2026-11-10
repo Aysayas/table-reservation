@@ -226,6 +226,9 @@ class Reservations extends Controller {
 		$old_table = $reservation['table_id'] !== null ? (int) $reservation['table_id'] : null;
 		$new_table = $has_table ? $table_id : $old_table;
 		if ($current === 'no_show') {
+			if ($new_table !== null && !$has_table && !(int) ($this->Table_model->find($new_table)['is_active'] ?? 0)) {
+				$new_table = null;
+			}
 			$next = $new_table !== null ? 'confirmed' : 'pending';
 			$taken = $new_table !== null && $this->Reservation_model
 				->filter(['table_id' => $new_table, 'reservation_date' => $reservation['reservation_date'], 'reservation_time' => $reservation['reservation_time']])
