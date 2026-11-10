@@ -59,7 +59,7 @@ const ages = [
   { label: '15+ min', chip: 'bg-brand-red/10 text-brand-red', bar: 'bg-brand-red' },
 ]
 const headerButton =
-  'flex items-center gap-2 text-sm text-white/70 transition-colors duration-200 hover:text-white pointer-coarse:min-h-11'
+  'flex items-center gap-2 text-sm text-white/70 transition-colors duration-200 hover:text-white pointer-coarse:min-h-11 pointer-coarse:min-w-11 pointer-coarse:justify-center'
 const kitchenKey = ['orders', 'kitchen']
 const moveKey = ['kitchen-move']
 const ticksKey = 'kitchen-ticks'

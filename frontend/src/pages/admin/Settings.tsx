@@ -329,7 +329,7 @@ export default function Settings() {
                     aria-checked={d.is_open}
                     aria-label={`${name} open`}
                     onClick={() => setValue(`hours.${i}.is_open`, !d.is_open)}
-                    className={`relative h-6 w-11 shrink-0 rounded-full transition-colors duration-200 ${d.is_open ? 'bg-brand-green' : 'bg-brand-ink/20'}`}
+                    className={`relative h-6 w-11 shrink-0 rounded-full transition-colors duration-200 pointer-coarse:before:absolute pointer-coarse:before:inset-x-0 pointer-coarse:before:-inset-y-2.5 ${d.is_open ? 'bg-brand-green' : 'bg-brand-ink/20'}`}
                   >
                     <span
                       className={`shadow-soft absolute top-0.5 left-0.5 size-5 rounded-full bg-white transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${d.is_open ? 'translate-x-5' : ''}`}
@@ -412,7 +412,7 @@ export default function Settings() {
               aria-checked={!!depositOn}
               aria-labelledby="deposit-label"
               onClick={() => setValue('deposit_required', !depositOn)}
-              className={`relative h-6 w-11 shrink-0 rounded-full transition-colors duration-200 ${depositOn ? 'bg-brand-green' : 'bg-brand-ink/20'}`}
+              className={`relative h-6 w-11 shrink-0 rounded-full transition-colors duration-200 pointer-coarse:before:absolute pointer-coarse:before:inset-x-0 pointer-coarse:before:-inset-y-2.5 ${depositOn ? 'bg-brand-green' : 'bg-brand-ink/20'}`}
             >
               <span
                 className={`shadow-soft absolute top-0.5 left-0.5 size-5 rounded-full bg-white transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${depositOn ? 'translate-x-5' : ''}`}

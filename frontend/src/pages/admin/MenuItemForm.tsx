@@ -61,7 +61,7 @@ function Toggle({
           aria-checked={on}
           aria-labelledby={`${name}-label`}
           onClick={() => onChange(!on)}
-          className={`relative h-6 w-11 shrink-0 rounded-full transition-colors duration-200 ${on ? 'bg-brand-green' : 'bg-brand-ink/20'}`}
+          className={`relative h-6 w-11 shrink-0 rounded-full transition-colors duration-200 pointer-coarse:before:absolute pointer-coarse:before:inset-x-0 pointer-coarse:before:-inset-y-2.5 ${on ? 'bg-brand-green' : 'bg-brand-ink/20'}`}
         >
           <span
             className={`shadow-soft absolute top-0.5 left-0.5 size-5 rounded-full bg-white transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${on ? 'translate-x-5' : ''}`}
