@@ -3,7 +3,15 @@ import { api, fileUrl, USE_SAMPLE } from '@/lib/api'
 import { sampleCategories, sampleMenuItems, sampleOrderItems } from '@/services/sampleData'
 import type { Category, MenuItem } from '@/types/db'
 
-const withPhoto = (item: MenuItem) => ({ ...item, image_url: fileUrl(item.image_url) })
+const withPhoto = <T extends MenuItem>(item: T): T => ({
+  ...item,
+  image_url: fileUrl(item.image_url),
+})
+
+export type RecommendReason =
+  { type: 'together'; with_item_id: number } | { type: 'popular' } | { type: 'pick' }
+
+export type Recommendation = MenuItem & { reason: RecommendReason }
 
 export type CategoryWithCount = Category & { item_count: number }
 
@@ -173,11 +181,17 @@ export async function uploadMenuImage(item_id: number, photo: File): Promise<Men
   return res.data.data
 }
 
-export async function getRecommendations(item_ids: number[] = [], limit = 4): Promise<MenuItem[]> {
+export async function getRecommendations(
+  item_ids: number[] = [],
+  limit = 4,
+): Promise<Recommendation[]> {
   if (USE_SAMPLE) {
-    const categories = new Set(
-      sampleMenuItems.filter((m) => item_ids.includes(m.item_id)).map((m) => m.category_id),
-    )
+    const chosen = sampleMenuItems.filter((m) => item_ids.includes(m.item_id))
+    const categories = new Set(chosen.map((m) => m.category_id))
+    const reason = (m: MenuItem): RecommendReason => {
+      const base = chosen.find((c) => c.category_id === m.category_id)
+      return base ? { type: 'together', with_item_id: base.item_id } : { type: 'pick' }
+    }
     return sampleMenuItems
       .filter(
         (m) =>
@@ -191,6 +205,7 @@ export async function getRecommendations(item_ids: number[] = [], limit = 4): Pr
           Number(b.is_recommended) - Number(a.is_recommended),
       )
       .slice(0, limit)
+      .map((m) => ({ ...m, reason: reason(m) }))
   }
   const res = await api.get('/recommendations', {
     params: { item_ids: item_ids.length ? item_ids.join(',') : undefined, limit },

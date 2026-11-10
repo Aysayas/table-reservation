@@ -5,6 +5,7 @@ import { toast } from 'sonner'
 import DishPhoto from '@/components/DishPhoto'
 import EmptyState from '@/components/EmptyState'
 import LeaderRow from '@/components/LeaderRow'
+import WhyLine from '@/components/WhyLine'
 import { getMenuItems, getRecommendations } from '@/services/menu'
 import { getSettings } from '@/services/settings'
 import { cartTotal, useCart } from '@/stores/cart'
@@ -166,6 +167,7 @@ export default function Cart() {
                         {dish.name}
                       </p>
                       <p className="text-brand-red font-serif text-sm">{peso(dish.price)}</p>
+                      <WhyLine reason={dish.reason} names={lines} />
                     </div>
                     <button
                       type="button"

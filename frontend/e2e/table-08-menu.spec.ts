@@ -77,3 +77,9 @@ test('add sends a gold dot to the cart, and not with reduced motion', async ({ p
   await expect(page.getByRole('link', { name: /View Cart · 3 items/ })).toBeVisible()
   await expect(dots).toHaveCount(0)
 })
+
+test('each recommendation says why it is there', async ({ page }) => {
+  await page.goto(url)
+  const row = page.getByRole('region', { name: 'Recommended for You' })
+  await expect(row.getByRole('link').first()).toContainText("Kitchen's pick")
+})

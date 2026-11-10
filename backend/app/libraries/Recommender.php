@@ -54,6 +54,12 @@ class Recommender {
 			error_log("Recommender unavailable (HTTP {$code}), using the fallback");
 			return null;
 		}
-		return ['item_ids' => array_map('intval', $body['item_ids']), 'source' => (string) ($body['source'] ?? '')];
+		$item_ids = array_map('intval', $body['item_ids']);
+		$reasons = is_array($body['reasons'] ?? null) ? $body['reasons'] : [];
+		$by_item = [];
+		foreach ($item_ids as $i => $id) {
+			$by_item[$id] = $reasons[$i] ?? null;
+		}
+		return ['item_ids' => $item_ids, 'source' => (string) ($body['source'] ?? ''), 'reasons' => $by_item];
 	}
 }

@@ -70,6 +70,7 @@ class Menu extends Controller {
 		$flagged = $this->Menu_item_model->filter(['is_available' => 1, 'is_recommended' => 1])->get_all();
 		$by_id = array_column(array_map([$this, 'format'], $flagged), null, 'item_id');
 
+		$best = [];
 		if ($result) {
 			$picks = $result['item_ids'];
 			$source = $result['source'];
@@ -80,7 +81,19 @@ class Menu extends Controller {
 		}
 
 		$picks = array_slice(array_values(array_unique(array_filter($picks, fn($id) => isset($by_id[$id]) && !in_array($id, $item_ids, true)))), 0, $limit);
-		$this->api->respond(['data' => array_map(fn($id) => $by_id[$id], $picks), 'meta' => ['source' => $source]]);
+		$reason = function ($id) use ($result, $best, $item_ids) {
+			$given = $result['reasons'][$id] ?? null;
+			$type = $given['type'] ?? null;
+			if ($type === 'together' && in_array((int) ($given['with_item_id'] ?? 0), $item_ids, true)) {
+				return ['type' => 'together', 'with_item_id' => (int) $given['with_item_id']];
+			}
+			if ($type === 'popular' || in_array($id, $best, true)) {
+				return ['type' => 'popular'];
+			}
+			return ['type' => 'pick'];
+		};
+		$data = array_map(fn($id) => $by_id[$id] + ['reason' => $reason($id)], $picks);
+		$this->api->respond(['data' => $data, 'meta' => ['source' => $source]]);
 	}
 
 	private function format($item)
